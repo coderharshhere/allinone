@@ -1,10 +1,333 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-  <title>AllInOne</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllInOne | MP Govt Services Portal</title>
+    <!-- Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* MP Govt Portal Custom Styles */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Hero Section Gradient */
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+
+        /* Service Card Hover Effects */
+        .service-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-left-color: #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Ticker Animation */
+        .ticker-wrapper {
+            overflow: hidden;
+            background: #fffbeb;
+            border-bottom: 1px solid #fef3c7;
+        }
+
+        .ticker-text {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: ticker 30s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Sidebar Tab Active State */
+        .category-tab {
+            transition: background 0.2s;
+        }
+
+        .category-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .category-tab:hover:not(.active) {
+            background-color: #eff6ff;
+        }
+    </style>
 </head>
-<body>
-  <h1>🚀 AllInOne Live Ho Gaya!</h1>
-  <p>Firebase + GitHub working perfectly</p>
+<body class="bg-gray-50">
+
+    <!-- Top Bar -->
+    <div class="bg-blue-900 text-white text-xs py-2 px-4 flex justify-between items-center">
+        <div>मध्यप्रदेश सरकार | Government of Madhya Pradesh</div>
+        <div class="flex gap-4">
+            <a href="#" class="hover:underline">Screen Reader Access</a>
+            <a href="#" class="hover:underline">A-</a> | <a href="#" class="hover:underline">A</a> | <a href="#" class="hover:underline">A+</a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/1200px-Emblem_of_Madhya_Pradesh.svg.png" alt="MP Logo" class="h-16">
+                <div>
+                    <h1 class="text-2xl font-bold text-blue-900 leading-tight">AllInOne MP</h1>
+                    <p class="text-sm text-gray-600">एकल खिड़की सेवा पोर्टल</p>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex gap-6 items-center">
+                <div class="text-right">
+                    <p class="text-xs text-gray-500 uppercase">सहायता केंद्र</p>
+                    <p class="font-bold text-blue-800">
+  <a href="https://wa.me/918435273042" target="_blank">
+    8435273042
+  </a>
+</p>
+                </div>
+<a href="/adminlogin.html"
+   class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition inline-block">
+   लॉगिन / पंजीकरण
+</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-blue-800 text-white">
+        <div class="container mx-auto px-4">
+            <ul class="flex overflow-x-auto whitespace-nowrap py-3 gap-8">
+                <li><a href="#" class="hover:text-blue-200 flex items-center gap-2"><i class="fas fa-home"></i> मुख्य पृष्ठ</a></li>
+                <li><a href="#" class="hover:text-blue-200">नागरिक सेवाएँ</a></li>
+                <li><a href="#" class="hover:text-blue-200">योजनाएँ</a></li>
+                <li><a href="#" class="hover:text-blue-200">विभागीय डैशबोर्ड</a></li>
+                <li><a href="#" class="hover:text-blue-200">शिकायत निवारण</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Ticker Section -->
+    <div class="ticker-wrapper py-2">
+        <div class="ticker-text text-sm text-red-600 font-bold">
+            📢 सूचना: लाड़ली बहना योजना के अंतर्गत केवाईसी (e-KYC) पूर्ण करना अनिवार्य है। | मुख्यमंत्री सीखो-कमाओ योजना हेतु पंजीकरण प्रारंभ। | समग्र आईडी में आधार लिंक करने की प्रक्रिया निःशुल्क है।
+        </div>
+    </div>
+
+    <!-- Hero Search -->
+    <section class="hero-gradient text-white py-12 px-4">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">सभी सरकारी सेवाएँ, अब आपकी उंगलियों पर</h2>
+            <div class="max-w-2xl mx-auto relative">
+                <input type="text" id="searchInput" placeholder="सेवा का नाम खोजें (जैसे: आय प्रमाण पत्र, समग्र...)" class="w-full py-4 px-6 rounded-lg text-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-xl">
+                <button class="absolute right-3 top-3 bg-blue-600 p-2 px-4 rounded-md hover:bg-blue-700">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar -->
+            <aside class="lg:w-1/4">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden sticky top-24">
+                    <h3 class="bg-gray-100 p-4 font-bold border-b">सेवा श्रेणियाँ</h3>
+                    <div class="p-2 space-y-1">
+                        <button onclick="filterServices('all')" class="category-tab active w-full text-left p-3 rounded-lg flex items-center gap-3"><i class="fas fa-th-large"></i> सभी सेवाएँ</button>
+                        <button onclick="filterServices('social')" class="category-tab w-full text-left p-3 rounded-lg flex items-center gap-3"><i class="fas fa-users"></i> समग्र एवं सामाजिक</button>
+                        <button onclick="filterServices('land')" class="category-tab w-full text-left p-3 rounded-lg flex items-center gap-3"><i class="fas fa-map-marked-alt"></i> भू-अभिलेख</button>
+                        <button onclick="filterServices('certificates')" class="category-tab w-full text-left p-3 rounded-lg flex items-center gap-3"><i class="fas fa-file-invoice"></i> प्रमाण पत्र</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Grid -->
+            <div class="lg:w-3/4">
+                <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    
+                    <!-- Samagra Card -->
+                    <div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="social">
+                        <div class="text-blue-600 text-3xl mb-4"><i class="fas fa-id-card"></i></div>
+                        <h4 class="font-bold text-lg mb-2">समग्र ई-केवाईसी</h4>
+                        <p class="text-sm text-gray-600 mb-4">समग्र आईडी में आधार लिंक करने की प्रक्रिया पूर्ण करें।</p>
+                        <a href="https://samagra.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">आवेदन करें <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Bhulekh Card -->
+                    <div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="land">
+                        <div class="text-green-600 text-3xl mb-4"><i class="fas fa-map"></i></div>
+                        <h4 class="font-bold text-lg mb-2">खसरा / खतौनी</h4>
+                        <p class="text-sm text-gray-600 mb-4">अपनी भूमि का विवरण एवं नक्शा ऑनलाइन देखें।</p>
+                        <a href="https://mpbhulekh.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">विवरण देखें <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Income Certificate -->
+                    <!-- आय प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-orange-600 text-3xl mb-4"><i class="fas fa-file-alt"></i></div>
+    <h4 class="font-bold text-lg mb-2">आय प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">नागरिक की वार्षिक आय का प्रमाण पत्र।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- जाति प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-green-600 text-3xl mb-4"><i class="fas fa-id-card"></i></div>
+    <h4 class="font-bold text-lg mb-2">जाति प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">SC / ST / OBC जाति प्रमाणन हेतु।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- निवास प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-blue-600 text-3xl mb-4"><i class="fas fa-home"></i></div>
+    <h4 class="font-bold text-lg mb-2">निवास प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">मध्यप्रदेश निवास का प्रमाण।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- जन्म प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-pink-600 text-3xl mb-4"><i class="fas fa-baby"></i></div>
+    <h4 class="font-bold text-lg mb-2">जन्म प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">जन्म पंजीकरण एवं प्रमाण पत्र।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- मृत्यु प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-gray-700 text-3xl mb-4"><i class="fas fa-book-dead"></i></div>
+    <h4 class="font-bold text-lg mb-2">मृत्यु प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">मृत्यु पंजीकरण हेतु आवेदन।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- विवाह प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-red-600 text-3xl mb-4"><i class="fas fa-ring"></i></div>
+    <h4 class="font-bold text-lg mb-2">विवाह प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">विवाह पंजीकरण एवं प्रमाणन।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- EWS प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-yellow-600 text-3xl mb-4"><i class="fas fa-certificate"></i></div>
+    <h4 class="font-bold text-lg mb-2">EWS प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">आर्थिक रूप से कमजोर वर्ग हेतु।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- BPL प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-indigo-600 text-3xl mb-4"><i class="fas fa-hand-holding-usd"></i></div>
+    <h4 class="font-bold text-lg mb-2">BPL प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">गरीबी रेखा से नीचे परिवार हेतु।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- विकलांगता प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-purple-600 text-3xl mb-4"><i class="fas fa-wheelchair"></i></div>
+    <h4 class="font-bold text-lg mb-2">विकलांगता प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">दिव्यांग प्रमाणन हेतु आवेदन।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<!-- चरित्र प्रमाण पत्र -->
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
+    <div class="text-teal-600 text-3xl mb-4"><i class="fas fa-user-shield"></i></div>
+    <h4 class="font-bold text-lg mb-2">चरित्र प्रमाण पत्र</h4>
+    <p class="text-sm text-gray-600 mb-4">चरित्र सत्यापन हेतु प्रमाण पत्र।</p>
+    <a href="https://mpedistrict.gov.in" target="_blank" class="text-blue-600 font-bold text-sm flex items-center gap-2">
+        Apply Now <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 px-4">
+        <div class="container mx-auto text-center">
+            <p>© 2026 AllInOne | MP Govt Services Portal</p>
+            <p class="text-xs mt-2">Managed by IT Department, Madhya Pradesh</p>
+        </div>
+    </footer>
+
+    <script>
+        // Filtering Functionality
+        function filterServices(category) {
+            const cards = document.querySelectorAll('.service-card');
+            const tabs = document.querySelectorAll('.category-tab');
+            
+            // Toggle Active Class
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Show/Hide Cards
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Search Functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.service-card');
+
+            cards.forEach(card => {
+                const title = card.querySelector('h4').textContent.toLowerCase();
+                const desc = card.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(term) || desc.includes(term)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
