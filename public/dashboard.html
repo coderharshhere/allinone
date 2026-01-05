@@ -3,67 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unified Dashboard | AllInOne MP</title>
+<title>AllInOne MP – Admin Dashboard</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-body{font-family:'Noto Sans Devanagari',sans-serif}
-.badge{padding:2px 8px;border-radius:999px;font-size:10px;font-weight:bold}
-.pending{background:#fef3c7;color:#92400e}
-.complete{background:#dcfce7;color:#166534}
-.reject{background:#fee2e2;color:#991b1b}
+body { font-family: 'Noto Sans Devanagari', sans-serif; }
+.tab { padding:6px 14px; border-radius:6px; cursor:pointer; }
+.active { background:#1e40af; color:white; }
 </style>
 </head>
 
 <body class="bg-gray-100">
 
 <!-- HEADER -->
-<div class="bg-blue-900 text-white p-3 flex justify-between">
-  <b>AllInOne MP – Admin Dashboard</b>
-  <button onclick="logout()" class="bg-red-600 px-3 py-1 rounded">Logout</button>
+<div class="bg-blue-900 text-white px-6 py-3 font-bold text-lg">
+  AllInOne MP – Admin Dashboard
 </div>
 
-<!-- FILTER -->
-<div class="p-4 bg-white shadow flex gap-3">
-  <button onclick="loadData('ALL')" class="px-3 py-1 bg-gray-200 rounded">सभी</button>
-  <button onclick="loadData('SAMAGRA')" class="px-3 py-1 bg-blue-100 rounded">समग्र</button>
-  <button onclick="loadData('NIVAS')" class="px-3 py-1 bg-green-100 rounded">निवास</button>
-  <button onclick="loadData('JATI')" class="px-3 py-1 bg-yellow-100 rounded">जाति</button>
+<!-- SERVICE TYPE FILTER -->
+<div class="bg-white p-4 flex gap-3 shadow">
+  <div class="tab active" onclick="setService('ALL',this)">सभी</div>
+  <div class="tab" onclick="setService('SAMAGRA',this)">समग्र</div>
+  <div class="tab" onclick="setService('NIVAS',this)">निवास</div>
+  <div class="tab" onclick="setService('JATI',this)">जाति</div>
+</div>
+
+<!-- STATUS FILTER -->
+<div class="bg-white px-4 py-2 flex gap-3 border-t">
+  <div class="tab active" onclick="setStatus('PENDING',this)">Pending</div>
+  <div class="tab" onclick="setStatus('COMPLETE',this)">Complete</div>
+  <div class="tab" onclick="setStatus('REJECT',this)">Reject</div>
 </div>
 
 <!-- TABLE -->
-<div class="p-4 overflow-x-auto">
-<table class="min-w-full bg-white rounded shadow text-sm">
+<div class="p-6 overflow-x-auto">
+<table class="min-w-full bg-white shadow rounded text-sm">
 <thead class="bg-blue-800 text-white">
 <tr>
-<th class="p-3">नाम</th>
-<th class="p-3">सेवा</th>
-<th class="p-3">समग्र ID</th>
-<th class="p-3">स्थिति</th>
+  <th class="p-3">नाम</th>
+  <th class="p-3">सेवा</th>
+  <th class="p-3">समग्र ID</th>
+  <th class="p-3">मोबाइल</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
 </div>
 
-<!-- MODAL -->
+<!-- DETAIL MODAL -->
 <div id="modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center">
-<div class="bg-white w-full max-w-3xl rounded-lg p-6 overflow-y-auto max-h-[90vh]">
-  <div class="flex justify-between mb-4">
-    <h3 class="font-bold text-lg">पूरा विवरण</h3>
-    <button onclick="closeModal()">❌</button>
+  <div class="bg-white w-full max-w-3xl rounded p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between mb-4">
+      <h2 class="font-bold">पूरा आवेदन विवरण</h2>
+      <button onclick="closeModal()">❌</button>
+    </div>
+    <div id="detailBox" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
   </div>
-  <div id="detailBox" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-</div>
 </div>
 
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
@@ -73,53 +76,69 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
-onAuthStateChanged(auth,user=>{
-  if(!user) location.href="login.html";
-  else loadData("ALL");
-});
+let currentService = "ALL";
+let currentStatus = "PENDING";
 
-window.logout=()=>signOut(auth).then(()=>location.href="login.html");
-
-window.loadData = async(type)=>{
-  const body=document.getElementById("tableBody");
-  body.innerHTML="";
-
-  let q;
-  if(type==="ALL"){
-    q=collection(db,"applications");
-  }else{
-    q=query(collection(db,"applications"),where("serviceType","==",type));
-  }
-
-  const snap=await getDocs(q);
-  snap.forEach(doc=>{
-    const d=doc.data();
-    body.innerHTML+=`
-    <tr class="border-b hover:bg-gray-50 cursor-pointer"
-        onclick="showDetails('${doc.id}')">
-      <td class="p-3 text-blue-700 underline">${d.applicantName||"-"}</td>
-      <td class="p-3">${d.serviceType}</td>
-      <td class="p-3">${d.samagraId||"-"}</td>
-      <td class="p-3"><span class="badge ${d.status}">${d.status}</span></td>
-    </tr>`;
-  });
+window.setService = (type,el) => {
+  currentService = type;
+  activate(el);
+  loadData();
 };
 
-window.showDetails=async(id)=>{
-  const snap=await getDocs(collection(db,"applications"));
+window.setStatus = (status,el) => {
+  currentStatus = status;
+  activate(el);
+  loadData();
+};
+
+function activate(el){
+  el.parentElement.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+}
+
+async function loadData(){
+  const body = document.getElementById("tableBody");
+  body.innerHTML = "";
+
+  let q = collection(db,"applications");
+
+  if(currentService !== "ALL"){
+    q = query(q, where("serviceType","==",currentService));
+  }
+
+  q = query(q, where("status","==",currentStatus));
+
+  const snap = await getDocs(q);
+
+  snap.forEach(doc=>{
+    const d = doc.data();
+    body.innerHTML += `
+      <tr class="border-b hover:bg-gray-50 cursor-pointer"
+          onclick="showDetails('${doc.id}')">
+        <td class="p-3 text-blue-700 underline">${d.applicantName || "-"}</td>
+        <td class="p-3">${d.serviceType}</td>
+        <td class="p-3">${d.samagraId || "-"}</td>
+        <td class="p-3">${d.mobile || "-"}</td>
+      </tr>
+    `;
+  });
+}
+
+window.showDetails = async (id)=>{
+  const snap = await getDocs(collection(db,"applications"));
   snap.forEach(doc=>{
     if(doc.id===id){
-      const d=doc.data();
-      const box=document.getElementById("detailBox");
+      const d = doc.data();
+      const box = document.getElementById("detailBox");
       box.innerHTML="";
       Object.keys(d).forEach(k=>{
         box.innerHTML+=`
-        <div>
-          <small class="text-gray-500">${k}</small>
-          <div class="font-semibold">${d[k]}</div>
-        </div>`;
+          <div>
+            <div class="text-xs text-gray-500">${k}</div>
+            <div class="font-semibold">${d[k]}</div>
+          </div>
+        `;
       });
       document.getElementById("modal").classList.remove("hidden");
       document.getElementById("modal").classList.add("flex");
@@ -127,9 +146,10 @@ window.showDetails=async(id)=>{
   });
 };
 
-window.closeModal=()=>{
-  document.getElementById("modal").classList.add("hidden");
-};
+window.closeModal = ()=>document.getElementById("modal").classList.add("hidden");
+
+loadData();
 </script>
+
 </body>
 </html>
