@@ -133,6 +133,23 @@
     <p class="text-xs mt-2">Managed by IT Department, Madhya Pradesh</p>
   </div>
 </footer>
+  <!-- ================= DETAIL MODAL ================= -->
+<div id="detailModal"
+     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+  <div class="bg-white w-full max-w-3xl rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
+    
+    <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+      <h3 class="font-bold text-lg">आवेदन का पूरा विवरण</h3>
+      <button onclick="closeDetails()" class="text-xl font-bold">×</button>
+    </div>
+
+    <div id="detailBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <!-- data here -->
+    </div>
+
+  </div>
+</div>
 
 <!-- ================= FIREBASE ================= -->
 <script type="module">
@@ -175,13 +192,46 @@ async function loadData() {
     const d = doc.data();
     table.innerHTML += `
       <tr class="hover:bg-gray-50 cursor-pointer">
-        <td class="px-4 py-3 font-bold text-blue-800">${d.applicantName || "-"}</td>
+        <td class="px-4 py-3 font-bold text-blue-800 cursor-pointer underline"
+    onclick="openDetails('${doc.id}')">
+  ${d.applicantName || "-"}
+</td>
         <td class="px-4 py-3">${d.serviceType || "-"}</td>
         <td class="px-4 py-3">${d.samagraId || "-"}</td>
         <td class="px-4 py-3 font-bold text-green-700">${d.status || "PENDING"}</td>
       </tr>`;
   });
 }
+  import { doc, getDoc } from
+  "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+window.openDetails = async function(id) {
+  const ref = doc(db, "applications", id);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return;
+
+  const d = snap.data();
+  document.getElementById("detailBody").innerHTML = `
+    <div><b>नाम:</b> ${d.applicantName || "-"}</div>
+    <div><b>पिता का नाम:</b> ${d.fatherName || "-"}</div>
+    <div><b>सेवा प्रकार:</b> ${d.serviceType || "-"}</div>
+    <div><b>समग्र ID:</b> ${d.samagraId || "-"}</div>
+    <div><b>आधार:</b> ${d.aadhaar || "-"}</div>
+    <div><b>मोबाइल:</b> ${d.mobile || "-"}</div>
+    <div><b>आय:</b> ₹ ${d.annualIncome || "-"}</div>
+    <div><b>स्थिति:</b> ${d.status || "PENDING"}</div>
+    <div class="md:col-span-2"><b>पता:</b> ${d.fullAddress || "-"}</div>
+  `;
+
+  document.getElementById("detailModal").classList.remove("hidden");
+  document.getElementById("detailModal").classList.add("flex");
+};
+
+window.closeDetails = function() {
+  document.getElementById("detailModal").classList.add("hidden");
+};
+
 </script>
 
 </body>
