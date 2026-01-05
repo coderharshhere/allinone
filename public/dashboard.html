@@ -1,1 +1,121 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | AllInOne MP</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+<!-- ================= HEADER (same as yours) ================= -->
+<header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/1200px-Emblem_of_Madhya_Pradesh.svg.png" class="h-12">
+            <div>
+                <h1 class="text-xl font-bold text-blue-900">AllInOne MP</h1>
+                <p class="text-xs text-gray-500">Admin Dashboard</p>
+            </div>
+        </div>
+
+        <button onclick="logout()"
+            class="bg-red-600 text-white px-4 py-2 rounded font-bold hover:bg-red-700">
+            Logout
+        </button>
+    </div>
+</header>
+
+<!-- ================= MAIN DASHBOARD ================= -->
+<main class="flex-grow container mx-auto px-4 py-10">
+
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+        📋 आय प्रमाण पत्र आवेदन सूची
+    </h2>
+
+    <div class="bg-white rounded-xl shadow overflow-x-auto">
+        <table class="min-w-full text-sm text-left">
+            <thead class="bg-blue-800 text-white">
+                <tr>
+                    <th class="px-4 py-3">नाम</th>
+                    <th class="px-4 py-3">समग्र ID</th>
+                    <th class="px-4 py-3">आय</th>
+                    <th class="px-4 py-3">स्थिति</th>
+                </tr>
+            </thead>
+            <tbody id="applicationsTable" class="divide-y">
+                <!-- Firestore data here -->
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="bg-gray-900 text-gray-300 text-center text-xs py-4">
+    © 2026 AllInOne | मध्यप्रदेश शासन
+</footer>
+
+<!-- ================= FIREBASE AUTH + DATA ================= -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut }
+      from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs }
+      from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+        authDomain: "allinone-aa89.firebaseapp.com",
+        projectId: "allinone-aa89"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 🔒 Protect dashboard
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+        }
+    });
+
+    // 🔴 Logout
+    window.logout = function () {
+        signOut(auth).then(() => {
+            window.location.href = "login.html";
+        });
+    };
+
+    // 📥 Load applications
+    const table = document.getElementById("applicationsTable");
+    const snapshot = await getDocs(collection(db, "applications"));
+
+    snapshot.forEach(doc => {
+        const d = doc.data();
+        table.innerHTML += `
+            <tr>
+                <td class="px-4 py-3">${d.applicantName || "-"}</td>
+                <td class="px-4 py-3">${d.samagraId || "-"}</td>
+                <td class="px-4 py-3">₹ ${d.annualIncome || "-"}</td>
+                <td class="px-4 py-3 font-bold text-blue-700">
+                    ${d.status || "pending"}
+                </td>
+            </tr>
+        `;
+    });
+</script>
+
+</body>
+</html>
 
