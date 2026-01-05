@@ -68,7 +68,7 @@
                 </p>
             </div>
 
-            <form action="#" method="post" class="p-6 md:p-10 space-y-10">
+<form id="incomeForm" action="#" method="post" class="p-6 md:p-10 space-y-10">
 
                 <!-- 1. व्यक्तिगत जानकारी -->
                 <section>
@@ -78,19 +78,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">आवेदक का पूरा नाम (हिन्दी में) *</label>
-                            <input type="text" class="form-input" placeholder="नाम दर्ज करें" required>
+<input type="text" name="applicantName" class="form-input" placeholder="नाम दर्ज करें" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Father/Husband Name (English) *</label>
-                            <input type="text" class="form-input" placeholder="Enter Name" required>
+<input type="text" name="fatherName" class="form-input" placeholder="Enter Name" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">समग्र आईडी (सदस्य) *</label>
-                            <input type="number" class="form-input" placeholder="9 अंकों की आईडी" required>
+<input type="number" name="samagraId" class="form-input" placeholder="9 अंकों की आईडी" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">आधार नंबर *</label>
-                            <input type="number" class="form-input" placeholder="12 अंकों का आधार" required>
+<input type="number" name="aadhaar" class="form-input" placeholder="12 अंकों का आधार" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">लिंग *</label>
@@ -146,7 +146,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">व्यवसाय का प्रकार *</label>
-                            <select class="form-input bg-white" required>
+<select name="occupation" class="form-input bg-white" required>
                                 <option value="">व्यवसाय चुनें</option>
                                 <option>कृषि (Agriculture)</option>
                                 <option>मजदूरी (Labor)</option>
@@ -159,7 +159,7 @@
                             <label class="block text-sm font-bold text-gray-700 mb-2">कुल वार्षिक आय (अंकों में) *</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">₹</span>
-                                <input type="number" class="form-input pl-8" placeholder="जैसे: 60000" required>
+<input type="number" name="annualIncome" class="form-input pl-8" placeholder="जैसे: 60000" required>
                             </div>
                         </div>
                     </div>
@@ -236,6 +236,56 @@
     <footer class="bg-white border-t py-6 text-center text-gray-400 text-xs mt-10">
         <p>© 2026 AllInOne MP | मध्यप्रदेश शासन का डिजिटल सेवा पोर्टल</p>
     </footer>
+<script type="module">
+
+  // 1️⃣ Firebase imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+  // 2️⃣ Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+    authDomain: "allinone-aa89.firebaseapp.com",
+    projectId: "allinone-aa89",
+    storageBucket: "allinone-aa89.firebasestorage.app",
+    messagingSenderId: "924003122498",
+    appId: "1:924003122498:web:2c86505457236e60055cdb"
+  };
+
+  // 3️⃣ Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 4️⃣ Form select
+  const form = document.getElementById("incomeForm");
+
+  // 5️⃣ Form submit
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    await addDoc(collection(db, "applications"), {
+      serviceType: "Income Certificate",
+      applicantName: form.applicantName.value,
+      fatherName: form.fatherName.value,
+      samagraId: form.samagraId.value,
+      aadhaar: form.aadhaar.value,
+      occupation: form.occupation.value,
+      annualIncome: form.annualIncome.value,
+      status: "pending",
+      assignedTo: null,
+      createdAt: serverTimestamp()
+    });
+
+    alert("आवेदन सफलतापूर्वक जमा हो गया ✅");
+    form.reset();
+  });
+
+</script>
 
 </body>
 </html>
