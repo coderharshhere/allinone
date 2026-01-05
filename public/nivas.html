@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>स्थानीय निवासी प्रमाण पत्र आवेदन | AllInOne MP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .form-input {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- ================= STANDARD HEADER ================= -->
+    <div id="header"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow container mx-auto px-4 py-10">
+        
+        <div class="max-w-4xl mx-auto mb-8">
+            <nav class="text-sm text-gray-500 mb-2">
+                <a href="#" class="hover:text-blue-600">होम</a> / <span>सेवाएँ</span> / <span class="text-blue-900 font-semibold">स्थानीय निवासी प्रमाण पत्र</span>
+            </nav>
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <i class="fas fa-house-user text-blue-600"></i>
+                स्थानीय निवासी प्रमाण पत्र हेतु आवेदन
+            </h2>
+        </div>
+
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            
+            <div class="bg-blue-50 border-b border-blue-100 p-4 flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                <p class="text-xs text-blue-800 leading-relaxed">
+                    <strong>नोट:</strong> स्थानीय निवासी प्रमाण पत्र हेतु मध्य प्रदेश में न्यूनतम 15 वर्ष का निवास या प्रदेश में जन्म होना अनिवार्य है। समग्र आईडी का उपयोग ई-केवाईसी के लिए किया जाएगा।
+                </p>
+            </div>
+
+            <form id="residenceForm" class="p-6 md:p-10 space-y-10">
+
+                <!-- 1. व्यक्तिगत जानकारी -->
+                <section>
+                    <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-user-circle text-sm"></i> आवेदक की व्यक्तिगत जानकारी
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">आवेदक का पूरा नाम (हिन्दी में) *</label>
+                            <input type="text" name="applicantName" class="form-input" placeholder="नाम दर्ज करें" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">पिता/पति का नाम (हिन्दी में) *</label>
+                            <input type="text" name="fatherName" class="form-input" placeholder="पिता या पति का नाम" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">समग्र आईडी (सदस्य) *</label>
+                            <input type="number" name="samagraId" class="form-input" placeholder="9 अंकों की आईडी" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">आधार नंबर *</label>
+                            <input type="number" name="aadhaar" class="form-input" placeholder="12 अंकों का आधार" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">जन्म तिथि *</label>
+                            <input type="date" name="dob" class="form-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">मोबाइल नंबर *</label>
+                            <input type="tel" name="mobile" class="form-input" placeholder="10 अंकों का नंबर" required>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. निवास का विवरण -->
+                <section class="bg-blue-50/30 p-6 rounded-xl border border-blue-100">
+                    <h3 class="text-lg font-bold text-blue-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-history text-sm"></i> निवास की जानकारी
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">मध्य प्रदेश में निवास की अवधि (वर्षों में) *</label>
+                            <input type="number" name="stayDuration" class="form-input" placeholder="जैसे: 15" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">आवेदन का कारण *</label>
+                            <select name="reason" class="form-input bg-white" required>
+                                <option value="">कारण चुनें</option>
+                                <option>शिक्षा हेतु (Education)</option>
+                                <option>शासकीय सेवा हेतु (Recruitment)</option>
+                                <option>राशन कार्ड/योजना हेतु</option>
+                                <option>अन्य</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">क्या आप मध्य प्रदेश में पैदा हुए हैं? *</label>
+                            <div class="flex gap-6 mt-2">
+                                <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                    <input type="radio" name="bornInMP" value="yes" class="w-4 h-4 text-blue-600"> हाँ
+                                </label>
+                                <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                    <input type="radio" name="bornInMP" value="no" class="w-4 h-4 text-blue-600"> नहीं
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. पते की जानकारी -->
+                <section>
+                    <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-sm"></i> वर्तमान पता
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">जिला *</label>
+                            <select name="district" class="form-input bg-white" required>
+                                <option>सीधी (Sidhi)</option>
+                                <option>सिंगरौली (Singrauli)</option>
+                                <option>रीवा (Rewa)</option>
+                                <option>भोपाल (Bhopal)</option>
+                                <option>इंदौर (Indore)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">तहसील *</label>
+                            <input type="text" name="tehsil" class="form-input" placeholder="तहसील का नाम" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">ग्राम/वार्ड *</label>
+                            <input type="text" name="village" class="form-input" placeholder="ग्राम या वार्ड नंबर" required>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">पूरा पता (मकान नंबर सहित) *</label>
+                            <textarea name="fullAddress" class="form-input h-20" placeholder="विस्तृत पता दर्ज करें..."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. दस्तावेज़ चेकलिस्ट -->
+                <section class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="text-lg font-bold text-blue-800 mb-4">आवश्यक दस्तावेज़ों की चेकलिस्ट</h3>
+                    <div class="space-y-3 text-sm text-gray-700">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" required class="mt-1 h-4 w-4 text-blue-600 rounded">
+                            <span>आवेदक का फोटो (पासपोर्ट साइज)</span>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" required class="mt-1 h-4 w-4 text-blue-600 rounded">
+                            <span>पहचान पत्र (आधार कार्ड / वोटर आईडी / समग्र आईडी)</span>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" required class="mt-1 h-4 w-4 text-blue-600 rounded">
+                            <span>निवास का प्रमाण (बिजली बिल / पानी का बिल / रजिस्ट्री दस्तावेज़)</span>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" required class="mt-1 h-4 w-4 text-blue-600 rounded">
+                            <span>स्व-घोषणा पत्र (स्थानीय निवासी होने के संबंध में निर्धारित प्रारूप में)</span>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded">
+                            <span>पिछला निवास प्रमाण (यदि लागू हो)</span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Submit Section -->
+                <div class="pt-6 border-t space-y-4">
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded" required>
+                        <span class="text-xs text-gray-600 italic">
+                            मैं सत्यनिष्ठा से घोषणा करता/करती हूँ कि मैं मध्य प्रदेश का स्थानीय निवासी हूँ और आवेदन में दी गई समस्त जानकारी सत्य है। असत्य जानकारी पाए जाने पर मुझ पर कानूनी कार्यवाही की जा सकती है।
+                        </span>
+                    </label>
+
+                    <div class="flex gap-4">
+                        <button type="submit" class="flex-1 bg-blue-700 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-800 shadow-xl shadow-blue-100 transition active:scale-95">
+                            निवास आवेदन जमा करें
+                        </button>
+                        <button type="reset" class="px-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
+                            रीसेट
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer"></div>
+
+
+    <script type="module">
+         fetch("header.html")
+      .then(res => res.text())
+      .then(data => document.getElementById("header").innerHTML = data);
+
+    fetch("footer.html")
+      .then(res => res.text())
+      .then(data => document.getElementById("footer").innerHTML = data);
+      
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+            authDomain: "allinone-aa89.firebaseapp.com",
+            projectId: "allinone-aa89",
+            storageBucket: "allinone-aa89.firebasestorage.app",
+            messagingSenderId: "924003122498",
+            appId: "1:924003122498:web:2c86505457236e60055cdb"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const form = document.getElementById("residenceForm");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            try {
+                const formData = new FormData(form);
+                await addDoc(collection(db, "applications"), {
+                    serviceType: "Residence Certificate",
+                    applicantName: formData.get("applicantName"),
+                    fatherName: formData.get("fatherName"),
+                    samagraId: formData.get("samagraId"),
+                    aadhaar: formData.get("aadhaar"),
+                    stayDuration: formData.get("stayDuration"),
+                    reason: formData.get("reason"),
+                    mobile: formData.get("mobile"),
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+                alert("निवास प्रमाण पत्र हेतु आवेदन सफलतापूर्वक जमा हो गया ✅");
+                form.reset();
+            } catch (error) {
+                console.error("Error submitting form: ", error);
+                alert("आवेदन जमा करने में समस्या हुई, कृपया पुनः प्रयास करें।");
+            }
+        });
+    </script>
+</body>
+</html>

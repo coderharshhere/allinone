@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>समग्र ई-केवाईसी | AllInOne MP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+        }
+        .form-input {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+        .step-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header id="header"></header>
+
+    <!-- MAIN FORM CONTENT -->
+    <main class="container mx-auto px-4 py-10">
+        
+        <!-- Breadcrumb & Header -->
+        <div class="max-w-4xl mx-auto mb-8">
+            <nav class="text-sm text-gray-500 mb-2">
+                <a href="#" class="hover:text-blue-600">होम</a> / <span>सेवाएँ</span> / <span class="text-blue-900 font-semibold">समग्र ई-केवाईसी</span>
+            </nav>
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <i class="fas fa-fingerprint text-blue-600"></i>
+                समग्र ई-केवाईसी (e-KYC) आवेदन
+            </h2>
+        </div>
+
+        <div class="max-w-4xl mx-auto step-card border border-gray-100 overflow-hidden">
+            
+            <!-- Instruction Bar -->
+            <div class="bg-blue-50 border-b border-blue-100 p-4 flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                <div class="text-xs text-blue-800 leading-relaxed">
+                    <strong>अनिवार्य निर्देश:</strong> 
+                    <ul class="list-disc ml-4 mt-1 space-y-1">
+                        <li>समग्र सदस्य आईडी 9 अंकों की होनी चाहिए।</li>
+                        <li>नाम और जन्म तिथि आधार के डेटा के अनुसार ही भरें।</li>
+                        <li>सभी जानकारी सही होने पर ही आवेदन सबमिट करें।</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="samagraKycForm" class="p-6 md:p-10 space-y-10">
+
+                <!-- 1. सदस्य पहचान -->
+                <section>
+                    <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-id-card text-sm"></i> 1. समग्र आईडी विवरण
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">समग्र सदस्य आईडी *</label>
+                            <input type="number" name="memberId" class="form-input" placeholder="9 अंकों की आईडी" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">परिवार आईडी *</label>
+                            <input type="number" name="familyId" class="form-input" placeholder="8 अंकों की आईडी" required>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. आधार विवरण -->
+                <section class="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                    <h3 class="text-lg font-bold text-blue-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-shield-check text-sm"></i> 2. आधार जानकारी
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">आधार नंबर *</label>
+                            <input type="number" name="aadhaarNumber" class="form-input" placeholder="12 अंकों का आधार नंबर" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">प्रमाणीकरण का प्रकार *</label>
+                            <select name="authMethod" class="form-input bg-white" required>
+                                <option value="otp">ओटीपी (Aadhaar OTP)</option>
+                                <option value="biometric">बायोमेट्रिक (Fingerprint)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. व्यक्तिगत जानकारी -->
+                <section>
+                    <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-user-edit text-sm"></i> 3. आवेदक की जानकारी
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">पूरा नाम (अंग्रेजी में) *</label>
+                            <input type="text" name="applicantName" class="form-input" placeholder="आधार के अनुसार नाम" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">मोबाइल नंबर *</label>
+                            <input type="tel" name="mobile" class="form-input" placeholder="10 अंकों का मोबाइल" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">जन्म तिथि *</label>
+                            <input type="date" name="dob" class="form-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">लिंग *</label>
+                            <select name="gender" class="form-input bg-white" required>
+                                <option value="">चुनें</option>
+                                <option>पुरुष (Male)</option>
+                                <option>महिला (Female)</option>
+                                <option>अन्य</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. घोषणा एवं सबमिट -->
+                <div class="pt-8 border-t space-y-6">
+                    <div class="bg-amber-50 p-4 rounded-lg border border-amber-100 flex items-start gap-3">
+                        <input type="checkbox" id="kyc-agree" class="mt-1 h-4 w-4 text-blue-600" required>
+                        <label for="kyc-agree" class="text-xs text-amber-900 leading-relaxed italic">
+                            मैं घोषणा करता हूँ कि मेरे द्वारा दी गई जानकारी पूर्णतः सत्य है। मैं अपने आधार डेटा का उपयोग समग्र ई-केवाईसी के लिए करने की अनुमति प्रदान करता हूँ।
+                        </label>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button type="submit" class="flex-1 bg-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-800 shadow-xl shadow-blue-100 transition active:scale-95">
+                            आवेदन जमा करें
+                        </button>
+                        <button type="reset" class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
+                            रीसेट
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </main>
+        <div id="footer"></div>
+
+
+
+    <!-- Firebase Script Logic -->
+    <script type="module">
+         fetch("header.html")
+      .then(res => res.text())
+      .then(data => document.getElementById("header").innerHTML = data);
+
+    fetch("footer.html")
+      .then(res => res.text())
+      .then(data => document.getElementById("footer").innerHTML = data);
+      
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+            authDomain: "allinone-aa89.firebaseapp.com",
+            projectId: "allinone-aa89",
+            storageBucket: "allinone-aa89.firebasestorage.app",
+            messagingSenderId: "924003122498",
+            appId: "1:924003122498:web:2c86505457236e60055cdb"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const form = document.getElementById("samagraKycForm");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            try {
+                const formData = new FormData(form);
+                await addDoc(collection(db, "applications"), {
+                    serviceType: "Samagra e-KYC (No OTP)",
+                    memberId: formData.get("memberId"),
+                    familyId: formData.get("familyId"),
+                    aadhaarNumber: formData.get("aadhaarNumber"),
+                    applicantName: formData.get("applicantName"),
+                    mobile: formData.get("mobile"),
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+                alert("समग्र ई-केवाईसी आवेदन सफलतापूर्वक जमा हो गया ✅");
+                form.reset();
+            } catch (error) {
+                console.error("Error: ", error);
+                alert("कुछ त्रुटि हुई, कृपया पुनः प्रयास करें।");
+            }
+        });
+    </script>
+
+</body>
+</html>
