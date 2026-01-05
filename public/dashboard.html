@@ -154,10 +154,26 @@
 <!-- ================= FIREBASE ================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import { updateDoc, doc } from
+"https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 import { getAuth, signOut, onAuthStateChanged } from
   "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { getFirestore, collection, getDocs }
   from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+window.changeStatus = async function (docId, newStatus) {
+  try {
+    await updateDoc(
+      doc(db, "applications", docId),
+      { status: newStatus }
+    );
+
+    console.log("Status updated:", newStatus);
+
+  } catch (error) {
+    console.error("Status update error:", error);
+    alert("स्थिति बदलने में समस्या आई");
+  }
+};
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
@@ -198,7 +214,27 @@ async function loadData() {
 </td>
         <td class="px-4 py-3">${d.serviceType || "-"}</td>
         <td class="px-4 py-3">${d.samagraId || "-"}</td>
-        <td class="px-4 py-3 font-bold text-green-700">${d.status || "PENDING"}</td>
+<td class="px-4 py-3">
+  <select
+    class="border rounded px-2 py-1 text-sm font-bold
+      ${d.status === 'complete' ? 'text-green-600' :
+        d.status === 'reject' ? 'text-red-600' :
+        'text-blue-600'}"
+    onchange="changeStatus('${doc.id}', this.value)">
+    
+    <option value="pending" ${d.status === 'pending' ? 'selected' : ''}>
+      pending
+    </option>
+
+    <option value="complete" ${d.status === 'complete' ? 'selected' : ''}>
+      complete
+    </option>
+
+    <option value="reject" ${d.status === 'reject' ? 'selected' : ''}>
+      reject
+    </option>
+  </select>
+</td>
       </tr>`;
   });
 }
