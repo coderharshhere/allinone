@@ -1,45 +1,124 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>आय प्रमाण पत्र आवेदन | AllInOne MP</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
-    body { font-family: 'Noto Sans Devanagari', sans-serif; }
-    .form-input{width:100%;border:1px solid #d1d5db;border-radius:.5rem;padding:.5rem}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>आय प्रमाण पत्र आवेदन | AllInOne MP</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .form-input{width:100%;border:1px solid #d1d5db;border-radius:.5rem;padding:.5rem}
+    </style>
 </head>
-<body class="bg-gray-50">
-<div id="header.html"></div>
-<main class="container mx-auto px-4 py-10">
-  <form id="incomeForm" class="bg-white p-6 rounded-xl shadow space-y-6">
+<body class="bg-gray-50 flex flex-col min-h-screen">
 
-    <input type="text" name="applicantName" placeholder="नाम" required class="form-input" />
-    <input type="text" name="fatherName" placeholder="Father Name" required class="form-input" />
-    <input type="text" name="samagraId" placeholder="Samagra ID" required class="form-input" />
-    <input type="text" name="aadhaar" placeholder="Aadhaar" required class="form-input" />
+<!-- ================= TOP BAR ================= -->
+<div class="bg-blue-900 text-white text-xs py-2 px-4 flex justify-between">
+  <span>मध्यप्रदेश सरकार | Government of Madhya Pradesh</span>
+  <span>हेल्पलाइन: 181</span>
+</div>
 
-    <input type="email" name="email" placeholder="Email" required class="form-input" />
-    <input type="tel" name="mobile" placeholder="Mobile" required class="form-input" />
+<!-- ================= HEADER ================= -->
+<header class="bg-white shadow sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/512px-Emblem_of_Madhya_Pradesh.svg.png" class="h-16" />
+      <div>
+        <h1 class="text-2xl font-bold text-blue-900">AllInOne MP</h1>
+        <p class="text-xs text-gray-500 uppercase">State Services Delivery Gateway</p>
+      </div>
+    </div>
+    <a href="#" class="bg-blue-600 text-white px-6 py-2 rounded shadow font-bold">लॉगिन</a>
+  </div>
 
-    <select name="occupation" required class="form-input">
-      <option value="">Occupation</option>
-      <option>Service</option>
-      <option>Business</option>
-    </select>
+  <nav class="bg-blue-800 text-white">
+    <div class="container mx-auto px-4">
+      <ul class="flex gap-8 py-3 text-sm font-medium">
+        <li><a href="#" class="hover:text-blue-200"><i class="fas fa-home"></i> होम</a></li>
+        <li><a href="#" class="hover:text-blue-200">नागरिक सेवाएँ</a></li>
+        <li><a href="#" class="hover:text-blue-200">योजनाएँ</a></li>
+        <li><a href="#" class="hover:text-blue-200">शिकायत</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
 
-    <input type="number" name="annualIncome" placeholder="Annual Income" required class="form-input" />
-    <textarea name="fullAddress" placeholder="Full Address" required class="form-input"></textarea>
+<!-- ================= MAIN ================= -->
+<main class="flex-grow container mx-auto px-4 py-10">
 
-    <button type="submit" class="bg-blue-700 text-white px-6 py-2 rounded">Submit</button>
-  </form>
+  <div class="max-w-4xl mx-auto mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fas fa-file-invoice-dollar text-blue-600"></i>
+      आय प्रमाण पत्र हेतु आवेदन फॉर्म
+    </h2>
+  </div>
+
+  <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow p-8">
+
+    <form id="incomeForm" class="space-y-6">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <input type="text" name="applicantName" placeholder="आवेदक का पूरा नाम" required class="form-input">
+        <input type="text" name="fatherName" placeholder="पिता / पति का नाम" required class="form-input">
+        <input type="text" name="samagraId" placeholder="समग्र ID" required class="form-input">
+        <input type="text" name="aadhaar" placeholder="आधार नंबर" required class="form-input">
+        <input type="email" name="email" placeholder="ईमेल" required class="form-input">
+        <input type="tel" name="mobile" placeholder="मोबाइल नंबर" required class="form-input">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <select name="occupation" required class="form-input">
+          <option value="">व्यवसाय चुनें</option>
+          <option>कृषि</option>
+          <option>नौकरी</option>
+          <option>व्यवसाय</option>
+        </select>
+        <input type="number" name="annualIncome" placeholder="वार्षिक आय" required class="form-input">
+      </div>
+
+      <textarea name="fullAddress" placeholder="पूरा पता" required class="form-input h-24"></textarea>
+
+      <button type="submit" class="w-full bg-blue-700 text-white py-3 rounded-xl font-bold text-lg">
+        आवेदन जमा करें
+      </button>
+
+    </form>
+  </div>
 </main>
-<div id="footer.html"></div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="bg-gray-900 text-gray-300 text-sm mt-10">
+  <div class="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div>
+      <h4 class="text-white font-bold mb-2">AllInOne MP</h4>
+      <p>मध्यप्रदेश शासन का एकीकृत डिजिटल सेवा पोर्टल</p>
+    </div>
+    <div>
+      <h4 class="text-white font-bold mb-2">उपयोगी कड़ियाँ</h4>
+      <ul class="space-y-1">
+        <li>MP Online</li>
+        <li>e-District</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-white font-bold mb-2">संपर्क</h4>
+      <p>सीएम हेल्पलाइन: 181</p>
+      <p>Email: support-mp@nic.in</p>
+    </div>
+  </div>
+  <div class="text-center border-t border-gray-800 py-4">© 2026 AllInOne MP</div>
+</footer>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
   import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -69,6 +148,7 @@
 
     const applicationNo = generateApplicationNumber();
 
+    // 🔹 Save to Firestore
     await addDoc(collection(db, "applications"), {
       applicationNo,
       applicantName: form.applicantName.value,
@@ -84,13 +164,23 @@
       createdAt: serverTimestamp()
     });
 
-    alert("Form Submitted. Application No: " + applicationNo);
-
+    // 🔹 Send Email Confirmation
     emailjs.send("service_allinone", "template_application", {
       to_name: form.applicantName.value,
       to_email: form.email.value,
-      application_no: applicationNo
+      application_no: applicationNo,
+      service_name: "आय प्रमाण पत्र"
     });
+
+    alert(
+      "आपका फॉर्म सफलतापूर्वक जमा हो गया ✅
+
+" +
+      "आवेदन क्रमांक: " + applicationNo + "
+
+" +
+      "इसकी पुष्टि आपके ईमेल पर भेज दी गई है।"
+    );
 
     form.reset();
   });
