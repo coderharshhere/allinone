@@ -122,8 +122,10 @@
     </div>
 
     <!-- DATA STATUS MESSAGE -->
-    <div id="loadingStatus" class="text-center py-10 text-gray-500">
-        <i class="fas fa-spinner fa-spin mr-2"></i> डेटा लोड हो रहा है...
+    <div id="loadingStatus" class="text-center py-10 text-gray-600 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
+        <div id="loadingContent">
+            <i class="fas fa-spinner fa-spin mr-2 text-blue-600"></i> डेटा लोड हो रहा है, कृपया प्रतीक्षा करें...
+        </div>
     </div>
 
     <!-- TABLE -->
@@ -144,6 +146,7 @@
             </table>
         </div>
         <div id="noDataMsg" class="hidden p-10 text-center text-gray-500">
+            <i class="fas fa-folder-open text-4xl mb-3 block opacity-20"></i>
             कोई आवेदन नहीं मिला।
         </div>
     </div>
@@ -163,13 +166,13 @@
     <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
         <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
             <h3 class="font-bold text-lg">आवेदन का पूर्ण विवरण</h3>
-            <button onclick="closeDetails()" class="text-2xl font-bold leading-none">×</button>
+            <button onclick="closeDetails()" class="text-2xl font-bold leading-none hover:text-red-200">×</button>
         </div>
         <div id="detailBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm max-h-[70vh] overflow-y-auto">
             <!-- Details Injection -->
         </div>
         <div class="bg-gray-50 px-6 py-4 border-t flex justify-end">
-            <button onclick="closeDetails()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold">बंद करें</button>
+            <button onclick="closeDetails()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700">बंद करें</button>
         </div>
     </div>
 </div>
@@ -193,10 +196,16 @@
     const APPLICATIONS_PATH = ['artifacts', appId, 'public', 'data', 'applications'];
 
     async function initAuth() {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-            await signInAnonymously(auth);
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        } catch (error) {
+            console.error("Auth error:", error);
+            document.getElementById("loadingContent").innerHTML = 
+                `<span class="text-red-500 font-bold"><i class="fas fa-exclamation-triangle mr-2"></i> लॉगिन में समस्या: ${error.message}</span>`;
         }
     }
 
@@ -208,7 +217,10 @@
     });
 
     window.handleLogout = async () => {
-        await signOut(auth);
+        try {
+            await signOut(auth);
+            location.reload();
+        } catch (e) { console.error(e); }
     };
 
     function startListening() {
@@ -220,24 +232,22 @@
                 ...doc.data()
             }));
             
-            // ================= SORTING LOGIC =================
-            // हम 'timestamp' फ़ील्ड के आधार पर सॉर्ट कर रहे हैं (नया पहले)
-            // यदि 'timestamp' नहीं है, तो 'id' या क्रोनोलॉजिकल रिवर्स ऑर्डर का उपयोग करें
+            // SORTING: Latest First
             allApplications.sort((a, b) => {
                 const timeA = a.timestamp || 0;
                 const timeB = b.timestamp || 0;
-                // यदि दोनों के पास टाइमस्टैम्प नहीं है, तो आईडी के हिसाब से सॉर्ट करें
-                if (timeA === 0 && timeB === 0) {
-                    return b.id.localeCompare(a.id);
-                }
+                if (timeA === 0 && timeB === 0) return b.id.localeCompare(a.id);
                 return timeB - timeA;
             });
 
+            // UI UPDATES
             document.getElementById("loadingStatus").classList.add("hidden");
             document.getElementById("tableContainer").classList.remove("hidden");
             renderTable(allApplications);
         }, (error) => {
-            console.error("Fetch error", error);
+            console.error("Firestore error:", error);
+            document.getElementById("loadingContent").innerHTML = 
+                `<span class="text-red-500 font-bold"><i class="fas fa-lock mr-2"></i> डेटा एक्सेस करने की अनुमति नहीं है या डेटाबेस उपलब्ध नहीं है।</span>`;
         });
     }
 
@@ -264,6 +274,7 @@
                     <button onclick="openDetails('${item.id}')" class="text-blue-700 font-bold hover:underline text-left">
                         ${item.applicantName || "अज्ञात"}
                     </button>
+                    <div class="text-[10px] text-gray-400">ID: ${item.id.substring(0,8)}</div>
                 </td>
                 <td class="px-6 py-4 capitalize font-medium text-gray-700">
                     <span class="px-2 py-1 rounded bg-gray-100">${item.serviceType || "-"}</span>
@@ -274,7 +285,7 @@
                 </td>
                 <td class="px-6 py-4">
                     <select onchange="updateApplicationStatus('${item.id}', this.value)" 
-                            class="border rounded-md px-2 py-1 font-bold text-xs ${statusColor}">
+                            class="border rounded-md px-2 py-1 font-bold text-xs ${statusColor} outline-none focus:ring-1 focus:ring-blue-400">
                         <option value="pending" ${item.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
                         <option value="complete" ${item.status === 'complete' ? 'selected' : ''}>✅ Complete</option>
                         <option value="reject" ${item.status === 'reject' ? 'selected' : ''}>❌ Reject</option>
@@ -306,7 +317,7 @@
             const docRef = doc(db, ...APPLICATIONS_PATH, docId);
             await updateDoc(docRef, { status: newStatus });
         } catch (e) {
-            console.error("Status update error", e);
+            console.error("Update error:", e);
         }
     };
 
@@ -316,15 +327,18 @@
 
         const detailBody = document.getElementById("detailBody");
         detailBody.innerHTML = `
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">नाम</span><span class="font-bold">${item.applicantName || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">पिता/पति</span><span class="font-bold">${item.fatherName || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">सेवा</span><span class="font-bold text-blue-700 capitalize">${item.serviceType || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">मोबाइल</span><span class="font-bold">${item.mobile || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">समग्र आईडी</span><span class="font-bold">${item.samagraId || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">आधार</span><span class="font-bold">${item.aadhaar || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">आय</span><span class="font-bold text-green-700">₹ ${item.annualIncome || "0"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">स्थिति</span><span class="font-bold uppercase">${item.status || "pending"}</span></div>
-            <div class="flex flex-col md:col-span-2 bg-blue-50 p-3 rounded-lg"><span class="text-blue-600 text-xs font-bold">पता</span><span>${item.fullAddress || "-"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">नाम</span><span class="font-bold text-base">${item.applicantName || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">पिता/पति</span><span class="font-bold text-base">${item.fatherName || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">सेवा</span><span class="font-bold text-blue-700 capitalize text-base">${item.serviceType || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">मोबाइल</span><span class="font-bold text-base">${item.mobile || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">समग्र आईडी</span><span class="font-bold text-base">${item.samagraId || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">आधार</span><span class="font-bold text-base">${item.aadhaar || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">आय</span><span class="font-bold text-green-700 text-base">₹ ${item.annualIncome || "0"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">स्थिति</span><span class="font-bold uppercase text-base">${item.status || "pending"}</span></div>
+            <div class="flex flex-col md:col-span-2 bg-blue-50 p-4 rounded-xl border border-blue-100 mt-2">
+                <span class="text-blue-600 text-xs font-bold uppercase mb-1">पूरा पता</span>
+                <span class="text-gray-700 leading-relaxed">${item.fullAddress || "जानकारी उपलब्ध नहीं है"}</span>
+            </div>
         `;
 
         document.getElementById("detailModal").classList.remove("hidden");
@@ -333,8 +347,10 @@
 
     window.closeDetails = () => {
         document.getElementById("detailModal").classList.add("hidden");
+        document.getElementById("detailModal").classList.remove("flex");
     };
 
+    // SEARCH LOGIC
     document.getElementById("searchInput").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = allApplications.filter(app => 
