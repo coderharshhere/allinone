@@ -1,310 +1,350 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AllInOne MP – Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllInOne MP – Dashboard</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Font -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
-    body { font-family: 'Noto Sans Devanagari', sans-serif; }
-    .ticker-wrapper { overflow: hidden; background: #fffbeb; }
-    .ticker-text {
-      display: inline-block;
-      white-space: nowrap;
-      padding-left: 100%;
-      animation: ticker 30s linear infinite;
-    }
-    @keyframes ticker {
-      100% { transform: translateX(-100%); }
-    }
-  </style>
+    <!-- Font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .ticker-wrapper { overflow: hidden; background: #fffbeb; }
+        .ticker-text {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: ticker 30s linear infinite;
+        }
+        @keyframes ticker {
+            100% { transform: translateX(-100%); }
+        }
+        .active-filter {
+            border: 2px solid #1e40af !important;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
 <!-- ================= TOP BAR ================= -->
-<div class="bg-blue-900 text-white text-xs py-2 px-4 flex justify-between items-center">
-  <div>मध्यप्रदेश सरकार | Government of Madhya Pradesh</div>
-  <div class="flex gap-4">
-    <a href="#" class="hover:underline">Screen Reader Access</a>
-    <span>A- | A | A+</span>
-  </div>
+<div class="bg-blue-900 text-white text-[10px] md:text-xs py-2 px-4 flex justify-between items-center">
+    <div>मध्यप्रदेश सरकार | Government of Madhya Pradesh</div>
+    <div class="flex gap-4">
+        <a href="#" class="hover:underline hidden md:block">Screen Reader Access</a>
+        <span>A- | A | A+</span>
+    </div>
 </div>
 
 <!-- ================= HEADER ================= -->
 <header class="bg-white shadow-md sticky top-0 z-50">
-  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/1200px-Emblem_of_Madhya_Pradesh.svg.png"
-           class="h-14" alt="MP">
-      <div>
-        <h1 class="text-2xl font-bold text-blue-900">AllInOne MP</h1>
-        <p class="text-sm text-gray-600">one window service portal</p>
-      </div>
-    </div>
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/1200px-Emblem_of_Madhya_Pradesh.svg.png"
+                 class="h-10 md:h-14" alt="MP Logo">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-blue-900">AllInOne MP</h1>
+                <p class="text-[10px] md:text-sm text-gray-600">वन विंडो सर्विस पोर्टल</p>
+            </div>
+        </div>
 
-    <div class="hidden md:flex gap-6 items-center">
-      <div class="text-right">
-        <p class="text-xs text-gray-500 uppercase">सहायता केंद्र</p>
-        <p class="font-bold text-blue-800">
-          <a href="https://wa.me/918435273042" target="_blank">8435273042</a>
-        </p>
-      </div>
-
-      <!-- LOGOUT -->
-      <button onclick="logout()"
-        class="bg-red-600 text-white px-6 py-2 rounded-full font-bold hover:bg-red-700">
-        लॉगआउट
-      </button>
+        <div class="flex gap-4 items-center">
+            <div class="hidden lg:text-right lg:block">
+                <p class="text-xs text-gray-500 uppercase">सहायता केंद्र</p>
+                <p class="font-bold text-blue-800">8435273042</p>
+            </div>
+            <button onclick="handleLogout()"
+                class="bg-red-600 text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full text-sm font-bold hover:bg-red-700 transition">
+                लॉगआउट
+            </button>
+        </div>
     </div>
-  </div>
 </header>
 
 <!-- ================= NAV ================= -->
-<nav class="bg-blue-800 text-white">
-  <div class="container mx-auto px-4">
-    <ul class="flex overflow-x-auto whitespace-nowrap py-3 gap-8">
-      <li><a href="index.html" class="hover:text-blue-200 flex gap-2">
-        <i class="fas fa-home"></i> मुख्य पृष्ठ</a></li>
-      <li><a href="#" class="hover:text-blue-200">नागरिक सेवाएँ</a></li>
-      <li><a href="#" class="hover:text-blue-200">योजनाएँ</a></li>
-      <li><a href="dashboard.html" class="hover:text-blue-200">विभागीय डैशबोर्ड</a></li>
-      <li><a href="#" class="hover:text-blue-200">शिकायत निवारण</a></li>
-    </ul>
-  </div>
+<nav class="bg-blue-800 text-white overflow-x-auto">
+    <div class="container mx-auto px-4">
+        <ul class="flex whitespace-nowrap py-3 gap-6 md:gap-8 text-sm">
+            <li><a href="#" class="hover:text-blue-200 flex items-center gap-2">
+                <i class="fas fa-home"></i> मुख्य पृष्ठ</a></li>
+            <li><a href="#" class="hover:text-blue-200">नागरिक सेवाएँ</a></li>
+            <li><a href="#" class="hover:text-blue-200">योजनाएँ</a></li>
+            <li><a href="#" class="text-yellow-400 font-bold">विभागीय डैशबोर्ड</a></li>
+            <li><a href="#" class="hover:text-blue-200">शिकायत निवारण</a></li>
+        </ul>
+    </div>
 </nav>
 
 <!-- ================= TICKER ================= -->
-<div class="ticker-wrapper py-2">
-  <div class="ticker-text text-sm text-red-600 font-bold">
-    📢 सूचना: लाड़ली बहना योजना के अंतर्गत केवाईसी अनिवार्य |
-    मुख्यमंत्री सीखो-कमाओ योजना प्रारंभ |
-    समग्र आईडी में आधार लिंक निःशुल्क
-  </div>
+<div class="ticker-wrapper py-2 border-b border-amber-100">
+    <div class="ticker-text text-sm text-red-600 font-bold">
+        📢 सूचना: लाड़ली बहना योजना के अंतर्गत केवाईसी अनिवार्य | मुख्यमंत्री सीखो-कमाओ योजना प्रारंभ | समग्र आईडी में आधार लिंक निःशुल्क | किसी भी असुविधा के लिए हेल्पलाइन नंबर पर संपर्क करें |
+    </div>
 </div>
 
 <!-- ================= MAIN ================= -->
-<main class="flex-grow container mx-auto px-4 py-10">
+<main class="flex-grow container mx-auto px-4 py-6 md:py-10">
 
-  <h2 class="text-2xl font-bold text-gray-800 mb-6">
-    📋 आवेदन डैशबोर्ड
-  </h2>
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-800">
+            <i class="fas fa-list-check mr-2 text-blue-600"></i> आवेदन डैशबोर्ड
+        </h2>
+        
+        <!-- SEARCH -->
+        <div class="relative w-full md:w-64">
+            <input type="text" id="searchInput" placeholder="नाम से खोजें..." 
+                   class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+    </div>
 
-  <!-- FILTER TABS -->
- <div class="flex gap-3 mb-6">
-  <button onclick="filterByType('ALL')" class="px-4 py-2 bg-gray-200 rounded">
-    सभी
-  </button>
+    <!-- FILTER TABS -->
+    <div class="flex flex-wrap gap-2 mb-8" id="filterButtons">
+        <button onclick="filterByType('ALL')" id="btn-ALL" class="px-5 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm transition active-filter">
+            सभी (All)
+        </button>
+        <button onclick="filterByType('samagra')" id="btn-samagra" class="px-5 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-sm transition">
+            समग्र (Samagra)
+        </button>
+        <button onclick="filterByType('nivas')" id="btn-nivas" class="px-5 py-2 bg-green-100 hover:bg-green-200 rounded-lg text-sm transition">
+            निवास (Nivas)
+        </button>
+        <button onclick="filterByType('jati')" id="btn-jati" class="px-5 py-2 bg-yellow-100 hover:bg-yellow-200 rounded-lg text-sm transition">
+            जाति (Jati)
+        </button>
+    </div>
 
-  <button onclick="filterByType('Samagra')" class="px-4 py-2 bg-blue-200 rounded">
-    समग्र
-  </button>
+    <!-- DATA STATUS MESSAGE -->
+    <div id="loadingStatus" class="text-center py-10 text-gray-500">
+        <i class="fas fa-spinner fa-spin mr-2"></i> डेटा लोड हो रहा है...
+    </div>
 
-  <button onclick="filterByType('Nivas')" class="px-4 py-2 bg-green-200 rounded">
-    निवास
-  </button>
-
-  <button onclick="filterByType('Jati')" class="px-4 py-2 bg-yellow-200 rounded">
-    जाति
-  </button>
-</div>
-
-
-  <!-- TABLE -->
-  <div class="bg-white rounded-xl shadow overflow-x-auto">
-    <table class="min-w-full text-sm">
-      <thead class="bg-blue-800 text-white">
-        <tr>
-          <th class="px-4 py-3">नाम</th>
-          <th class="px-4 py-3">सेवा</th>
-          <th class="px-4 py-3">समग्र ID</th>
-          <th class="px-4 py-3">स्थिति</th>
-        </tr>
-      </thead>
-      <tbody id="dataTable" class="divide-y">
-        <!-- Firebase Data -->
-      </tbody>
-    </table>
-  </div>
+    <!-- TABLE -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden hidden" id="tableContainer">
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-blue-900 text-white">
+                    <tr>
+                        <th class="px-6 py-4 text-left font-medium">आवेदक का नाम</th>
+                        <th class="px-6 py-4 text-left font-medium">सेवा का प्रकार</th>
+                        <th class="px-6 py-4 text-left font-medium">समग्र ID / आधार</th>
+                        <th class="px-6 py-4 text-left font-medium">आवेदन की स्थिति</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTable" class="divide-y divide-gray-200">
+                    <!-- Firebase Data Injection -->
+                </tbody>
+            </table>
+        </div>
+        <div id="noDataMsg" class="hidden p-10 text-center text-gray-500">
+            कोई आवेदन नहीं मिला।
+        </div>
+    </div>
 
 </main>
 
 <!-- ================= FOOTER ================= -->
-<footer class="bg-gray-900 text-gray-400 py-12 px-4">
-  <div class="container mx-auto text-center">
-    <p>© 2026 AllInOne | MP Govt Services Portal</p>
-    <p class="text-xs mt-2">Managed by IT Department, Madhya Pradesh</p>
-  </div>
+<footer class="bg-gray-900 text-gray-400 py-10 px-4 mt-auto">
+    <div class="container mx-auto text-center">
+        <p>© 2026 AllInOne | MP Govt Services Portal</p>
+        <p class="text-xs mt-2 text-gray-500">Managed by IT Cell, Madhya Pradesh.</p>
+    </div>
 </footer>
-  <!-- ================= DETAIL MODAL ================= -->
-<div id="detailModal"
-     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
 
-  <div class="bg-white w-full max-w-3xl rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
-    
-    <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
-      <h3 class="font-bold text-lg">आवेदन का पूरा विवरण</h3>
-      <button onclick="closeDetails()" class="text-xl font-bold">×</button>
+<!-- ================= DETAIL MODAL ================= -->
+<div id="detailModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-[100] p-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+            <h3 class="font-bold text-lg">आवेदन का पूर्ण विवरण</h3>
+            <button onclick="closeDetails()" class="text-2xl font-bold leading-none">×</button>
+        </div>
+        <div id="detailBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm max-h-[70vh] overflow-y-auto">
+            <!-- Details Injection -->
+        </div>
+        <div class="bg-gray-50 px-6 py-4 border-t flex justify-end">
+            <button onclick="closeDetails()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold">बंद करें</button>
+        </div>
     </div>
-
-    <div id="detailBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-      <!-- data here -->
-    </div>
-
-  </div>
 </div>
 
-<!-- ================= FIREBASE ================= -->
+<!-- ================= FIREBASE & LOGIC ================= -->
 <script type="module">
-  let allApplications = [];
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-  import { getAuth, signOut, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    updateDoc,
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  /* ================= FIREBASE INIT ================= */
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-    authDomain: "allinone-aa89.firebaseapp.com",
-    projectId: "allinone-aa89"
-  };
+    let allApplications = [];
+    let currentUser = null;
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const firebaseConfig = JSON.parse(__firebase_config);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-  /* ================= AUTH PROTECT ================= */
-  onAuthStateChanged(auth, user => {
-    if (!user) {
-      window.location.href = "login.html";
-    } else {
-      loadData();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const APPLICATIONS_PATH = ['artifacts', appId, 'public', 'data', 'applications'];
+
+    async function initAuth() {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+            await signInAnonymously(auth);
+        }
     }
-  });
 
-  window.logout = () => {
-    signOut(auth).then(() => {
-      window.location.href = "login.html";
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        if (user) {
+            startListening();
+        }
     });
-  };
 
-  /* ================= LOAD TABLE ================= */
- async function loadData() {
-  const snap = await getDocs(collection(db, "applications"));
+    window.handleLogout = async () => {
+        await signOut(auth);
+    };
 
-  allApplications = []; // reset
-
-  snap.forEach(docc => {
-    allApplications.push({
-      id: docc.id,
-      ...docc.data()
-    });
-  });
-
-  // पहली बार सभी दिखाओ
-  renderTable(allApplications);
-}
-function renderTable(data) {
-  const table = document.getElementById("dataTable");
-  table.innerHTML = "";
-
-  data.forEach(d => {
-    table.innerHTML += `
-      <tr class="hover:bg-gray-50">
-        <td class="px-4 py-3 font-bold text-blue-800 underline cursor-pointer"
-            onclick="openDetails('${d.id}')">
-          ${d.applicantName || "-"}
-        </td>
-
-        <td class="px-4 py-3">${d.serviceType || "-"}</td>
-        <td class="px-4 py-3">${d.samagraId || "-"}</td>
-
-        <td class="px-4 py-3">
-          <select
-            class="border rounded px-2 py-1 font-bold text-sm
-              ${d.status === 'complete' ? 'text-green-600' :
-                d.status === 'reject' ? 'text-red-600' :
-                'text-blue-600'}"
-            onchange="changeStatus('${d.id}', this.value)">
+    function startListening() {
+        const colRef = collection(db, ...APPLICATIONS_PATH);
+        
+        onSnapshot(colRef, (snapshot) => {
+            allApplications = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
             
-            <option value="pending" ${d.status === 'pending' ? 'selected' : ''}>pending</option>
-            <option value="complete" ${d.status === 'complete' ? 'selected' : ''}>complete</option>
-            <option value="reject" ${d.status === 'reject' ? 'selected' : ''}>reject</option>
-          </select>
-        </td>
-      </tr>
-    `;
-  });
-}
+            // ================= SORTING LOGIC =================
+            // हम 'timestamp' फ़ील्ड के आधार पर सॉर्ट कर रहे हैं (नया पहले)
+            // यदि 'timestamp' नहीं है, तो 'id' या क्रोनोलॉजिकल रिवर्स ऑर्डर का उपयोग करें
+            allApplications.sort((a, b) => {
+                const timeA = a.timestamp || 0;
+                const timeB = b.timestamp || 0;
+                // यदि दोनों के पास टाइमस्टैम्प नहीं है, तो आईडी के हिसाब से सॉर्ट करें
+                if (timeA === 0 && timeB === 0) {
+                    return b.id.localeCompare(a.id);
+                }
+                return timeB - timeA;
+            });
 
-
-  /* ================= STATUS UPDATE ================= */
-  window.changeStatus = async function (docId, newStatus) {
-    try {
-      await updateDoc(doc(db, "applications", docId), {
-        status: newStatus
-      });
-      loadData(); // refresh table
-    } catch (e) {
-      alert("स्थिति बदलने में समस्या आई");
-      console.error(e);
+            document.getElementById("loadingStatus").classList.add("hidden");
+            document.getElementById("tableContainer").classList.remove("hidden");
+            renderTable(allApplications);
+        }, (error) => {
+            console.error("Fetch error", error);
+        });
     }
-  };
-window.filterByType = function(type) {
-  if (type === "ALL") {
-    renderTable(allApplications);
-    return;
-  }
 
-  const filtered = allApplications.filter(app =>
-    app.serviceType === type
-  );
+    function renderTable(data) {
+        const tableBody = document.getElementById("dataTable");
+        const noData = document.getElementById("noDataMsg");
+        tableBody.innerHTML = "";
 
-  renderTable(filtered);
-};
+        if (data.length === 0) {
+            noData.classList.remove("hidden");
+            return;
+        }
 
-  /* ================= DETAILS MODAL ================= */
-  window.openDetails = async function (id) {
-    const snap = await getDoc(doc(db, "applications", id));
-    if (!snap.exists()) return;
+        noData.classList.add("hidden");
 
-    const d = snap.data();
-    document.getElementById("detailBody").innerHTML = `
-      <div><b>नाम:</b> ${d.applicantName || "-"}</div>
-      <div><b>पिता का नाम:</b> ${d.fatherName || "-"}</div>
-      <div><b>सेवा:</b> ${d.serviceType || "-"}</div>
-      <div><b>समग्र ID:</b> ${d.samagraId || "-"}</div>
-      <div><b>आधार:</b> ${d.aadhaar || "-"}</div>
-      <div><b>मोबाइल:</b> ${d.mobile || "-"}</div>
-      <div><b>आय:</b> ₹ ${d.annualIncome || "-"}</div>
-      <div><b>स्थिति:</b> ${d.status || "pending"}</div>
-      <div class="md:col-span-2"><b>पता:</b> ${d.fullAddress || "-"}</div>
-    `;
+        data.forEach(item => {
+            const statusColor = item.status === 'complete' ? 'text-green-600' : 
+                                item.status === 'reject' ? 'text-red-600' : 'text-blue-600';
 
-    document.getElementById("detailModal").classList.remove("hidden");
-    document.getElementById("detailModal").classList.add("flex");
-  };
+            const row = document.createElement("tr");
+            row.className = "hover:bg-blue-50 transition border-b";
+            row.innerHTML = `
+                <td class="px-6 py-4">
+                    <button onclick="openDetails('${item.id}')" class="text-blue-700 font-bold hover:underline text-left">
+                        ${item.applicantName || "अज्ञात"}
+                    </button>
+                </td>
+                <td class="px-6 py-4 capitalize font-medium text-gray-700">
+                    <span class="px-2 py-1 rounded bg-gray-100">${item.serviceType || "-"}</span>
+                </td>
+                <td class="px-6 py-4 text-gray-600">
+                    <div class="text-xs">S: ${item.samagraId || "-"}</div>
+                    <div class="text-xs">A: ${item.aadhaar || "-"}</div>
+                </td>
+                <td class="px-6 py-4">
+                    <select onchange="updateApplicationStatus('${item.id}', this.value)" 
+                            class="border rounded-md px-2 py-1 font-bold text-xs ${statusColor}">
+                        <option value="pending" ${item.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                        <option value="complete" ${item.status === 'complete' ? 'selected' : ''}>✅ Complete</option>
+                        <option value="reject" ${item.status === 'reject' ? 'selected' : ''}>❌ Reject</option>
+                    </select>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
 
-  window.closeDetails = function () {
-    document.getElementById("detailModal").classList.add("hidden");
-  };
+    window.filterByType = (type) => {
+        const btns = document.querySelectorAll("#filterButtons button");
+        btns.forEach(b => b.classList.remove("active-filter"));
+        document.getElementById(`btn-${type}`).classList.add("active-filter");
+
+        if (type === 'ALL') {
+            renderTable(allApplications);
+        } else {
+            const filtered = allApplications.filter(app => 
+                (app.serviceType || "").toLowerCase() === type.toLowerCase()
+            );
+            renderTable(filtered);
+        }
+    };
+
+    window.updateApplicationStatus = async (docId, newStatus) => {
+        if (!currentUser) return;
+        try {
+            const docRef = doc(db, ...APPLICATIONS_PATH, docId);
+            await updateDoc(docRef, { status: newStatus });
+        } catch (e) {
+            console.error("Status update error", e);
+        }
+    };
+
+    window.openDetails = (id) => {
+        const item = allApplications.find(a => a.id === id);
+        if (!item) return;
+
+        const detailBody = document.getElementById("detailBody");
+        detailBody.innerHTML = `
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">नाम</span><span class="font-bold">${item.applicantName || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">पिता/पति</span><span class="font-bold">${item.fatherName || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">सेवा</span><span class="font-bold text-blue-700 capitalize">${item.serviceType || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">मोबाइल</span><span class="font-bold">${item.mobile || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">समग्र आईडी</span><span class="font-bold">${item.samagraId || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">आधार</span><span class="font-bold">${item.aadhaar || "N/A"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">आय</span><span class="font-bold text-green-700">₹ ${item.annualIncome || "0"}</span></div>
+            <div class="flex flex-col"><span class="text-gray-500 text-xs">स्थिति</span><span class="font-bold uppercase">${item.status || "pending"}</span></div>
+            <div class="flex flex-col md:col-span-2 bg-blue-50 p-3 rounded-lg"><span class="text-blue-600 text-xs font-bold">पता</span><span>${item.fullAddress || "-"}</span></div>
+        `;
+
+        document.getElementById("detailModal").classList.remove("hidden");
+        document.getElementById("detailModal").classList.add("flex");
+    };
+
+    window.closeDetails = () => {
+        document.getElementById("detailModal").classList.add("hidden");
+    };
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allApplications.filter(app => 
+            (app.applicantName || "").toLowerCase().includes(term) ||
+            (app.samagraId || "").toLowerCase().includes(term)
+        );
+        renderTable(filtered);
+    });
+
+    initAuth();
 </script>
-
 </body>
 </html>
