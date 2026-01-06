@@ -56,7 +56,8 @@ body { font-family: 'Noto Sans Devanagari', sans-serif; }
           <th class="p-3 text-left">नाम</th>
           <th class="p-3 text-left">सेवा</th>
           <th class="p-3 text-left">समग्र ID</th>
-          <th class="p-3 text-left">स्थिति</th>
+          <th class="p-3 text-left">तारीख</th>
+         <th class="p-3 text-left">स्थिति</th>
         </tr>
       </thead>
       <tbody id="dataTable"></tbody>
@@ -124,8 +125,18 @@ function loadData() {
     renderTable(allApplications);
   });
 }
+function formatDate(timestamp) {
+  if (!timestamp) return "-";
 
+  const date = timestamp.toDate();
+  return date.toLocaleDateString("hi-IN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+}
 function renderTable(data) {
+    
   const table = document.getElementById("dataTable");
   table.innerHTML = "";
 
@@ -138,6 +149,9 @@ function renderTable(data) {
         </td>
         <td class="p-3">${item.serviceType || "-"}</td>
         <td class="p-3">${item.samagraId || "-"}</td>
+        <td class="p-3">
+  ${formatDate(item.createdAt)}
+</td>
         <td class="p-3">
           <select onchange="changeStatus('${item.id}', this.value)"
             class="border px-2 py-1">
@@ -169,6 +183,7 @@ window.openDetails = (id) => {
     annualIncome: "आय",
     fullAddress: "पता",
     status: "स्थिति"
+      createdAt: "आवेदन तिथि",
   };
 
   let html = "";
@@ -176,7 +191,11 @@ window.openDetails = (id) => {
     html += `
       <div>
         <div class="text-xs text-gray-500">${labels[key]}</div>
-        <div class="font-bold">${item[key] || "-"}</div>
+        <div class="font-bold">
+  ${key === "createdAt"
+    ? formatDate(item.createdAt)
+    : (item[key] || "-")}
+</div>
       </div>
     `;
   }
@@ -197,6 +216,8 @@ window.openDetails = (id) => {
           <p><b>आवेदक:</b> ${item.applicantName || "-"}</p>
           <p><b>सेवा:</b> ${item.serviceType || "-"}</p>
           <p><b>मोबाइल:</b> ${item.mobile || "-"}</p>
+          <p><b>आवेदन तिथि:</b> ${formatDate(item.createdAt)}</p>
+
         </div>
 
         <div id="qrBox"></div>
