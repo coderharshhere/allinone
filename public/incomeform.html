@@ -4,40 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>आय प्रमाण पत्र आवेदन | AllInOne MP</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (डिजाइन के लिए) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
+    <!-- Font Awesome (आइकन्स के लिए) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf & EmailJS Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
         body {
             font-family: 'Noto Sans Devanagari', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-h-screen;
         }
-        .form-input {
-            width: 100%;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            padding: 0.6rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-input:focus {
-            border-color: #1e40af;
-            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
-        }
-        /* Custom Success Message Box */
-        #statusOverlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+        .form-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -49,8 +32,13 @@
             <span class="hidden sm:inline">मध्यप्रदेश सरकार | Government of Madhya Pradesh</span>
             <span class="sm:hidden text-xs">MP Govt</span>
         </div>
-        <div class="flex gap-4 items-center">
-            <span>सीएम हेल्पलाइन: 181</span>
+        <div class="flex gap-3 md:gap-4 items-center">
+            <a href="#" class="hover:underline">Skip to content</a> |
+            <div class="flex items-center gap-1">
+                <button class="px-1 border border-white/30 rounded">A-</button>
+                <button class="px-1 border border-white/30 rounded">A</button>
+                <button class="px-1 border border-white/30 rounded">A+</button>
+            </div>
             <select class="bg-transparent border-none text-white text-xs cursor-pointer focus:ring-0">
                 <option class="text-black">हिन्दी</option>
                 <option class="text-black">English</option>
@@ -67,20 +55,27 @@
                     <p class="text-[10px] md:text-xs text-gray-600 uppercase tracking-wider">State Services Delivery Gateway</p>
                 </div>
             </div>
+            
             <div class="flex gap-4 items-center">
                 <div class="hidden lg:block text-right border-r pr-4">
                     <p class="text-[10px] text-gray-500 uppercase">हेल्पलाइन</p>
-                    <p class="font-bold text-blue-800">8435273042</p>
+                   <p class="font-bold text-blue-800">
+                      <a href="https://wa.me/918435273042" target="_blank">8435273042</a>
+                    </p>
                 </div>
-                <button class="bg-blue-600 text-white px-4 md:px-6 py-2 rounded shadow-md font-bold hover:bg-blue-700 transition text-sm">लॉगिन</button>
+                <button class="bg-blue-600 text-white px-4 md:px-6 py-2 rounded shadow-md font-bold hover:bg-blue-700 transition text-sm">
+                    लॉगिन
+                </button>
             </div>
         </div>
+
         <nav class="bg-blue-800 text-white hidden md:block">
             <div class="container mx-auto px-4">
                 <ul class="flex py-3 gap-8 text-sm font-medium">
-                    <li><a href="#" class="hover:text-blue-200 flex items-center gap-2 pb-1 transition-all"><i class="fas fa-home"></i> होम</a></li>
+                    <li><a href="#" class="hover:text-blue-200 flex items-center gap-2 border-b-2 border-transparent hover:border-blue-200 pb-1 transition-all"><i class="fas fa-home"></i> होम</a></li>
                     <li><a href="#" class="hover:text-blue-200 border-b-2 border-transparent hover:border-blue-200 pb-1 transition-all">नागरिक सेवाएँ</a></li>
                     <li><a href="#" class="hover:text-blue-200 border-b-2 border-transparent hover:border-blue-200 pb-1 transition-all">योजनाएँ</a></li>
+                    <li><a href="#" class="hover:text-blue-200 border-b-2 border-transparent hover:border-blue-200 pb-1 transition-all">सांख्यिकी</a></li>
                     <li><a href="#" class="hover:text-blue-200 border-b-2 border-transparent hover:border-blue-200 pb-1 transition-all">शिकायत निवारण</a></li>
                 </ul>
             </div>
@@ -89,6 +84,8 @@
 
     <!-- MAIN FORM CONTENT -->
     <main class="flex-grow container mx-auto px-4 py-10">
+        
+        <!-- Breadcrumb & Header -->
         <div class="max-w-4xl mx-auto mb-8">
             <nav class="text-sm text-gray-500 mb-2">
                 <a href="#" class="hover:text-blue-600">होम</a> / <span>सेवाएँ</span> / <span class="text-blue-900 font-semibold">आय प्रमाण पत्र</span>
@@ -100,14 +97,17 @@
         </div>
 
         <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            
+            <!-- Instruction Bar -->
             <div class="bg-blue-50 border-b border-blue-100 p-4 flex items-start gap-3">
                 <i class="fas fa-info-circle text-blue-600 mt-1"></i>
                 <p class="text-xs text-blue-800 leading-relaxed">
-                    <strong>नोट:</strong> तारांकित (*) फ़ील्ड अनिवार्य हैं। कृपया दस्तावेज़ों को केवल JPG या PDF फॉर्मेट में ही अपलोड करें।
+                    <strong>नोट:</strong> तारांकित (*) फ़ील्ड अनिवार्य हैं। कृपया दस्तावेज़ों को केवल JPG या PDF फॉर्मेट में ही अपलोड करें। स्व-घोषणा पत्र अनिवार्य रूप से संलग्न करें।
                 </p>
             </div>
 
-            <form id="incomeForm" class="p-6 md:p-10 space-y-10">
+<form id="incomeForm" action="#" method="post" class="p-6 md:p-10 space-y-10">
+
                 <!-- 1. व्यक्तिगत जानकारी -->
                 <section>
                     <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2 flex items-center gap-2">
@@ -115,24 +115,24 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">आवेदक का पूरा नाम (हिन्दी/English) *</label>
-                            <input type="text" name="applicantName" class="form-input" placeholder="नाम दर्ज करें" required>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">आवेदक का पूरा नाम (हिन्दी में) *</label>
+<input type="text" name="applicantName" class="form-input" placeholder="नाम दर्ज करें" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">पिता / पति का नाम *</label>
-                            <input type="text" name="fatherName" class="form-input" placeholder="नाम दर्ज करें" required>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Father/Husband Name (English) *</label>
+<input type="text" name="fatherName" class="form-input" placeholder="Enter Name" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">समग्र आईडी (सदस्य) *</label>
-                            <input type="number" name="samagraId" class="form-input" placeholder="9 अंकों की आईडी" required>
+<input type="number" name="samagraId" class="form-input" placeholder="9 अंकों की आईडी" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">आधार नंबर *</label>
-                            <input type="number" name="aadhaar" class="form-input" placeholder="12 अंकों का आधार" required>
+<input type="number" name="aadhaar" class="form-input" placeholder="12 अंकों का आधार" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">लिंग *</label>
-                            <select name="gender" class="form-input bg-white" required>
+                            <select class="form-input bg-white" required>
                                 <option value="">चुनें</option>
                                 <option>पुरुष</option>
                                 <option>महिला</option>
@@ -140,12 +140,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">ईमेल (Email) *</label>
-                            <input type="email" name="email" class="form-input" placeholder="example@mail.com" required>
-                        </div>
-                        <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">मोबाइल नंबर *</label>
-                            <input type="tel" name="mobile" class="form-input" placeholder="10 अंकों का नंबर" required>
+                            <input type="tel" class="form-input" placeholder="10 अंकों का नंबर" required>
                         </div>
                     </div>
                 </section>
@@ -158,24 +154,24 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">जिला *</label>
-                            <select name="district" class="form-input bg-white" required>
+                            <select class="form-input bg-white" required>
                                 <option>सीधी (Sidhi)</option>
                                 <option>भोपाल (Bhopal)</option>
                                 <option>इंदौर (Indore)</option>
-                                <option>रीवा (Rewa)</option>
+                                <!-- अन्य जिले -->
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">तहसील *</label>
-                            <input type="text" name="tehsil" class="form-input" placeholder="तहसील का नाम" required>
+                            <input type="text" class="form-input" placeholder="तहसील का नाम" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">ग्राम/वार्ड *</label>
-                            <input type="text" name="village" class="form-input" placeholder="ग्राम या वार्ड नंबर" required>
+                            <input type="text" class="form-input" placeholder="ग्राम या वार्ड नंबर" required>
                         </div>
                         <div class="md:col-span-3">
                             <label class="block text-sm font-bold text-gray-700 mb-2">पूरा पता *</label>
-                            <textarea name="fullAddress" class="form-input h-20" placeholder="मकान नंबर, मोहल्ला आदि..." required></textarea>
+                            <textarea class="form-input h-20" placeholder="मकान नंबर, मोहल्ला आदि..."></textarea>
                         </div>
                     </div>
                 </section>
@@ -188,31 +184,74 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">व्यवसाय का प्रकार *</label>
-                            <select name="occupation" class="form-input bg-white" required>
+<select name="occupation" class="form-input bg-white" required>
                                 <option value="">व्यवसाय चुनें</option>
                                 <option>कृषि (Agriculture)</option>
                                 <option>मजदूरी (Labor)</option>
                                 <option>नौकरी (Service)</option>
                                 <option>स्व-रोजगार (Business)</option>
+                                <option>अन्य</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">कुल वार्षिक आय (₹) *</label>
-                            <input type="number" name="annualIncome" class="form-input" placeholder="जैसे: 60000" required>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">कुल वार्षिक आय (अंकों में) *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 font-bold">₹</span>
+<input type="number" name="annualIncome" class="form-input pl-8" placeholder="जैसे: 60000" required>
+                            </div>
                         </div>
                     </div>
                 </section>
+                <section class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+  <h3 class="text-lg font-bold text-blue-800 mb-4">
+    आय प्रमाण पत्र हेतु आवश्यक दस्तावेज़
+  </h3>
 
-                <!-- Declarations -->
+  <p class="text-sm text-gray-600 mb-4">
+    कृपया सुनिश्चित करें कि नीचे दिए गए सभी दस्तावेज़ आपके पास उपलब्ध हैं:
+  </p>
+
+  <div class="space-y-3 text-sm text-gray-700">
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>आवेदक का पासपोर्ट साइज फोटो</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>आधार कार्ड / समग्र आईडी</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>आय का प्रमाण (वेतन पर्ची / आय प्रमाण / स्व-घोषणा पत्र)</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>निवास प्रमाण पत्र (यदि उपलब्ध हो)</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>स्व-घोषणा पत्र (आय के संबंध में)</span>
+    </label>
+
+  </div>
+</section>
+
+                <!-- Final Submit Section -->
                 <div class="pt-6 border-t space-y-4">
                     <label class="flex items-start gap-3 cursor-pointer">
                         <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded" required>
                         <span class="text-xs text-gray-600 italic">
-                            मैं एतद् द्वारा यह घोषणा करता/करती हूँ कि आवेदन में दी गई समस्त जानकारी पूर्णतः सत्य है।
+                            मैं एतद् द्वारा यह घोषणा करता/करती हूँ कि आवेदन में दी गई समस्त जानकारी पूर्णतः सत्य है। किसी भी त्रुटि की स्थिति में मैं स्वयं जिम्मेदार रहूँगा/रहूँगी।
                         </span>
                     </label>
+
                     <div class="flex gap-4">
-                        <button type="submit" id="submitBtn" class="flex-1 bg-blue-700 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-800 shadow-xl transition active:scale-95">
+                        <button type="submit" class="flex-1 bg-blue-700 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-800 shadow-xl shadow-blue-200 transition active:scale-95">
                             आवेदन जमा करें
                         </button>
                         <button type="reset" class="px-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
@@ -220,176 +259,121 @@
                         </button>
                     </div>
                 </div>
+
             </form>
         </div>
     </main>
 
-    <!-- Success Modal -->
-    <div id="statusOverlay">
-        <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl">
-            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                <i class="fas fa-check"></i>
-            </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">सफलतापूर्वक जमा!</h2>
-            <p class="text-gray-600 text-sm mb-4">आपका आवेदन क्रमांक है:</p>
-            <p id="receiptNoDisplay" class="text-2xl font-black text-blue-700 mb-6 font-mono"></p>
-            <button onclick="location.reload()" class="w-full bg-blue-700 text-white py-2 rounded-lg font-bold">नया आवेदन करें</button>
-        </div>
-    </div>
+    <!-- Simple Footer -->
+    <footer class="bg-white border-t py-6 text-center text-gray-400 text-xs mt-10">
+        <p>© 2026 AllInOne MP | मध्यप्रदेश शासन का डिजिटल सेवा पोर्टल</p>
+    </footer>
+<script type="module">
 
-    <!-- Hidden Receipt for PDF Generation -->
-    <div id="pdfContent" class="hidden"></div>
+  // 1️⃣ Firebase imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-    <!-- Footer -->
+  // 2️⃣ Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+    authDomain: "allinone-aa89.firebaseapp.com",
+    projectId: "allinone-aa89",
+    storageBucket: "allinone-aa89.firebasestorage.app",
+    messagingSenderId: "924003122498",
+    appId: "1:924003122498:web:2c86505457236e60055cdb"
+  };
+
+  // 3️⃣ Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 4️⃣ Form select
+  const form = document.getElementById("incomeForm");
+
+  // 5️⃣ Form submit
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    await addDoc(collection(db, "applications"), {
+      serviceType: "Income Certificate",
+      applicantName: form.applicantName.value,
+      fatherName: form.fatherName.value,
+      samagraId: form.samagraId.value,
+      aadhaar: form.aadhaar.value,
+      occupation: form.occupation.value,
+      annualIncome: form.annualIncome.value,
+      status: "pending",
+      assignedTo: null,
+      createdAt: serverTimestamp()
+    });
+
+    alert("आवेदन सफलतापूर्वक जमा हो गया ✅");
+    form.reset();
+  });
+
+</script>
     <footer class="bg-gray-900 text-gray-300">
         <div class="container mx-auto px-4 py-12">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Column 1: About -->
                 <div>
                     <h5 class="text-white font-bold text-lg mb-4 border-l-4 border-blue-600 pl-3">AllInOne MP</h5>
-                    <p class="text-sm leading-relaxed">मध्यप्रदेश शासन का एकीकृत पोर्टल नागरिकों को पारदर्शी और त्वरित सरकारी सेवाएँ प्रदान करने के लिए प्रतिबद्ध है।</p>
+                    <p class="text-sm leading-relaxed">
+                        मध्यप्रदेश शासन का एकीकृत पोर्टल नागरिकों को पारदर्शी और त्वरित सरकारी सेवाएँ प्रदान करने के लिए प्रतिबद्ध है।
+                    </p>
                 </div>
+                
+                <!-- Column 2: Quick Links -->
                 <div>
                     <h5 class="text-white font-bold mb-4">उपयोगी कड़ियाँ</h5>
                     <ul class="text-sm space-y-2">
-                        <li><a href="#" class="hover:text-blue-400"><i class="fas fa-chevron-right text-[10px] mr-2"></i> एम.पी. ऑनलाइन</a></li>
-                        <li><a href="#" class="hover:text-blue-400"><i class="fas fa-chevron-right text-[10px] mr-2"></i> ई-डिस्ट्रिक्ट पोर्टल</a></li>
+                        <li><a href="#" class="hover:text-blue-400 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px]"></i> एम.पी. ऑनलाइन</a></li>
+                        <li><a href="#" class="hover:text-blue-400 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px]"></i> ई-डिस्ट्रिक्ट पोर्टल</a></li>
                     </ul>
                 </div>
+
+                <!-- Column 3: Contact -->
                 <div>
                     <h5 class="text-white font-bold mb-4">सहायता एवं संपर्क</h5>
                     <ul class="text-sm space-y-3">
-                        <li class="flex items-start gap-3"><i class="fas fa-headset mt-1 text-blue-500"></i> हेल्पलाइन: 181</li>
-                        <li class="flex items-start gap-3"><i class="fas fa-envelope mt-1 text-blue-500"></i> support-mp@nic.in</li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-headset mt-1 text-blue-500"></i>
+                            <span>सीएम हेल्पलाइन: 181</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-envelope mt-1 text-blue-500"></i>
+                            <span>support-mp@nic.in</span>
+                        </li>
                     </ul>
                 </div>
+
+                <!-- Column 4: Social & App -->
                 <div>
                     <h5 class="text-white font-bold mb-4">सोशल मीडिया</h5>
-                    <div class="flex gap-4">
-                        <a href="#" class="bg-gray-800 p-2 rounded hover:bg-blue-600"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="bg-gray-800 p-2 rounded hover:bg-blue-400"><i class="fab fa-twitter"></i></a>
+                    <div class="flex gap-4 mb-6">
+                        <a href="#" class="bg-gray-800 p-2 rounded hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="bg-gray-800 p-2 rounded hover:bg-blue-400 transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="bg-gray-800 p-2 rounded hover:bg-red-600 transition"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-10 pt-8 flex justify-between items-center text-xs">
+            
+            <!-- Bottom Copyright Bar -->
+            <div class="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs gap-4">
                 <p>© 2026 AllInOne | मध्यप्रदेश शासन का आधिकारिक पोर्टल</p>
-                <div class="bg-gray-800 px-3 py-1 rounded">विज़िटर: <span class="text-blue-400 font-bold">12,45,678</span></div>
+                <div class="flex items-center gap-2 bg-gray-800 px-3 py-1 rounded">
+                    <span>विज़िटर संख्या:</span>
+                    <span class="text-blue-400 font-bold">12,45,678</span>
+                </div>
             </div>
         </div>
     </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Configuration (Same as provided)
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-            authDomain: "allinone-aa89.firebaseapp.com",
-            projectId: "allinone-aa89",
-            storageBucket: "allinone-aa89.firebasestorage.app",
-            messagingSenderId: "924003122498",
-            appId: "1:924003122498:web:2c86505457236e60055cdb"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Initialize EmailJS
-        emailjs.init("-HjIyXVqfuRKrznVE");
-
-        const form = document.getElementById("incomeForm");
-        const statusOverlay = document.getElementById("statusOverlay");
-        const submitBtn = document.getElementById("submitBtn");
-
-        function generateID() {
-            return "AIO-" + Math.floor(100000 + Math.random() * 900000);
-        }
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            submitBtn.innerText = "कृपया प्रतीक्षा करें...";
-
-            const applicationNo = generateID();
-            const formData = {
-                applicationNo: applicationNo,
-                serviceType: "आय प्रमाण पत्र",
-                applicantName: form.applicantName.value,
-                fatherName: form.fatherName.value,
-                samagraId: form.samagraId.value,
-                aadhaar: form.aadhaar.value,
-                gender: form.gender.value,
-                email: form.email.value,
-                mobile: form.mobile.value,
-                district: form.district.value,
-                tehsil: form.tehsil.value,
-                village: form.village.value,
-                fullAddress: form.fullAddress.value,
-                occupation: form.occupation.value,
-                annualIncome: form.annualIncome.value,
-                status: "pending",
-                createdAt: serverTimestamp()
-            };
-
-            try {
-                // 1. Save to Firebase
-                await addDoc(collection(db, "applications"), formData);
-
-                // 2. Generate PDF Receipt
-                generateReceiptPDF(formData);
-
-                // 3. Send Email
-                sendConfirmationEmail(formData);
-
-                // 4. Show Success
-                document.getElementById("receiptNoDisplay").innerText = applicationNo;
-                statusOverlay.style.display = 'flex';
-
-            } catch (error) {
-                console.error("Submission error:", error);
-                alert("कुछ त्रुटि हुई, कृपया दोबारा प्रयास करें।");
-                submitBtn.disabled = false;
-                submitBtn.innerText = "आवेदन जमा करें";
-            }
-        });
-
-        function generateReceiptPDF(data) {
-            const pdfDiv = document.getElementById("pdfContent");
-            pdfDiv.innerHTML = `
-                <div style="padding:40px; font-family: 'Noto Sans Devanagari', sans-serif; border: 5px solid #0a4275;">
-                    <div style="text-align:center; border-bottom: 2px solid #0a4275; padding-bottom:10px;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/1200px-Emblem_of_Madhya_Pradesh.svg.png" style="height:80px;">
-                        <h1 style="color:#0a4275; margin:10px 0;">मध्यप्रदेश शासन</h1>
-                        <h2>AllInOne MP पोर्टल - आवेदन पावती</h2>
-                    </div>
-                    <div style="margin:20px 0;">
-                        <p><b>आवेदन संख्या:</b> ${data.applicationNo}</p>
-                        <p><b>दिनांक:</b> ${new Date().toLocaleDateString('hi-IN')}</p>
-                        <hr>
-                        <p><b>आवेदक का नाम:</b> ${data.applicantName}</p>
-                        <p><b>सेवा का नाम:</b> ${data.serviceType}</p>
-                        <p><b>मोबाइल:</b> ${data.mobile}</p>
-                        <p><b>वार्षिक आय:</b> ₹ ${data.annualIncome}</p>
-                    </div>
-                    <div style="margin-top:50px; text-align:center; font-size:12px; color:#666;">
-                        यह एक कंप्यूटर जनित पावती है। डिजिटल पोर्टल द्वारा सत्यापित।
-                    </div>
-                </div>
-            `;
-            pdfDiv.classList.remove("hidden");
-            html2pdf().from(pdfDiv).save(`Receipt_${data.applicationNo}.pdf`).then(() => {
-                pdfDiv.classList.add("hidden");
-            });
-        }
-
-        function sendConfirmationEmail(data) {
-            emailjs.send("service_allinone", "template_application", {
-                to_name: data.applicantName,
-                to_email: data.email,
-                application_no: data.applicationNo,
-                service_name: data.serviceType
-            }).then(() => console.log("Email sent!")).catch(err => console.error("Email failed:", err));
-        }
-    </script>
 </body>
 </html>
