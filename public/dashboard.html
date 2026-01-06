@@ -100,12 +100,24 @@
   </h2>
 
   <!-- FILTER TABS -->
-  <div class="flex gap-3 mb-6">
-    <button class="px-4 py-2 bg-gray-200 rounded">सभी</button>
-    <button class="px-4 py-2 bg-blue-200 rounded">समग्र</button>
-    <button class="px-4 py-2 bg-green-200 rounded">निवास</button>
-    <button class="px-4 py-2 bg-yellow-200 rounded">जाति</button>
-  </div>
+ <div class="flex gap-3 mb-6">
+  <button onclick="filterByType('ALL')" class="px-4 py-2 bg-gray-200 rounded">
+    सभी
+  </button>
+
+  <button onclick="filterByType('Samagra')" class="px-4 py-2 bg-blue-200 rounded">
+    समग्र
+  </button>
+
+  <button onclick="filterByType('Nivas')" class="px-4 py-2 bg-green-200 rounded">
+    निवास
+  </button>
+
+  <button onclick="filterByType('Jati')" class="px-4 py-2 bg-yellow-200 rounded">
+    जाति
+  </button>
+</div>
+
 
   <!-- TABLE -->
   <div class="bg-white rounded-xl shadow overflow-x-auto">
@@ -153,6 +165,7 @@
 
 <!-- ================= FIREBASE ================= -->
 <script type="module">
+  let allApplications = [];
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
   import { getAuth, signOut, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
@@ -192,41 +205,54 @@
   };
 
   /* ================= LOAD TABLE ================= */
-  async function loadData() {
-    const table = document.getElementById("dataTable");
-    table.innerHTML = "";
+ async function loadData() {
+  const snap = await getDocs(collection(db, "applications"));
 
-    const snap = await getDocs(collection(db, "applications"));
+  allApplications = []; // reset
 
-    snap.forEach(docc => {
-      const d = docc.data();
-      table.innerHTML += `
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-3 font-bold text-blue-800 underline cursor-pointer"
-              onclick="openDetails('${docc.id}')">
-            ${d.applicantName || "-"}
-          </td>
-
-          <td class="px-4 py-3">${d.serviceType || "-"}</td>
-          <td class="px-4 py-3">${d.samagraId || "-"}</td>
-
-          <td class="px-4 py-3">
-            <select
-              class="border rounded px-2 py-1 font-bold text-sm
-                ${d.status === 'complete' ? 'text-green-600' :
-                  d.status === 'reject' ? 'text-red-600' :
-                  'text-blue-600'}"
-              onchange="changeStatus('${docc.id}', this.value)">
-              
-              <option value="pending" ${d.status === 'pending' ? 'selected' : ''}>pending</option>
-              <option value="complete" ${d.status === 'complete' ? 'selected' : ''}>complete</option>
-              <option value="reject" ${d.status === 'reject' ? 'selected' : ''}>reject</option>
-            </select>
-          </td>
-        </tr>
-      `;
+  snap.forEach(docc => {
+    allApplications.push({
+      id: docc.id,
+      ...docc.data()
     });
-  }
+  });
+
+  // पहली बार सभी दिखाओ
+  renderTable(allApplications);
+}
+function renderTable(data) {
+  const table = document.getElementById("dataTable");
+  table.innerHTML = "";
+
+  data.forEach(d => {
+    table.innerHTML += `
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 font-bold text-blue-800 underline cursor-pointer"
+            onclick="openDetails('${d.id}')">
+          ${d.applicantName || "-"}
+        </td>
+
+        <td class="px-4 py-3">${d.serviceType || "-"}</td>
+        <td class="px-4 py-3">${d.samagraId || "-"}</td>
+
+        <td class="px-4 py-3">
+          <select
+            class="border rounded px-2 py-1 font-bold text-sm
+              ${d.status === 'complete' ? 'text-green-600' :
+                d.status === 'reject' ? 'text-red-600' :
+                'text-blue-600'}"
+            onchange="changeStatus('${d.id}', this.value)">
+            
+            <option value="pending" ${d.status === 'pending' ? 'selected' : ''}>pending</option>
+            <option value="complete" ${d.status === 'complete' ? 'selected' : ''}>complete</option>
+            <option value="reject" ${d.status === 'reject' ? 'selected' : ''}>reject</option>
+          </select>
+        </td>
+      </tr>
+    `;
+  });
+}
+
 
   /* ================= STATUS UPDATE ================= */
   window.changeStatus = async function (docId, newStatus) {
@@ -240,6 +266,18 @@
       console.error(e);
     }
   };
+window.filterByType = function(type) {
+  if (type === "ALL") {
+    renderTable(allApplications);
+    return;
+  }
+
+  const filtered = allApplications.filter(app =>
+    app.serviceType === type
+  );
+
+  renderTable(filtered);
+};
 
   /* ================= DETAILS MODAL ================= */
   window.openDetails = async function (id) {
