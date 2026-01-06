@@ -1,4 +1,25 @@
-<!-- TOP BAR -->
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AllINONE-MP | Government Services Portal</title>
+
+  <!-- ✅ Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ Font Awesome (icons ke liye) -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- ✅ Custom Header CSS (ticker, animation, extra style) -->
+  <link rel="stylesheet" href="assets/css/header.css">
+</head>
+
+<body>
+
+<!-- ================= TOP BAR ================= -->
 <div class="bg-blue-900 text-white text-xs py-2 px-4 flex justify-between items-center">
   <div>मध्यप्रदेश सरकार | Government of Madhya Pradesh</div>
   <div class="flex gap-4">
@@ -7,13 +28,16 @@
   </div>
 </div>
 
-<!-- MAIN HEADER -->
+<!-- ================= MAIN HEADER ================= -->
 <header class="bg-white shadow-md sticky top-0 z-50">
   <div class="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+
     <div class="flex items-center gap-3">
-<img src="assets/images/logo.jpg"
-     class="h-10 md:h-14 object-contain"
-     alt="AllInOne Logo">      <div>
+      <img src="assets/images/logo.jpg"
+           class="h-10 md:h-14 object-contain"
+           alt="AllInOne Logo">
+
+      <div>
         <h1 class="text-2xl font-bold text-blue-900 leading-tight">AllINONE-MP</h1>
         <p class="text-sm text-gray-600">one window service portal</p>
       </div>
@@ -26,19 +50,25 @@
           <a href="https://wa.me/918435273042" target="_blank">8435273042</a>
         </p>
       </div>
+
       <a href="/adminlogin.html"
          class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition">
         लॉगिन / पंजीकरण
       </a>
     </div>
+
   </div>
 </header>
 
-<!-- NAV BAR -->
+<!-- ================= NAV BAR ================= -->
 <nav class="bg-blue-800 text-white">
   <div class="container mx-auto px-4">
     <ul class="flex overflow-x-auto whitespace-nowrap py-3 gap-8">
-      <li><a href="index.html" class="hover:text-blue-200 flex items-center gap-2"><i class="fas fa-home"></i> मुख्य पृष्ठ</a></li>
+      <li>
+        <a href="index.html" class="hover:text-blue-200 flex items-center gap-2">
+          <i class="fas fa-home"></i> मुख्य पृष्ठ
+        </a>
+      </li>
       <li><a href="#" class="hover:text-blue-200">नागरिक सेवाएँ</a></li>
       <li><a href="#" class="hover:text-blue-200">योजनाएँ</a></li>
       <li><a href="#" class="hover:text-blue-200">विभागीय डैशबोर्ड</a></li>
@@ -47,7 +77,7 @@
   </div>
 </nav>
 
-<!-- TICKER -->
+<!-- ================= TICKER ================= -->
 <div class="ticker-wrapper py-2">
   <div class="ticker-text text-sm text-red-600 font-bold">
     📢 सूचना: लाड़ली बहना योजना के अंतर्गत केवाईसी (e-KYC) पूर्ण करना अनिवार्य है। |
@@ -56,4 +86,5 @@
   </div>
 </div>
 
-
+</body>
+</html>
