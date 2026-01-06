@@ -263,6 +263,21 @@ window.handleLogout = function () {
         console.error(error);
       });
   };
+    // 🔍 SEARCH FUNCTIONALITY FIX
+const searchInput = document.getElementById("searchInput");
+
+
+searchInput.addEventListener("input", () => {
+const keyword = searchInput.value.toLowerCase();
+
+
+const filtered = allApplications.filter(app =>
+(app.applicantName || "").toLowerCase().includes(keyword)
+);
+
+
+renderTable(filtered);
+});
 </script>
 
 </body>
