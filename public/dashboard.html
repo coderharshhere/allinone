@@ -1,445 +1,201 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllInOne MP – Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllInOne MP – Dashboard</title>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- html2pdf library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <!-- Font -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
-        body { font-family: 'Noto Sans Devanagari', sans-serif; }
-        .ticker-wrapper { overflow: hidden; background: #fffbeb; }
-        .ticker-text {
-            display: inline-block;
-            white-space: nowrap;
-            padding-left: 100%;
-            animation: ticker 30s linear infinite;
-        }
-        @keyframes ticker {
-            100% { transform: translateX(-100%); }
-        }
-        .active-filter {
-            border: 2px solid #1e40af !important;
-            font-weight: bold;
-        }
-        /* PDF specific styles */
-        #pdfContent {
-            font-family: 'Noto Sans Devanagari', sans-serif;
-            color: #333;
-        }
-    </style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+body { font-family: 'Noto Sans Devanagari', sans-serif; }
+</style>
 </head>
 
-<body class="bg-gray-100 flex flex-col min-h-screen">
+<body class="bg-gray-100">
 
-<!-- ================= TOP BAR ================= -->
-<div class="bg-blue-900 text-white text-[10px] md:text-xs py-2 px-4 flex justify-between items-center">
-    <div>मध्यप्रदेश सरकार | Government of Madhya Pradesh</div>
-    <div class="flex gap-4">
-        <a href="#" class="hover:underline hidden md:block">Screen Reader Access</a>
-        <span>A- | A | A+</span>
-    </div>
-</div>
-
-<!-- ================= HEADER ================= -->
-<header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/1200px-Emblem_of_Madhya_Pradesh.svg.png"
-                 class="h-10 md:h-14" alt="MP Logo">
-            <div>
-                <h1 class="text-xl md:text-2xl font-bold text-blue-900">AllInOne MP</h1>
-                <p class="text-[10px] md:text-sm text-gray-600">वन विंडो सर्विस पोर्टल</p>
-            </div>
-        </div>
-
-        <div class="flex gap-4 items-center">
-            <div class="hidden lg:text-right lg:block">
-                <p class="text-xs text-gray-500 uppercase">सहायता केंद्र</p>
-                <p class="font-bold text-blue-800">8435273042</p>
-            </div>
-            <button onclick="handleLogout()"
-                class="bg-red-600 text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full text-sm font-bold hover:bg-red-700 transition">
-                लॉगआउट
-            </button>
-        </div>
-    </div>
+<!-- HEADER -->
+<header class="bg-white shadow p-4 flex justify-between items-center">
+  <h1 class="text-2xl font-bold text-blue-800">AllInOne MP – Dashboard</h1>
+  <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded">Logout</button>
 </header>
 
-<!-- ================= NAV ================= -->
-<nav class="bg-blue-800 text-white overflow-x-auto">
-    <div class="container mx-auto px-4">
-        <ul class="flex whitespace-nowrap py-3 gap-6 md:gap-8 text-sm">
-            <li><a href="#" class="hover:text-blue-200 flex items-center gap-2">
-                <i class="fas fa-home"></i> मुख्य पृष्ठ</a></li>
-            <li><a href="#" class="hover:text-blue-200">नागरिक सेवाएँ</a></li>
-            <li><a href="#" class="hover:text-blue-200">योजनाएँ</a></li>
-            <li><a href="#" class="text-yellow-400 font-bold">विभागीय डैशबोर्ड</a></li>
-            <li><a href="#" class="hover:text-blue-200">शिकायत निवारण</a></li>
-        </ul>
-    </div>
-</nav>
+<!-- MAIN -->
+<main class="p-6">
+  <input id="searchInput" placeholder="नाम से खोजें..."
+    class="border p-2 mb-4 w-full max-w-sm">
 
-<!-- ================= TICKER ================= -->
-<div class="ticker-wrapper py-2 border-b border-amber-100">
-    <div class="ticker-text text-sm text-red-600 font-bold">
-        📢 सूचना: लाड़ली बहना योजना के अंतर्गत केवाईसी अनिवार्य | मुख्यमंत्री सीखो-कमाओ योजना प्रारंभ | समग्र आईडी में आधार लिंक निःशुल्क | किसी भी असुविधा के लिए हेल्पलाइन नंबर पर संपर्क करें |
-    </div>
-</div>
-
-<!-- ================= MAIN ================= -->
-<main class="flex-grow container mx-auto px-4 py-6 md:py-10">
-
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <h2 class="text-xl md:text-2xl font-bold text-gray-800">
-            <i class="fas fa-list-check mr-2 text-blue-600"></i> आवेदन डैशबोर्ड
-        </h2>
-        
-        <!-- SEARCH -->
-        <div class="relative w-full md:w-64">
-            <input type="text" id="searchInput" placeholder="नाम से खोजें..." 
-                   class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-        </div>
-    </div>
-
-    <!-- FILTER TABS -->
-    <div class="flex flex-wrap gap-2 mb-8" id="filterButtons">
-        <button onclick="filterByType('ALL')" id="btn-ALL" class="px-5 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm transition active-filter">
-            सभी (All)
-        </button>
-        <button onclick="filterByType('samagra')" id="btn-samagra" class="px-5 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-sm transition">
-            समग्र (Samagra)
-        </button>
-        <button onclick="filterByType('nivas')" id="btn-nivas" class="px-5 py-2 bg-green-100 hover:bg-green-200 rounded-lg text-sm transition">
-            निवास (Nivas)
-        </button>
-        <button onclick="filterByType('jati')" id="btn-jati" class="px-5 py-2 bg-yellow-100 hover:bg-yellow-200 rounded-lg text-sm transition">
-            जाति (Jati)
-        </button>
-    </div>
-
-    <!-- DATA STATUS MESSAGE -->
-    <div id="loadingStatus" class="text-center py-10 text-gray-600 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
-        <div id="loadingContent">
-            <i class="fas fa-spinner fa-spin mr-2 text-blue-600"></i> डेटा लोड हो रहा है, कृपया प्रतीक्षा करें...
-        </div>
-    </div>
-
-    <!-- TABLE -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden hidden" id="tableContainer">
-        <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="bg-blue-900 text-white">
-                    <tr>
-                        <th class="px-6 py-4 text-left font-medium">आवेदक का नाम</th>
-                        <th class="px-6 py-4 text-left font-medium">सेवा का प्रकार</th>
-                        <th class="px-6 py-4 text-left font-medium">समग्र ID / आधार</th>
-                        <th class="px-6 py-4 text-left font-medium">आवेदन की स्थिति</th>
-                    </tr>
-                </thead>
-                <tbody id="dataTable" class="divide-y divide-gray-200">
-                    <!-- Firebase Data Injection -->
-                </tbody>
-            </table>
-        </div>
-        <div id="noDataMsg" class="hidden p-10 text-center text-gray-500">
-            <i class="fas fa-folder-open text-4xl mb-3 block opacity-20"></i>
-            कोई आवेदन नहीं मिला।
-        </div>
-    </div>
-
+  <div class="bg-white rounded shadow overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-blue-800 text-white">
+        <tr>
+          <th class="p-3 text-left">नाम</th>
+          <th class="p-3 text-left">सेवा</th>
+          <th class="p-3 text-left">समग्र ID</th>
+          <th class="p-3 text-left">स्थिति</th>
+        </tr>
+      </thead>
+      <tbody id="dataTable"></tbody>
+    </table>
+  </div>
 </main>
 
-<!-- ================= FOOTER ================= -->
-<footer class="bg-gray-900 text-gray-400 py-10 px-4 mt-auto">
-    <div class="container mx-auto text-center">
-        <p>© 2026 AllInOne | MP Govt Services Portal</p>
-        <p class="text-xs mt-2 text-gray-500">Managed by IT Cell, Madhya Pradesh.</p>
+<!-- DETAILS MODAL -->
+<div id="detailModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center">
+  <div class="bg-white w-full max-w-2xl rounded shadow">
+    <div class="bg-blue-800 text-white p-4 flex justify-between">
+      <h2 class="font-bold">आवेदन विवरण</h2>
+      <button onclick="closeDetails()">✖</button>
     </div>
-</footer>
 
-<!-- ================= DETAIL MODAL ================= -->
-<div id="detailModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-[100] p-4">
-    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
-            <h3 class="font-bold text-lg">आवेदन का पूर्ण विवरण</h3>
-            <button onclick="closeDetails()" class="text-2xl font-bold leading-none hover:text-red-200">×</button>
-        </div>
-        <div id="detailBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm max-h-[70vh] overflow-y-auto">
-            <!-- Details Injection -->
-        </div>
-        <div class="bg-gray-50 px-6 py-4 border-t flex justify-end gap-3">
-            <button onclick="downloadPDF()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700">
-                📄 PDF डाउनलोड करें
-            </button>
-            <button onclick="closeDetails()" class="bg-gray-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-600">बंद करें</button>
-        </div>
+    <div id="detailBody" class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+    <div class="p-4 flex justify-end gap-3 bg-gray-100">
+      <button onclick="downloadPDF()" class="bg-green-600 text-white px-4 py-2 rounded">
+        📄 PDF डाउनलोड
+      </button>
+      <button onclick="closeDetails()" class="bg-gray-600 text-white px-4 py-2 rounded">
+        बंद करें
+      </button>
     </div>
+  </div>
 </div>
 
-<!-- ================= HIDDEN PDF TEMPLATE ================= -->
-<div id="pdfContent" class="hidden">
-    <!-- Content will be injected via JS -->
-</div>
+<!-- PDF TEMPLATE -->
+<div id="pdfContent" class="hidden"></div>
 
-
-<!-- ================= FIREBASE & LOGIC ================= -->
+<!-- FIREBASE -->
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    let allApplications = [];
-    let currentUser = null;
+const firebaseConfig = {
+  apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+  authDomain: "allinone-aa89.firebaseapp.com",
+  projectId: "allinone-aa89"
+};
 
-    // Environmental variables
-    const firebaseConfig = JSON.parse(__firebase_config);
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+let allApplications = [];
 
-    // Rule 1 Compliance: Strict Path
-    const APPLICATIONS_PATH = ['artifacts', appId, 'public', 'data', 'applications'];
+signInAnonymously(auth);
 
-    async function initAuth() {
-        try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        } catch (error) {
-            console.error("Auth error:", error);
-            document.getElementById("loadingContent").innerHTML = 
-                `<span class="text-red-500 font-bold"><i class="fas fa-exclamation-triangle mr-2"></i> लॉगिन में समस्या: ${error.message}</span>`;
-        }
-    }
+onAuthStateChanged(auth, user => {
+  if (user) loadData();
+});
 
-    onAuthStateChanged(auth, (user) => {
-        currentUser = user;
-        if (user) {
-            startListening();
-        }
-    });
+function loadData() {
+  onSnapshot(collection(db, "applications"), snap => {
+    allApplications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderTable(allApplications);
+  });
+}
 
-    window.handleLogout = async () => {
-        try {
-            await signOut(auth);
-            // Redirecting to index.html as requested
-            window.location.href = "index.html";
-        } catch (e) { console.error(e); }
-    };
+function renderTable(data) {
+  const table = document.getElementById("dataTable");
+  table.innerHTML = "";
 
-    function startListening() {
-        const colRef = collection(db, ...APPLICATIONS_PATH);
-        
-        onSnapshot(colRef, (snapshot) => {
-            allApplications = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            
-            // SORTING: Latest First
-            allApplications.sort((a, b) => {
-                const timeA = a.timestamp || 0;
-                const timeB = b.timestamp || 0;
-                if (timeA === 0 && timeB === 0) return b.id.localeCompare(a.id);
-                return timeB - timeA;
-            });
+  data.forEach(item => {
+    table.innerHTML += `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-3 text-blue-700 font-bold cursor-pointer underline"
+            onclick="openDetails('${item.id}')">
+          ${item.applicantName || "-"}
+        </td>
+        <td class="p-3">${item.serviceType || "-"}</td>
+        <td class="p-3">${item.samagraId || "-"}</td>
+        <td class="p-3">
+          <select onchange="changeStatus('${item.id}', this.value)"
+            class="border px-2 py-1">
+            <option value="pending" ${item.status==="pending"?"selected":""}>Pending</option>
+            <option value="complete" ${item.status==="complete"?"selected":""}>Complete</option>
+            <option value="reject" ${item.status==="reject"?"selected":""}>Reject</option>
+          </select>
+        </td>
+      </tr>
+    `;
+  });
+}
 
-            // UI UPDATES
-            document.getElementById("loadingStatus").classList.add("hidden");
-            document.getElementById("tableContainer").classList.remove("hidden");
-            renderTable(allApplications);
-        }, (error) => {
-            console.error("Firestore error:", error);
-            document.getElementById("loadingContent").innerHTML = 
-                `<span class="text-red-500 font-bold"><i class="fas fa-lock mr-2"></i> डेटा एक्सेस करने की अनुमति नहीं है।</span>`;
-        });
-    }
+window.changeStatus = async (id, status) => {
+  await updateDoc(doc(db, "applications", id), { status });
+};
 
-    function renderTable(data) {
-        const tableBody = document.getElementById("dataTable");
-        const noData = document.getElementById("noDataMsg");
-        tableBody.innerHTML = "";
+window.openDetails = (id) => {
+  const item = allApplications.find(a => a.id === id);
+  if (!item) return;
 
-        if (data.length === 0) {
-            noData.classList.remove("hidden");
-            return;
-        }
+  const labels = {
+    applicantName: "नाम",
+    fatherName: "पिता का नाम",
+    serviceType: "सेवा",
+    samagraId: "समग्र ID",
+    aadhaar: "आधार",
+    mobile: "मोबाइल",
+    annualIncome: "आय",
+    fullAddress: "पता",
+    status: "स्थिति"
+  };
 
-        noData.classList.add("hidden");
+  let html = "";
+  for (const key in labels) {
+    html += `
+      <div>
+        <div class="text-xs text-gray-500">${labels[key]}</div>
+        <div class="font-bold">${item[key] || "-"}</div>
+      </div>
+    `;
+  }
 
-        data.forEach(item => {
-            const statusColor = item.status === 'complete' ? 'text-green-600' : 
-                                item.status === 'reject' ? 'text-red-600' : 'text-blue-600';
+  document.getElementById("detailBody").innerHTML = html;
 
-            const row = document.createElement("tr");
-            row.className = "hover:bg-blue-50 transition border-b";
-            row.innerHTML = `
-                <td class="px-6 py-4">
-                    <button onclick="openDetails('${item.id}')" class="text-blue-700 font-bold hover:underline text-left">
-                        ${item.applicantName || "अज्ञात"}
-                    </button>
-                    <div class="text-[10px] text-gray-400">ID: ${item.id.substring(0,8)}</div>
-                </td>
-                <td class="px-6 py-4 capitalize font-medium text-gray-700">
-                    <span class="px-2 py-1 rounded bg-gray-100">${item.serviceType || "-"}</span>
-                </td>
-                <td class="px-6 py-4 text-gray-600">
-                    <div class="text-xs">S: ${item.samagraId || "-"}</div>
-                    <div class="text-xs">A: ${item.aadhaar || "-"}</div>
-                </td>
-                <td class="px-6 py-4">
-                    <select onchange="updateApplicationStatus('${item.id}', this.value)" 
-                            class="border rounded-md px-2 py-1 font-bold text-xs ${statusColor} outline-none focus:ring-1 focus:ring-blue-400">
-                        <option value="pending" ${item.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-                        <option value="complete" ${item.status === 'complete' ? 'selected' : ''}>✅ Complete</option>
-                        <option value="reject" ${item.status === 'reject' ? 'selected' : ''}>❌ Reject</option>
-                    </select>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    }
+  document.getElementById("pdfContent").innerHTML = `
+    <h2 style="text-align:center">AllInOne MP आवेदन विवरण</h2>
+    <table border="1" style="width:100%;border-collapse:collapse">
+      ${Object.keys(labels).map(k=>`
+        <tr>
+          <td style="padding:8px;font-weight:bold">${labels[k]}</td>
+          <td style="padding:8px">${item[k]||"-"}</td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
 
-    window.filterByType = (type) => {
-        const btns = document.querySelectorAll("#filterButtons button");
-        btns.forEach(b => b.classList.remove("active-filter"));
-        document.getElementById(`btn-${type}`).classList.add("active-filter");
+  document.getElementById("detailModal").classList.remove("hidden");
+  document.getElementById("detailModal").classList.add("flex");
+};
 
-        if (type === 'ALL') {
-            renderTable(allApplications);
-        } else {
-            const filtered = allApplications.filter(app => 
-                (app.serviceType || "").toLowerCase() === type.toLowerCase()
-            );
-            renderTable(filtered);
-        }
-    };
+window.closeDetails = () => {
+  document.getElementById("detailModal").classList.add("hidden");
+};
 
-    window.updateApplicationStatus = async (docId, newStatus) => {
-        if (!currentUser) return;
-        try {
-            const docRef = doc(db, ...APPLICATIONS_PATH, docId);
-            await updateDoc(docRef, { status: newStatus });
-        } catch (e) {
-            console.error("Update error:", e);
-        }
-    };
+window.downloadPDF = () => {
+  const el = document.getElementById("pdfContent");
+  el.classList.remove("hidden");
 
-    window.openDetails = (id) => {
-        const item = allApplications.find(a => a.id === id);
-        if (!item) return;
+  html2pdf().from(el).set({
+    filename: "Application.pdf",
+    margin: 0.5
+  }).save().then(()=>el.classList.add("hidden"));
+};
 
-        // Populate Modal
-        const detailBody = document.getElementById("detailBody");
-        let modalHtml = "";
-        
-        // List specific important keys
-        const displayKeys = {
-            "applicantName": "आवेदक का नाम",
-            "fatherName": "पिता/पति का नाम",
-            "serviceType": "सेवा का प्रकार",
-            "samagraId": "समग्र आईडी",
-            "aadhaar": "आधार नंबर",
-            "mobile": "मोबाइल नंबर",
-            "annualIncome": "वार्षिक आय",
-            "fullAddress": "पूरा पता",
-            "status": "आवेदन स्थिति"
-        };
+window.logout = () => {
+  signOut(auth).then(()=>location.reload());
+};
 
-        for (const [key, label] of Object.entries(displayKeys)) {
-            if (item[key]) {
-                modalHtml += `
-                    <div class="flex flex-col border-b border-gray-100 pb-2">
-                        <span class="text-gray-500 text-xs">${label}</span>
-                        <span class="font-bold text-base text-gray-800">${item[key]}</span>
-                    </div>
-                `;
-            }
-        }
-        detailBody.innerHTML = modalHtml;
-
-        // Populate Hidden PDF Template for Download
-        const pdfContent = document.getElementById("pdfContent");
-        pdfContent.innerHTML = `
-            <div style="padding: 40px; border: 2px solid #000;">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Emblem_of_Madhya_Pradesh.svg/1200px-Emblem_of_Madhya_Pradesh.svg.png" style="height: 80px;">
-                    <h1 style="font-size: 24px; font-weight: bold; margin-top: 10px;">मध्यप्रदेश शासन</h1>
-                    <h2 style="font-size: 18px;">AllInOne MP - आवेदन पावती</h2>
-                </div>
-                <hr style="border: 1px solid #eee; margin-bottom: 20px;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; width: 40%;">आवेदक का नाम</td><td style="padding: 8px; border: 1px solid #ddd;">${item.applicantName || "-"}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">पिता/पति का नाम</td><td style="padding: 8px; border: 1px solid #ddd;">${item.fatherName || "-"}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">समग्र आईडी</td><td style="padding: 8px; border: 1px solid #ddd;">${item.samagraId || "-"}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">सेवा का प्रकार</td><td style="padding: 8px; border: 1px solid #ddd; text-transform: capitalize;">${item.serviceType || "-"}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">मोबाइल नंबर</td><td style="padding: 8px; border: 1px solid #ddd;">${item.mobile || "-"}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">पता</td><td style="padding: 8px; border: 1px solid #ddd;">${item.fullAddress || "-"}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">आवेदन दिनांक</td><td style="padding: 8px; border: 1px solid #ddd;">${item.timestamp ? new Date(item.timestamp).toLocaleDateString('hi-IN') : "-"}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">स्थिति</td><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">${item.status || "Pending"}</td></tr>
-                </table>
-                <div style="margin-top: 40px; text-align: right;">
-                    <p>डिजिटल हस्ताक्षरित</p>
-                    <p style="font-size: 12px; color: #777;">AllInOne MP पोर्टल</p>
-                </div>
-            </div>
-        `;
-
-        document.getElementById("detailModal").classList.remove("hidden");
-        document.getElementById("detailModal").classList.add("flex");
-    };
-
-    window.closeDetails = () => {
-        document.getElementById("detailModal").classList.add("hidden");
-        document.getElementById("detailModal").classList.remove("flex");
-    };
-
-    // SEARCH LOGIC
-    document.getElementById("searchInput").addEventListener("input", (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = allApplications.filter(app => 
-            (app.applicantName || "").toLowerCase().includes(term) ||
-            (app.samagraId || "").toLowerCase().includes(term)
-        );
-        renderTable(filtered);
-    });
-
-    window.downloadPDF = function () {
-        const element = document.getElementById("pdfContent");
-        // Temporarily show it for html2pdf to capture correctly
-        element.classList.remove("hidden");
-
-        const options = {
-            margin: [0.5, 0.5],
-            filename: 'Application_Acknowledgement.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(options).from(element).save().then(() => {
-            // Hide it back
-            element.classList.add("hidden");
-        });
-    };
-
-    initAuth();
+document.getElementById("searchInput").addEventListener("input", e=>{
+  const t = e.target.value.toLowerCase();
+  renderTable(allApplications.filter(a =>
+    (a.applicantName||"").toLowerCase().includes(t)
+  ));
+});
 </script>
 
 </body>
