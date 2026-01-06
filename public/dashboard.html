@@ -332,11 +332,6 @@
         }
     };
 
-    window.openDetails = (id) => {
-        const item = allApplications.find(a => a.id === id);
-        if (!item) return;
-
-        const detailBody = document.getElementById("detailBody");
         window.openDetails = (id) => {
     const item = allApplications.find(a => a.id === id);
     if (!item) return;
@@ -359,11 +354,6 @@
     document.getElementById("detailModal").classList.remove("hidden");
     document.getElementById("detailModal").classList.add("flex");
 };
-
-
-        document.getElementById("detailModal").classList.remove("hidden");
-        document.getElementById("detailModal").classList.add("flex");
-    };
 
     window.closeDetails = () => {
         document.getElementById("detailModal").classList.add("hidden");
