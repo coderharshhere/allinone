@@ -186,14 +186,16 @@
     let allApplications = [];
     let currentUser = null;
 
-    const firebaseConfig = JSON.parse(__firebase_config);
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = {
+  apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+  authDomain: "allinone-aa89.firebaseapp.com",
+  projectId: "allinone-aa89"
+};
+
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
-    const APPLICATIONS_PATH = ['artifacts', appId, 'public', 'data', 'applications'];
 
     async function initAuth() {
         try {
@@ -224,7 +226,7 @@
     };
 
     function startListening() {
-        const colRef = collection(db, ...APPLICATIONS_PATH);
+            const colRef = collection(db, "applications");
         
         onSnapshot(colRef, (snapshot) => {
             allApplications = snapshot.docs.map(doc => ({
@@ -314,7 +316,7 @@
     window.updateApplicationStatus = async (docId, newStatus) => {
         if (!currentUser) return;
         try {
-            const docRef = doc(db, ...APPLICATIONS_PATH, docId);
+            const docRef = doc(db, "applications", docId);
             await updateDoc(docRef, { status: newStatus });
         } catch (e) {
             console.error("Update error:", e);
@@ -362,5 +364,6 @@
 
     initAuth();
 </script>
+    
 </body>
 </html>
