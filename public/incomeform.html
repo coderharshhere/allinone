@@ -249,29 +249,42 @@ import {
   form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  try {
-    await addDoc(collection(db, "applications"), {
-      serviceType: "Income Certificate",
-      applicantName: form.applicantName.value,
-      fatherName: form.fatherName.value,
-      samagraId: form.samagraId.value,
-      aadhaar: form.aadhaar.value,
-      occupation: form.occupation.value,
-      annualIncome: form.annualIncome.value,
-      status: "pending",
-      assignedTo: null,
-     createdAt: serverTimestamp(),
-mobile: form.mobile.value
-    });
+  // 🔹 form values (example)
+  const applicantName = document.getElementById("name").value;
+  const serviceType = document.getElementById("service").value;
+  const samagraId = document.getElementById("samagra").value;
+  const mobile = document.getElementById("mobile").value;
 
-    alert("आवेदन सफलतापूर्वक जमा हो गया ✅");
-    form.reset();
+  // 🔹 Firestore me data add
+  const docRef = await addDoc(collection(db, "applications"), {
+    applicantName,
+    serviceType,
+    samagraId,
+    mobile,
+    status: "pending",
+    createdAt: serverTimestamp()
+  });
+
+  // 🔹 SAME application ID (Dashboard jaisi)
+  const applicationNumber =
+    "AIO-" + docRef.id.substring(0, 8).toUpperCase();
+
+  // 🔔 ALERT with Application ID
+  alert(
+    "आवेदन सफलतापूर्वक जमा हो गया ✅\n\n" +
+    "Application ID: " + applicationNumber + "\n\n" +
+    "कृपया इस ID को सुरक्षित रखें।"
+  );
+
+  form.reset();
+});
 
   } catch (error) {
     console.error(error);
     alert("❌ आवेदन जमा नहीं हुआ, कृपया पुनः प्रयास करें");
   }
 });
+    
 
 </script>
     <script>
