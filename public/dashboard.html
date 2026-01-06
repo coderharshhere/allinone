@@ -172,10 +172,19 @@
             <!-- Details Injection -->
         </div>
         <div class="bg-gray-50 px-6 py-4 border-t flex justify-end">
-            <button onclick="closeDetails()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700">बंद करें</button>
+<button onclick="downloadPDF()"
+  class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700">
+  📄 PDF डाउनलोड करें
+</button>
         </div>
+        
     </div>
+    
 </div>
+    <div id="pdfContent" class="hidden p-8 text-sm">
+  <!-- JS से content आएगा -->
+</div>
+
 
 <!-- ================= FIREBASE & LOGIC ================= -->
 <script type="module">
@@ -328,20 +337,29 @@
         if (!item) return;
 
         const detailBody = document.getElementById("detailBody");
-        detailBody.innerHTML = `
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">नाम</span><span class="font-bold text-base">${item.applicantName || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">पिता/पति</span><span class="font-bold text-base">${item.fatherName || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">सेवा</span><span class="font-bold text-blue-700 capitalize text-base">${item.serviceType || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">मोबाइल</span><span class="font-bold text-base">${item.mobile || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">समग्र आईडी</span><span class="font-bold text-base">${item.samagraId || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">आधार</span><span class="font-bold text-base">${item.aadhaar || "N/A"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">आय</span><span class="font-bold text-green-700 text-base">₹ ${item.annualIncome || "0"}</span></div>
-            <div class="flex flex-col"><span class="text-gray-500 text-xs">स्थिति</span><span class="font-bold uppercase text-base">${item.status || "pending"}</span></div>
-            <div class="flex flex-col md:col-span-2 bg-blue-50 p-4 rounded-xl border border-blue-100 mt-2">
-                <span class="text-blue-600 text-xs font-bold uppercase mb-1">पूरा पता</span>
-                <span class="text-gray-700 leading-relaxed">${item.fullAddress || "जानकारी उपलब्ध नहीं है"}</span>
+        window.openDetails = (id) => {
+    const item = allApplications.find(a => a.id === id);
+    if (!item) return;
+
+    const detailBody = document.getElementById("detailBody");
+
+    let html = "";
+
+    for (const key in item) {
+        html += `
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-xs">${key}</span>
+                <span class="font-bold text-base">${item[key]}</span>
             </div>
         `;
+    }
+
+    detailBody.innerHTML = html;
+
+    document.getElementById("detailModal").classList.remove("hidden");
+    document.getElementById("detailModal").classList.add("flex");
+};
+
 
         document.getElementById("detailModal").classList.remove("hidden");
         document.getElementById("detailModal").classList.add("flex");
@@ -363,7 +381,22 @@
     });
 
     initAuth();
+    window.downloadPDF = function () {
+  const element = document.getElementById("pdfContent");
+
+  const options = {
+    margin: 0.5,
+    filename: 'Application.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(options).from(element).save();
+};
+
 </script>
-    
+    <!-- html2pdf library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
