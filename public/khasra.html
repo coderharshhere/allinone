@@ -89,14 +89,42 @@
     </label>
     <input type="tel" name="ownerMobile" class="form-input" placeholder="10 अंकों का मोबाइल नंबर" required>
 </div>
-
+ <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        ई-मेल आईडी *
+      </label>
+      <input type="email" name="email" placeholder="example@gmail.com" class="form-input" required>
+    </div>
 <!-- भूमि का विवरण -->
-<div>
-    <label class="block text-sm font-bold text-gray-700 mb-2">
+ <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
         जिला *
-    </label>
-    <input type="text" name="district" class="form-input" placeholder="जिला नाम" required>
-</div>
+      </label>
+      <select name="district" class="form-input bg-white" required>
+        <option value="">चुनें</option>
+        <option value="Agar Malwa">अगर-मालवा</option> 
+        <option value="Alirajpur">अलीराजपुर</option> 
+        <option value="Anuppur">अनूपपुर</option>
+        <option value="Ashoknagar">अशोकनगर</option> 
+        <option value="Balaghat">बालाघाट</option> 
+          <option value="Barwani">बड़वानी</option> 
+          <option value="Betul">बैतूल</option> 
+          <option value="Bhind">भिंड</option> 
+          <option value="Bhopal">भोपाल</option> 
+          <option value="Burhanpur">बुरहानपुर</option> 
+          <option value="Chachaura">चाचौड़ा</option> 
+          <option value="Chhatarpur">छतरपुर</option> 
+          <option value="Chhindwara">छिंदवाड़ा</option> 
+          <option value="Damoh">दमोह</option> 
+          <option value="Datia">दतिया</option> 
+          <option value="Dewas">देवास</option> 
+          <option value="Dhar">धार</option> 
+          <option value="Dindori">डिंडोरी</option> 
+          <option value="Guna">गुना</option> 
+          <option value="Gwalior">ग्वालियर</option> 
+          <option value="Harda">हरदा</option> <option value="Hoshangabad">होशंगाबाद</option> <option value="Indore">इंदौर</option> <option value="Jabalpur">जबलपुर</option> <option value="Jhabua">झाबुआ</option> <option value="Katni">कटनी</option> <option value="Khandwa">खंडवा</option> <option value="Khargone">खरगोन</option> <option value="Maihar">मैहर</option> <option value="Mandla">मंडला</option> -option value="Mandsaur">मंदसौर</option> <option value="Morena">मुरैना</option> <option value="Nagda">नागदा</option> <option value="Narsinghpur">नरसिंहपुर</option> <option value="Neemuch">नीमच</option> <option value="Niwari">निवाड़ी</option> <option value="Panna">पन्ना</option> <option value="Raisen">रायसेन</option> <option value="Rajgarh">राजगढ़</option> <option value="Ratlam">रतलाम</option> <option value="Rewa">रीवा</option> <option value="Sagar">सागर</option> <option value="Satna">सतना</option> <option value="Sehore">सीहोर</option> <option value="Seoni">सिवनी</option> <option value="Shahdol">शाहडोल</option> <option value="Shajapur">शाजापुर</option> <option value="Sheopur">श्योपुर</option> <option value="Shivpuri">शिवपुरी</option> <option value="Sidhi">सीधी</option> <option value="Singrauli">सिंगरौली</option> <option value="Tikamgarh">टीकमगढ़</option> <option value="Ujjain">उज्जैन</option> <option value="Umaria">उमरिया</option> <option value="Vidisha">विदिशा</option>
+      </select>
+    </div>
 
 <div>
     <label class="block text-sm font-bold text-gray-700 mb-2">
@@ -229,18 +257,18 @@
 
     <!-- FOOTER -->
     <div id="footer"></div>
-
-    <script type="module">
-        fetch("header.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("header").innerHTML = data);
-
-    fetch("footer.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("footer").innerHTML = data);
+<script>
+  (function(){
+    emailjs.init("-HjIyXVqfuRKrznVE"); // ← यहाँ अपनी Public Key डालो
+  })();
+</script>
+  <script type="module">
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getFirestore, collection, 
+                addDoc, 
+                serverTimestamp } 
+        from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
         // Firebase Configuration (From User Template)
         const firebaseConfig = {
@@ -258,27 +286,86 @@
 
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            try {
-                const formData = new FormData(form);
-                await addDoc(collection(db, "applications"), {
-                    serviceType: "Caste Certificate",
-                    applicantName: formData.get("applicantName"),
-                    fatherName: formData.get("fatherName"),
-                    samagraId: formData.get("samagraId"),
-                    aadhaar: formData.get("aadhaar"),
-                    category: formData.get("category"),
-                    subCaste: formData.get("subCaste"),
-                    mobile: formData.get("mobile"),
-                    status: "pending",
-                    createdAt: serverTimestamp()
-                });
-                alert("आवेदन सफलतापूर्वक जमा हो गया हम आपसे जल्द संपर्क करेंगे✅");
-                form.reset();
-            } catch (error) {
-                console.error("Error submitting form: ", error);
-                alert("कुछ त्रुटि हुई, कृपया पुनः प्रयास करें।");
-            }
-        });
+           try {
+  const formData = new FormData(form);
+
+  // checkbox documents (multiple)
+  const documents = formData.getAll("documents[]");
+
+  await addDoc(collection(db, "applications"), {
+
+    // ===== SERVICE INFO =====
+    serviceType: "Khasra / Khatauni",
+    status: "pending",
+    createdAt: serverTimestamp(),
+
+    // ===== OWNER DETAILS =====
+    ownerName: formData.get("ownerName"),
+    fatherHusbandName: formData.get("fatherHusbandName"),
+    ownerMobile: formData.get("ownerMobile"),
+    email: formData.get("email"),
+
+    // ===== LAND DETAILS =====
+    district: formData.get("district"),
+    tehsil: formData.get("tehsil"),
+    village: formData.get("village"),
+    khasraNumber: formData.get("khasraNumber"),
+    khataKhatauniNumber: formData.get("khataKhatauniNumber"),
+    documentType: formData.get("documentType"),
+    year: formData.get("year"),
+
+    // ===== APPLICANT DETAILS =====
+    applicantName: formData.get("applicantName"),
+    relationWithOwner: formData.get("relationWithOwner"),
+    applicantMobile: formData.get("applicantMobile"),
+
+    // ===== DOCUMENTS =====
+    documentsProvided: documents
+
+  });
+         const applicationNumber =
+      "AIO-" + docRef.id.substring(0, 8).toUpperCase();
+
+    // 3️⃣ अब EMAIL भेजो (यही सही जगह है ✅)
+    await emailjs.send(
+      "service_allinone",      // 👈 EmailJS Service ID
+      "template_7x246oi",     // 👈 Template ID
+      {
+        to_email: form.email.value,
+        to_name: form.applicantName.value,
+        application_no: applicationNumber
+      }
+    );
+
+    // 4️⃣ User को message दिखाओ
+    alert(
+      "✅ आवेदन सफलतापूर्वक जमा हो गया हम आपसे जल्द संपर्क करेंगे\n\n" +
+      "Application ID: " + applicationNumber +
+      "\n\nईमेल आपके पते पर भेज दिया गया है।"
+    );
+
+    form.reset();
+
+  } catch (error) {
+    console.error(error);
+    alert("❌ आवेदन या ईमेल भेजने में समस्या आई");
+  }
+});
+
     </script>
+                   <script>
+  fetch("header.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    });
+
+  fetch("footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+</script>
+  
 </body>
 </html>
