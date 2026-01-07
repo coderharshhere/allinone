@@ -55,7 +55,7 @@ body { font-family: 'Noto Sans Devanagari', sans-serif; }
         <tr>
           <th class="p-3 text-left">नाम</th>
           <th class="p-3 text-left">सेवा</th>
-          <th class="p-3 text-left">समग्र ID</th>
+          <th class="p-3 text-left">समग्र / सदस्य ID</th>
           <th class="p-3 text-left">तारीख</th>
          <th class="p-3 text-left">स्थिति</th>
         <th class="p-3 text-left">Delete</th>
@@ -104,16 +104,14 @@ import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https:/
 import { deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 window.deleteApplication = async function (id) {
-  const confirmDelete = confirm("क्या आप यह आवेदन delete करना चाहते हैं?");
-  if (!confirmDelete) return;
+  const item = allApplications.find(a => a.id === id);
+  if (!item) return;
 
-  try {
-    await deleteDoc(doc(db, "applications", id));
-    alert("आवेदन सफलतापूर्वक delete हो गया ✅");
-  } catch (err) {
-    console.error(err);
-    alert("Delete करने में समस्या आई ❌");
-  }
+  const ok = confirm("क्या आप यह आवेदन delete करना चाहते हैं?");
+  if (!ok) return;
+
+  await deleteDoc(doc(db, item._collection, id));
+  alert("आवेदन delete हो गया ✅");
 };
 
 const firebaseConfig = {
@@ -131,9 +129,9 @@ let allApplications = [];
 onSnapshot(collection(db, "applications"), snap => {
   const apps = snap.docs.map(d => ({
     id: d.id,
+    _collection: "applications",
     ...d.data()
   }));
-
   allApplications = [...apps];
   renderTable(allApplications);
 });
@@ -141,9 +139,9 @@ onSnapshot(collection(db, "applications"), snap => {
 onSnapshot(collection(db, "samagra_ekyc_requests"), snap => {
   const ekyc = snap.docs.map(d => ({
     id: d.id,
+    _collection: "samagra_ekyc_requests",
     ...d.data()
   }));
-
   allApplications = [...allApplications, ...ekyc];
   renderTable(allApplications);
 });
@@ -171,8 +169,8 @@ function renderTable(data) {
           ${item.applicantName || "-"}
         </td>
         <td class="p-3">${item.serviceType || "-"}</td>
-        <td class="p-3">${item.samagraId || "-"}</td>
-        <td class="p-3">
+<td>${item.memberId || "-"}</td>
+<td class="p-3">
   ${formatDate(item.createdAt)}
 </td>
       <td class="p-3">
@@ -208,17 +206,20 @@ window.openDetails = (id) => {
   const applicationNumber = "AIO-" + item.id.substring(0, 8).toUpperCase();
 
   const labels = {
-    applicantName: "नाम",
-    fatherName: "पिता का नाम",
-    serviceType: "सेवा",
-    samagraId: "समग्र ID",
-    aadhaar: "आधार",
-    mobile: "मोबाइल",
-    annualIncome: "आय",
-    fullAddress: "पता",
-    status: "स्थिति",
-      createdAt: "आवेदन तिथि"
-  };
+  applicantName: "नाम",
+  memberId: "समग्र सदस्य ID",
+  familyId: "परिवार ID",
+  aadhaarLast4: "आधार (Last 4 Digit)",
+  authMethod: "प्रमाणीकरण तरीका",
+  mobile: "मोबाइल",
+  email: "ई-मेल",
+  dob: "जन्म तिथि",
+  gender: "लिंग",
+  serviceType: "सेवा",
+  status: "स्थिति",
+  createdAt: "आवेदन तिथि"
+};
+;
 
   let html = "";
   for (const key in labels) {
@@ -332,11 +333,16 @@ window.handleLogout = function () {
 
     renderTable(filteredData);
   });
-    window.changeStatus = async function (id, value) {
-  await updateDoc(doc(db, "applications", id), {
-    status: value
-  });
+   window.changeStatus = async function (id, value) {
+  const item = allApplications.find(a => a.id === id);
+  if (!item) return;
+
+  await updateDoc(
+    doc(db, item._collection, id),
+    { status: value }
+  );
 };
+
 
 </script>
 
