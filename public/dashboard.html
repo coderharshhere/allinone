@@ -128,23 +128,26 @@ const auth = getAuth(app);
 
 let allApplications = [];
 
-signInAnonymously(auth);
+onSnapshot(collection(db, "applications"), snap => {
+  const apps = snap.docs.map(d => ({
+    id: d.id,
+    ...d.data()
+  }));
 
-onAuthStateChanged(auth, user => {
-  if (user) loadData();
+  allApplications = [...apps];
+  renderTable(allApplications);
 });
 
-function loadData() {
-  onSnapshot(collection(db, "applications"), snap => {
-allApplications = snap.docs
-  .map(d => ({ id: d.id, ...d.data() }))
-  .sort((a, b) => {
-    if (!a.createdAt || !b.createdAt) return 0;
-    return b.createdAt.seconds - a.createdAt.seconds;
-  });
-    renderTable(allApplications);
-  });
-}
+onSnapshot(collection(db, "samagra_ekyc_requests"), snap => {
+  const ekyc = snap.docs.map(d => ({
+    id: d.id,
+    ...d.data()
+  }));
+
+  allApplications = [...allApplications, ...ekyc];
+  renderTable(allApplications);
+});
+
 function formatDate(timestamp) {
   if (!timestamp) return "-";
 
