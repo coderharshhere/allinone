@@ -25,6 +25,7 @@
     </style>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
     <!-- ================= STANDARD HEADER START ================= -->
   <div id="header"></div>
@@ -101,8 +102,9 @@
       <label class="block text-sm font-bold text-gray-700 mb-2">
         आधार नंबर *
       </label>
-      <input type="number" name="aadhaar"
+      <input type="text" name="aadhaar"
              class="form-input"
+              pattern="[0-9]{12}"
              minlength="12" maxlength="12"
              required>
     </div>
@@ -281,6 +283,11 @@
 
     <!-- Simple Footer -->
     <div id="footer"></div>
+    <script>
+  (function(){
+    emailjs.init("-HjIyXVqfuRKrznVE"); // ← यहाँ अपनी Public Key डालो
+  })();
+</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
   import {
@@ -308,23 +315,32 @@
   const form = document.getElementById("incomeForm");
 
   // 🔹 Submit handler
-    import emailjs from "https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js";
 
   form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   try {
     // 1️⃣ पहले Firestore में data save करो
-    const docRef = await addDoc(collection(db, "applications"), {
-      applicantName: form.applicantName.value,
-      fatherName: form.fatherName.value,
-      samagraId: form.samagraId.value,
-      aadhaar: form.aadhaar.value,
-      email: form.email.value,
-      annualIncome: form.annualIncome.value,
-      status: "pending",
-      createdAt: serverTimestamp()
-    });
+   const docRef = await addDoc(collection(db, "applications"), {
+  applicantName: form.applicantName.value,
+  fatherName: form.fatherName.value,
+  samagraId: form.samagraId.value,
+  aadhaar: form.aadhaar.value,
+  email: form.email.value,
+  mobile: form.mobile.value,
+
+  gender: form.gender.value,
+  district: form.district.value,
+  tehsil: form.tehsil.value,
+  village: form.village.value,
+  fullAddress: form.fullAddress.value,
+  occupation: form.occupation.value,
+
+  annualIncome: form.annualIncome.value,
+  status: "pending",
+  createdAt: serverTimestamp()
+});
+
 
     // 2️⃣ Application Number बनाओ
     const applicationNumber =
@@ -373,13 +389,8 @@
 </script>
   
             <!-- Bottom Copyright Bar -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-<script>
-  (function(){
-    emailjs.init("-HjIyXVqfuRKrznVE"); // ← यहाँ अपनी Public Key डालो
-  })();
-</script>
+
      
 </body>
 </html>
