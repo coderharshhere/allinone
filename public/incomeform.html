@@ -308,43 +308,54 @@
   const form = document.getElementById("incomeForm");
 
   // 🔹 Submit handler
+    import emailjs from "https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js";
+
   form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const applicantName = document.getElementById("name").value;
-      const samagraId = document.getElementById("samagra").value;
-      const mobile = document.getElementById("mobile").value;
+  try {
+    // 1️⃣ पहले Firestore में data save करो
+    const docRef = await addDoc(collection(db, "applications"), {
+      applicantName: form.applicantName.value,
+      fatherName: form.fatherName.value,
+      samagraId: form.samagraId.value,
+      aadhaar: form.aadhaar.value,
+      email: form.email.value,
+      annualIncome: form.annualIncome.value,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
 
-      const docRef =await addDoc(collection(db, "applications"), {
-  applicantName: form.applicantName.value,
-  fatherName: form.fatherName.value,
-  samagraId: form.samagraId.value,
-  aadhaar: form.aadhaar.value,
+    // 2️⃣ Application Number बनाओ
+    const applicationNumber =
+      "AIO-" + docRef.id.substring(0, 8).toUpperCase();
 
-  email: form.email.value,   // 👈 यही line add करनी है
+    // 3️⃣ अब EMAIL भेजो (यही सही जगह है ✅)
+    await emailjs.send(
+      "SERVICE_ID",      // 👈 EmailJS Service ID
+      "TEMPLATE_ID",     // 👈 Template ID
+      {
+        to_email: form.email.value,
+        to_name: form.applicantName.value,
+        application_no: applicationNumber
+      }
+    );
 
-  annualIncome: form.annualIncome.value,
-  status: "pending",
-  createdAt: serverTimestamp()
+    // 4️⃣ User को message दिखाओ
+    alert(
+      "✅ आवेदन सफलतापूर्वक जमा हो गया हम आपसे जल्द संपर्क करेंगे\n\n" +
+      "Application ID: " + applicationNumber +
+      "\n\nईमेल आपके पते पर भेज दिया गया है।"
+    );
+
+    form.reset();
+
+  } catch (error) {
+    console.error(error);
+    alert("❌ आवेदन या ईमेल भेजने में समस्या आई");
+  }
 });
 
-
-      const applicationNumber =
-        "AIO-" + docRef.id.substring(0, 8).toUpperCase();
-
-      alert(
-        "✅ आवेदन सफलतापूर्वक जमा हो गया हम आपसे जल्द संपर्क करेंगे \n\n" +
-        "Application ID: " + applicationNumber
-      );
-
-      form.reset();
-
-    } catch (error) {
-      console.error(error);
-      alert("❌ आवेदन जमा नहीं हुआ, कृपया पुनः प्रयास करें");
-    }
-  });
 </script>
 
     <script>
@@ -362,6 +373,13 @@
 </script>
   
             <!-- Bottom Copyright Bar -->
-            
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+  (function(){
+    emailjs.init("-HjIyXVqfuRKrznVE"); // ← यहाँ अपनी Public Key डालो
+  })();
+</script>
+     
 </body>
 </html>
