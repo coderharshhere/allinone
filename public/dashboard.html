@@ -239,7 +239,12 @@ window.openDetails = (id) => {
 
   // ---------- PDF CONTENT ----------
  document.getElementById("pdfContent").innerHTML = `
-  <div style="padding:30px;border:2px solid #000;font-family:Noto Sans Devanagari">
+  <div style="
+    position:relative;
+    padding:30px;
+    border:2px solid #000;
+    font-family:Noto Sans Devanagari;
+  ">
 
     <!-- HEADER -->
     <div style="text-align:center;margin-bottom:20px">
@@ -249,32 +254,26 @@ window.openDetails = (id) => {
       </p>
     </div>
 
-    <!-- APPLICANT + QR ROW -->
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      margin-bottom:20px;
-    ">
-      <div style="width:70%">
-        <p><b>नाम:</b> ${item.applicantName || "-"}</p>
-        <p><b>सेवा:</b> ${item.serviceType || "-"}</p>
-        <p><b>मोबाइल:</b> ${item.mobile || "-"}</p>
-        <p><b>आवेदन तिथि:</b> ${formatDate(item.createdAt)}</p>
-      </div>
+    <!-- BASIC INFO -->
+    <p><b>नाम:</b> ${item.applicantName || "-"}</p>
+    <p><b>सेवा:</b> ${item.serviceType || "-"}</p>
+    <p><b>मोबाइल:</b> ${item.mobile || "-"}</p>
+    <p><b>आवेदन तिथि:</b> ${formatDate(item.createdAt)}</p>
 
-      <div id="qrBox"
-        style="
-          width:120px;
-          height:120px;
-          border:1px solid #000;
-          padding:5px;
-        ">
-      </div>
-    </div>
+    <!-- 🔥 QR FIXED POSITION -->
+    <div id="qrBox" style="
+      position:absolute;
+      top:30px;
+      right:30px;
+      width:120px;
+      height:120px;
+      border:1px solid #000;
+      padding:5px;
+      background:#fff;
+    "></div>
 
     <!-- DETAILS TABLE -->
-    <table style="width:100%;border-collapse:collapse">
+    <table style="width:100%;border-collapse:collapse;margin-top:20px">
       ${Object.keys(item).map(key => {
         if (IGNORE_FIELDS.includes(key)) return "";
 
@@ -299,24 +298,24 @@ window.openDetails = (id) => {
     <p style="margin-top:25px;font-size:12px;text-align:right">
       यह दस्तावेज़ डिजिटल रूप से जनरेट किया गया है।
     </p>
+
   </div>
 `;
 
-  // ---------- QR CODE ----------
-  setTimeout(() => {
-    document.getElementById("qrBox")?.remove();
-    const qrDiv = document.createElement("div");
-    qrDiv.id = "qrBox";
-    document.getElementById("pdfContent").appendChild(qrDiv);
 
-    new QRCode(qrDiv, {
-      text: `Application No: ${applicationNumber}
+  // ---------- QR CODE ----------
+setTimeout(() => {
+  const qrDiv = document.getElementById("qrBox");
+  qrDiv.innerHTML = "";
+
+  new QRCode(qrDiv, {
+    text: `Application No: ${applicationNumber}
 Name: ${item.applicantName || ""}
 Service: ${item.serviceType || ""}`,
-      width: 120,
-      height: 120
-    });
-  }, 100);
+    width: 120,
+    height: 120
+  });
+}, 100);
 
   document.getElementById("detailModal").classList.remove("hidden");
   document.getElementById("detailModal").classList.add("flex");
