@@ -3,14 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <title>MPBHOJ Services</title>
-<link rel="stylesheet" href="assets/css/header.css">
 
+<style>
+body{
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    background:#f3f4f6;
+    margin:0;
+}
 
+/* ===== HEADER ===== */
+.header{
+    background:#1d4ed8;
+    color:#fff;
+    padding:15px 20px;
+    font-size:20px;
+    font-weight:bold;
+}
 
+/* ===== CONTAINER ===== */
+.container{
+    max-width:900px;
+    margin:20px auto;
+    background:#ffffff;
+    padding:18px 20px;
+    border-radius:10px;
+}
+
+/* ===== TABS ===== */
+.tabs{
+    display:flex;
+    gap:6px;
+    border-bottom:2px solid #1d4ed8;
+    margin-bottom:18px;
+}
+.tab{
+    flex:1;
+    text-align:center;
+    padding:10px;
+    cursor:pointer;
+    font-weight:600;
+    color:#1d4ed8;
+    background:#e0e7ff;
+    border-radius:16px 16px 0 0;
+}
+.tab.active{
+    background:#1d4ed8;
+    color:#ffffff;
+}
+
+/* ===== FORM BOX ===== */
+.form-box{
+    border:1px solid #e5e7eb;
+    background:#ffffff;
+    border-radius:14px;
+    padding:26px 44px 26px 30px;
+}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+}
+.form-input{
+    width:100%;
+    padding:12px 14px;
+    margin-bottom:18px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    font-size:14px;
+}
+.form-input:focus{
+    border-color:#1d4ed8;
+    outline:none;
+}
+
+/* ===== SUBMIT ===== */
+.submit-box{
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid #e5e7eb;
+}
+.submit-box button{
+    padding:12px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+.submit{
+    background:#15803d;
+    color:#fff;
+}
+.reset{
+    background:#e5e7eb;
+    margin-left:10px;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+    margin-top:40px;
+    background:#111827;
+    color:#d1d5db;
+    text-align:center;
+    padding:15px;
+    font-size:14px;
+}
+</style>
 </head>
 
 <body>
 
+<div class="header">
+    MP-BHOJ OPEN UNIVERSITY SERVICE 
+</div>
 
 <div class="container">
 
@@ -37,7 +145,15 @@
             <label>पिता का नाम / father name*</label>
             <input type="text" class="form-input" placeholder="छात्र के पिता का नाम..."required>
 
-            <label>कोर्स / Course</label>
+            <label>एबीसी आईडी/ABCID*</label>
+<input 
+    type="text" 
+    class="form-input" 
+    placeholder="ENTER ABCID..." 
+    required>
+
+
+    <label>कोर्स / Course</label>
             <select class="form-input">
     <option value="">Select</option>
     <option value="BSC">BSC</option>
@@ -49,10 +165,33 @@
     <option value="Other">Other</option>
 </select>
 
-             <label>मोबाइल नंबर/Mobile no*</label>
+    
+<label>वोटर ID/पैन कार्ड*</label>
+<input 
+    type="text" 
+    class="form-input" 
+    placeholder="Voter ID या PAN Number"required>
+
+    <label>बैंक खाता संख्या</label>
+        <input
+            type="text"
+            class="form-input"
+            placeholder="Bank Account Number"required
+        >
+
+ 
+
+<label>मोबाइल नंबर/Mobile no*</label>
             <input type="tel" class="form-input"placeholder="enter mobile no..."required>
 <label>E-mail Id *</label>
 <input type="email" class="form-input" placeholder="example@gmail.com"required>
+
+<label style="display:flex; align-items:center; gap:8px; margin-bottom:10px; font-size:14px;">
+        <input type="checkbox" name="bpl">
+        बीपीएल श्रेणी में आता है (BPL)
+    </label>
+
+
 
 
         </div>
@@ -264,7 +403,9 @@ form.addEventListener("submit", function(e){
 
 </div>
 
-<div id="footer"></div>
+<div class="footer">
+    © 2026 MPBHOJ Services | All Rights Reserved
+</div>
 
 <script>
 function openTab(index){
@@ -276,6 +417,6 @@ function openTab(index){
     contents[index].classList.add('active');
 }
 </script>
-<script src="assets/js/script.js?v=1.0"></script>
+
 </body>
 </html>
