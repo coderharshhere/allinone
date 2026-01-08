@@ -1,1 +1,391 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>MPBHOJ Services</title>
 
+<style>
+body{
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    background:#f3f4f6;
+    margin:0;
+}
+
+/* ===== HEADER ===== */
+.header{
+    background:#1d4ed8;
+    color:#fff;
+    padding:15px 20px;
+    font-size:20px;
+    font-weight:bold;
+}
+
+/* ===== CONTAINER ===== */
+.container{
+    max-width:900px;
+    margin:20px auto;
+    background:#ffffff;
+    padding:18px 20px;
+    border-radius:10px;
+}
+
+/* ===== TABS ===== */
+.tabs{
+    display:flex;
+    gap:6px;
+    border-bottom:2px solid #1d4ed8;
+    margin-bottom:18px;
+}
+.tab{
+    flex:1;
+    text-align:center;
+    padding:10px;
+    cursor:pointer;
+    font-weight:600;
+    color:#1d4ed8;
+    background:#e0e7ff;
+    border-radius:16px 16px 0 0;
+}
+.tab.active{
+    background:#1d4ed8;
+    color:#ffffff;
+}
+
+/* ===== FORM BOX ===== */
+.form-box{
+    border:1px solid #e5e7eb;
+    background:#ffffff;
+    border-radius:14px;
+    padding:26px 44px 26px 30px;
+}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+}
+.form-input{
+    width:100%;
+    padding:12px 14px;
+    margin-bottom:18px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    font-size:14px;
+}
+.form-input:focus{
+    border-color:#1d4ed8;
+    outline:none;
+}
+
+/* ===== SUBMIT ===== */
+.submit-box{
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid #e5e7eb;
+}
+.submit-box button{
+    padding:12px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+.submit{
+    background:#15803d;
+    color:#fff;
+}
+.reset{
+    background:#e5e7eb;
+    margin-left:10px;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+    margin-top:40px;
+    background:#111827;
+    color:#d1d5db;
+    text-align:center;
+    padding:15px;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    MP-BHOJ OPEN UNIVERSITY SERVICE 
+</div>
+
+<div class="container">
+
+    <div class="tabs">
+        <div class="tab active" onclick="openTab(0)">Admission</div>
+        <div class="tab" onclick="openTab(1)">Supplement</div>
+        <div class="tab" onclick="openTab(2)">Result</div>
+        <div class="tab" onclick="openTab(3)">Exam Form</div>
+        <div class="tab" onclick="openTab(4)">Other</div>
+    </div>
+
+    <form class="form-box">
+
+        <!-- Admission -->
+        <div class="tab-content active">
+          <label>छात्र का नाम/Student full name *</label>
+<input 
+    type="text" 
+    class="form-input" 
+    placeholder="यहाँ पूरा नाम लिखें (जैसे: राम कुमार शर्मा)" 
+    required
+>  
+
+            <label>पिता का नाम / father name*</label>
+            <input type="text" class="form-input" placeholder="छात्र के पिता का नाम..."required>
+
+            <label>कोर्स / Course</label>
+            <select class="form-input">
+    <option value="">Select</option>
+    <option value="BSC">BSC</option>
+    <option value="BCOM">BCom</option>
+    <option value="BA">BA</option>
+    <option value="MA">MA</option>
+    <option value="MCS">MCS</option>
+    <option value="MCOM">MCom</option>
+    <option value="Other">Other</option>
+</select>
+
+             <label>मोबाइल नंबर/Mobile no*</label>
+            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
+<label>E-mail Id *</label>
+<input type="email" class="form-input" placeholder="example@gmail.com"required>
+
+
+        </div>
+
+        <!-- Supplement -->
+        <div class="tab-content">
+            <label>रोल नंबर/ROLL NO*</label>
+            <input type="text" class="form-input"placeholder="enter roll no..."required>
+
+             <label>जन्म तिथि (DOB)*</label>
+            <input type="date" class="form-input"placeholder="enter DOB..."required>
+
+
+            <label>वर्ष / Year</label>
+<select class="form-input">
+    <option value="">Select</option>
+    <option value="1">1st Year</option>
+    <option value="2">2nd Year</option>
+    <option value="3">3rd Year</option>
+</select>
+
+            <label>मोबाइल नंबर/Mobile no*</label>
+            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
+
+<label>E-mail Id *</label>
+<input type="email" class="form-input" placeholder="example@gmail.com"required>
+</div>
+
+        <!-- Result -->
+        <div class="tab-content">
+            <label>रोल नंबर/ROLL NO*</label>
+            <input type="text" class="form-input"placeholder="enter roll no..."required>
+
+             <label>जन्म तिथि (DOB)*</label>
+            <input type="date" class="form-input"placeholder="enter DOB..."required>
+           
+            <label>मोबाइल नंबर/Mobile no*</label>
+            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
+
+    <label>E-mail Id *</label>
+<input type="email" class="form-input" placeholder="example@gmail.com"required>
+
+
+        </div>
+
+        <!-- Exam -->
+        <div class="tab-content">
+            <label>रोल नंबर/Roll no*</label>
+            <input type="text" class="form-input"placeholder="enter roll...">
+
+            <label>जन्म तिथि (DOB)*</label>
+            <input type="date" class="form-input"placeholder="enter DOB..."required>
+
+            <label>कोर्स / Course</label>
+            <select class="form-input">
+    <option value="">Select</option>
+    <option value="BSC">BSC</option>
+    <option value="BCOM">BCom</option>
+    <option value="BA">BA</option>
+    <option value="MA">MA</option>
+    <option value="MCS">MCS</option>
+    <option value="MCOM">MCom</option>
+    <option value="Other">Other</option>
+</select>
+       
+            <label>विषय/Subject*</label>
+            <input type="text" class="form-input"placeholder="enter subject..."required>
+
+        
+            <label>मोबाइल नंबर/Mobile no*</label>
+            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
+
+
+            <label>E-mail Id *</label>
+<input type="email" class="form-input" placeholder="example@gmail.com"required>
+
+        </div>
+
+
+        <!-- Other -->
+       <div class="tab-content">
+
+<label>Other/Service</label>
+            <select class="form-input">
+    <option value="">Select</option>
+    <option value="APAAR_ID">ABC/APAAR ID</option>
+    <option value="Revaluation">Revaluation/Retotaling</option>
+    <option value="SIS_REGISTRATION">SIS Registration</option>
+    <option value="Other">Other</option>
+    
+</select>
+
+            <label>विवरण/Details</label>
+            <input type="text" class="form-input"placeholder="अपने कार्य के बारे में थोड़ा सा बताइए....."required>
+
+             <label>मोबाइल नंबर/Mobile no*</label>
+            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
+
+
+            <label>E-mail Id *</label>
+<input type="email" class="form-input" placeholder="example@gmail.com"required>
+
+
+        </div>
+
+        
+
+<!-- ===== DOCUMENT CHECKLIST ===== -->
+<div class="submit-box" style="margin-top:30px;">
+
+    <label style="font-weight:600; margin-bottom:10px; display:block;">
+        आवश्यक दस्तावेज (यदि उपलब्ध हों तो टिक करें)
+    </label>
+
+    <div style="margin-left:5px; margin-bottom:20px; font-size:13px; color:#374151;">
+        <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+            <input type="checkbox" name="documents[]">
+            छात्र का आधार कार्ड
+        </label>
+
+        <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+            <input type="checkbox" name="documents[]">
+            छात्र की मार्क शीट
+        </label>
+
+        <label style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" name="documents[]">
+            अन्य दस्तावेज
+        </label>
+    </div>
+
+    <!-- ===== DECLARATION ===== -->
+    <label style="
+        display:flex;
+        align-items:flex-start;
+        gap:10px;
+        font-size:12px;
+        color:#4b5563;
+        margin-bottom:20px;
+        line-height:1.5;
+        font-weight:normal;
+    ">
+        <input type="checkbox" required style="margin-top:3px;">
+        मैं घोषणा करता/करती हूँ कि मेरे द्वारा दी गई जानकारी सत्य है। असत्य पाए जाने पर मेरा आवेदन निरस्त किया जा सकता है।
+    </label>
+
+     <!--===== BUTTONS ===== -->
+    <div style="display:flex; gap:12px;">
+        <button type="submit" class="submit">
+            आवेदन जमा करें
+        </button>
+        <button type="reset" class="reset">
+            रीसेट
+        </button>
+
+
+
+
+        <!-- ===== SUCCESS ALERT (Hidden by default) ===== -->
+<div id="alertBox" style="
+    display:none;
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #86efac;
+    padding:12px 16px;
+    margin-top:18px;
+    border-radius:10px;
+    font-size:14px;
+    text-align:center;
+    font-weight:600;
+">
+    ✅ आवेदन सफलतापूर्वक जमा हो गया! हम आपसे जल्द संपर्क करेंगे।
+</div>
+
+<!-- ===== ERROR ALERT ===== -->
+<div id="errorBox" style="
+    display:none;
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fca5a5;
+    padding:12px 16px;
+    margin-top:18px;
+    border-radius:10px;
+    font-size:14px;
+    text-align:center;
+    font-weight:600;
+">
+    ⚠️ कुछ त्रुटि हुई, कृपया पुनः प्रयास करें।
+<script>
+const form = document.querySelector("form");
+
+form.addEventListener("submit", function(e){
+    e.preventDefault(); // ❗ very important
+
+    // TEST PURPOSE (Firebase hata ke check)
+    document.getElementById("alertBox").style.display = "block";
+
+    // auto hide
+    setTimeout(()=>{
+        document.getElementById("alertBox").style.display = "none";
+    }, 3000);
+});
+</script>
+    </div>
+</section>
+
+
+    </form>
+
+</div>
+
+<div class="footer">
+    © 2026 MPBHOJ Services | All Rights Reserved
+</div>
+
+<script>
+function openTab(index){
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(t=>t.classList.remove('active'));
+    contents.forEach(c=>c.classList.remove('active'));
+    tabs[index].classList.add('active');
+    contents[index].classList.add('active');
+}
+</script>
+
+</body>
+</html>
