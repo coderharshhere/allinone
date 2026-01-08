@@ -1,173 +1,110 @@
-/* ================= BASE ================= */
-body {
-  font-family: 'Noto Sans Devanagari', sans-serif;
-  background: #f3f4f6;
+*{ box-sizing:border-box; }
+
+body{
+    font-family:'Noto Sans Devanagari', sans-serif;
+    background:#f3f4f6;
+    margin:0;
 }
 
-/* ================= FORM CONTAINER ================= */
-.container {
-  max-width: 900px;
-  margin: 32px auto;
-  background: #ffffff;
-  padding: 22px;
-  border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+/* CONTAINER */
+.container{
+    width:100%;
+    max-width:900px;
+    margin:20px auto;
+    background:#ffffff;
+    padding:16px;
+    border-radius:10px;
 }
 
-/* ================= TABS ================= */
-.tabs {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #1d4ed8;
+/* TABS */
+.tabs{
+    display:flex;
+    gap:6px;
+    border-bottom:2px solid #1d4ed8;
+    margin-bottom:18px;
+}
+.tab{
+    flex:1;
+    text-align:center;
+    padding:10px;
+    cursor:pointer;
+    font-weight:600;
+    color:#1d4ed8;
+    background:#e0e7ff;
+    border-radius:16px 16px 0 0;
+}
+.tab.active{
+    background:#1d4ed8;
+    color:#ffffff;
 }
 
-.tab {
-  flex: 1;
-  text-align: center;
-  padding: 10px 6px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  color: #1d4ed8;
-  background: #e0e7ff;
-  border-radius: 14px 14px 0 0;
-  transition: all 0.2s ease;
+/* FORM */
+.form-box{
+    border:1px solid #e5e7eb;
+    background:#ffffff;
+    border-radius:14px;
+    padding:clamp(16px,4vw,28px);
 }
 
-.tab:hover {
-  background: #c7d2fe;
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
 }
 
-.tab.active {
-  background: #1d4ed8;
-  color: #ffffff;
+.form-input{
+    width:100%;
+    padding:12px 14px;
+    margin-bottom:18px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    font-size:14px;
 }
 
-/* ================= FORM BOX ================= */
-.form-box {
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 26px;
-  background: #ffffff;
+.form-input:focus{
+    border-color:#1d4ed8;
+    outline:none;
 }
 
-/* ================= TAB CONTENT ================= */
-.tab-content {
-  display: none;
+/* SUBMIT */
+.submit-box{
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid #e5e7eb;
 }
 
-.tab-content.active {
-  display: block;
+.submit{
+    background:#15803d;
+    color:#fff;
+    padding:12px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
 }
 
-/* ================= LABEL & INPUT ================= */
-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #1f2937;
+.reset{
+    background:#e5e7eb;
+    padding:12px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
 }
 
-.form-input {
-  width: 100%;
-  padding: 11px 14px;
-  margin-bottom: 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  font-size: 14px;
-  transition: 0.2s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.15);
-}
-
-/* ================= CHECKBOX ================= */
-input[type="checkbox"] {
-  accent-color: #1d4ed8;
-}
-
-/* ================= SUBMIT SECTION ================= */
-.submit-box {
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px solid #e5e7eb;
-}
-
-/* ================= BUTTONS ================= */
-.submit,
-.reset {
-  padding: 12px 22px;
-  font-size: 15px;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.submit {
-  background: #16a34a;
-  color: #ffffff;
-}
-
-.submit:hover {
-  background: #15803d;
-}
-
-.reset {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.reset:hover {
-  background: #d1d5db;
-}
-
-/* ================= SUCCESS / ERROR ================= */
-#alertBox {
-  display: none;
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
-  padding: 12px 16px;
-  margin-top: 18px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-}
-
-#errorBox {
-  display: none;
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
-  padding: 12px 16px;
-  margin-top: 18px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* ================= MOBILE ================= */
-@media (max-width: 600px) {
-  .container {
-    margin: 16px;
-    padding: 18px;
-  }
-
-  .form-box {
-    padding: 18px 16px;
-  }
-
-  .tab {
-    font-size: 12px;
-    padding: 8px 4px;
-  }
+/* MOBILE ONLY */
+@media(max-width:600px){
+    .tabs{flex-direction:column;}
+    .tab{border-radius:12px;}
+    .submit-actions{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+    }
+    .submit-actions button{
+        width:100%;
+    }
 }
