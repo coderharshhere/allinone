@@ -20,13 +20,13 @@ const db = getFirestore(app);
 console.log("mpbhoj.js loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
-
   const mpbhojForm = document.getElementById("mpbhojForm");
   if (!mpbhojForm) return;
 
   mpbhojForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     console.log("MPBHOJ submit handler working");
+  });
 
     try {
       // 🔹 Active tab service detect
