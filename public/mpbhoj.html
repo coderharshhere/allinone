@@ -1,237 +1,137 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MPBHOJ Services</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="assets/css/mpbhoj.css">
+  <title>MPBHOJ Services | AllINONE-MP</title>
 
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Header + MPBHOJ CSS -->
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/mpbhoj.css">
 </head>
 
 <body>
-
+<!-- ================= HEADER ================= -->
 <div id="header"></div>
 
-<div class="mpbhoj-wrap">
+<!-- ================= NAV ================= -->
+<nav class="main-nav text-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <ul class="flex gap-8 py-3 overflow-x-auto whitespace-nowrap">
+      <li><a href="index.html"><i class="fas fa-home"></i> मुख्य पृष्ठ</a></li>
+      <li><a href="#">नागरिक सेवाएँ</a></li>
+      <li><a href="#">योजनाएँ</a></li>
+      <li><a href="#">विभागीय डैशबोर्ड</a></li>
+      <li><a href="#">शिकायत निवारण</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================= TICKER ================= -->
+<div class="ticker-wrapper py-2">
+  <div class="ticker-text text-sm text-red-600 font-bold">
+    📢 सूचना: लाड़ली बहना योजना के अंतर्गत e-KYC अनिवार्य है |
+    मुख्यमंत्री सीखो-कमाओ योजना पंजीकरण प्रारंभ |
+    समग्र ID में आधार लिंक प्रक्रिया निःशुल्क है
+  </div>
+</div>
+
+<!-- ================= MPBHOJ FORM ================= -->
+<div id="mpbhojForm" class="mpbhoj-wrap">
   <div class="mpbhoj-container">
 
-<div class="tabs">
-    <div class="tab active" onclick="openTab(0)">Admission</div>
-    <div class="tab" onclick="openTab(1)">Supplement</div>
-    <div class="tab" onclick="openTab(2)">Result</div>
-    <div class="tab" onclick="openTab(3)">Exam Form</div>
-    <div class="tab" onclick="openTab(4)">Other</div>
-</div>
-
-<form id="mpbhojForm" class="form-box">
-
-<!-- Admission -->
-<div class="tab-content active">
-          <label>छात्र का नाम/Student full name *</label>
-<input name="studentName" type="text" class="form-input" required>
-
-            <label>पिता का नाम / father name*</label>
-<input name="fatherName" type="text" class="form-input" required>
-
-            <label>एबीसी आईडी/ABCID*</label>
-<input 
-    type="text" 
-    class="form-input" 
-    placeholder="ENTER ABCID..." 
-    required>
-
-
-    <label>कोर्स / Course</label>
-            <select class="form-input">
-    <option value="">Select</option>
-    <option value="BSC">BSC</option>
-    <option value="BCOM">BCom</option>
-    <option value="BA">BA</option>
-    <option value="MA">MA</option>
-    <option value="MCS">MCS</option>
-    <option value="MCOM">MCom</option>
-    <option value="Other">Other</option>
-</select>
-
-    
-<label>वोटर ID/पैन कार्ड*</label>
-<input 
-    type="text" 
-    class="form-input" 
-    placeholder="Voter ID या PAN Number"required>
-
-    <label>बैंक खाता संख्या</label>
-        <input
-            type="text"
-            class="form-input"
-            placeholder="Bank Account Number"required
-        >
-
- 
-
-<label>मोबाइल नंबर/Mobile no*</label>
-            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
-<label>E-mail Id *</label>
-<input type="email" class="form-input" placeholder="example@gmail.com"required>
-
-<label style="display:flex; align-items:center; gap:8px; margin-bottom:10px; font-size:14px;">
-        <input type="checkbox" name="bpl">
-        बीपीएल श्रेणी में आता है (BPL)
-    </label>
-</div>
-
-
-
-<!-- Supplement -->
-        <div class="tab-content">
-            <label>रोल नंबर/ROLL NO*</label>
-            <input type="text" class="form-input"placeholder="enter roll no..."required>
-
-             <label>जन्म तिथि (DOB)*</label>
-            <input type="date" class="form-input"placeholder="enter DOB..."required>
-
-
-            <label>वर्ष / Year</label>
-<select class="form-input">
-    <option value="">Select</option>
-    <option value="1">1st Year</option>
-    <option value="2">2nd Year</option>
-    <option value="3">3rd Year</option>
-</select>
-
-            <label>मोबाइल नंबर/Mobile no*</label>
-            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
-
-<label>E-mail Id *</label>
-<input type="email" class="form-input" placeholder="example@gmail.com"required>
-</div>
-
-        <!-- Result -->
-        <div class="tab-content">
-            <label>रोल नंबर/ROLL NO*</label>
-            <input type="text" class="form-input"placeholder="enter roll no..."required>
-
-             <label>जन्म तिथि (DOB)*</label>
-            <input type="date" class="form-input"placeholder="enter DOB..."required>
-           
-            <label>मोबाइल नंबर/Mobile no*</label>
-            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
-
-    <label>E-mail Id *</label>
-<input type="email" class="form-input" placeholder="example@gmail.com"required>
-
-
-        </div>
-
-        <!-- Exam -->
-        <div class="tab-content">
-            <label>रोल नंबर/Roll no*</label>
-            <input type="text" class="form-input"placeholder="enter roll...">
-
-            <label>जन्म तिथि (DOB)*</label>
-            <input type="date" class="form-input"placeholder="enter DOB..."required>
-
-            <label>कोर्स / Course</label>
-            <select class="form-input">
-    <option value="">Select</option>
-    <option value="BSC">BSC</option>
-    <option value="BCOM">BCom</option>
-    <option value="BA">BA</option>
-    <option value="MA">MA</option>
-    <option value="MCS">MCS</option>
-    <option value="MCOM">MCom</option>
-    <option value="Other">Other</option>
-</select>
-       
-            <label>विषय/Subject*</label>
-            <input type="text" class="form-input"placeholder="enter subject..."required>
-
-        
-            <label>मोबाइल नंबर/Mobile no*</label>
-            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
-
-
-            <label>E-mail Id *</label>
-<input type="email" class="form-input" placeholder="example@gmail.com"required>
-
-        </div>
-
-
-        <!-- Other -->
-       <div class="tab-content">
-
-<label>Other/Service</label>
-            <select class="form-input">
-    <option value="">Select</option>
-    <option value="APAAR_ID">ABC/APAAR ID</option>
-    <option value="Revaluation">Revaluation/Retotaling</option>
-    <option value="SIS_REGISTRATION">SIS Registration</option>
-    <option value="Other">Other</option>
-    
-</select>
-
-            <label>विवरण/Details</label>
-            <input type="text" class="form-input"placeholder="अपने कार्य के बारे में थोड़ा सा बताइए....."required>
-
-             <label>मोबाइल नंबर/Mobile no*</label>
-            <input type="tel" class="form-input"placeholder="enter mobile no..."required>
-
-
-            <label>E-mail Id *</label>
-<input type="email" class="form-input" placeholder="example@gmail.com"required>
-
-
-        </div>
-
-        
-
-
-<!-- ===== DOCUMENT CHECKLIST ===== -->
-<div class="submit-box" style="margin-top:30px;">
-
-    <label style="font-weight:600; margin-bottom:10px; display:block;">
-        आवश्यक दस्तावेज (यदि उपलब्ध हों तो टिक करें)
-    </label>
-
-    <div style="margin-left:5px; margin-bottom:20px; font-size:13px; color:#374151;">
-        <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-            <input type="checkbox" name="documents[]">
-            छात्र का आधार कार्ड
-        </label>
-
-        <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-            <input type="checkbox" name="documents[]">
-            छात्र की मार्क शीट
-        </label>
-
-        <label style="display:flex; align-items:center; gap:8px;">
-            <input type="checkbox" name="documents[]">
-            अन्य दस्तावेज
-        </label>
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="openTab(0)">Admission</div>
+      <div class="tab" onclick="openTab(1)">Supplement</div>
+      <div class="tab" onclick="openTab(2)">Result</div>
+      <div class="tab" onclick="openTab(3)">Exam Form</div>
+      <div class="tab" onclick="openTab(4)">Other</div>
     </div>
 
-    <!--===== BUTTONS ===== -->
-    <div style="display:flex; gap:12px;">
-        <button type="submit" class="submit">
-            आवेदन जमा करें
-        </button>
-        <button type="reset" class="reset">
-            रीसेट
-        </button>
+    <form id="mpbhojForm" class="form-box">
 
+      <!-- Admission -->
+      <div class="tab-content active">
+        <label>छात्र का नाम *</label>
+        <input name="studentName" class="form-input" required>
 
-<div id="alertBox" style="display:none;margin-top:15px;
-background:#dcfce7;color:#166534;
-padding:12px;border-radius:10px;font-weight:600;text-align:center;">
-✅ आवेदन सफलतापूर्वक जमा हो गया!
+        <label>पिता का नाम *</label>
+        <input name="fatherName" class="form-input" required>
+
+        <label>ABC ID *</label>
+        <input class="form-input" required>
+
+        <label>मोबाइल नंबर *</label>
+        <input type="tel" class="form-input" required>
+
+        <label>E-mail *</label>
+        <input type="email" class="form-input" required>
+      </div>
+
+      <!-- Supplement -->
+      <div class="tab-content">
+        <label>रोल नंबर *</label>
+        <input class="form-input" required>
+
+        <label>DOB *</label>
+        <input type="date" class="form-input" required>
+      </div>
+
+      <!-- Result -->
+      <div class="tab-content">
+        <label>रोल नंबर *</label>
+        <input class="form-input" required>
+      </div>
+
+      <!-- Exam -->
+      <div class="tab-content">
+        <label>रोल नंबर *</label>
+        <input class="form-input" required>
+
+        <label>विषय *</label>
+        <input class="form-input" required>
+      </div>
+
+      <!-- Other -->
+      <div class="tab-content">
+        <label>सेवा *</label>
+        <select class="form-input">
+          <option>ABC / APAAR</option>
+          <option>SIS Registration</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="submit-box">
+        <button type="submit" class="submit">आवेदन जमा करें</button>
+        <button type="reset" class="reset">रीसेट</button>
+      </div>
+
+    </form>
+  </div>
 </div>
-</form>
-</div>
-</div>
 
-
+<!-- ================= FOOTER ================= -->
 <div id="footer"></div>
+
+<!-- ================= JS ================= -->
+<script>
+function openTab(i){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab')[i].classList.add('active');
+  document.querySelectorAll('.tab-content')[i].classList.add('active');
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script src="assets/js/common.js?v=1.0" defer></script>
 <script type="module" src="assets/js/mpbhoj.js?v=1.0"></script>
