@@ -81,58 +81,7 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
-            <div class="flex items-center gap-3">
-<img src="assets/images/logo.jpg"
-     class="h-10 md:h-14 object-contain"
-     alt="AllInOne Logo">                <div>
-                    <h1 class="text-2xl font-bold text-blue-900 leading-tight">AllINONE-MP</h1>
-                    <p class="text-sm text-gray-600">One window for all sevice</p>
-                </div>
-            </div>
-            
-           <div class="flex flex-col md:flex-row md:items-center md:justify-end gap-4 text-right">
-    
-    <div class="hidden md:block">
-        <p class="text-xs text-gray-500 uppercase">सहायता केंद्र</p>
-        <p class="font-bold text-blue-800">
-            <a href="https://wa.me/918435273042" target="_blank">
-                8435273042
-            </a>
-        </p>
-    </div>
-
-    <a href="/adminlogin.html"
-       class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-sm
-              hover:bg-blue-700 transition text-center md:text-left">
-        लॉगिन
-    </a>
-
-</div>
-
-        </div>
-    </header>
-
-    <!-- Navigation -->
-    <nav class="bg-blue-800 text-white">
-        <div class="container mx-auto px-4">
-            <ul class="flex overflow-x-auto whitespace-nowrap py-3 gap-8">
-                <li><a href="#" class="hover:text-blue-200 flex items-center gap-2"><i class="fas fa-home"></i> मुख्य पृष्ठ</a></li>
-                <li><a href="#" class="hover:text-blue-200">नागरिक सेवाएँ</a></li>
-                <li><a href="#" class="hover:text-blue-200">योजनाएँ</a></li>
-                <li><a href="#" class="hover:text-blue-200">विभागीय डैशबोर्ड</a></li>
-                <li><a href="#" class="hover:text-blue-200">शिकायत निवारण</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Ticker Section -->
-    <div class="ticker-wrapper py-2">
-        <div class="ticker-text text-sm text-red-600 font-bold">
-            📢 सूचना: लाड़ली बहना योजना के अंतर्गत केवाईसी (e-KYC) पूर्ण करना अनिवार्य है। | मुख्यमंत्री सीखो-कमाओ योजना हेतु पंजीकरण प्रारंभ। | समग्र आईडी में आधार लिंक करने की प्रक्रिया निःशुल्क है।
-        </div>
-    </div>
+    <div id="header"></div>
 
     <!-- Hero Search -->
     <section class="hero-gradient text-white py-12 px-4">
@@ -349,6 +298,11 @@
         });
     </script>
     <script>
+          fetch("header.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    });
         fetch("footer.html")
     .then(res => res.text())
     .then(data => {
@@ -357,6 +311,7 @@
 </script>
 </body>
 </html>
+
 
 
 
