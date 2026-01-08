@@ -141,12 +141,35 @@
   </h3>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div>
+  <label class="block text-sm font-bold text-gray-700 mb-2">
+    पिन कोड *
+  </label>
+  <input type="text"
+         id="pincode"
+         name="pincode"
+         maxlength="6"
+         pattern="[0-9]{6}"
+         class="form-input"
+         placeholder="462001"
+         required>
+</div>
+      <div>
+  <label class="block text-sm font-bold text-gray-700 mb-2">
+    राज्य
+  </label>
+  <input type="text"
+         id="state"
+         name="state"
+         class="form-input bg-gray-100"
+         readonly>
+</div>
 
     <div>
       <label class="block text-sm font-bold text-gray-700 mb-2">
         जिला *
       </label>
-      <select name="district" class="form-input bg-white" required>
+      <select id="district" name="district" class="form-input bg-white" required>
         <option value="">चुनें</option>
         <option value="Agar Malwa">अगर-मालवा</option> 
         <option value="Alirajpur">अलीराजपुर</option> 
@@ -351,6 +374,8 @@
 
   gender: form.gender.value,
   district: form.district.value,
+  pincode: form.pincode.value,
+  state: form.state.value,
   tehsil: form.tehsil.value,
   village: form.village.value,
   fullAddress: form.fullAddress.value,
@@ -394,6 +419,47 @@ serviceType: "Income Certificate"
 });
 
 </script>
+    <script>
+const pinInput = document.getElementById("pincode");
+const districtSelect = document.getElementById("district");
+const stateInput = document.getElementById("state");
+
+pinInput.addEventListener("blur", () => {
+  const pin = pinInput.value.trim();
+  if (pin.length !== 6) return;
+
+  fetchPincode(pin);
+});
+
+function fetchPincode(pin) {
+  const API_KEY = "579b464db66ec23bdd000001cf26e874ff084c794c4c4c10fd788575";
+
+  const url =
+    `https://api.data.gov.in/resource/5c2f62fe-5afa-4119-a499-fec9d604d5bd` +
+    `?api-key=${API_KEY}&format=json&filters[pincode]=${pin}&limit=1`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.records || data.records.length === 0) return;
+
+      const d = data.records[0];
+
+      // State auto fill
+      stateInput.value = d.statename;
+
+      // District auto select
+      for (let option of districtSelect.options) {
+        if (option.value.toLowerCase() === d.district.toLowerCase()) {
+          districtSelect.value = option.value;
+          break;
+        }
+      }
+    })
+    .catch(err => console.error("Pincode API Error:", err));
+}
+</script>
+
 
     <script>
   fetch("header.html")
