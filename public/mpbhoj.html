@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>MPBHOJ Services | AllINONE-MP</title>
 
   <!-- Tailwind -->
@@ -13,106 +12,126 @@
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Header + MPBHOJ CSS -->
+  <!-- Header + Page CSS -->
   <link rel="stylesheet" href="assets/css/header.css">
   <link rel="stylesheet" href="assets/css/mpbhoj.css">
 </head>
 
 <body>
+
 <!-- ================= HEADER ================= -->
 <div id="header"></div>
 
-<!-- ================= NAV ================= -->
-
-<!-- ================= MPBHOJ FORM ================= -->
-<div id="mpbhojForm" class="mpbhoj-wrap">
+<!-- ================= MPBHOJ PAGE ================= -->
+<div class="mpbhoj-wrap">
   <div class="mpbhoj-container">
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <div class="tab active" onclick="openTab(0)">Admission</div>
-      <div class="tab" onclick="openTab(1)">Supplement</div>
-      <div class="tab" onclick="openTab(2)">Result</div>
-      <div class="tab" onclick="openTab(3)">Exam Form</div>
-      <div class="tab" onclick="openTab(4)">Other</div>
-    </div>
+  <!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="openTab(0)">Admission</div>
+  <div class="tab" onclick="openTab(1)">Supplement</div>
+  <div class="tab" onclick="openTab(2)">Result</div>
+  <div class="tab" onclick="openTab(3)">Exam Form</div>
+  <div class="tab" onclick="openTab(4)">Other</div>
+</div>
 
-    <form id="mpbhojForm" class="form-box">
+<form id="mpbhojForm" class="form-box">
 
-      <!-- Admission -->
-      <div class="tab-content active">
-        <label>छात्र का नाम *</label>
-        <input name="studentName" class="form-input" required>
+  <!-- Admission -->
+  <div class="tab-content active">
+    <label>छात्र का नाम *</label>
+    <input name="studentName" class="form-input" data-required />
 
-        <label>पिता का नाम *</label>
-        <input name="fatherName" class="form-input" required>
+    <label>पिता का नाम *</label>
+    <input name="fatherName" class="form-input" data-required />
 
-        <label>ABC ID *</label>
-<input class="form-input">
+    <label>ABC ID *</label>
+    <input name="abcId" class="form-input" data-required />
 
-        <label>मोबाइल नंबर *</label>
-        <input type="tel" class="form-input" required>
+    <label>मोबाइल नंबर *</label>
+    <input type="tel" name="mobile" class="form-input" data-required />
 
-        <label>E-mail *</label>
-        <input type="email" class="form-input" required>
-      </div>
+    <label>E-mail *</label>
+    <input type="email" name="email" class="form-input" data-required />
+  </div>
 
-      <!-- Supplement -->
-      <div class="tab-content">
-        <label>रोल नंबर *</label>
-<input class="form-input">
+  <!-- Supplement -->
+  <div class="tab-content">
+    <label>रोल नंबर *</label>
+    <input name="rollNumber" class="form-input" data-required />
 
-        <label>DOB *</label>
-        <input type="date" class="form-input" required>
-      </div>
+    <label>DOB *</label>
+    <input type="date" name="dob" class="form-input" data-required />
+  </div>
 
-      <!-- Result -->
-      <div class="tab-content">
-        <label>रोल नंबर *</label>
-<input class="form-input">
-      </div>
+  <!-- Result -->
+  <div class="tab-content">
+    <label>रोल नंबर *</label>
+    <input name="resultRoll" class="form-input" data-required />
+  </div>
 
-      <!-- Exam -->
-      <div class="tab-content">
-        <label>रोल नंबर *</label>
-<input class="form-input">
+  <!-- Exam -->
+  <div class="tab-content">
+    <label>रोल नंबर *</label>
+    <input name="examRoll" class="form-input" data-required />
 
-        <label>विषय *</label>
-<input class="form-input">
+    <label>विषय *</label>
+    <input name="subject" class="form-input" data-required />
+  </div>
 
-    </div>
+  <!-- Other -->
+  <div class="tab-content">
+    <label>सेवा *</label>
+    <select name="service" class="form-input" data-required>
+      <option value="">Select</option>
+      <option value="ABC">ABC / APAAR</option>
+      <option value="SIS">SIS Registration</option>
+      <option value="OTHER">Other</option>
+    </select>
+  </div>
 
-      <!-- Other -->
-      <div class="tab-content">
-        <label>सेवा *</label>
-        <select class="form-input">
-          <option>ABC / APAAR</option>
-          <option>SIS Registration</option>
-          <option>Other</option>
-        </select>
-      </div>
+  <div class="submit-box">
+    <button type="submit" class="submit">आवेदन जमा करें</button>
+    <button type="reset" class="reset">रीसेट</button>
+  </div>
 
-      <div class="submit-box">
-        <button type="submit" class="submit">आवेदन जमा करें</button>
-        <button type="reset" class="reset">रीसेट</button>
-      </div>
-
-    </form>
+  <div id="alertBox" style="display:none; margin-top:12px; color:green; font-weight:600;">
+    ✅ आवेदन सफलतापूर्वक जमा हो गया
+  </div>
+</form>
   </div>
 </div>
 
 <!-- ================= FOOTER ================= -->
 <div id="footer"></div>
 
-<!-- ================= JS ================= -->
+<!-- ================= TAB LOGIC ================= -->
 <script>
 function openTab(i){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-  document.querySelectorAll('.tab')[i].classList.add('active');
-  document.querySelectorAll('.tab-content')[i].classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(t => t.classList.remove('active'));
+  contents.forEach(c => {
+    c.classList.remove('active');
+    c.querySelectorAll('[required]').forEach(el=>{
+      el.dataset.req="1";
+      el.removeAttribute('required');
+    });
+  });
+
+  tabs[i].classList.add('active');
+  contents[i].classList.add('active');
+
+  contents[i].querySelectorAll('[data-req]').forEach(el=>{
+    el.setAttribute('required','');
+  });
 }
+
+document.addEventListener("DOMContentLoaded", ()=>openTab(0));
 </script>
+
+<!-- ================= JS ================= -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script src="assets/js/common.js?v=1.0" defer></script>
 <script type="module" src="assets/js/mpbhoj.js?v=1.0"></script>
