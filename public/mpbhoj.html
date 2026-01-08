@@ -1,48 +1,171 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MPBHOJ OPEN UNIVERSITY</title>
-    <!-- Tailwind CSS (डिजाइन के लिए) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPBHOJ Services</title>
 
-    <!-- Font Awesome (आइकन्स के लिए) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-   <link rel="stylesheet" href="assets/css/mpbhoj.css">
+<style>
+*{ box-sizing:border-box; }
 
+body{
+    font-family:'Noto Sans Devanagari', sans-serif;
+    background:#f3f4f6;
+    margin:0;
+}
+
+/* HEADER */
+.header{
+    background:#1d4ed8;
+    color:#fff;
+    padding:15px 20px;
+    font-size:20px;
+    font-weight:bold;
+}
+
+/* CONTAINER */
+.container{
+    width:100%;
+    max-width:900px;
+    margin:20px auto;
+    background:#ffffff;
+    padding:16px;
+    border-radius:10px;
+}
+
+/* TABS */
+.tabs{
+    display:flex;
+    gap:6px;
+    border-bottom:2px solid #1d4ed8;
+    margin-bottom:18px;
+}
+.tab{
+    flex:1;
+    text-align:center;
+    padding:10px;
+    cursor:pointer;
+    font-weight:600;
+    color:#1d4ed8;
+    background:#e0e7ff;
+    border-radius:16px 16px 0 0;
+}
+.tab.active{
+    background:#1d4ed8;
+    color:#ffffff;
+}
+
+/* FORM */
+.form-box{
+    border:1px solid #e5e7eb;
+    background:#ffffff;
+    border-radius:14px;
+    padding:clamp(16px,4vw,28px);
+}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+.form-input{
+    width:100%;
+    padding:12px 14px;
+    margin-bottom:18px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    font-size:14px;
+}
+
+.form-input:focus{
+    border-color:#1d4ed8;
+    outline:none;
+}
+
+/* SUBMIT */
+.submit-box{
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid #e5e7eb;
+}
+
+.submit{
+    background:#15803d;
+    color:#fff;
+    padding:12px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.reset{
+    background:#e5e7eb;
+    padding:12px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* FOOTER */
+.footer{
+    margin-top:40px;
+    background:#111827;
+    color:#d1d5db;
+    text-align:center;
+    padding:15px;
+    font-size:14px;
+}
+
+/* MOBILE ONLY */
+@media(max-width:600px){
+    .tabs{flex-direction:column;}
+    .tab{border-radius:12px;}
+    .submit-actions{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+    }
+    .submit-actions button{
+        width:100%;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<div id="header"></div>
+<div class="header">MP-BHOJ OPEN UNIVERSITY SERVICE</div>
 
 <div class="container">
 
-    <div class="tabs">
-        <div class="tab active" onclick="openTab(0)">Admission</div>
-        <div class="tab" onclick="openTab(1)">Supplement</div>
-        <div class="tab" onclick="openTab(2)">Result</div>
-        <div class="tab" onclick="openTab(3)">Exam Form</div>
-        <div class="tab" onclick="openTab(4)">Other</div>
-    </div>
+<div class="tabs">
+    <div class="tab active" onclick="openTab(0)">Admission</div>
+    <div class="tab" onclick="openTab(1)">Supplement</div>
+    <div class="tab" onclick="openTab(2)">Result</div>
+    <div class="tab" onclick="openTab(3)">Exam Form</div>
+    <div class="tab" onclick="openTab(4)">Other</div>
+</div>
 
-<form id="mpbhojForm" class="form-box">
+<form class="form-box">
 
-        <!-- Admission -->
-        <div class="tab-content active">
+<!-- Admission -->
+<div class="tab-content active">
           <label>छात्र का नाम/Student full name *</label>
-<input
-    name="studentname"
+<input 
     type="text" 
     class="form-input" 
-    placeholder="stydent name" 
+    placeholder="यहाँ पूरा नाम लिखें (जैसे: राम कुमार शर्मा)" 
     required
 >  
 
             <label>पिता का नाम / father name*</label>
-            <input name="fathername"type="text" class="form-input" placeholder="fathername"required>
+            <input type="text" class="form-input" placeholder="छात्र के पिता का नाम..."required>
 
             <label>एबीसी आईडी/ABCID*</label>
 <input 
@@ -69,7 +192,7 @@
 <input 
     type="text" 
     class="form-input" 
-    placeholder="Voter ID या PAN Number">
+    placeholder="Voter ID या PAN Number"required>
 
     <label>बैंक खाता संख्या</label>
         <input
@@ -89,13 +212,11 @@
         <input type="checkbox" name="bpl">
         बीपीएल श्रेणी में आता है (BPL)
     </label>
+</div>
 
 
 
-
-        </div>
-
-        <!-- Supplement -->
+<!-- Supplement -->
         <div class="tab-content">
             <label>रोल नंबर/ROLL NO*</label>
             <input type="text" class="form-input"placeholder="enter roll no..."required>
@@ -198,6 +319,7 @@
 
         
 
+
 <!-- ===== DOCUMENT CHECKLIST ===== -->
 <div class="submit-box" style="margin-top:30px;">
 
@@ -222,22 +344,7 @@
         </label>
     </div>
 
-    <!-- ===== DECLARATION ===== -->
-    <label style="
-        display:flex;
-        align-items:flex-start;
-        gap:10px;
-        font-size:12px;
-        color:#4b5563;
-        margin-bottom:20px;
-        line-height:1.5;
-        font-weight:normal;
-    ">
-        <input type="checkbox" required style="margin-top:3px;">
-        मैं घोषणा करता/करती हूँ कि मेरे द्वारा दी गई जानकारी सत्य है। असत्य पाए जाने पर मेरा आवेदन निरस्त किया जा सकता है।
-    </label>
-
-     <!--===== BUTTONS ===== -->
+    <!--===== BUTTONS ===== -->
     <div style="display:flex; gap:12px;">
         <button type="submit" class="submit">
             आवेदन जमा करें
@@ -247,17 +354,29 @@
         </button>
 
 
-
-
-    </form>
-
+<div id="alertBox" style="display:none;margin-top:15px;
+background:#dcfce7;color:#166534;
+padding:12px;border-radius:10px;font-weight:600;text-align:center;">
+✅ आवेदन सफलतापूर्वक जमा हो गया!
+</div>
+</form>
 </div>
 
-<div id="footer"></div>
+<div class="footer">© 2026 MPBHOJ Services | All Rights Reserved</div>
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    <script src="assets/js/common.js?v=1.0" defer></script>
-<script type="module" src="assets/js/mpbhoj.js?v=1.0"></script>
+<script>
+function openTab(i){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+document.querySelectorAll('.tab')[i].classList.add('active');
+document.querySelectorAll('.tab-content')[i]?.classList.add('active');
+}
+
+document.querySelector("form").addEventListener("submit",e=>{
+e.preventDefault();
+document.getElementById("alertBox").style.display="block";
+});
+</script>
 
 </body>
 </html>
