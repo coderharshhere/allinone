@@ -1,3 +1,4 @@
+// ================= FIREBASE IMPORTS =================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
   getFirestore,
@@ -6,7 +7,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-/* ================= FIREBASE INIT ================= */
+// ================= FIREBASE CONFIG =================
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
@@ -16,91 +17,116 @@ const firebaseConfig = {
   appId: "1:924003122498:web:2c86505457236e60055cdb"
 };
 
+// ================= INIT =================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ================= EMAILJS INIT ================= */
+// ================= EMAILJS INIT =================
 emailjs.init("-HjIyXVqfuRKrznVE");
 
-/* ================= DOM READY ================= */
+// ================= DOM READY =================
 document.addEventListener("DOMContentLoaded", () => {
 
-  const mpbhojForm = document.getElementById("mpbhojForm");
-  if (!mpbhojForm) return;
+  const form = document.getElementById("mpbhojForm");
+  const alertBox = document.getElementById("alertBox");
 
-  /* ========== SUBMIT ========== */
-  mpbhojForm.addEventListener("submit", async (e) => {
+  if (!form) return;
+
+  // ================= FORM SUBMIT =================
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     try {
+      // 🔹 active tab service
       const serviceType = getActiveService();
 
-      const name = mpbhojForm.studentName.value;
-      const father = mpbhojForm.fatherName.value;
-      const mobile = mpbhojForm.querySelector('input[type="tel"]').value;
-      const email = mpbhojForm.querySelector('input[type="email"]').value;
+      // 🔹 common fields
+      const studentName = form.studentName?.value || "";
+      const fatherName = form.fatherName?.value || "";
+      const mobile = form.mobile?.value || "";
+      const email = form.email?.value || "";
 
-      const docRef = await addDoc(collection(db, "mpbhojApplications"), {
-        serviceType,
-        studentName: name,
-        fatherName: father,
-        mobile,
-        email,
-        status: "pending",
-        createdAt: serverTimestamp()
-      });
-
-      const applicationNumber =
-        "MPBHOJ-" + docRef.id.substring(0, 8).toUpperCase();
-
-      await emailjs.send(
-        "service_allinone",
-        "template_7x246oi",
+      // 🔹 save to firestore
+      const docRef = await addDoc(
+        collection(db, "mpbhojApplications"),
         {
-          to_email: email,
-          to_name: name,
-          application_no: applicationNumber
+          serviceType: serviceType,
+          studentName: studentName,
+          fatherName: fatherName,
+          mobile: mobile,
+          email: email,
+          status: "pending",
+          createdAt: serverTimestamp()
         }
       );
 
-      document.getElementById("alertBox").style.display = "block";
-      mpbhojForm.reset();
+      // 🔹 application number
+      const applicationNumber =
+        "MPBHOJ-" + docRef.id.substring(0, 8).toUpperCase();
+
+      // 🔹 send email
+      if (email) {
+        await emailjs.send(
+          "service_allinone",
+          "template_7x246oi",
+          {
+            to_email: email,
+            to_name: studentName || "Student",
+            application_no: applicationNumber
+          }
+        );
+      }
+
+      // 🔹 success UI
+      if (alertBox) {
+        alertBox.style.display = "block";
+      }
+
+      form.reset();
 
       setTimeout(() => {
-        document.getElementById("alertBox").style.display = "none";
+        if (alertBox) alertBox.style.display = "none";
       }, 3000);
 
-    } catch (err) {
-      console.error(err);
-      alert("❌ कुछ त्रुटि हुई");
+    } catch (error) {
+      console.error("MPBHOJ ERROR:", error);
+      alert("❌ आवेदन जमा करने में समस्या आई");
     }
   });
 
-  /* ========== HEADER / FOOTER ========== */
+  // ================= HEADER =================
   fetch("./header.html")
     .then(res => res.text())
-    .then(html => document.getElementById("header").innerHTML = html);
+    .then(html => {
+      const h = document.getElementById("header");
+      if (h) h.innerHTML = html;
+    });
 
+  // ================= FOOTER =================
   fetch("./footer.html")
     .then(res => res.text())
-    .then(html => document.getElementById("footer").innerHTML = html);
+    .then(html => {
+      const f = document.getElementById("footer");
+      if (f) f.innerHTML = html;
+    });
+
 });
 
-/* ================= TAB LOGIC ================= */
-function openTab(i) {
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-
-  document.querySelectorAll(".tab")[i].classList.add("active");
-  document.querySelectorAll(".tab-content")[i].classList.add("active");
-}
-
+// ================= ACTIVE TAB SERVICE =================
 function getActiveService() {
-  const services = ["Admission", "Supplement", "Result", "Exam Form", "Other"];
   const tabs = document.querySelectorAll(".tab");
+  const services = [
+    "Admission",
+    "Supplement",
+    "Result",
+    "Exam Form",
+    "Other"
+  ];
 
   for (let i = 0; i < tabs.length; i++) {
-    if (tabs[i].classList.contains("active")) return services[i];
+    if (tabs[i].classList.contains("active")) {
+      return services[i];
+    }
   }
   return "Unknown";
 }
