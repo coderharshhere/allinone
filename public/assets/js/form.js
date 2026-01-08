@@ -1,3 +1,5 @@
+console.log("form.js loaded");
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
   getFirestore,
@@ -19,12 +21,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ================= INCOME FORM =================
-const incomeForm = document.getElementById("incomeForm");
+// ================= DOM READY =================
+document.addEventListener("DOMContentLoaded", () => {
 
-if (incomeForm) {
-  incomeForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // ================= INCOME FORM =================
+  const incomeForm = document.getElementById("incomeForm");
+  if (!incomeForm) return; // agar ye page income form ka nahi hai
+incomeForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  console.log("submit handler working");
 
     try {
       const docRef = await addDoc(collection(db, "applications"), {
@@ -63,7 +69,11 @@ if (incomeForm) {
         }
       );
 
-      alert("✅ आवेदन सफलतापूर्वक जमा हो गया\nApplication ID: " + applicationNumber);
+      alert(
+        "✅ आवेदन सफलतापूर्वक जमा हो गया\n\n" +
+        "Application ID: " + applicationNumber
+      );
+
       incomeForm.reset();
 
     } catch (err) {
@@ -71,4 +81,5 @@ if (incomeForm) {
       alert("❌ आवेदन में समस्या आई");
     }
   });
-}
+
+});
