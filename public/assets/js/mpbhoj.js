@@ -89,5 +89,16 @@ function getActiveService() {
   }
   return "Unknown";
 }
+function openTab(i){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+document.querySelectorAll('.tab')[i].classList.add('active');
+document.querySelectorAll('.tab-content')[i]?.classList.add('active');
+}
+
+document.querySelector("form").addEventListener("submit",e=>{
+e.preventDefault();
+document.getElementById("alertBox").style.display="block";
+
   });
 
