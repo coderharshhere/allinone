@@ -396,16 +396,14 @@ serviceType: "Income Certificate"
   }
 });
 
-</script>
-    <script>
+<script>
 const pinInput = document.getElementById("pincode");
-const districtSelect = document.getElementById("district");
+const districtInput = document.getElementById("district");
 const stateInput = document.getElementById("state");
 
 pinInput.addEventListener("blur", () => {
   const pin = pinInput.value.trim();
   if (pin.length !== 6) return;
-
   fetchPincode(pin);
 });
 
@@ -423,20 +421,13 @@ function fetchPincode(pin) {
 
       const d = data.records[0];
 
-      // State auto fill
       stateInput.value = d.statename;
-
-      // District auto select
-      for (let option of districtSelect.options) {
-        if (option.value.toLowerCase() === d.district.toLowerCase()) {
-          districtSelect.value = option.value;
-          break;
-        }
-      }
+      districtInput.value = d.district;
     })
     .catch(err => console.error("Pincode API Error:", err));
 }
 </script>
+
 
 
     <script>
