@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EWS प्रमाण पत्र | AllInOne MP</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+ <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+        }
+        .form-input {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+        .step-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+
+<div id="header"></div>
+
+<main class="container mx-auto px-4 py-10">
+
+<div class="max-w-4xl mx-auto mb-8">
+<nav class="text-sm text-gray-500 mb-2">
+<a href="#">होम</a> / <span>प्रमाण पत्र</span> /
+<span class="text-blue-900 font-semibold">EWS प्रमाण पत्र</span>
+</nav>
+
+<h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+<i class="fas fa-certificate text-yellow-600"></i>
+EWS प्रमाण पत्र हेतु आवेदन
+</h2>
+</div>
+
+<div class="max-w-4xl mx-auto step-card border border-gray-100 overflow-hidden">
+
+ <div class="bg-blue-50 border-b border-blue-100 p-4 flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                <p class="text-xs text-blue-800 leading-relaxed">
+                    <strong>नोट:</strong> तारांकित (*) फ़ील्ड अनिवार्य हैं। EWS प्रमाण पत्र आय सीमा के अंतर्गत जारी किया जाता है।
+                </p>
+            </div>
+
+<form id="ewsForm" class="p-6 md:p-10 space-y-10">
+
+<!-- SECTION 1 -->
+<section>
+<h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2">
+1. आवेदक की व्यक्तिगत जानकारी
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+<div class="md:col-span-2">
+<label class="block text-sm font-bold mb-2">पूरा नाम *</label>
+<input type="text" name="applicantName" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">लिंग *</label>
+<select name="gender" class="form-input bg-white" required>
+<option value="">चुनें</option>
+<option value="Male">पुरुष</option>
+<option value="Female">महिला</option>
+<option value="Other">अन्य</option>
+</select>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">जन्म तिथि *</label>
+<input type="date" name="dob" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">मोबाइल नंबर *</label>
+<input type="tel" name="mobile" maxlength="10" class="form-input" required>
+</div>
+
+<div class="md:col-span-2">
+<label class="block text-sm font-bold mb-2">ई-मेल आईडी *</label>
+<input type="email" name="email" class="form-input" required>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 2 -->
+<section class="bg-gray-50 p-6 rounded-2xl border">
+<h3 class="text-lg font-bold text-blue-800 mb-6">
+2. पहचान विवरण
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+<div>
+<label class="block text-sm font-bold mb-2">आधार नंबर *</label>
+<input type="number" name="aadhaarNumber" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">समग्र आईडी *</label>
+<input type="number" name="samagraId" class="form-input" required>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 3 -->
+<section>
+<h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2">
+3. आय एवं संपत्ति विवरण
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+<div>
+<label class="block text-sm font-bold mb-2">कुल वार्षिक आय *</label>
+<input type="number" name="annualIncome" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">आय स्रोत *</label>
+<select name="incomeSource" class="form-input bg-white" required>
+<option value="">चुनें</option>
+<option>नौकरी</option>
+<option>व्यवसाय</option>
+<option>कृषि</option>
+<option>अन्य</option>
+</select>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">क्या आपके पास 5 एकड़ से अधिक भूमि है? *</label>
+<select name="landStatus" class="form-input bg-white" required>
+<option value="">चुनें</option>
+<option value="No">नहीं</option>
+<option value="Yes">हाँ</option>
+</select>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">क्या परिवार में कोई सरकारी कर्मचारी है? *</label>
+<select name="govEmployee" class="form-input bg-white" required>
+<option value="">चुनें</option>
+<option value="No">नहीं</option>
+<option value="Yes">हाँ</option>
+</select>
+</div>
+
+</div>
+</section>
+<!-- 4. पते की जानकारी -->
+<section>
+  <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2 flex items-center gap-2">
+    <i class="fas fa-map-marker-alt text-sm"></i> पते का विवरण
+  </h3>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div>
+  <label class="block text-sm font-bold text-gray-700 mb-2">
+    पिन कोड *
+  </label>
+  <input type="text"
+         id="pincode"
+         name="pincode"
+         maxlength="6"
+         pattern="[0-9]{6}"
+         class="form-input"
+         placeholder="462001"
+         required>
+</div>
+      <div>
+  <label class="block text-sm font-bold text-gray-700 mb-2">
+    राज्य
+  </label>
+  <input type="text"
+         id="state"
+         name="state"
+         class="form-input bg-gray-100"
+         readonly>
+</div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        जिला *
+      </label>
+<input type="text"
+         id="district"name="district"class="form-input bg-gray-100"readonly>      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        तहसील *
+      </label>
+      <input type="text" name="tehsil"
+             class="form-input" required>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        ग्राम / वार्ड *
+      </label>
+      <input type="text" name="village"
+             class="form-input" required>
+    </div>
+
+    <div class="md:col-span-3">
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        पूरा पता *
+      </label>
+      <textarea name="fullAddress"
+                class="form-input h-20"
+                required></textarea>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+<!-- आवश्यक दस्तावेज़ -->
+<section class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+  <h3 class="text-md font-bold text-blue-800 mb-4 flex items-center gap-2">
+    <i class="fas fa-folder-open"></i> आवश्यक दस्तावेज़
+  </h3>
+
+  <p class="text-xs text-gray-600 mb-4">
+    कृपया सुनिश्चित करें कि नीचे दिए गए सभी दस्तावेज़ आपके पास उपलब्ध हैं:
+  </p>
+
+  <div class="space-y-3 text-sm text-gray-700">
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>आधार कार्ड (Aadhaar Card)</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>समग्र आईडी (Samagra ID)</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>आय प्रमाण पत्र / स्व-घोषणा पत्र</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>निवास प्रमाण पत्र (यदि उपलब्ध हो)</span>
+    </label>
+
+    <label class="flex items-start gap-3">
+      <input type="checkbox" required class="mt-1">
+      <span>पासपोर्ट साइज फोटो</span>
+    </label>
+
+  </div>
+</section>
+
+<!-- DECLARATION -->
+<div class="bg-blue-50 p-4 rounded-lg border flex gap-3">
+<input type="checkbox" required>
+<p class="text-xs italic">
+मैं घोषणा करता/करती हूँ कि दी गई जानकारी सत्य है। यदि कोई भी जानकारी गलत पाई जाती है तो मेरा आवेदन निरस्त किया जा सकता है।
+</p>
+</div>
+
+ <div class="flex gap-4">
+                        <button type="submit" class="flex-1 bg-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-800 shadow-xl shadow-blue-100 transition active:scale-95">
+                            आवेदन जमा करें
+                        </button>
+                        <button type="reset" class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
+                            रीसेट
+                        </button>
+                    </div>
+                </div>
+</form>
+</div>
+</main>
+
+<div id="footer"></div>
+
+<!-- SAME JS PATTERN -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){ emailjs.init("-HjIyXVqfuRKrznVE"); })();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+authDomain: "allinone-aa89.firebaseapp.com",
+projectId: "allinone-aa89",
+storageBucket: "allinone-aa89.firebasestorage.app",
+messagingSenderId: "924003122498",
+appId: "1:924003122498:web:2c86505457236e60055cdb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const form = document.getElementById("ewsForm");
+
+form.addEventListener("submit", async (e)=>{
+e.preventDefault();
+const fd = new FormData(form);
+
+await addDoc(collection(db,"ews_certificate_requests"),{
+serviceType:"EWS Certificate",
+applicantName:fd.get("applicantName"),
+gender:fd.get("gender"),
+dob:fd.get("dob"),
+mobile:fd.get("mobile"),
+email:fd.get("email"),
+aadhaarLast4:fd.get("aadhaarNumber").slice(-4),
+samagraId:fd.get("samagraId"),
+annualIncome:fd.get("annualIncome"),
+incomeSource:fd.get("incomeSource"),
+landStatus:fd.get("landStatus"),
+govEmployee:fd.get("govEmployee"),
+status:"pending",
+createdAt:serverTimestamp()
+});
+
+alert("✅ EWS आवेदन सफलतापूर्वक जमा हो गया");
+form.reset();
+});
+</script>
+
+<script>
+fetch("header.html").then(r=>r.text()).then(d=>header.innerHTML=d);
+fetch("footer.html").then(r=>r.text()).then(d=>footer.innerHTML=d);
+</script>
+
+</body>
+</html>
