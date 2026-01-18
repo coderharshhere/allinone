@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>शिकायत निवारण | AllInOne MP</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+
+body{
+    font-family:'Noto Sans Devanagari',sans-serif;
+}
+
+/* ===== FORM ===== */
+.form-box{
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* GRID FIX */
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#374151;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #d1d5db;
+    font-size:14px;
+}
+
+.form-group textarea{
+    min-height:100px;
+}
+
+
+/* BUTTONS */
+.btn-row{
+    display:flex;
+    gap:12px;
+    margin-top:20px;
+}
+
+.btn-primary{
+    flex:1;
+    background:#1d4ed8;
+    color:#fff;
+    padding:14px;
+    border-radius:14px;
+    font-weight:700;
+}
+
+.btn-secondary{
+    background:#e5e7eb;
+    padding:14px 28px;
+    border-radius:14px;
+    font-weight:600;
+}
+
+/* MOBILE */
+@media(max-width:640px){
+    .form-grid{grid-template-columns:1fr;}
+    .btn-row{flex-direction:column;}
+}
+</style>
+</head>
+
+<body class="bg-gray-100">
+
+<div id="header"></div>
+
+<main class="container mx-auto px-4 py-10">
+
+<div class="max-w-4xl mx-auto mb-6">
+    <h2 class="text-2xl font-bold flex items-center gap-3 text-blue-800">
+        <i class="fas fa-headset"></i> शिकायत निवारण
+    </h2>
+    <p class="text-sm text-gray-600 mt-1">
+        अपनी समस्या दर्ज करें, हम समाधान का प्रयास करेंगे।
+    </p>
+</div>
+
+<div class="max-w-4xl mx-auto form-box p-6 md:p-10">
+
+<!-- INFO BAR -->
+<div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-8">
+    <strong>नोट:</strong> केवल सही व पूर्ण जानकारी वाली शिकायतों पर कार्य किया जाएगा।
+</div>
+
+<form>
+
+<!-- SECTION 1 -->
+<h3 class="font-bold text-blue-700 mb-4">शिकायत विवरण</h3>
+
+<div class="form-grid mb-6">
+    <div class="form-group">
+        <label>शिकायत का प्रकार *</label>
+        <select required>
+            <option value="">चुनें</option>
+            <option>सेवा में देरी</option>
+            <option>गलत जानकारी</option>
+            <option>पैसा / शुल्क समस्या</option>
+            <option>अन्य</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>सेवा का नाम *</label>
+        <select required>
+            <option value="">चुनें</option>
+            <option>आय प्रमाण पत्र</option>
+            <option>जाति प्रमाण पत्र</option>
+            <option>निवास प्रमाण पत्र</option>
+            <option>समग्र</option>
+        </select>
+    </div>
+</div>
+
+<!-- SECTION 2 -->
+<h3 class="font-bold text-blue-700 mb-4">शिकायतकर्ता जानकारी</h3>
+
+<div class="form-grid mb-6">
+    <div class="form-group">
+        <label>पूरा नाम *</label>
+        <input type="text" required>
+    </div>
+
+    <div class="form-group">
+        <label>मोबाइल नंबर *</label>
+        <input type="tel" maxlength="10" required>
+    </div>
+
+    <div class="form-group">
+        <label>ई-मेल </label>
+        <input type="email"required>
+    </div>
+
+    <div class="form-group">
+        <label>जिला *</label>
+        <input type="text" required>
+    </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="form-group mb-6">
+    <label>शिकायत का विवरण *</label>
+    <textarea placeholder="अपनी समस्या विस्तार से लिखें..." required></textarea>
+</div>
+
+<!-- DECLARATION -->
+<div class="flex items-start gap-3 text-xs text-gray-600 mb-6">
+    <input type="checkbox" required class="mt-1">
+    <span>
+        मैं घोषणा करता/करती हूँ कि दी गई जानकारी सही है।
+    </span>
+</div>
+
+<!-- BUTTONS -->
+<div class="btn-row">
+    <button type="submit" class="btn-primary">
+        शिकायत दर्ज करें
+    </button>
+    <button type="reset" class="btn-secondary">
+        रीसेट
+    </button>
+</div>
+
+<hr class="my-10">
+
+<!-- STATUS CHECK -->
+<h3 class="font-bold text-blue-700 mb-4">शिकायत की स्थिति देखें</h3>
+
+<div class="form-grid">
+    <div class="form-group">
+        <label>शिकायत संख्या</label>
+        <input type="text">
+    </div>
+    <div class="form-group">
+        <label>मोबाइल नंबर</label>
+        <input type="tel">
+    </div>
+</div>
+
+<button class="mt-4 w-full bg-gray-800 text-white py-3 rounded-xl font-bold">
+    स्थिति देखें
+</button>
+
+</form>
+</div>
+</main>
+
+<div id="footer"></div>
+
+<script>
+fetch("header.html").then(r=>r.text()).then(d=>header.innerHTML=d);
+fetch("footer.html").then(r=>r.text()).then(d=>footer.innerHTML=d);
+</script>
+
+</body>
+</html>
