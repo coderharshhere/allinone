@@ -230,11 +230,184 @@ body{
 
     </div>
 
-    <div class="note">
+<!--<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>विभागीय सेवाएँ | AllInOne MP</title>-->
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+body{font-family:'Noto Sans Devanagari',sans-serif}
+.dept-card{
+    background:linear-gradient(135deg,#ffffff,#f8fafc);
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    transition:.3s;
+}
+.dept-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 20px 30px -10px rgba(0,0,0,.1)
+}
+.service-list li::before{
+    content:"•";
+    color:#2563eb;
+    font-weight:bold;
+    margin-right:8px;
+}
+</style>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- HEADER -->
+<div class="bg-gradient-to-r from-blue-700 to-indigo-600 text-white p-5 text-center text-xl font-bold">
+    विभागीय सेवाएँ (MP Government Services)
+</div>
+
+<main class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+<!-- ===== राजस्व विभाग ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('rev')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-blue-700">
+        <i class="fas fa-landmark"></i> राजस्व विभाग
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="rev" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>आय प्रमाण पत्र</li>
+    <li>जाति प्रमाण पत्र</li>
+    <li>निवास प्रमाण पत्र</li>
+    <li>खसरा / खतौनी</li>
+    <li>नामांतरण</li>
+    <li>भू-अभिलेख प्रतिलिपि</li>
+</ul>
+</div>
+
+<!-- ===== सामाजिक न्याय ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('social')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-green-700">
+        <i class="fas fa-users"></i> सामाजिक न्याय विभाग
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="social" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>समग्र e-KYC</li>
+    <li>समग्र प्रोफाइल अपडेट</li>
+    <li>पेंशन सेवाएँ</li>
+    <li>छात्रवृत्ति सेवाएँ</li>
+    <li>विकलांग प्रमाण पत्र</li>
+</ul>
+</div>
+
+<!-- ===== परिवहन ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('rto')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-yellow-700">
+        <i class="fas fa-road"></i> परिवहन विभाग (RTO)
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="rto" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>ड्राइविंग लाइसेंस</li>
+    <li>लर्नर लाइसेंस</li>
+    <li>वाहन पंजीकरण</li>
+    <li>परमिट सेवाएँ</li>
+</ul>
+</div>
+
+<!-- ===== स्वास्थ्य ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('health')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-red-600">
+        <i class="fas fa-hospital"></i> स्वास्थ्य विभाग
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="health" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>जन्म प्रमाण पत्र</li>
+    <li>मृत्यु प्रमाण पत्र</li>
+    <li>टीकाकरण सेवाएँ</li>
+</ul>
+</div>
+
+<!-- ===== पंचायत एवं ग्रामीण ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('panchayat')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-emerald-700">
+        <i class="fas fa-tree"></i> पंचायत एवं ग्रामीण विकास
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="panchayat" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>मनरेगा जॉब कार्ड</li>
+    <li>प्रधानमंत्री आवास</li>
+    <li>ग्राम प्रमाण पत्र</li>
+</ul>
+</div>
+
+<!-- ===== पुलिस ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('police')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-gray-700">
+        <i class="fas fa-user-shield"></i> पुलिस विभाग
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="police" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>चरित्र प्रमाण पत्र</li>
+    <li>पासपोर्ट सत्यापन</li>
+</ul>
+</div>
+
+<!-- ===== शिक्षा ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('edu')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-indigo-700">
+        <i class="fas fa-school"></i> शिक्षा विभाग
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="edu" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>मार्कशीट सेवाएँ</li>
+    <li>स्कॉलरशिप</li>
+    <li>छात्र प्रमाण पत्र</li>
+</ul>
+</div>
+
+<!-- ===== नगरीय प्रशासन ===== -->
+<div class="dept-card p-5">
+<button onclick="toggle('urban')" class="w-full flex justify-between items-center">
+    <div class="flex items-center gap-3 font-semibold text-pink-700">
+        <i class="fas fa-city"></i> नगरीय प्रशासन
+    </div>
+    <i class="fas fa-chevron-down"></i>
+</button>
+<ul id="urban" class="service-list hidden mt-4 text-sm text-gray-700 space-y-1">
+    <li>विवाह पंजीकरण</li>
+    <li>जन्म/मृत्यु सुधार</li>
+    <li>नल कनेक्शन</li>
+</ul>
+</div>
+
+</main>
+ <div class="note">
         यह पोर्टल नागरिकों को विभिन्न सरकारी सेवाओं के लिए ऑनलाइन आवेदन करने में सहायता हेतु बनाया गया है।
     </div>
 
 </div>
+
+
+<script>
+function toggle(id){
+    document.getElementById(id).classList.toggle("hidden");
+}
+</script>
 
 <script>
 document.querySelectorAll('.accordion-header').forEach(header=>{
