@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>विभागीय डैशबोर्ड | AllInOne MP</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+body{
+    font-family:'Noto Sans Devanagari',sans-serif;
+}
+.stat-card{
+    background:white;
+    border-radius:1rem;
+    padding:1.5rem;
+    box-shadow:0 10px 25px -8px rgba(0,0,0,.08);
+    border-left:6px solid transparent;
+}
+.stat-blue{border-color:#2563eb;}
+.stat-green{border-color:#16a34a;}
+.stat-yellow{border-color:#f59e0b;}
+.stat-red{border-color:#dc2626;}
+
+.dept-card{
+    background:white;
+    border-radius:1.25rem;
+    padding:1.5rem;
+    box-shadow:0 8px 20px -6px rgba(0,0,0,.08);
+    transition:.3s;
+}
+.dept-card:hover{
+    transform:translateY(-6px);
+}
+</style>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- HEADER -->
+<div class="bg-blue-700 text-white px-6 py-4 text-xl font-bold">
+    विभागीय डैशबोर्ड – AllInOne MP
+</div>
+
+<main class="container mx-auto px-4 py-8 space-y-10">
+
+<!-- ================== TOP STATS ================== -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+    <div class="stat-card stat-blue">
+        <p class="text-gray-500 text-sm">कुल आवेदन</p>
+        <h3 class="text-3xl font-bold text-blue-700">1,248</h3>
+    </div>
+
+    <div class="stat-card stat-yellow">
+        <p class="text-gray-500 text-sm">आज के आवेदन</p>
+        <h3 class="text-3xl font-bold text-yellow-600">86</h3>
+    </div>
+
+    <div class="stat-card stat-green">
+        <p class="text-gray-500 text-sm">स्वीकृत</p>
+        <h3 class="text-3xl font-bold text-green-600">942</h3>
+    </div>
+
+    <div class="stat-card stat-red">
+        <p class="text-gray-500 text-sm">लंबित</p>
+        <h3 class="text-3xl font-bold text-red-600">219</h3>
+    </div>
+
+</section>
+
+<!-- ================== DEPARTMENT OVERVIEW ================== -->
+<section>
+<h2 class="text-xl font-bold text-gray-800 mb-6">
+    विभाग अनुसार स्थिति
+</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+<!-- REVENUE -->
+<div class="dept-card">
+<h3 class="font-bold text-lg text-blue-700 mb-3">
+    <i class="fas fa-landmark mr-2"></i> राजस्व विभाग
+</h3>
+<ul class="text-sm text-gray-700 space-y-2">
+<li>• आय प्रमाण पत्र — <span class="text-red-600 font-semibold">23 Pending</span></li>
+<li>• जाति प्रमाण पत्र — <span class="text-green-600 font-semibold">Approved</span></li>
+<li>• निवास प्रमाण पत्र — <span class="text-yellow-600 font-semibold">12 Pending</span></li>
+<li>• भू-अभिलेख सेवाएँ</li>
+</ul>
+</div>
+
+<!-- SOCIAL -->
+<div class="dept-card">
+<h3 class="font-bold text-lg text-green-700 mb-3">
+    <i class="fas fa-users mr-2"></i> सामाजिक न्याय विभाग
+</h3>
+<ul class="text-sm text-gray-700 space-y-2">
+<li>• BPL प्रमाण पत्र — <span class="text-red-600">9 Pending</span></li>
+<li>• दिव्यांग प्रमाण पत्र — <span class="text-green-600">Approved</span></li>
+<li>• छात्रवृत्ति आवेदन</li>
+<li>• सामाजिक सुरक्षा सेवाएँ</li>
+</ul>
+</div>
+
+<!-- URBAN -->
+<div class="dept-card">
+<h3 class="font-bold text-lg text-purple-700 mb-3">
+    <i class="fas fa-city mr-2"></i> नगरीय प्रशासन
+</h3>
+<ul class="text-sm text-gray-700 space-y-2">
+<li>• जन्म प्रमाण पत्र — <span class="text-green-600">Approved</span></li>
+<li>• मृत्यु प्रमाण पत्र — <span class="text-yellow-600">5 Pending</span></li>
+<li>• विवाह पंजीकरण</li>
+</ul>
+</div>
+
+<!-- EDUCATION -->
+<div class="dept-card">
+<h3 class="font-bold text-lg text-indigo-700 mb-3">
+    <i class="fas fa-graduation-cap mr-2"></i> शिक्षा विभाग
+</h3>
+<ul class="text-sm text-gray-700 space-y-2">
+<li>• छात्र प्रमाण पत्र</li>
+<li>• माइग्रेशन प्रमाण पत्र</li>
+<li>• MP Bhoj University फॉर्म</li>
+</ul>
+</div>
+
+<!-- POLICE -->
+<div class="dept-card">
+<h3 class="font-bold text-lg text-red-700 mb-3">
+    <i class="fas fa-user-shield mr-2"></i> पुलिस विभाग
+</h3>
+<ul class="text-sm text-gray-700 space-y-2">
+<li>• चरित्र प्रमाण पत्र — <span class="text-red-600">7 Pending</span></li>
+<li>• पुलिस सत्यापन</li>
+</ul>
+</div>
+
+<!-- HEALTH -->
+<div class="dept-card">
+<h3 class="font-bold text-lg text-teal-700 mb-3">
+    <i class="fas fa-hospital mr-2"></i> स्वास्थ्य विभाग
+</h3>
+<ul class="text-sm text-gray-700 space-y-2">
+<li>• आयुष्मान भारत</li>
+<li>• मेडिकल प्रमाण पत्र</li>
+<li>• दिव्यांग मेडिकल बोर्ड</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+</main>
+
+<footer class="bg-gray-900 text-gray-300 text-center py-6 mt-10">
+    © 2026 AllInOne MP | Department Monitoring Dashboard
+</footer>
+
+</body>
+</html>
