@@ -1,1 +1,308 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BPL प्रमाण पत्र आवेदन | AllInOne MP</title>
 
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+body{font-family:'Noto Sans Devanagari',sans-serif;}
+.form-input{
+  width:100%;
+  border:1px solid #d1d5db;
+  padding:0.75rem;
+  border-radius:0.75rem;
+}
+.form-input:focus{
+  border-color:#1d4ed8;
+  box-shadow:0 0 0 3px rgba(29,78,216,0.1);
+  outline:none;
+}
+</style>
+</head>
+
+<body class="bg-gray-50">
+
+<!-- HEADER -->
+<div id="header"></div>
+
+<main class="container mx-auto px-4 py-10">
+
+<!-- Title -->
+<div class="max-w-4xl mx-auto mb-8">
+<nav class="text-sm text-gray-500 mb-2">
+होम / सेवाएँ / <span class="text-blue-800 font-semibold">BPL प्रमाण पत्र</span>
+</nav>
+
+<h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+<i class="fas fa-hand-holding-usd text-blue-600"></i>
+BPL (गरीबी रेखा) प्रमाण पत्र आवेदन
+</h2>
+</div>
+
+<div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border overflow-hidden">
+
+<!-- Info -->
+<div class="bg-blue-50 border-b p-4 flex gap-3 text-xs text-blue-800">
+<i class="fas fa-info-circle mt-1"></i>
+<span>तारांकित (*) जानकारी अनिवार्य है। गलत जानकारी पर आवेदन निरस्त हो सकता है।</span>
+</div>
+
+<form id="bplForm" class="p-6 md:p-10 space-y-10">
+
+<!-- 1. व्यक्तिगत जानकारी -->
+<section>
+<h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2">
+<i class="fas fa-user"></i> आवेदक की जानकारी
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+<div>
+<label class="block text-sm font-bold mb-2">पूरा नाम *</label>
+<input type="text" name="applicantName" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">पिता / पति का नाम *</label>
+<input type="text" name="fatherName" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">समग्र आईडी *</label>
+<input type="number" name="samagraId" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">आधार नंबर *</label>
+<input type="text" maxlength="12" pattern="[0-9]{12}" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">मोबाइल नंबर *</label>
+<input type="tel" maxlength="10" pattern="[0-9]{10}" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">ई-मेल *</label>
+<input type="email" class="form-input" required>
+</div>
+
+</div>
+</section>
+
+
+<!-- 4. पते की जानकारी -->
+<section>
+  <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2 flex items-center gap-2">
+    <i class="fas fa-map-marker-alt text-sm"></i> पते का विवरण
+  </h3>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div>
+  <label class="block text-sm font-bold text-gray-700 mb-2">
+    पिन कोड *
+  </label>
+  <input type="text"
+         id="pincode"
+         name="pincode"
+         maxlength="6"
+         pattern="[0-9]{6}"
+         class="form-input"
+         placeholder="462001"
+         required>
+</div>
+      <div>
+  <label class="block text-sm font-bold text-gray-700 mb-2">
+    राज्य
+  </label>
+  <input type="text"
+         id="state"
+         name="state"
+         class="form-input bg-gray-100"
+         readonly>
+</div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        जिला *
+      </label>
+<input type="text"
+         id="district"name="district"class="form-input bg-gray-100"readonly>      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        तहसील *
+      </label>
+      <input type="text" name="tehsil"
+             class="form-input" required>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        ग्राम / वार्ड *
+      </label>
+      <input type="text" name="village"
+             class="form-input" required>
+    </div>
+
+    <div class="md:col-span-3">
+      <label class="block text-sm font-bold text-gray-700 mb-2">
+        पूरा पता *
+      </label>
+      <textarea name="fullAddress"
+                class="form-input h-20"
+                required></textarea>
+    </div>
+
+  </div>
+</section>
+
+<!-- 3. आर्थिक स्थिति -->
+<section class="bg-gray-50 p-6 rounded-xl border">
+<h3 class="text-lg font-bold text-blue-800 mb-6">
+<i class="fas fa-coins"></i> आर्थिक जानकारी
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+<div>
+<label class="block text-sm font-bold mb-2">परिवार की वार्षिक आय *</label>
+<input type="number" class="form-input" required>
+</div>
+
+<div>
+<label class="block text-sm font-bold mb-2">राशन कार्ड प्रकार *</label>
+<select class="form-input bg-white" required>
+<option value="">चुनें</option>
+<option>APL</option>
+<option>BPL</option>
+<option>Antyodaya</option>
+</select>
+</div>
+
+</div>
+</section>
+
+<!-- 4. आवश्यक दस्तावेज -->
+<section class="bg-gray-50 p-5 rounded-xl border">
+<h3 class="text-md font-bold text-blue-800 mb-4">
+<i class="fas fa-folder-open"></i> आवश्यक दस्तावेज़
+</h3>
+
+<div class="space-y-3 text-sm">
+
+<label class="flex gap-3">
+<input type="checkbox" required>
+<span>आधार कार्ड</span>
+</label>
+
+<label class="flex gap-3">
+<input type="checkbox" required>
+<span>समग्र परिवार आईडी</span>
+</label>
+
+<label class="flex gap-3">
+<input type="checkbox" required>
+<span>राशन कार्ड</span>
+</label>
+
+<label class="flex gap-3">
+<input type="checkbox" required>
+<span>स्व-घोषणा पत्र</span>
+</label>
+
+</div>
+</section>
+
+<!-- Declaration -->
+<div class="bg-blue-50 p-4 rounded-lg border text-xs">
+<label class="flex gap-3">
+<input type="checkbox" required>
+<span>मैं घोषणा करता/करती हूँ कि दी गई जानकारी सत्य है।</span>
+</label>
+</div>
+
+<!-- Buttons -->
+<div class="flex gap-4 pt-4">
+<button type="submit" class="flex-1 bg-blue-700 text-white py-3 rounded-xl font-bold hover:bg-blue-800">
+आवेदन जमा करें
+</button>
+<button type="reset" class="px-8 bg-gray-100 rounded-xl font-bold">
+रीसेट
+</button>
+</div>
+
+</form>
+</div>
+</main>
+
+<!-- FOOTER -->
+<div id="footer"></div>
+
+<!-- SAME JS PATTERN -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){ emailjs.init("-HjIyXVqfuRKrznVE"); })();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+authDomain: "allinone-aa89.firebaseapp.com",
+projectId: "allinone-aa89",
+storageBucket: "allinone-aa89.firebasestorage.app",
+messagingSenderId: "924003122498",
+appId: "1:924003122498:web:2c86505457236e60055cdb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const form = document.getElementById("ewsForm");
+
+form.addEventListener("submit", async (e)=>{
+e.preventDefault();
+const fd = new FormData(form);
+
+await addDoc(collection(db,"ews_certificate_requests"),{
+serviceType:"EWS Certificate",
+applicantName:fd.get("applicantName"),
+gender:fd.get("gender"),
+dob:fd.get("dob"),
+mobile:fd.get("mobile"),
+email:fd.get("email"),
+aadhaarLast4:fd.get("aadhaarNumber").slice(-4),
+samagraId:fd.get("samagraId"),
+annualIncome:fd.get("annualIncome"),
+incomeSource:fd.get("incomeSource"),
+landStatus:fd.get("landStatus"),
+govEmployee:fd.get("govEmployee"),
+status:"pending",
+createdAt:serverTimestamp()
+});
+
+alert("✅ EWS आवेदन सफलतापूर्वक जमा हो गया");
+form.reset();
+});
+</script>
+
+
+<!-- Header Footer Loader -->
+<script>
+fetch("header.html").then(r=>r.text()).then(d=>header.innerHTML=d);
+fetch("footer.html").then(r=>r.text()).then(d=>footer.innerHTML=d);
+</script>
+
+</body>
+</html>
