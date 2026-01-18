@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us | AllInOne Services</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:#f4f6f8;
+    color:#1f2937;
+}
+
+/* ===== HERO ABOUT ===== */
+.about-hero{
+    background:linear-gradient(135deg,#1e40af,#2563eb);
+    color:#fff;
+    padding:70px 20px;
+    text-align:center;
+}
+.about-hero h1{
+    font-size:40px;
+    margin-bottom:10px;
+}
+.about-hero p{
+    max-width:800px;
+    margin:auto;
+    font-size:16px;
+    opacity:.9;
+}
+
+/* ===== ABOUT CONTENT ===== */
+.about-section{
+    max-width:1100px;
+    margin:60px auto;
+    padding:0 20px;
+    text-align:center;
+}
+.about-section h2{
+    font-size:30px;
+    margin-bottom:15px;
+}
+.about-section p{
+    font-size:15px;
+    color:#4b5563;
+    max-width:900px;
+    margin:auto;
+    line-height:1.7;
+}
+
+/* ===== TEAM SECTION ===== */
+.team-section{
+    max-width:1200px;
+    margin:80px auto;
+    padding:0 20px;
+}
+.team-title{
+    text-align:center;
+    margin-bottom:50px;
+}
+.team-title h2{
+    font-size:32px;
+}
+.team-title p{
+    color:#6b7280;
+    font-size:15px;
+}
+
+/* ===== TEAM GRID ===== */
+.team-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:35px;
+}
+
+/* ===== TEAM CARD ===== */
+.team-card{
+    background:#fff;
+    border-radius:18px;
+    padding:30px 25px;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+    transition:.4s;
+    position:relative;
+    overflow:hidden;
+}
+.team-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+    clip-path:circle(0% at 50% 0%);
+    transition:.5s;
+    z-index:0;
+}
+.team-card:hover::before{
+    clip-path:circle(150% at 50% 0%);
+}
+.team-card:hover{
+    transform:translateY(-12px);
+}
+.team-card *{
+    position:relative;
+    z-index:1;
+}
+
+/* ===== PROFILE IMAGE ===== */
+.team-img{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    overflow:hidden;
+    margin:0 auto 15px;
+    border:6px solid #e5e7eb;
+}
+.team-img img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* ===== TEXT ===== */
+.team-card h3{
+    font-size:20px;
+    margin-bottom:5px;
+}
+.team-card span{
+    font-size:14px;
+    color:#6b7280;
+}
+.team-card:hover h3,
+.team-card:hover span{
+    color:#fff;
+}
+
+/* ===== SOCIAL LINKS ===== */
+.team-social{
+    margin-top:18px;
+}
+.team-social a{
+    display:inline-flex;
+    width:40px;
+    height:40px;
+    align-items:center;
+    justify-content:center;
+    background:#e5e7eb;
+    color:#1f2937;
+    border-radius:50%;
+    margin:0 5px;
+    text-decoration:none;
+    transition:.3s;
+}
+.team-card:hover .team-social a{
+    background:#fff;
+    color:#2563eb;
+}
+.team-social a:hover{
+    transform:scale(1.15);
+}
+
+/* ===== FOOTER ===== */
+.footer{
+    margin-top:80px;
+    background:#111827;
+    color:#d1d5db;
+    text-align:center;
+    padding:18px;
+    font-size:14px;
+}
+/* ===== MOBILE RESPONSIVE FIX ===== */
+@media (max-width: 768px){
+
+    .about-hero{
+        padding:50px 16px;
+    }
+    .about-hero h1{
+        font-size:28px;
+    }
+    .about-hero p{
+        font-size:14px;
+        line-height:1.6;
+    }
+
+    .about-section{
+        margin:40px auto;
+    }
+    .about-section h2{
+        font-size:24px;
+    }
+    .about-section p{
+        font-size:14px;
+    }
+
+    .team-title h2{
+        font-size:26px;
+    }
+    .team-title p{
+        font-size:14px;
+    }
+
+    .team-grid{
+        gap:22px;
+    }
+
+    .team-card{
+        padding:22px 18px;
+        border-radius:16px;
+    }
+
+    .team-img{
+        width:110px;
+        height:110px;
+        border-width:4px;
+    }
+
+    .team-card h3{
+        font-size:18px;
+    }
+    .team-card span{
+        font-size:13px;
+    }
+
+    .team-social a{
+        width:36px;
+        height:36px;
+        font-size:14px;
+    }
+
+    .footer{
+        font-size:13px;
+        padding:14px 10px;
+    }
+}
+
+/* EXTRA SMALL PHONES */
+@media (max-width: 420px){
+    .about-hero h1{
+        font-size:24px;
+    }
+    .team-card{
+        padding:20px 16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="about-hero">
+    <h1>About AllInOne Services</h1>
+    <p>
+        AllInOne Services एक डिजिटल प्लेटफॉर्म है जो मध्यप्रदेश की सरकारी सेवाओं
+        को सरल, तेज़ और भरोसेमंद तरीके से आम नागरिकों तक पहुँचाने का कार्य करता है।
+    </p>
+</section>
+
+<!-- ===== ABOUT TEXT ===== -->
+<section class="about-section">
+    <h2>हमारे बारे में</h2>
+    <p>
+        हम तीन सदस्यों की एक समर्पित टीम हैं, जिनका उद्देश्य सरकारी प्रक्रियाओं को
+        आम जनता के लिए आसान बनाना है। हमारा फोकस transparency, speed और trust पर है,
+        ताकि हर व्यक्ति बिना परेशानी के अपनी आवश्यक सेवाएँ प्राप्त कर सके।
+    </p>
+</section>
+
+<!-- ===== TEAM ===== -->
+<section class="team-section">
+    <div class="team-title">
+        <h2>Our Team</h2>
+        <p>जो इस प्लेटफॉर्म को संभव बनाते हैं</p>
+    </div>
+
+    <div class="team-grid">
+
+        <!-- MEMBER 1 -->
+        <div class="team-card">
+            <div class="team-img">
+                <img src="  " alt="Team Member">
+            </div>
+            <h3>HARSH TIWARI </h3>
+            <span>Developer | Core Technical Architect</span>
+
+            <div class="team-social">
+                <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/coderharshhere/" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://instagram.com/coderharshhere/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://Harshtiwari.in/" target="_blank"><i class="fa-solid fa-globe"></i></a>
+                <a href="https://Facebook.com/coderharshhere/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://YouTube.com/coderharshhere/" target="_blank" class="social yt"><i class="fa-brands fa-youtube"></i></a>
+
+            </div>
+        </div>
+
+        <!-- MEMBER 2 -->
+        <div class="team-card">
+            <div class="team-img">
+                <img src="https://i.ibb.co/2YhG7pps/IMG-20260118-WA0000.jpg" alt="Team Member">
+            </div>
+            <h3>AJAY SHUKLA </h3>
+            <span>UI/UX Operations | Social Media Manager </span>
+
+            <div class="team-social">
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                 <a href="#" target="_blank"><i class="fa-solid fa-globe"></i></a>
+            </div>
+        </div>
+
+        <!-- MEMBER 3 -->
+        <div class="team-card">
+            <div class="team-img">
+                <img src="team3.jpg" alt="Team Member">
+            </div>
+            <h3>VIJAY TRIPATHI</h3>
+            <span>Developer | Web Solutions</span>
+
+            <div class="team-social">
+                <a href="https://www.linkedin.com/in/vijay-tripathi-6a1980382?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/codervijaytripathi/"><i class="fab fa-github"></i></a>
+                <a href="https://www.instagram.com/thevijaytripathi?igsh=ZnZyaHQyaDNuazA2"><i class="fab fa-instagram"></i></a>
+                 <a href="https://vijaytripathi.online/" target="_blank"><i class="fa-solid fa-globe"></i></a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+    © 2026 AllInOne Services | All Rights Reserved
+</div>
+
+</body>
+</html>
