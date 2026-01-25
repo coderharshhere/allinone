@@ -47,29 +47,30 @@
     <main class="container mx-auto px-4 py-12">
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Sidebar -->
-            <aside class="lg:w-1/4">
+           <aside class="lg:w-1/4">
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden sticky top-10 border border-gray-100">
                     <h3 class="bg-gray-50 p-4 font-bold border-b text-gray-700">सेवा श्रेणियाँ</h3>
                     <div class="p-3 space-y-2">
-                        <button data-category="all" onclick="filterServices('all')" class="category-tab active">
-    <i class="fas fa-th-large"></i> सभी सेवाएँ
-</button>
-
-<button data-category="social" onclick="filterServices('social')" class="category-tab">
-    <i class="fas fa-users"></i> समग्र एवं सामाजिक
-</button>
-
-<button data-category="land" onclick="filterServices('land')" class="category-tab">
-    <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
-</button>
-
-<button data-category="certificates" onclick="filterServices('certificates')" class="category-tab">
-    <i class="fas fa-file-invoice"></i> प्रमाण पत्र
-</button>
-
-<button data-category="form" onclick="filterServices('form')" class="category-tab">
-    <i class="fas fa-university"></i> यूनिवर्सिटी/फार्म
-</button>
+                        <button data-category="all" onclick="filterServices('all')" 
+                                class="category-tab active flex items-center gap-3">
+                            <i class="fas fa-th-large w-5"></i> सभी सेवाएँ
+                        </button>
+                        <button data-category="social" onclick="filterServices('social')" 
+                                class="category-tab flex items-center gap-3">
+                            <i class="fas fa-users w-5"></i> समग्र एवं सामाजिक
+                        </button>
+                        <button data-category="land" onclick="filterServices('land')" 
+                                class="category-tab flex items-center gap-3">
+                            <i class="fas fa-map-marked-alt w-5"></i> भू-अभिलेख
+                        </button>
+                        <button data-category="certificates" onclick="filterServices('certificates')" 
+                                class="category-tab flex items-center gap-3">
+                            <i class="fas fa-file-invoice w-5"></i> प्रमाण पत्र
+                        </button>
+                        <button data-category="form" onclick="filterServices('form')" 
+                                class="category-tab flex items-center gap-3">
+                            <i class="fas fa-university w-5"></i> यूनिवर्सिटी/फार्म
+                        </button>
                     </div>
                 </div>
             </aside>
@@ -209,9 +210,9 @@
     <div id="footer"></div>
 
      <script>
-        // Search Functionality
-        function searchService() {
-    let input = document.getElementById('searchInput').value.toLowerCase();
+       // Search Functionality
+function searchService() {
+    let input = document.getElementById('searchInput').value.toLowerCase().trim();
     let cards = document.getElementsByClassName('service-card');
 
     for (let card of cards) {
@@ -220,12 +221,12 @@
     }
 }
 
-
-        // Filter Functionality
-        function filterServices(category) {
+// Category Filter Functionality
+function filterServices(category) {
     const cards = document.querySelectorAll('.service-card');
     const tabs = document.querySelectorAll('.category-tab');
 
+    // Active class toggle
     tabs.forEach(tab => {
         tab.classList.remove('active');
         if (tab.dataset.category === category) {
@@ -233,6 +234,7 @@
         }
     });
 
+    // Show/hide cards
     cards.forEach(card => {
         if (category === 'all' || card.dataset.category === category) {
             card.style.display = "";
@@ -242,8 +244,13 @@
     });
 }
 
+// Optional: Page load पर सभी दिखें
+document.addEventListener('DOMContentLoaded', () => {
+    filterServices('all');
+});
     </script>
     <script src="assets/js/script.js?v=1.0"></script>
 
 </body>
 </html>
+
