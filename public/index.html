@@ -228,34 +228,49 @@
     <!-- Footer -->
     <div id="footer"></div>
 
-     <script>
-       // Search Functionality
-function searchService() {
-    let input = document.getElementById('searchInput').value.toLowerCase().trim();
-    let cards = document.getElementsByClassName('service-card');
+    <script>
+let currentCategory = "all";
+let currentSearch = "";
 
-    for (let card of cards) {
-        let text = card.innerText.toLowerCase();
-        card.style.display = text.includes(input) ? "" : "none";
-    }
+// SEARCH
+function searchService() {
+    currentSearch = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    applyFilters();
 }
 
-// Category Filter Functionality
+// CATEGORY FILTER
 function filterServices(category) {
-    const cards = document.querySelectorAll('.service-card');
-    const tabs = document.querySelectorAll('.category-tab');
+    currentCategory = category;
 
-    // Active class toggle
-    tabs.forEach(tab => {
-        tab.classList.remove('active');
+    // Active tab highlight
+    document.querySelectorAll(".category-tab").forEach(tab => {
+        tab.classList.remove("active");
         if (tab.dataset.category === category) {
-            tab.classList.add('active');
+            tab.classList.add("active");
         }
     });
 
-    // Show/hide cards
+    applyFilters();
+}
+
+// COMMON FILTER LOGIC (MOST IMPORTANT)
+function applyFilters() {
+    const cards = document.querySelectorAll(".service-card");
+
     cards.forEach(card => {
-        if (category === 'all' || card.dataset.category === category) {
+        const text = card.innerText.toLowerCase();
+
+        const matchSearch = text.includes(currentSearch);
+        const matchCategory =
+            currentCategory === "all" ||
+            card.dataset.category === currentCategory;
+
+        if (matchSearch && matchCategory) {
             card.style.display = "";
         } else {
             card.style.display = "none";
@@ -263,14 +278,16 @@ function filterServices(category) {
     });
 }
 
-// Optional: Page load पर सभी दिखें
-document.addEventListener('DOMContentLoaded', () => {
-    filterServices('all');
+// Page load
+document.addEventListener("DOMContentLoaded", () => {
+    applyFilters();
 });
-    </script>
+</script>
+
     <script src="assets/js/script.js?v=1.0"></script>
 
 </body>
 </html>
+
 
 
