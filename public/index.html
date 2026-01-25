@@ -40,39 +40,59 @@
     <div id="header"></div>
 
     <!-- Hero Search -->
-   <!-- LEFT STICKY SIDEBAR -->
-    <aside class="w-1/4">
-        <div class="sticky top-24 bg-white p-4 rounded-xl shadow">
-            <h3 class="font-bold mb-4">सेवा श्रेणियाँ</h3>
-
-            <button class="category-tab active" data-category="all" onclick="filterServices('all')">
-                सभी सेवाएँ
-            </button>
-            <button class="category-tab" data-category="social" onclick="filterServices('social')">
-                समग्र एवं सामाजिक
-            </button>
-            <button class="category-tab" data-category="land" onclick="filterServices('land')">
-                भू-अभिलेख
-            </button>
-            <button class="category-tab" data-category="certificates" onclick="filterServices('certificates')">
-                प्रमाण पत्र
-            </button>
-            <button class="category-tab" data-category="form" onclick="filterServices('form')">
-                यूनिवर्सिटी / फार्म
-            </button>
+    <section class="hero-gradient text-white py-9 px-2">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">सभी सरकारी सेवाएँ, अब आपकी उंगलियों पर</h2>
+            <div class="max-w-2xl mx-auto relative">
+               <input type="text" id="searchInput"onkeyup="searchService()"placeholder="सेवा का नाम खोजें..."class="w-full py-4 px-6 rounded-lg"/>
+                <button onclick="searchService()" class="absolute right-3 top-3 bg-blue-600 p-2 px-4 rounded-md">
+                <i class="fas fa-search"></i>
+                </button>
+            </div>
+             <div class="mt-8 flex justify-center gap-6 text-sm opacity-90">
+                <span><i class="fas fa-check-circle mr-1"></i> 100% Safe </span>
+                <span><i class="fas fa-bolt mr-1"></i> Fast Processing</span>
+            </div>
         </div>
-    </aside>
+    </section>
 
-    <!-- RIGHT CONTENT -->
-    <section class="w-3/4">
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar -->
+            <!-- SEARCH BOX -->
+<div class="max-w-2xl mx-auto relative mb-6">
+    <input 
+        type="text"
+        id="searchInput"
+        placeholder="सेवा का नाम खोजें..."
+        class="w-full py-4 px-6 rounded-lg text-gray-800"
+        onkeyup="searchService()"
+    />
+</div>
 
-        <!-- SEARCH -->
-        <input
-            id="searchInput"
-            onkeyup="searchService()"
-            placeholder="सेवा का नाम खोजें..."
-            class="w-full p-4 rounded-lg border mb-6"
-        />
+<!-- CATEGORY BUTTONS -->
+<div class="space-y-2">
+    <button class="category-tab active" data-category="all" onclick="filterServices('all')">
+        सभी सेवाएँ
+    </button>
+
+    <button class="category-tab" data-category="social" onclick="filterServices('social')">
+        समग्र एवं सामाजिक
+    </button>
+
+    <button class="category-tab" data-category="land" onclick="filterServices('land')">
+        भू-अभिलेख
+    </button>
+
+    <button class="category-tab" data-category="certificates" onclick="filterServices('certificates')">
+        प्रमाण पत्र
+    </button>
+
+    <button class="category-tab" data-category="form" onclick="filterServices('form')">
+        यूनिवर्सिटी / फार्म
+    </button>
+</div>
 
             <div class="lg:w-3/4">
                 <div class="bg-white p-6 rounded-2xl mb-10 shadow-sm border-l-8 border-blue-600 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -207,21 +227,25 @@
     <!-- Footer -->
     <div id="footer"></div>
 
-  <script>
+    <script>
 let currentCategory = "all";
 let currentSearch = "";
 
-function searchService(){
+// Search function
+function searchService() {
     currentSearch = document.getElementById("searchInput").value.toLowerCase();
     renderServices();
 }
 
-function filterServices(category){
+// Category filter function
+function filterServices(category) {
     currentCategory = category;
 
-    document.querySelectorAll(".category-tab").forEach(tab=>{
+    // Active tab handling
+    const tabs = document.querySelectorAll(".category-tab");
+    tabs.forEach(tab => {
         tab.classList.remove("active");
-        if(tab.dataset.category === category){
+        if (tab.dataset.category === category) {
             tab.classList.add("active");
         }
     });
@@ -229,15 +253,22 @@ function filterServices(category){
     renderServices();
 }
 
-function renderServices(){
-    document.querySelectorAll(".service-card").forEach(card=>{
+// Common render function
+function renderServices() {
+    const cards = document.querySelectorAll(".service-card");
+
+    cards.forEach(card => {
         const text = card.innerText.toLowerCase();
         const matchSearch = text.includes(currentSearch);
         const matchCategory =
             currentCategory === "all" ||
             card.dataset.category === currentCategory;
 
-        card.style.display = (matchSearch && matchCategory) ? "" : "none";
+        if (matchSearch && matchCategory) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
     });
 }
 </script>
@@ -283,6 +314,4 @@ function renderServices(){
 
 
 
-
-
-
+ siderbar me karke pura code aak sath do 
