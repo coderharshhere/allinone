@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AllInOne | MP Govt Services Portal</title>
     <!-- Tailwind CSS for utility classes -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="assets/css/homeheader.css">
 
@@ -19,7 +17,7 @@
         body { font-family: 'Hind', sans-serif; }
         .hero-gradient { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
         .service-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; }
-        .service-card:hover { transform: translateY(-8px); shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-color: #3b82f6; }
+.service-card:hover { transform: translateY(-8px);box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);}
         .category-tab.active { background-color: #2563eb; color: white; }
     </style>
 </head>
@@ -53,21 +51,25 @@
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden sticky top-10 border border-gray-100">
                     <h3 class="bg-gray-50 p-4 font-bold border-b text-gray-700">सेवा श्रेणियाँ</h3>
                     <div class="p-3 space-y-2">
-                        <button onclick="filterServices('all')" class="category-tab active w-full text-left p-4 rounded-xl flex items-center gap-3 transition-all">
-                            <i class="fas fa-th-large"></i> सभी सेवाएँ
-                        </button>
+                        <button data-category="all" onclick="filterServices('all')" class="category-tab active">
+    <i class="fas fa-th-large"></i> सभी सेवाएँ
+</button>
+
 <button data-category="social" onclick="filterServices('social')" class="category-tab">
-                            <i class="fas fa-users"></i> समग्र एवं सामाजिक
-                        </button>
-<button data-category="social" onclick="filterServices('land')" class="category-tab">
-                            <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
-                        </button>
-<button data-category="social" onclick="filterServices('certificates')" class="category-tab">
-                            <i class="fas fa-file-invoice"></i> प्रमाण पत्र
-                        </button>
-<button data-category="social" onclick="filterServices('form')" class="category-tab">
-                            <i class="fas fa-university"></i> यूनिवर्सिटी/फार्म
-                        </button>
+    <i class="fas fa-users"></i> समग्र एवं सामाजिक
+</button>
+
+<button data-category="land" onclick="filterServices('land')" class="category-tab">
+    <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
+</button>
+
+<button data-category="certificates" onclick="filterServices('certificates')" class="category-tab">
+    <i class="fas fa-file-invoice"></i> प्रमाण पत्र
+</button>
+
+<button data-category="form" onclick="filterServices('form')" class="category-tab">
+    <i class="fas fa-university"></i> यूनिवर्सिटी/फार्म
+</button>
                     </div>
                 </div>
             </aside>
@@ -209,39 +211,43 @@
      <script>
         // Search Functionality
         function searchService() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.getElementsByClassName('service-card');
-            for (let card of cards) {
-                let text = card.innerText.toLowerCase();
-            card.style.display = text.includes(input) ? "" : "none";
-            }
-        }
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let cards = document.getElementsByClassName('service-card');
+
+    for (let card of cards) {
+        let text = card.innerText.toLowerCase();
+        card.style.display = text.includes(input) ? "" : "none";
+    }
+}
+
 
         // Filter Functionality
         function filterServices(category) {
-            const cards = document.querySelectorAll('.service-card');
-            const tabs = document.querySelectorAll('.category-tab');
+    const cards = document.querySelectorAll('.service-card');
+    const tabs = document.querySelectorAll('.category-tab');
 
-           tabs.forEach(tab => {
-    tab.classList.remove('active');
-    if (tab.dataset.category === category) {
-        tab.classList.add('active');
-    }
-});
-
-            cards.forEach(card => {
-                if (category === 'all' || card.getAttribute('data-category') === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.category === category) {
+            tab.classList.add('active');
         }
+    });
+
+    cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+
     </script>
     <script src="assets/js/script.js?v=1.0"></script>
 
 </body>
 </html>
+
 
 
 
