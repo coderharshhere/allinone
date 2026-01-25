@@ -1,52 +1,69 @@
 // ================= HOME PAGE JS =================
 
-// CATEGORY FILTER
-function filterServices(category, btn) {
-  const cards = document.querySelectorAll('.service-card');
-  const tabs = document.querySelectorAll('.category-tab');
+// GLOBAL STATE
+let currentCategory = "all";
+let currentSearch = "";
 
-  tabs.forEach(tab => tab.classList.remove('active'));
-  btn.classList.add('active');
-
-  cards.forEach(card => {
-    card.style.display =
-      category === 'all' || card.dataset.category === category
-        ? 'block'
-        : 'none';
-  });
+// ================= SEARCH =================
+function searchService() {
+    const input = document.getElementById("searchInput");
+    currentSearch = input ? input.value.toLowerCase().trim() : "";
+    applyFilters();
 }
 
-// DOM READY
+// ================= CATEGORY FILTER =================
+function filterServices(category) {
+    currentCategory = category;
+
+    // Active tab highlight
+    document.querySelectorAll(".category-tab").forEach(tab => {
+        tab.classList.remove("active");
+        if (tab.dataset.category === category) {
+            tab.classList.add("active");
+        }
+    });
+
+    applyFilters();
+}
+
+// ================= COMMON FILTER LOGIC =================
+function applyFilters() {
+    const cards = document.querySelectorAll(".service-card");
+
+    cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+
+        const matchSearch = text.includes(currentSearch);
+        const matchCategory =
+            currentCategory === "all" ||
+            card.dataset.category === currentCategory;
+
+        card.style.display =
+            matchSearch && matchCategory ? "" : "none";
+    });
+}
+
+// ================= DOM READY =================
 document.addEventListener("DOMContentLoaded", () => {
 
-  // SEARCH
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', e => {
-      const term = e.target.value.toLowerCase();
-      document.querySelectorAll('.service-card').forEach(card => {
-        card.style.display =
-          card.innerText.toLowerCase().includes(term)
-            ? 'block'
-            : 'none';
-      });
-    });
-  }
+    // Initial render
+    applyFilters();
 
-  // HEADER
-  fetch("header.html")
-    .then(res => res.text())
-    .then(data => {
-      const h = document.getElementById("header");
-      if (h) h.innerHTML = data;
-    });
+    // ================= HEADER LOAD =================
+    fetch("header.html")
+        .then(res => res.text())
+        .then(html => {
+            const header = document.getElementById("header");
+            if (header) header.innerHTML = html;
+        })
+        .catch(err => console.error("Header load error:", err));
 
-  // FOOTER
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(data => {
-      const f = document.getElementById("footer");
-      if (f) f.innerHTML = data;
-    });
-
+    // ================= FOOTER LOAD =================
+    fetch("footer.html")
+        .then(res => res.text())
+        .then(html => {
+            const footer = document.getElementById("footer");
+            if (footer) footer.innerHTML = html;
+        })
+        .catch(err => console.error("Footer load error:", err));
 });
