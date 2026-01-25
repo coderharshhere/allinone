@@ -89,7 +89,43 @@ body { font-family: 'Noto Sans Devanagari', sans-serif; }
 </div>
 
 <!-- PDF TEMPLATE -->
-<div id="pdfContent" class="hidden"></div>
+<!-- ================= PDF TEMPLATE ================= -->
+<div id="pdfContent" class="hidden">
+  <div style="
+    position:relative;
+    padding:30px;
+    border:2px solid #000;
+    font-family:'Noto Sans Devanagari';
+  ">
+
+    <h2 style="text-align:center;">AllInOne MP – आवेदन विवरण</h2>
+    <p style="text-align:center;font-weight:bold;">
+      आवेदन क्रमांक: <span id="pdfApplicationNo"></span>
+    </p>
+
+    <!-- QR -->
+    <div id="pdfQR" style="
+      position:absolute;
+      top:30px;
+      right:30px;
+      width:120px;
+      height:120px;
+      border:1px solid #000;
+      padding:5px;
+      background:#fff;
+    "></div>
+
+    <!-- AUTO DETAILS TABLE -->
+    <table id="pdfDetailsTable"
+      style="width:100%;border-collapse:collapse;margin-top:20px;">
+    </table>
+
+    <p style="margin-top:25px;font-size:12px;text-align:right;">
+      यह दस्तावेज़ डिजिटल रूप से जनरेट किया गया है।
+    </p>
+
+  </div>
+</div>
   <footer class="bg-gray-900 text-gray-400 py-10 px-4 mt-auto">
     <div class="container mx-auto text-center">
         <p>© 2026 AllInOne | MP Govt Services Portal</p>
@@ -184,6 +220,12 @@ function formatDate(ts){
   if(!ts) return "-";
   return ts.toDate().toLocaleDateString("hi-IN");
 }
+function formatLabel(key){
+  return key
+    .replace(/_/g," ")
+    .replace(/([A-Z])/g," $1")
+    .replace(/^./,s=>s.toUpperCase());
+}
 
 /* ===== ACTIONS ===== */
 window.del = async id => {
@@ -210,23 +252,70 @@ document.getElementById("searchInput").addEventListener("input",e=>{
 });
 
 /* ===== DETAILS ===== */
-window.openDetails = id => {
-  const i = allApplications.find(x=>x.id===id);
-  if(!i) return;
+window.openDetails = (id) => {
+  const item = allApplications.find(a => a.id === id);
+  if (!item) return;
+
+  /* ===== SCREEN MODAL ===== */
   document.getElementById("detailBody").innerHTML =
-    Object.entries(i).map(([k,v])=>`
-      <div><div class="text-xs text-gray-500">${k}</div><div class="font-bold">${v||"-"}</div></div>
+    Object.entries(item).map(([k,v])=>`
+      <div>
+        <div class="text-xs text-gray-500">${formatLabel(k)}</div>
+        <div class="font-bold">${v || "-"}</div>
+      </div>
     `).join("");
+
   document.getElementById("detailModal").classList.remove("hidden");
   document.getElementById("detailModal").classList.add("flex");
+
+  /* ===== PDF DATA ===== */
+  const appNo = "AIO-" + item.id.substring(0,8).toUpperCase();
+  document.getElementById("pdfApplicationNo").innerText = appNo;
+
+  // AUTO TABLE
+  document.getElementById("pdfDetailsTable").innerHTML =
+    Object.entries(item).map(([k,v])=>`
+      <tr>
+        <td style="border:1px solid #000;padding:8px;font-weight:bold;width:40%">
+          ${formatLabel(k)}
+        </td>
+        <td style="border:1px solid #000;padding:8px">
+          ${v || "-"}
+        </td>
+      </tr>
+    `).join("");
+
+  // QR
+  const qr = document.getElementById("pdfQR");
+  qr.innerHTML = "";
+  new QRCode(qr,{
+    text:`Application: ${appNo}
+Name: ${item.applicantName || item.studentName || ""}
+Service: ${item.serviceType || ""}`,
+    width:110,
+    height:110
+  });
 };
+
 
 window.closeDetails = ()=>document.getElementById("detailModal").classList.add("hidden");
 
-window.downloadPDF = ()=>{
-  const el=document.getElementById("detailBody");
-  html2pdf().from(el).save("Application.pdf");
+window.downloadPDF = () => {
+  const pdf = document.getElementById("pdfContent");
+  pdf.classList.remove("hidden");
+
+  setTimeout(()=>{
+    html2pdf().from(pdf).set({
+      filename:"Application.pdf",
+      margin:10,
+      html2canvas:{scale:2},
+      jsPDF:{unit:"mm",format:"a4"}
+    }).save().then(()=>{
+      pdf.classList.add("hidden");
+    });
+  },300);
 };
+
 </script>
 
 </body>
