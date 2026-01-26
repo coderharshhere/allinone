@@ -3,10 +3,14 @@ import {
   getFirestore,
   collection,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  updateDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
 console.log("form.js loaded");
-// ================= FIREBASE INIT =================
+
+/* ================= FIREBASE INIT ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
@@ -15,9 +19,11 @@ const firebaseConfig = {
   messagingSenderId: "924003122498",
   appId: "1:924003122498:web:2c86505457236e60055cdb"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-  // ================= INCOME FORM =================
+
+/* ================= INCOME FORM ================= */
 document.addEventListener("DOMContentLoaded", () => {
   const incomeForm = document.getElementById("incomeForm");
   if (!incomeForm) return;
@@ -25,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
   incomeForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     console.log("submit handler working");
+
     try {
+      /* 1️⃣ FIRST: add document */
       const docRef = await addDoc(collection(db, "applications"), {
         applicantName: incomeForm.applicantName.value,
         fatherName: incomeForm.fatherName.value,
@@ -49,9 +57,16 @@ document.addEventListener("DOMContentLoaded", () => {
         createdAt: serverTimestamp()
       });
 
+      /* 2️⃣ GENERATE APPLICATION NUMBER */
       const applicationNumber =
         "AIO-" + docRef.id.substring(0, 8).toUpperCase();
 
+      /* 3️⃣ SAVE applicationNumber IN DATABASE ✅ */
+      await updateDoc(doc(db, "applications", docRef.id), {
+        applicationNumber: applicationNumber
+      });
+
+      /* 4️⃣ SEND EMAIL */
       await window.emailjs.send(
         "service_allinone",
         "template_7x246oi",
@@ -62,9 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
 
+      /* 5️⃣ SUCCESS MESSAGE */
       alert(
         "✅ आवेदन सफलतापूर्वक जमा हो गया\n\n" +
-        "Application ID: " + applicationNumber
+        "आवेदन क्रमांक: " + applicationNumber
       );
 
       incomeForm.reset();
@@ -74,5 +90,4 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("❌ आवेदन में समस्या आई");
     }
   });
-
 });
