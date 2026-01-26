@@ -94,26 +94,27 @@
                 </div>
             </aside>
 
+<h4 class="font-bold text-gray-800 text-lg">आवेदन की स्थिति जांचें</h4>
+<p class="text-sm text-gray-500">आवेदन क्रमांक डालें</p>
 
-          <div class="flex w-full md:w-auto gap-2">
+<div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
   <input
-    type="text"
     id="trackInput"
-    placeholder="आवेदन क्रमांक (AIO-XXXXXX)"
-    class="border p-3 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none w-full md:w-64 uppercase"
+    type="text"
+    placeholder="AIO-XXXXXX"
+    class="border p-3 rounded-lg w-full sm:w-56 uppercase"
   >
 
   <button
     onclick="trackApplication()"
-    class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700">
+    class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold">
     Track
   </button>
 </div>
 
-<!-- RESULT -->
-<div id="trackResult"
-     class="mt-4 hidden font-bold text-center text-lg">
-</div>
+<p id="trackResult"
+   class="mt-2 text-sm font-bold hidden"></p>
+
 
 
 
@@ -317,6 +318,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
