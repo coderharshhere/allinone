@@ -1,220 +1,352 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About Us | AllInOne Services</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | AllInOne Services</title>
 
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins', sans-serif;
-}
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --bg-light: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --white: #ffffff;
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
 
-body{
-    background:#f4f6f8;
-    color:#1f2937;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-/* ===== HERO ABOUT ===== */
-.about-hero{
-    background:linear-gradient(135deg,#1e40af,#2563eb);
-    color:#fff;
-    padding:70px 20px;
-    text-align:center;
-}
-.about-hero h1{
-    font-size:40px;
-    margin-bottom:10px;
-}
-.about-hero p{
-    max-width:800px;
-    margin:auto;
-    font-size:16px;
-    opacity:.9;
-}
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-/* ===== ABOUT CONTENT ===== */
-.about-section{
-    max-width:1100px;
-    margin:60px auto;
-    padding:0 20px;
-    text-align:center;
-}
-.about-section h2{
-    font-size:30px;
-    margin-bottom:15px;
-}
-.about-section p{
-    font-size:15px;
-    color:#4b5563;
-    max-width:900px;
-    margin:auto;
-    line-height:1.7;
-}
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 120px 20px;
+            color: var(--white);
+            text-align: center;
+            overflow: hidden;
+        }
 
-/* ===== TEAM SECTION ===== */
-.team-section{
-    max-width:1200px;
-    margin:80px auto;
-    padding:0 20px;
-}
-.team-title{
-    text-align:center;
-    margin-bottom:50px;
-}
-.team-title h2{
-    font-size:32px;
-}
-.team-title p{
-    color:#6b7280;
-    font-size:15px;
-}
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
 
-/* ===== TEAM GRID ===== */
-.team-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:35px;
-}
+        .hero-content {
+            max-width: 900px;
+            margin: auto;
+            position: relative;
+            z-index: 2;
+        }
 
-/* ===== TEAM CARD ===== */
-.team-card{
-    background:#fff;
-    border-radius:18px;
-    padding:30px 25px;
-    text-align:center;
-    box-shadow:0 15px 35px rgba(0,0,0,.08);
-    transition:.4s;
-    position:relative;
-    overflow:hidden;
-}
-.team-card::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(135deg,#2563eb,#1e40af);
-    clip-path:circle(0% at 50% 0%);
-    transition:.5s;
-}
-.team-card:hover::before{
-    clip-path:circle(150% at 50% 0%);
-}
-.team-card:hover{
-    transform:translateY(-12px);
-}
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
 
-/* ===== PROFILE IMAGE ===== */
-.team-img{
-    width:130px;
-    height:130px;
-    border-radius:50%;
-    overflow:hidden;
-    margin:0 auto 15px;
-    border:6px solid #e5e7eb;
-}
-.team-img img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: auto;
+        }
 
-/* ===== TEXT ===== */
-.team-card h3{
-    font-size:20px;
-    margin-bottom:5px;
-}
-.team-card span{
-    font-size:14px;
-    color:#6b7280;
-}
-.team-card:hover h3,
-.team-card:hover span{
-    color:#fff;
-}
+        /* ===== STATS SECTION ===== */
+        .stats-section {
+            background: var(--white);
+            padding: 60px 5%;
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+            border-radius: 30px;
+            box-shadow: var(--shadow-lg);
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-    .about-hero h1{font-size:28px;}
-    .about-section h2{font-size:24px;}
-    .team-title h2{font-size:26px;}
-}
-</style>
+        .stat-item h2 { font-size: 2.5rem; color: var(--primary); font-weight: 700; }
+        .stat-item p { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+
+        /* ===== VALUES/MISSION ===== */
+        .content-section {
+            padding: 100px 5%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 15px; position: relative; display: inline-block; }
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .value-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            transition: 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .value-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .value-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; }
+
+        /* ===== TEAM SECTION ===== */
+        .team-bg {
+            background: #f1f5f9;
+            padding: 100px 5%;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 35px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        /* Clickable Team Card */
+        .team-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .team-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .team-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .team-img-wrapper {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 25px;
+            padding: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .team-card:hover .team-img-wrapper {
+            border-color: var(--primary);
+            border-style: dashed;
+        }
+
+        .team-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .team-card h3 { font-size: 1.4rem; color: var(--text-dark); margin-bottom: 5px; }
+        .team-card .role { color: var(--primary); font-weight: 600; font-size: 0.9rem; margin-bottom: 20px; display: block; }
+        
+        .visit-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: #f1f5f9;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: 0.3s;
+        }
+
+        .team-card:hover .visit-btn {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Footer and Header Placeholders */
+        #header, #footer { width: 100%; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .stats-section { margin-top: 20px; border-radius: 0; }
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER LOAD HERE ===== -->
+<!-- Header dynamic load -->
 <div id="header"></div>
 
-<!-- ===== HERO ===== -->
-<section class="about-hero">
-    <h1>About AllInOne Services</h1>
-    <p>
-        AllInOne Services एक डिजिटल प्लेटफॉर्म है जो मध्यप्रदेश की सरकारी सेवाओं
-        को सरल, तेज़ और भरोसेमंद तरीके से आम नागरिकों तक पहुँचाने का कार्य करता है।
-    </p>
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>हमारा सफर, आपकी प्रगति</h1>
+        <p>मध्यप्रदेश के डिजिटल भविष्य को सुरक्षित और सुलभ बनाने के लिए समर्पित एक टीम।</p>
+    </div>
 </section>
 
-<!-- ===== ABOUT TEXT ===== -->
-<section class="about-section">
-    <h2>हमारे बारे में</h2>
-    <p>
-        हम तीन सदस्यों की एक समर्पित टीम हैं, जिनका उद्देश्य सरकारी प्रक्रियाओं को
-        आम जनता के लिए आसान बनाना है। हमारा फोकस transparency, speed और trust पर है,
-        ताकि हर व्यक्ति बिना परेशानी के अपनी आवश्यक सेवाएँ प्राप्त कर सके।
-    </p>
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="stat-item">
+        <h2>50+</h2>
+        <p>सरकारी सेवाएँ</p>
+    </div>
+    <div class="stat-item">
+        <h2>10k+</h2>
+        <p>संतुष्ट नागरिक</p>
+    </div>
+    <div class="stat-item">
+        <h2>24/7</h2>
+        <p>सपोर्ट सुविधा</p>
+    </div>
+    <div class="stat-item">
+        <h2>100%</h2>
+        <p>सुरक्षित डेटा</p>
+    </div>
 </section>
 
-<!-- ===== TEAM ===== -->
-<section class="team-section">
-    <div class="team-title">
-        <h2>Our Team</h2>
-        <p>जो इस प्लेटफॉर्म को संभव बनाते हैं</p>
+<!-- Mission Section -->
+<section class="content-section">
+    <div class="section-header">
+        <h2>हमारा विजन</h2>
+    </div>
+    <div class="values-grid">
+        <div class="value-card">
+            <div class="value-icon"><i class="fa-solid fa-lightbulb"></i></div>
+            <h3>सरलता (Simplicity)</h3>
+            <p>जटिल सरकारी प्रक्रियाओं को सरल बना कर एक क्लिक की दूरी पर लाना हमारा लक्ष्य है।</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3>भरोसा (Trust)</h3>
+            <p>आपकी गोपनीयता और डेटा की सुरक्षा हमारी सर्वोच्च प्राथमिकता है।</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon"><i class="fa-solid fa-users-gear"></i></div>
+            <h3>समाधान (Solution)</h3>
+            <p>तकनीकी समस्याओं से लेकर कागजी कार्रवाई तक, हम हर मोड़ पर आपके साथ हैं।</p>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-bg">
+    <div class="section-header">
+        <h2>हमारी टीम</h2>
+        <p style="color: var(--text-muted);">बॉक्स पर क्लिक करके हमारे बारे में और जानें</p>
     </div>
 
     <div class="team-grid">
-
-        <div class="team-card">
-            <div class="team-img">
-                <img src="assets/image/cropped_circle_image.png">
+        <!-- Team Member 1 -->
+        <a href="https://github.com/harshtiwari" target="_blank" class="team-card-link">
+            <div class="team-card">
+                <div class="team-img-wrapper">
+                    <img src="assets/image/cropped_circle_image.png" alt="Harsh Tiwari" class="team-img" onerror="this.src='https://ui-avatars.com/api/?name=Harsh+Tiwari&background=2563eb&color=fff'">
+                </div>
+                <h3>Harsh Tiwari</h3>
+                <span class="role">Core Technical Architect</span>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">सिस्टम डिजाइन और बैकएंड एक्सपर्ट जो पोर्टल को स्मूथ बनाते हैं।</p>
+                <div class="visit-btn">Visit Profile <i class="fa-solid fa-arrow-right"></i></div>
             </div>
-            <h3>HARSH TIWARI</h3>
-            <span>Developer | Core Technical Architect</span>
-        </div>
+        </a>
 
-        <div class="team-card">
-            <div class="team-img">
-                <img src="assets/image/IMG-20260118-WA0000.jpg">
+        <!-- Team Member 2 -->
+        <a href="https://instagram.com/ajayshukla" target="_blank" class="team-card-link">
+            <div class="team-card">
+                <div class="team-img-wrapper">
+                    <img src="assets/image/IMG-20260118-WA0000.jpg" alt="Ajay Shukla" class="team-img" onerror="this.src='https://ui-avatars.com/api/?name=Ajay+Shukla&background=2563eb&color=fff'">
+                </div>
+                <h3>Ajay Shukla</h3>
+                <span class="role">UI/UX & Operations</span>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">यूजर एक्सपीरियंस और सोशल मीडिया ऑपरेशन्स के विशेषज्ञ।</p>
+                <div class="visit-btn">Visit Profile <i class="fa-solid fa-arrow-right"></i></div>
             </div>
-            <h3>AJAY SHUKLA</h3>
-            <span>UI/UX Operations | Social Media Manager</span>
-        </div>
+        </a>
 
-        <div class="team-card">
-            <div class="team-img">
-                <img src="assets/image/20260118-135311.png">
+        <!-- Team Member 3 -->
+        <a href="https://github.com/vijaytripathi" target="_blank" class="team-card-link">
+            <div class="team-card">
+                <div class="team-img-wrapper">
+                    <img src="assets/image/20260118-135311.png" alt="Vijay Tripathi" class="team-img" onerror="this.src='https://ui-avatars.com/api/?name=Vijay+Tripathi&background=2563eb&color=fff'">
+                </div>
+                <h3>Vijay Tripathi</h3>
+                <span class="role">Web Solution Developer</span>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">वेब इंटरफेस और क्लाइंट-साइड सॉल्यूशंस के मास्टर।</p>
+                <div class="visit-btn">Visit Profile <i class="fa-solid fa-arrow-right"></i></div>
             </div>
-            <h3>VIJAY TRIPATHI</h3>
-            <span>Developer | Web Solutions</span>
-        </div>
-
+        </a>
     </div>
 </section>
 
-<!-- ===== FOOTER LOAD HERE ===== -->
+<!-- Footer dynamic load -->
 <div id="footer"></div>
 
-<!-- ===== COMMON JS ===== -->
-<script src="assets/js/headerfooter.js?v=1.0" defer></script>
+<!-- Custom JS for Header/Footer -->
+<script src="assets/js/headerfooter.js" defer></script>
 
 </body>
 </html>
