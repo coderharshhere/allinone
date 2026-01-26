@@ -262,6 +262,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import {
   getFirestore,
   collection,
+  query,
+  where,
   getDocs
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -284,15 +286,13 @@ window.trackApplication = async function () {
     .toUpperCase();
 
   const resultBox = document.getElementById("trackResult");
+  resultBox.classList.remove("hidden");
 
   if (!input.startsWith("AIO-")) {
-    resultBox.classList.remove("hidden");
-    resultBox.className = "mt-4 text-red-600 font-bold text-center";
+    resultBox.className = "mt-4 text-red-600 font-bold";
     resultBox.innerText = "❌ सही आवेदन क्रमांक डालें (AIO-XXXXXX)";
     return;
   }
-
-  const idPart = input.replace("AIO-", "").toLowerCase();
 
   const collections = [
     "applications",
@@ -300,37 +300,45 @@ window.trackApplication = async function () {
     "mpbhojApplications"
   ];
 
-  let foundStatus = null;
+  let foundData = null;
 
   for (const col of collections) {
-    const snap = await getDocs(collection(db, col));
+    const q = query(
+      collection(db, col),
+      where("applicationNumber", "==", input)
+    );
 
-    snap.forEach(docu => {
-      if (docu.id.startsWith(idPart)) {
-        foundStatus = docu.data().status || "pending";
-      }
-    });
+    const snap = await getDocs(q);
 
-    if (foundStatus) break;
+    if (!snap.empty) {
+      const docu = snap.docs[0];
+      foundData = docu.data();
+      break;
+    }
   }
 
-  resultBox.classList.remove("hidden");
-
-  if (!foundStatus) {
-    resultBox.className = "mt-4 text-red-600 font-bold text-center";
+  if (!foundData) {
+    resultBox.className = "mt-4 text-red-600 font-bold";
     resultBox.innerText = "❌ कोई आवेदन नहीं मिला";
     return;
   }
 
   let color =
-    foundStatus === "complete" ? "text-green-600" :
-    foundStatus === "reject"   ? "text-red-600" :
-                                 "text-yellow-600";
+    foundData.status === "complete" ? "text-green-600" :
+    foundData.status === "reject"   ? "text-red-600" :
+                                      "text-yellow-600";
 
-  resultBox.className = `mt-4 font-bold text-center text-lg ${color}`;
-  resultBox.innerText = `स्थिति : ${foundStatus.toUpperCase()}`;
+  resultBox.className = `mt-4 font-bold text-lg ${color}`;
+
+  resultBox.innerHTML = `
+    📄 <b>आवेदन क्रमांक:</b> ${foundData.applicationNumber}<br>
+    👤 <b>नाम:</b> ${foundData.applicantName || "-"}<br>
+    🛠 <b>सेवा:</b> ${foundData.serviceType || "-"}<br>
+    📌 <b>स्थिति:</b> ${foundData.status.toUpperCase()}
+  `;
 };
 </script>
+
 
  
 
@@ -338,6 +346,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
