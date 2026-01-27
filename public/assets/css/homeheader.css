@@ -58,4 +58,60 @@
     transform: translateX(-100%);
   }
 }
-<
+/* ===============================
+   MOBILE LOGIN VISIBILITY FIX
+   =============================== */
+
+/* Header wrapper fix */
+.header,
+.top-header,
+.header-top,
+.header-bar {
+  overflow: visible !important;
+}
+
+/* Right section fix */
+.header-right,
+.top-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Login button force visible */
+.login-btn,
+.login-button,
+.header-login {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* ===== MOBILE VIEW FIX ===== */
+@media (max-width: 768px) {
+
+  .top-header,
+  .header-top,
+  .header-bar {
+    flex-wrap: wrap;
+    height: auto !important;
+    padding-bottom: 8px;
+  }
+
+  .top-header-right,
+  .header-right {
+    width: 100%;
+    justify-content: center;
+    margin-top: 6px;
+  }
+
+  .login-btn,
+  .login-button,
+  .header-login {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
