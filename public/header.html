@@ -50,36 +50,45 @@
 
 <!-- ================= MAIN HEADER ================= -->
 <header class="bg-white shadow-md sticky top-0 z-50">
-  <div class="container mx-auto px-4 py-1 flex flex-wrap justify-between items-center">
+  <div class="container mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-3">
 
+    <!-- LOGO + TITLE -->
     <div class="flex items-center gap-3">
-      <!--<img src="assets/logo(2).png"
-           class="h-15 md:h-14 object-contain"
-           alt="AllInOne Logo">-->
-    <img src="assets/logo(2).png"
-     class="h-16 w-auto md:h-20 object-contain"
-     alt="AllInOne Logo">
-
+      <img src="assets/logo(2).png"
+           class="h-14 md:h-20 w-auto object-contain"
+           alt="AllInOne Logo">
 
       <div>
-        <h1 class="text-2xl font-bold text-blue-900 leading-tight">AllINONE-MP</h1>
-        <p class="text-sm text-gray-600">one window service portal</p>
+        <h1 class="text-xl md:text-2xl font-bold text-blue-900 leading-tight">
+          AllINONE-MP
+        </h1>
+        <p class="text-xs md:text-sm text-gray-600">
+          one window service portal
+        </p>
       </div>
     </div>
 
-    <div class="hidden md:flex gap-6 items-center">
-      <div class="text-right">
+    <!-- RIGHT SECTION (VISIBLE ON ALL DEVICES) -->
+    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-6 w-full md:w-auto">
+
+      <!-- HELPLINE -->
+      <div class="text-center md:text-right">
         <p class="text-xs text-gray-500 uppercase">सहायता केंद्र</p>
         <p class="font-bold text-blue-800">
-          <a href="https://wa.me/918435273042" target="_blank">8435273042</a>
+          <a href="https://wa.me/918435273042" target="_blank">
+            8435273042
+          </a>
         </p>
       </div>
 
-     <a href="/adminlogin.html"
+      <!-- LOGIN BUTTON -->
+      <a href="/adminlogin.html"
          class="bg-blue-600 text-white px-5 py-2 rounded-full font-bold
                 hover:bg-blue-700 transition whitespace-nowrap">
         लॉगिन / पंजीकरण
       </a>
+
+    </div>
 
   </div>
 </header>
@@ -113,6 +122,7 @@
 
 </body>
 </html>
+
 
 
 
