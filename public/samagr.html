@@ -167,99 +167,14 @@
         </div>
     </main>
         <div id="footer"></div>
-   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<script>
-  (function(){
-    emailjs.init("-HjIyXVqfuRKrznVE");
-  })();
-</script>
-
-    <!-- Firebase Script Logic -->
-    <script type="module">     
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-            authDomain: "allinone-aa89.firebaseapp.com",
-            projectId: "allinone-aa89",
-            storageBucket: "allinone-aa89.firebasestorage.app",
-            messagingSenderId: "924003122498",
-            appId: "1:924003122498:web:2c86505457236e60055cdb"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const form = document.getElementById("samagraKycForm");
-
-      form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  try {
-    const formData = new FormData(form);
-
-    const docRef = await addDoc(collection(db, "samagra_ekyc_requests"), {
-      serviceType: "Samagra e-KYC Request",
-      memberId: formData.get("memberId"),
-      familyId: formData.get("familyId"),
-      aadhaarLast4: formData.get("aadhaarNumber").slice(-4),
-      authMethod: formData.get("authMethod"),
-      applicantName: formData.get("applicantName"),
-      mobile: formData.get("mobile"),
-      email: formData.get("email"),
-      dob: formData.get("dob"),
-      gender: formData.get("gender"),
-      status: "pending",
-      createdAt: serverTimestamp()
-    });
-
-    const applicationNumber =
-      "AIO-" + docRef.id.substring(0, 8).toUpperCase();
-
-    await emailjs.send(
-      "service_allinone",
-      "template_7x246oi",
-      {
-        to_email: formData.get("email"),
-        to_name: formData.get("applicantName"),
-        application_no: applicationNumber
-      }
-    );
-
-    alert(
-      "✅ आवेदन सफलतापूर्वक जमा हो गया\n\n" +
-      "Application ID: " + applicationNumber +
-      "\n\nईमेल भेज दिया गया है।"
-    );
-
-    form.reset();
-
-  } catch (error) {
-    console.error(error);
-    alert("❌ आवेदन या ईमेल भेजने में समस्या आई");
-  }
-});
-
-    </script>
-  <script>
-  fetch("header.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("header").innerHTML = data;
-    });
-
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("footer").innerHTML = data;
-    });
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="assets/js/common.js?v=1.0" defer></script>
+<script type="module" src="assets/js/form.js?v=1.0"></script>
   
 </body>
 
 </html>
+
 
 
 
