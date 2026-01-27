@@ -310,77 +310,8 @@
 
     <!-- FOOTER -->
     <div id="footer"></div>
-
-    <script type="module">
-        fetch("header.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("header").innerHTML = data);
-
-    fetch("footer.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("footer").innerHTML = data);
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-        // Firebase Configuration (From User Template)
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-            authDomain: "allinone-aa89.firebaseapp.com",
-            projectId: "allinone-aa89",
-            storageBucket: "allinone-aa89.firebasestorage.app",
-            messagingSenderId: "924003122498",
-            appId: "1:924003122498:web:2c86505457236e60055cdb"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const form = document.getElementById("casteForm");
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            try {
-                const formData = new FormData(form);
-                await addDoc(collection(db, "applications"), {
-                    serviceType: "Caste Certificate",
-                    applicantName: formData.get("applicantName"),
-                    fatherName: formData.get("fatherName"),
-                    samagraId: formData.get("samagraId"),
-                    aadhaar: formData.get("aadhaar"),
-                    category: formData.get("category"),
-                    subCaste: formData.get("subCaste"),
-                    mobile: formData.get("mobile"),
-                    status: "pending",
-                    createdAt: serverTimestamp()
-                });
-               const applicationNumber =
-        "AIO-" + docRef.id.substring(0, 8).toUpperCase();
-
-      alert(
-        "✅ आवेदन सफलतापूर्वक जमा हो गया हम आपसे जल्द संपर्क करेंगे \n\n" +
-        "Application ID: " + applicationNumber
-      );
-
-      form.reset();
-
-    } catch (error) {
-      console.error(error);
-      alert("❌ आवेदन जमा नहीं हुआ, कृपया पुनः प्रयास करें");
-    }
-  });
-    </script>
- <script>
-  fetch("header.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("header").innerHTML = data;
-    });
-
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("footer").innerHTML = data;
-    });
-</script>
+ <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="assets/js/common.js?v=1.0" defer></script>
+<script type="module" src="assets/js/form.js?v=1.0"></script>
 </body>
 </html>
