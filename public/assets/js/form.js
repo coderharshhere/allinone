@@ -1,3 +1,4 @@
+/* ================= FIREBASE IMPORTS ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
   getFirestore,
@@ -10,7 +11,7 @@ import {
 
 console.log("form.js loaded");
 
-/* ================= FIREBASE INIT ================= */
+/* ================= FIREBASE CONFIG ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
@@ -20,74 +21,84 @@ const firebaseConfig = {
   appId: "1:924003122498:web:2c86505457236e60055cdb"
 };
 
+/* ================= INIT ================= */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ================= INCOME FORM ================= */
+/* ================= COMMON FORM HANDLER ================= */
 document.addEventListener("DOMContentLoaded", () => {
-  const incomeForm = document.getElementById("incomeForm");
-  if (!incomeForm) return;
 
-  incomeForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    console.log("submit handler working");
+  // 🔥 jitne bhi forms me data-service hoga sab handle honge
+  const forms = document.querySelectorAll("form[data-service]");
 
-    try {
-      /* 1️⃣ FIRST: add document */
-      const docRef = await addDoc(collection(db, "applications"), {
-        applicantName: incomeForm.applicantName.value,
-        fatherName: incomeForm.fatherName.value,
-        samagraId: incomeForm.samagraId.value,
-        aadhaar: incomeForm.aadhaar.value,
-        email: incomeForm.email.value,
-        mobile: incomeForm.mobile.value,
+  forms.forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      console.log("Submitting:", form.id);
 
-        gender: incomeForm.gender.value,
-        district: incomeForm.district.value,
-        pincode: incomeForm.pincode.value,
-        state: incomeForm.state.value,
-        tehsil: incomeForm.tehsil.value,
-        village: incomeForm.village.value,
-        fullAddress: incomeForm.fullAddress.value,
-        occupation: incomeForm.occupation.value,
+      try {
+        const serviceType = form.serviceType.value;
 
-        annualIncome: incomeForm.annualIncome.value,
-        serviceType: "Income Certificate",
-        status: "pending",
-        createdAt: serverTimestamp()
-      });
+        /* 1️⃣ SAVE DATA */
+        const docRef = await addDoc(collection(db, "applications"), {
+          applicantName: form.applicantName?.value || "",
+          fatherName: form.fatherName?.value || "",
+          samagraId: form.samagraId?.value || "",
+          aadhaar: form.aadhaar?.value || "",
+          email: form.email?.value || "",
+          mobile: form.mobile?.value || "",
 
-      /* 2️⃣ GENERATE APPLICATION NUMBER */
-      const applicationNumber =
-        "AIO-" + docRef.id.substring(0, 8).toUpperCase();
+          gender: form.gender?.value || "",
+          district: form.district?.value || "",
+          pincode: form.pincode?.value || "",
+          state: form.state?.value || "",
+          tehsil: form.tehsil?.value || "",
+          village: form.village?.value || "",
+          fullAddress: form.fullAddress?.value || "",
+          occupation: form.occupation?.value || "",
+          annualIncome: form.annualIncome?.value || "",
 
-      /* 3️⃣ SAVE applicationNumber IN DATABASE ✅ */
-      await updateDoc(doc(db, "applications", docRef.id), {
-        applicationNumber: applicationNumber
-      });
+          serviceType: serviceType,   // ✅ dynamic category
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
 
-      /* 4️⃣ SEND EMAIL */
-      await window.emailjs.send(
-        "service_allinone",
-        "template_7x246oi",
-        {
-          to_email: incomeForm.email.value,
-          to_name: incomeForm.applicantName.value,
-          application_no: applicationNumber
+        /* 2️⃣ APPLICATION NUMBER */
+        const applicationNumber =
+          "AIO-" + docRef.id.substring(0, 8).toUpperCase();
+
+        /* 3️⃣ UPDATE DOC */
+        await updateDoc(doc(db, "applications", docRef.id), {
+          applicationNumber
+        });
+
+        /* 4️⃣ EMAIL (OPTIONAL) */
+        if (window.emailjs && form.email?.value) {
+          await emailjs.send(
+            "service_allinone",
+            "template_7x246oi",
+            {
+              to_email: form.email.value,
+              to_name: form.applicantName?.value || "Applicant",
+              application_no: applicationNumber,
+              service_type: serviceType
+            }
+          );
         }
-      );
 
-      /* 5️⃣ SUCCESS MESSAGE */
-      alert(
-        "✅ आवेदन सफलतापूर्वक जमा हो गया\n\n" +
-        "आवेदन क्रमांक: " + applicationNumber
-      );
+        /* 5️⃣ SUCCESS */
+        alert(
+          "✅ आवेदन सफलतापूर्वक जमा हो गया\n\n" +
+          "सेवा: " + serviceType + "\n" +
+          "आवेदन क्रमांक: " + applicationNumber
+        );
 
-      incomeForm.reset();
+        form.reset();
 
-    } catch (err) {
-      console.error(err);
-      alert("❌ आवेदन में समस्या आई");
-    }
+      } catch (error) {
+        console.error(error);
+        alert("❌ आवेदन जमा करने में समस्या आई");
+      }
+    });
   });
 });
