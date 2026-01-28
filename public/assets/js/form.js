@@ -1,56 +1,84 @@
 /* ================= FIREBASE IMPORTS ================= */
+/* ================= FIREBASE ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
   getFirestore,
   collection,
   addDoc,
-  serverTimestamp,
-  updateDoc,
-  doc
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-console.log("form.js loaded");
-
-/* ================= FIREBASE CONFIG ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
   projectId: "allinone-aa89"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* ================= ELEMENTS ================= */
 const payBtn = document.getElementById("payNowBtn");
 const form = document.querySelector("form");
 
-payBtn.addEventListener("click", () => {
+/* ================= PAY FLOW ================= */
+payBtn.addEventListener("click", async () => {
 
-  // 1️⃣ Form validation
+  // 1️⃣ Validate form
   if (!form.checkValidity()) {
     form.reportValidity();
     return;
   }
 
-  // 2️⃣ Razorpay options
-  var options = {
-    key: "rzp_test_S9jk2wxqonRqth", // ✅ KEY_ID
-    amount: 9900, // ₹99 = 9900 paise
+  payBtn.disabled = true;
+  payBtn.innerText = "Processing...";
+
+  // 2️⃣ CREATE ORDER (BACKEND)
+  const res = await fetch(
+    "https://us-central1-allinone-aa89.cloudfunctions.net/createOrder"
+  );
+  const order = await res.json();
+
+  // 3️⃣ OPEN RAZORPAY
+  const options = {
+    key: "rzp_test_S9jk2wxqonRqth",
+    order_id: order.id,
+    amount: order.amount,
     currency: "INR",
     name: "AllInOne MP",
-    description: "Income Certificate Application Fee",
+    description: "Income Certificate Fee",
 
-    handler: function (response) {
-      alert("Payment Successful ✅\nPayment ID: " + response.razorpay_payment_id);
+    handler: async function (response) {
 
-      // 👉 यहाँ आगे form submit / firebase save होगा
-      console.log("Payment ID:", response.razorpay_payment_id);
+      // 4️⃣ COLLECT FORM DATA
+      const data = {};
+      new FormData(form).forEach((v, k) => data[k] = v);
+
+      // 5️⃣ PAYMENT INFO
+      data.payment = {
+        paymentId: response.razorpay_payment_id,
+        orderId: response.razorpay_order_id,
+        status: "PAID"
+      };
+
+      data.createdAt = serverTimestamp();
+
+      // 6️⃣ SAVE TO FIRESTORE
+      await addDoc(collection(db, "applications"), data);
+
+      alert("✅ Payment Successful & Application Submitted");
+      window.location.href = "/thank-you.html";
     },
 
-    theme: {
-      color: "#16a34a"
+    modal: {
+      ondismiss: () => {
+        payBtn.disabled = false;
+        payBtn.innerText = "Pay Now ₹99";
+      }
     }
   };
 
-  // 3️⃣ Open Razorpay popup
-  var rzp = new Razorpay(options);
-  rzp.open();
+  new Razorpay(options).open();
 });
 
 /* ================= INIT ================= */
