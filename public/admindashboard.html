@@ -65,12 +65,16 @@
             </button>
         </nav>
 
-        <div class="p-4 border-t border-slate-800">
-            <button class="flex items-center text-slate-400 hover:text-white transition-colors w-full">
-                <i data-lucide="log-out" class="w-5 h-5"></i>
-                <span class="ml-3 text-sm font-medium sidebar-text">Logout System</span>
-            </button>
-        </div>
+    <div class="p-4 border-t border-slate-800">
+  <button 
+    onclick="logoutSystem()"
+    class="flex items-center text-slate-400 hover:text-white transition-colors w-full"
+  >
+    <i data-lucide="log-out" class="w-5 h-5"></i>
+    <span class="ml-3 text-sm font-medium sidebar-text">Logout System</span>
+  </button>
+</div>
+
     </aside>
 
     <!-- Main Content Wrapper -->
@@ -261,13 +265,39 @@
     <script type="module">
         // Import Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged,
+  signInWithCustomToken,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+window.logoutSystem = async function () {
+  try {
+    await signOut(auth);
+    window.location.href = "https://allinonemp.harshtiwari.in";
+  } catch (e) {
+    console.error("Logout error:", e);
+  }
+};
 
         // --- Configuration ---
-        const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
-        const appId = window.__app_id || 'default-app-id';
-        
+       // ✅ REAL FIREBASE CONFIG (Firebase Console से)
+const firebaseConfig = {
+   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+  authDomain: "allinone-aa89.firebaseapp.com",
+  projectId: "allinone-aa89",
+  storageBucket: "allinone-aa89.firebasestorage.app",
+  messagingSenderId: "924003122498",
+  appId: "1:924003122498:web:2c86505457236e60055cdb",
+  measurementId: "G-45N39T3BB6"
+};
+
+// ✅ FIXED APP ID (same everywhere)
+const appId = "super-admin-dashboard";
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
