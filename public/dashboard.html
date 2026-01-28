@@ -195,7 +195,14 @@ function render(data) {
             onclick="openDetails('${i.id}')">
           ${i.studentName || i.applicantName || "-"}
         </td>
-        <td class="p-3">${i.serviceType || "-"}</td>
+<td class="p-3">
+  ${i.serviceType 
+    || i.formType 
+    || i.serviceName 
+    || i.service 
+    || i.applicationType 
+    || "-"}
+</td>
         <td class="p-3">${i.memberId || "-"}</td>
         <td class="p-3">${formatDate(i.createdAt)}</td>
         <td class="p-3">
