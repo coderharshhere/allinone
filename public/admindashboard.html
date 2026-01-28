@@ -25,6 +25,10 @@
         
         /* Dashboard hidden by default for security */
         #dashboard-view { display: none; }
+        
+        /* Modal Styles */
+        .modal { transition: opacity 0.25s ease; }
+        body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 h-screen overflow-hidden">
@@ -53,7 +57,6 @@
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span class="ml-3">Add Application</span>
                 </button>
-                <!-- Updated: Changed from Activity Logs to Admin Details -->
                 <button onclick="switchTab('admins')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="admins">
                     <i data-lucide="shield" class="w-5 h-5"></i>
                     <span class="ml-3">Admin Details</span>
@@ -105,6 +108,49 @@
                     <p class="mt-4 text-gray-500 font-medium">Processing...</p>
                 </div>
 
+                <!-- ADD ADMIN MODAL -->
+                <div id="add-admin-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+                    <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+                    
+                    <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto animate-fade-in">
+                        
+                        <div class="modal-content py-4 text-left px-6">
+                            <!--Title-->
+                            <div class="flex justify-between items-center pb-3">
+                                <p class="text-2xl font-bold text-gray-800">Add New Admin</p>
+                                <div class="modal-close cursor-pointer z-50" onclick="toggleModal('add-admin-modal')">
+                                    <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
+                                </div>
+                            </div>
+                            
+                            <!--Body-->
+                            <form id="new-admin-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                    <input type="email" id="new-admin-email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin@example.com" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                    <input type="password" id="new-admin-password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="******" required minlength="6">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                    <select id="new-admin-role" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="super_admin">Super Admin</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="moderator">Moderator</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mt-4 flex justify-end pt-2">
+                                    <button type="button" class="px-4 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2" onclick="toggleModal('add-admin-modal')">Cancel</button>
+                                    <button type="submit" class="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">Create Admin</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="max-w-7xl mx-auto">
                     
                     <!-- DASHBOARD VIEW -->
@@ -112,6 +158,7 @@
                         
                         <!-- Stats Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <!-- Stats Cards (Same as before) -->
                             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                                 <div class="flex justify-between items-start">
                                     <div>
@@ -161,17 +208,17 @@
 
                         <!-- Service Breakdown & Table -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                <!-- Breakdown Chart/List -->
-                                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                                    <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                                        <i data-lucide="bar-chart-2" class="w-4 h-4 mr-2 text-blue-500"></i> Form-wise Breakdown
-                                    </h3>
-                                    <div id="service-breakdown" class="space-y-3">
-                                        <div class="text-sm text-gray-400">Loading breakdown...</div>
-                                    </div>
+                            <!-- Chart -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                                <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                                    <i data-lucide="bar-chart-2" class="w-4 h-4 mr-2 text-blue-500"></i> Form-wise Breakdown
+                                </h3>
+                                <div id="service-breakdown" class="space-y-3">
+                                    <div class="text-sm text-gray-400">Loading breakdown...</div>
                                 </div>
+                            </div>
 
-                            <!-- Applications Table -->
+                            <!-- Table -->
                             <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                                 <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                                     <h3 class="font-semibold text-gray-800">Recent Applications</h3>
@@ -199,6 +246,7 @@
                     <!-- ADD APPLICATION VIEW -->
                     <div id="view-create-form" class="hidden animate-fade-in">
                         <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                            <!-- ... existing form ... -->
                             <div class="p-6 border-b border-gray-100 bg-blue-50">
                                 <h2 class="text-xl font-bold text-blue-900 flex items-center">
                                     <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> New Application Entry
@@ -245,12 +293,17 @@
                         </div>
                     </div>
 
-                    <!-- ADMIN DETAILS VIEW (Replaces Log View) -->
+                    <!-- ADMIN DETAILS VIEW -->
                     <div id="view-admins" class="hidden animate-fade-in">
                         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
-                                <h2 class="text-lg font-bold text-slate-800">Admin Management</h2>
-                                <div class="text-xs text-slate-500">Live Data from 'admins' collection</div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-800">Admin Management</h2>
+                                    <div class="text-xs text-slate-500">Add or Remove System Administrators</div>
+                                </div>
+                                <button onclick="toggleModal('add-admin-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
+                                    <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Add New Admin
+                                </button>
                             </div>
                             
                             <div class="overflow-x-auto">
@@ -260,7 +313,7 @@
                                             <th class="px-6 py-4">Admin Email</th>
                                             <th class="px-6 py-4">Role</th>
                                             <th class="px-6 py-4">Status</th>
-                                            <th class="px-6 py-4 text-right">Created At</th>
+                                            <th class="px-6 py-4 text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="admins-table-body" class="divide-y divide-gray-100">
@@ -285,6 +338,7 @@
             addDoc, 
             updateDoc, 
             getDoc,
+            setDoc,
             doc, 
             onSnapshot, 
             serverTimestamp, 
@@ -296,7 +350,7 @@
             getAuth, 
             onAuthStateChanged, 
             signInWithEmailAndPassword,
-            signInAnonymously,
+            createUserWithEmailAndPassword,
             signOut 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
@@ -322,23 +376,20 @@
 
         // --- State ---
         let applications = [];
-        let adminList = []; // Replaces logs
+        let adminList = []; 
         let unsubscribeApps = null;
         let unsubscribeAdmins = null;
 
-        // --- Auth Logic (STRICT SECURITY ADDED) ---
+        // --- Auth Logic (STRICT SECURITY) ---
         onAuthStateChanged(auth, async (user) => {
             const authLoader = document.getElementById('auth-loader');
             const dashboardView = document.getElementById('dashboard-view');
 
             if (!user) {
-                // REDIRECT IMMEDIATELY if not logged in
-                console.log("No active session. Redirecting to login...");
                 window.location.href = "adminlogin.html"; 
                 return;
             }
 
-            // User is present, verify admin privileges
             try {
                 const snap = await getDoc(doc(db, ADMINS_COLLECTION, user.uid));
                 
@@ -357,21 +408,18 @@
                     return;
                 }
 
-                // If valid admin:
                 document.getElementById('admin-email-display').innerText = user.email || "Super Admin";
                 
-                // HIDE Loader, SHOW Dashboard
                 authLoader.style.opacity = '0';
                 setTimeout(() => {
                     authLoader.style.display = 'none';
-                    dashboardView.style.display = 'flex'; // Enable flex layout
+                    dashboardView.style.display = 'flex'; 
                 }, 300);
 
                 setupRealtimeListeners();
 
             } catch (error) {
                 console.error("Auth verification failed:", error);
-                alert("Security verification failed. Please login again.");
                 await signOut(auth);
                 window.location.href = "adminlogin.html";
             }
@@ -379,7 +427,6 @@
 
         // --- Listeners ---
         function setupRealtimeListeners() {
-            // 1. Admin Stats & List (Updated)
             const adminsRef = collection(db, ADMINS_COLLECTION);
             unsubscribeAdmins = onSnapshot(adminsRef, (snapshot) => {
                 let totalAdmins = 0;
@@ -387,16 +434,15 @@
 
                 snapshot.forEach(docSnap => {
                     const d = docSnap.data();
-                    adminList.push({ id: docSnap.id, ...d }); // Store admin data
+                    adminList.push({ id: docSnap.id, ...d }); 
                     if (d.status === "active") totalAdmins++;
                 });
                 
                 document.getElementById("stat-users").innerText = totalAdmins;
-                renderAdmins(); // Render the new table
+                renderAdmins();
 
             }, (error) => console.log("Admin stats require auth"));
 
-            // 2. Applications
             const appRef = collection(db, COLLECTION_NAME);
             unsubscribeApps = onSnapshot(appRef, (snapshot) => {
                 applications = [];
@@ -450,10 +496,25 @@
                 await submitApplication(data);
                 e.target.reset();
             });
+
+            // New Admin Form
+            document.getElementById('new-admin-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await createNewAdmin();
+            });
         });
+
+        // --- Modal Logic ---
+        window.toggleModal = (modalID) => {
+            const modal = document.getElementById(modalID);
+            modal.classList.toggle('opacity-0');
+            modal.classList.toggle('pointer-events-none');
+            document.body.classList.toggle('modal-active');
+        }
 
         // --- Database Actions ---
 
+        // 1. Submit Application
         async function submitApplication(formData) {
             try {
                 document.getElementById('loading').classList.remove('hidden');
@@ -487,6 +548,75 @@
                 console.error(err);
                 document.getElementById('loading').classList.add('hidden');
                 showToast("Submission Failed");
+            }
+        }
+
+        // 2. Create New Admin (The smart way)
+        async function createNewAdmin() {
+            const email = document.getElementById('new-admin-email').value;
+            const password = document.getElementById('new-admin-password').value;
+            const role = document.getElementById('new-admin-role').value;
+            
+            try {
+                document.getElementById('loading').classList.remove('hidden');
+                window.toggleModal('add-admin-modal');
+
+                // Initialize a SECONDARY App to create user without logging out the current Super Admin
+                const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+                const secondaryAuth = getAuth(secondaryApp);
+
+                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                const newUser = userCredential.user;
+
+                // Add to Firestore 'admins' collection
+                await setDoc(doc(db, ADMINS_COLLECTION, newUser.uid), {
+                    email: email,
+                    role: role,
+                    status: 'active',
+                    createdAt: serverTimestamp()
+                });
+
+                await logActivity("Admin Created", `Added new admin: ${email}`, "success");
+                
+                // Cleanup secondary app logout (just in case)
+                await signOut(secondaryAuth);
+                
+                document.getElementById('new-admin-form').reset();
+                document.getElementById('loading').classList.add('hidden');
+                showToast("New Admin Created Successfully!");
+
+            } catch (error) {
+                console.error("Error creating admin:", error);
+                document.getElementById('loading').classList.add('hidden');
+                
+                let msg = "Failed to create admin";
+                if(error.code === 'auth/email-already-in-use') msg = "Email already registered!";
+                if(error.code === 'auth/weak-password') msg = "Password too weak (min 6 chars)";
+                
+                alert(msg);
+            }
+        }
+
+        // 3. Delete Admin
+        window.deleteAdmin = async (id, email) => {
+            if(!confirm(`Are you sure you want to remove admin access for ${email}?`)) return;
+            
+            try {
+                document.getElementById('loading').classList.remove('hidden');
+                
+                // We delete the document from Firestore. 
+                // Note: The user remains in Auth but loses access because we check the DB on login.
+                await deleteDoc(doc(db, ADMINS_COLLECTION, id));
+                
+                await logActivity("Admin Removed", `Removed admin: ${email}`, "warning");
+                
+                document.getElementById('loading').classList.add('hidden');
+                showToast("Admin Removed Successfully");
+                
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').classList.add('hidden');
+                showToast("Failed to remove admin");
             }
         }
 
@@ -529,7 +659,7 @@
                 container.innerHTML = '<div class="text-sm text-gray-400">No data available</div>';
                 return;
             }
-
+            // ... (Same logic as before)
             const services = [
                 { name: 'Income Certificate', icon: 'banknote', color: 'text-green-600', bg: 'bg-green-100' },
                 { name: 'Samagra ID', icon: 'users', color: 'text-blue-600', bg: 'bg-blue-100' },
@@ -540,7 +670,6 @@
             ];
 
             let html = '';
-            
             Object.entries(counts).forEach(([serviceName, count]) => {
                 let def = services.find(s => serviceName.includes(s.name) || s.name.includes(serviceName)) || { icon: 'file', color: 'text-gray-600', bg: 'bg-gray-100' };
                 const percentage = Math.round((count / total) * 100);
@@ -564,7 +693,6 @@
                     </div>
                 </div>`;
             });
-
             container.innerHTML = html;
             lucide.createIcons();
         }
@@ -620,7 +748,6 @@
             lucide.createIcons();
         }
 
-        // --- NEW FUNCTION: Render Admin Table ---
         function renderAdmins() {
             const container = document.getElementById('admins-table-body');
             if(adminList.length === 0) {
@@ -629,17 +756,22 @@
             }
             
             container.innerHTML = adminList.map(admin => {
+                const isMe = auth.currentUser && auth.currentUser.uid === admin.id;
+                
                 let roleColor = admin.role === 'super_admin' ? 'text-purple-600 bg-purple-100' : 'text-blue-600 bg-blue-100';
                 let statusColor = admin.status === 'active' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
                 
-                let dateStr = "N/A";
-                // Handle different timestamp formats just in case
-                if(admin.createdAt) {
-                    if (admin.createdAt.seconds) {
-                         dateStr = new Date(admin.createdAt.seconds * 1000).toLocaleDateString();
-                    } else if (typeof admin.createdAt === 'string') {
-                         dateStr = new Date(admin.createdAt).toLocaleDateString();
-                    }
+                // --- Delete Button Logic ---
+                // Show delete button ONLY if it's not the current user
+                let deleteBtn = '';
+                if (!isMe) {
+                    deleteBtn = `
+                        <button onclick="window.deleteAdmin('${admin.id}', '${admin.email}')" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors" title="Remove Admin">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                } else {
+                    deleteBtn = `<span class="text-xs text-gray-400 italic">Current User</span>`;
                 }
 
                 return `
@@ -664,15 +796,13 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <span class="text-xs text-slate-500 font-mono">${dateStr}</span>
+                        ${deleteBtn}
                     </td>
                 </tr>
                 `;
             }).join('');
-        }
-
-        async function clearLogs() {
-             document.getElementById('logs-container').innerHTML = '<div class="p-4 text-center text-gray-400 text-sm">Logs cleared locally</div>';
+            
+            lucide.createIcons();
         }
 
         // --- Global Exports ---
@@ -689,7 +819,7 @@
             
             document.getElementById('view-dashboard').classList.add('hidden');
             document.getElementById('view-create-form').classList.add('hidden');
-            document.getElementById('view-admins').classList.add('hidden'); // Previously view-users
+            document.getElementById('view-admins').classList.add('hidden'); 
             
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
             
@@ -705,8 +835,6 @@
         };
         
         window.updateStatus = updateStatus;
-        window.clearLogs = clearLogs;
-
         window.logoutSystem = async () => {
             try {
                 if(unsubscribeApps) unsubscribeApps();
@@ -714,8 +842,6 @@
                 
                 await logActivity("Logout", "User manually logged out", "warning");
                 await signOut(auth);
-                
-                // Redirect to admin login after logout
                 window.location.href = "adminlogin.html";
                 
             } catch (error) {
