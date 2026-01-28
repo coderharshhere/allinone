@@ -53,9 +53,10 @@
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span class="ml-3">Add Application</span>
                 </button>
-                <button onclick="switchTab('users')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="users">
-                    <i data-lucide="file-clock" class="w-5 h-5"></i>
-                    <span class="ml-3">Activity Logs</span>
+                <!-- Updated: Changed from Activity Logs to Admin Details -->
+                <button onclick="switchTab('admins')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="admins">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span class="ml-3">Admin Details</span>
                 </button>
             </nav>
 
@@ -244,15 +245,28 @@
                         </div>
                     </div>
 
-                    <!-- LOGS VIEW -->
-                    <div id="view-users" class="hidden animate-fade-in">
+                    <!-- ADMIN DETAILS VIEW (Replaces Log View) -->
+                    <div id="view-admins" class="hidden animate-fade-in">
                         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                                <h2 class="text-lg font-bold">System Activity Logs</h2>
-                                <button onclick="clearLogs()" class="text-sm text-red-500 hover:text-red-700">Clear Logs</button>
+                            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
+                                <h2 class="text-lg font-bold text-slate-800">Admin Management</h2>
+                                <div class="text-xs text-slate-500">Live Data from 'admins' collection</div>
                             </div>
-                            <div id="logs-container" class="max-h-[500px] overflow-y-auto">
-                                <!-- Logs injected here -->
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+                                        <tr>
+                                            <th class="px-6 py-4">Admin Email</th>
+                                            <th class="px-6 py-4">Role</th>
+                                            <th class="px-6 py-4">Status</th>
+                                            <th class="px-6 py-4 text-right">Created At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admins-table-body" class="divide-y divide-gray-100">
+                                        <tr><td colspan="4" class="p-6 text-center text-gray-400">Loading admin details...</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -308,10 +322,9 @@
 
         // --- State ---
         let applications = [];
-        let logs = [];
+        let adminList = []; // Replaces logs
         let unsubscribeApps = null;
         let unsubscribeAdmins = null;
-        let unsubscribeLogs = null;
 
         // --- Auth Logic (STRICT SECURITY ADDED) ---
         onAuthStateChanged(auth, async (user) => {
@@ -366,15 +379,21 @@
 
         // --- Listeners ---
         function setupRealtimeListeners() {
-            // 1. Admin Count
+            // 1. Admin Stats & List (Updated)
             const adminsRef = collection(db, ADMINS_COLLECTION);
             unsubscribeAdmins = onSnapshot(adminsRef, (snapshot) => {
                 let totalAdmins = 0;
+                adminList = [];
+
                 snapshot.forEach(docSnap => {
                     const d = docSnap.data();
+                    adminList.push({ id: docSnap.id, ...d }); // Store admin data
                     if (d.status === "active") totalAdmins++;
                 });
+                
                 document.getElementById("stat-users").innerText = totalAdmins;
+                renderAdmins(); // Render the new table
+
             }, (error) => console.log("Admin stats require auth"));
 
             // 2. Applications
@@ -406,24 +425,7 @@
             }, (error) => {
                 console.error("Listener Error:", error);
                 document.getElementById('loading').classList.add('hidden');
-            });
-
-            // 3. Logs Listener
-            const logsRef = collection(db, LOGS_COLLECTION);
-            unsubscribeLogs = onSnapshot(logsRef, (snapshot) => {
-                logs = [];
-                snapshot.forEach(docSnap => {
-                    logs.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                
-                logs.sort((a, b) => {
-                    const timeA = a.createdAt?.seconds || 0;
-                    const timeB = b.createdAt?.seconds || 0;
-                    return timeB - timeA;
-                });
-
-                renderLogs();
-            }, (e) => console.log("Logs require auth"));         
+            });       
         }
 
         // --- UI Interactions ---
@@ -618,28 +620,53 @@
             lucide.createIcons();
         }
 
-        function renderLogs() {
-            const container = document.getElementById('logs-container');
-            if(logs.length === 0) {
-                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-sm">No activity logs yet</div>';
+        // --- NEW FUNCTION: Render Admin Table ---
+        function renderAdmins() {
+            const container = document.getElementById('admins-table-body');
+            if(adminList.length === 0) {
+                container.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400 text-sm">No admins found</td></tr>';
                 return;
             }
             
-            container.innerHTML = logs.map(log => {
-                let color = "text-gray-600";
-                if(log.type === 'success') color = "text-green-600";
-                if(log.type === 'warning') color = "text-red-600";
-                if(log.type === 'info') color = "text-blue-600";
+            container.innerHTML = adminList.map(admin => {
+                let roleColor = admin.role === 'super_admin' ? 'text-purple-600 bg-purple-100' : 'text-blue-600 bg-blue-100';
+                let statusColor = admin.status === 'active' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
                 
+                let dateStr = "N/A";
+                // Handle different timestamp formats just in case
+                if(admin.createdAt) {
+                    if (admin.createdAt.seconds) {
+                         dateStr = new Date(admin.createdAt.seconds * 1000).toLocaleDateString();
+                    } else if (typeof admin.createdAt === 'string') {
+                         dateStr = new Date(admin.createdAt).toLocaleDateString();
+                    }
+                }
+
                 return `
-                <div class="flex items-center p-3 border-b border-gray-50 last:border-0 hover:bg-gray-50">
-                    <div class="w-2 h-2 rounded-full bg-gray-300 mr-3"></div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium ${color}">${log.action}</p>
-                        <p class="text-xs text-gray-500">${log.details}</p>
-                    </div>
-                    <div class="text-xs text-gray-400">${log.time || ''}</div>
-                </div>
+                <tr class="hover:bg-slate-50 border-b border-gray-100 last:border-0 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs mr-3">
+                                ${admin.email ? admin.email.charAt(0).toUpperCase() : 'A'}
+                            </div>
+                            <span class="text-sm font-medium text-slate-700">${admin.email || 'No Email'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-semibold capitalize ${roleColor}">
+                            ${admin.role ? admin.role.replace('_', ' ') : 'User'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="flex items-center w-fit px-2.5 py-1 rounded-full text-xs font-medium ${statusColor}">
+                            <span class="w-1.5 h-1.5 rounded-full ${admin.status === 'active' ? 'bg-green-500' : 'bg-red-500'} mr-2"></span>
+                            ${admin.status || 'Unknown'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="text-xs text-slate-500 font-mono">${dateStr}</span>
+                    </td>
+                </tr>
                 `;
             }).join('');
         }
@@ -662,10 +689,11 @@
             
             document.getElementById('view-dashboard').classList.add('hidden');
             document.getElementById('view-create-form').classList.add('hidden');
-            document.getElementById('view-users').classList.add('hidden');
+            document.getElementById('view-admins').classList.add('hidden'); // Previously view-users
+            
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
             
-            const titles = {'dashboard': 'Overview', 'create-form': 'Admin Entry', 'users': 'System Logs'};
+            const titles = {'dashboard': 'Overview', 'create-form': 'Admin Entry', 'admins': 'Admin Management'};
             document.getElementById('page-title').innerText = titles[tabId];
         };
 
@@ -683,7 +711,6 @@
             try {
                 if(unsubscribeApps) unsubscribeApps();
                 if(unsubscribeAdmins) unsubscribeAdmins();
-                if(unsubscribeLogs) unsubscribeLogs();
                 
                 await logActivity("Logout", "User manually logged out", "warning");
                 await signOut(auth);
