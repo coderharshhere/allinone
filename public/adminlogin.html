@@ -133,11 +133,11 @@
 
     <!-- ================= STANDARD FOOTER END ================= -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-  import {
-    getAuth,
-    signInWithEmailAndPassword
-  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+    from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
   // Firebase config (same project as form)
   const firebaseConfig = {
@@ -146,8 +146,10 @@
     projectId: "allinone-aa89"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+ const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 
   // Login submit
   document.getElementById("loginForm").addEventListener("submit", (e) => {
@@ -156,20 +158,35 @@
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        alert("लॉगिन सफल ✅");
-        window.location.href = "dashboard.html";
-      })
-      .catch((error) => {
-        alert("लॉगिन असफल ❌\n" + error.message);
-      });
+ signInWithEmailAndPassword(auth, email, password)
+  .then(async (result) => {
+
+    const user = result.user;
+
+    // 🔐 CHECK ADMIN IN FIRESTORE
+    const adminRef = doc(db, "admins", user.uid);
+    const snap = await getDoc(adminRef);
+
+    if (!snap.exists()) {
+      alert("आपको Admin Access नहीं है ❌");
+      auth.signOut();
+      return;
+    }
+
+    if (snap.data().status !== "active") {
+      alert("आपका Admin account blocked है ❌");
+      auth.signOut();
+      return;
+    }
+
+    // ✅ ADMIN VERIFIED
+    alert("Admin Login सफल ✅");
+    window.location.href = "dashboard.html";
+
+  })
+  .catch((error) => {
+    alert("लॉगिन असफल ❌\n" + error.message);
   });
-      fetch("header.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("header").innerHTML = data;
-    });
 
   fetch("footer.html")
     .then(res => res.text())
