@@ -338,14 +338,130 @@ window.trackApplication = async function () {
   `;
 };
 
+
+
+
+
+
+
+    const box = document.getElementById('moveable-notif');
+    const trigger = document.getElementById('notif-trigger');
+    const drawer = document.getElementById('notif-drawer');
+    const overlay = document.getElementById('notif-overlay');
+    const closeBtn = document.getElementById('close-drawer');
+
+    let isMoving = false;
+    let startX, startY;
+
+    // --- Drag Logic ---
+    box.addEventListener('touchstart', (e) => {
+        isMoving = false;
+        // Current position capture karna
+        const rect = box.getBoundingClientRect();
+        startX = e.touches[0].clientX - rect.left;
+        startY = e.touches[0].clientY - rect.top;
+    }, {passive: true});
+
+    box.addEventListener('touchmove', (e) => {
+        isMoving = true; 
+        e.preventDefault(); // Scroll block karne ke liye
+        
+        let x = e.touches[0].clientX - startX;
+        let y = e.touches[0].clientY - startY;
+
+        // Screen boundaries
+        const maxX = window.innerWidth - box.offsetWidth;
+        const maxY = window.innerHeight - box.offsetHeight;
+        
+        // Limits apply karna
+        x = Math.max(0, Math.min(x, maxX));
+        y = Math.max(0, Math.min(y, maxY));
+
+        // Direct style update
+        box.style.left = x + 'px';
+        box.style.top = y + 'px';
+        box.style.bottom = 'auto';
+        box.style.right = 'auto';
+    }, {passive: false});
+
+    // --- Toggle Functions ---
+    function openDrawer() {
+        if (navigator.vibrate) navigator.vibrate(50);
+        drawer.classList.remove('translate-x-full');
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+        drawer.classList.add('translate-x-full');
+        overlay.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Click handle (Desktop + Mobile Tap)
+    trigger.addEventListener('click', (e) => {
+        if (!isMoving) {
+            openDrawer();
+        }
+    });
+
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
 </script>
 
  <script src="assets/js/script.js?v=1.0"></script>
 
+    <div id="moveable-notif" 
+     class="fixed z-[100] touch-none select-none"
+     style="width: 64px; height: 64px; top: calc(100vh - 100px); left: calc(100vw - 100px);">
+    <button id="notif-trigger" 
+            class="w-full h-full bg-gradient-to-tr from-blue-600 to-blue-400 text-white rounded-full shadow-[0_10px_25px_rgba(37,99,235,0.4)] flex items-center justify-center border-4 border-white active:scale-90 transition-transform relative">
+        <i class="fas fa-bell text-2xl pointer-events-none"></i>
+        <span class="absolute -top-1 -right-1 w-6 h-6 bg-red-600 border-2 border-white rounded-full text-[10px] flex items-center justify-center font-bold pointer-events-none animate-bounce">2</span>
+    </button>
+</div>
+
+<div id="notif-drawer" class="fixed top-0 right-0 h-full w-85 max-w-[90%] bg-white/95 backdrop-blur-md shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-[110] transform translate-x-full transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) border-l border-gray-100 rounded-l-3xl">
     
+    <div class="p-6 bg-gradient-to-r from-blue-900 to-blue-800 text-white flex justify-between items-center rounded-tl-3xl">
+        <div>
+            <h3 class="font-extrabold text-lg tracking-tight">महत्वपूर्ण सूचनाएं</h3>
+            <p class="text-[10px] text-blue-200 uppercase tracking-widest mt-1">Updates & Alerts</p>
+        </div>
+        <button id="close-drawer" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+    </div>
+
+    <div class="p-5 space-y-4 overflow-y-auto h-[calc(100%-100px)]">
+        
+        <div class="group p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all border-l-4 border-l-blue-600">
+            <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-md uppercase">New Update</span>
+                <span class="text-[9px] text-gray-400 italic">अभी</span>
+            </div>
+            <p class="text-[13px] text-gray-800 font-semibold leading-snug">समग्र आईडी में आधार ई-केवाईसी (e-KYC) अनिवार्य कर दी गई है।</p>
+            <button class="mt-3 text-xs text-blue-600 font-bold hover:underline">विवरण देखें →</button>
+        </div>
+
+        <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm border-l-4 border-l-orange-500">
+            <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] font-bold rounded-md uppercase">Alert</span>
+                <span class="text-[9px] text-gray-400 italic">2 घंटे पहले</span>
+            </div>
+            <p class="text-[13px] text-gray-800 leading-snug">सर्वर मेंटेनेंस के कारण आज शाम 6:00 से 8:00 बजे तक सेवाएं बाधित रहेंगी।</p>
+        </div>
+
+    </div>
+</div>
+
+<div id="notif-overlay" class="fixed inset-0 bg-blue-900/20 backdrop-blur-sm z-[105] hidden transition-opacity duration-300"></div>
+
 
 </body>
 </html>
+
 
 
 
