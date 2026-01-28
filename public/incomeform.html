@@ -365,11 +365,17 @@ class="p-6 md:p-10 space-y-10">
 
     <!-- Simple Footer -->
     <div id="footer"></div>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+ <!-- 1️⃣ Razorpay (global object needed in form.js) -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- 2️⃣ EmailJS (used inside common.js) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-<script src="assets/js/common.js?v=1.0"></script>
+<!-- 3️⃣ Common JS (header, footer, pincode, emailjs.init) -->
+<script src="assets/js/common.js?v=1.0" defer></script>
 
+<!-- 4️⃣ Form + Payment Logic (ES Module) -->
 <script type="module" src="assets/js/form.js?v=1.0"></script>
+
 </body>
 </html>
