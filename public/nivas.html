@@ -58,7 +58,8 @@
                 </p>
             </div>
 
-            <form id="residenceForm" class="p-6 md:p-10 space-y-10">
+           <form data-service="nivas"
+class="p-6 md:p-10 space-y-10">
 
                 <!-- 1. व्यक्तिगत जानकारी -->
                 <section>
@@ -211,56 +212,9 @@
     <!-- FOOTER -->
     <div id="footer"></div>
 
-
-    <script type="module">
-         fetch("header.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("header").innerHTML = data);
-
-    fetch("footer.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("footer").innerHTML = data);
-      
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-            authDomain: "allinone-aa89.firebaseapp.com",
-            projectId: "allinone-aa89",
-            storageBucket: "allinone-aa89.firebasestorage.app",
-            messagingSenderId: "924003122498",
-            appId: "1:924003122498:web:2c86505457236e60055cdb"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const form = document.getElementById("residenceForm");
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            try {
-                const formData = new FormData(form);
-                await addDoc(collection(db, "applications"), {
-                    serviceType: "Residence Certificate",
-                    applicantName: formData.get("applicantName"),
-                    fatherName: formData.get("fatherName"),
-                    samagraId: formData.get("samagraId"),
-                    aadhaar: formData.get("aadhaar"),
-                    stayDuration: formData.get("stayDuration"),
-                    reason: formData.get("reason"),
-                    mobile: formData.get("mobile"),
-                    status: "pending",
-                    createdAt: serverTimestamp()
-                });
-                alert("निवास प्रमाण पत्र हेतु आवेदन सफलतापूर्वक जमा हो गया ✅");
-                form.reset();
-            } catch (error) {
-                console.error("Error submitting form: ", error);
-                alert("आवेदन जमा करने में समस्या हुई, कृपया पुनः प्रयास करें।");
-            }
-        });
-    </script>
+ <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="assets/js/common.js?v=1.0" defer></script>
+<script type="module" src="assets/js/form.js?v=1.0"></script>
 </body>
+
 </html>
