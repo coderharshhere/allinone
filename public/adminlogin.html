@@ -133,69 +133,72 @@
 
     <!-- ================= STANDARD FOOTER END ================= -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-  // Firebase config (same project as form)
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-    authDomain: "allinone-aa89.firebaseapp.com",
-    projectId: "allinone-aa89"
-  };
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
- const app = initializeApp(firebaseConfig);
+const firebaseConfig = {
+  apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+  authDomain: "allinone-aa89.firebaseapp.com",
+  projectId: "allinone-aa89"
+};
+
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// ================= LOGIN =================
+const form = document.getElementById("loginForm");
 
-  // Login submit
-  document.getElementById("loginForm").addEventListener("submit", (e) => {
-    e.preventDefault();
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+  const email = form.email.value;
+  const password = form.password.value;
 
- signInWithEmailAndPassword(auth, email, password)
-  .then(async (result) => {
-
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
     const user = result.user;
 
-    // 🔐 CHECK ADMIN IN FIRESTORE
     const adminRef = doc(db, "admins", user.uid);
     const snap = await getDoc(adminRef);
 
     if (!snap.exists()) {
       alert("आपको Admin Access नहीं है ❌");
-      auth.signOut();
+      await auth.signOut();
       return;
     }
 
     if (snap.data().status !== "active") {
       alert("आपका Admin account blocked है ❌");
-      auth.signOut();
+      await auth.signOut();
       return;
     }
 
-    // ✅ ADMIN VERIFIED
     alert("Admin Login सफल ✅");
     window.location.href = "dashboard.html";
 
-  })
-  .catch((error) => {
-    alert("लॉगिन असफल ❌\n" + error.message);
-  });
-  fetch("./header.html")
-    .then(res => res.text())
-    .then(html => {
-      const h = document.getElementById("header");
-      if (h) h.innerHTML = html;
-    });
+  } catch (err) {
+    console.error(err);
+    alert("Error: " + err.message);
+  }
+});
 
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("footer").innerHTML = data;
-    });
+// ================= HEADER =================
+fetch("./header.html")
+  .then(res => res.text())
+  .then(html => {
+    const h = document.getElementById("header");
+    if (h) h.innerHTML = html;
+  });
+
+// ================= FOOTER =================
+fetch("./footer.html")
+  .then(res => res.text())
+  .then(html => {
+    const f = document.getElementById("footer");
+    if (f) f.innerHTML = html;
+  });
 </script>
 
 </body>
