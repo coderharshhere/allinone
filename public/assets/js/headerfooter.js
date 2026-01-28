@@ -1,7 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-
-    // Initial render
-    applyFilters();
 
     // ================= HEADER LOAD =================
     fetch("header.html")
