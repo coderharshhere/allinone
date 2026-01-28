@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", () => {
 
     // ================= HEADER LOAD =================
     fetch("header.html")
@@ -16,4 +17,5 @@
             if (footer) footer.innerHTML = html;
         })
         .catch(err => console.error("Footer load error:", err));
+
 });
