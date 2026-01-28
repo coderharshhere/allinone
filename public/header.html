@@ -21,50 +21,55 @@
 
 <body>
 
-  <div class="top-bar">
-  <!-- LEFT : Moving text -->
-  <div class="marquee">
-    <div class="marquee-text">
-      यह एक निजी सहायता पोर्टल है, मध्य प्रदेश शासन की आधिकारिक वेबसाइट नहीं है।
+      <!-- ================= TOP BAR ================= -->
+ <div class="bg-[#0f172a] text-white py-2 px-3 md:px-10 flex justify-between items-center text-[11px] md:text-xs border-b border-white/10">
+   
+  
+    <div class="flex-1 overflow-hidden">
+        <marquee class="opacity-90 font-medium italic" scrollamount="4">
+            यह एक निजी सहायता पोर्टल है, मध्य प्रदेश शासन की आधिकारिक वेबसाइट नहीं है।
+        </marquee>
     </div>
-  </div>
 
-  <!-- RIGHT : Fixed content -->
-  <div class="access-tools">
-    <span>Screen Reader Access</span>
-    <div class="flex border border-white/20 rounded-md overflow-hidden bg-white/5">
-                    <button class="px-2 py-0.5 border-r border-white/20 hover:bg-white/10 transition">A- </button>
-                    <button class="px-2 py-0.5 border-r border-white/20 hover:bg-white/10 transition font-bold">A </button>
-                    <button class="px-2 py-0.5 hover:bg-white/10 transition">A+</button>
-                </div>
-  </div>
+    <div class="flex items-center gap-2 md:gap-4 shrink-0 ml-2">
+        <span class="hidden md:inline-block opacity-70">Screen Reader Access</span>
+        <i class="fas fa-universal-access md:hidden opacity-70 text-sm"></i>
+
+        <div class="flex border border-white/20 rounded-md overflow-hidden bg-white/5">
+            <button class="px-2 md:px-3 py-0.5 border-r border-white/20 hover:bg-white/10 transition">A-</button>
+            <button class="px-2 md:px-3 py-0.5 border-r border-white/20 hover:bg-white/10 transition font-bold">A</button>
+            <button class="px-2 md:px-3 py-0.5 hover:bg-white/10 transition">A+</button>
+        </div>
+    </div>
 </div>
 
 
-<!-- ================= TOP BAR ================= 
-<div class="bg-blue-900 text-white text-xs py-2 px-4 flex justify-between items-center">
-  <div>यह एक निजी सहायता पोर्टल है, मध्य प्रदेश शासन की आधिकारिक वेबसाइट नहीं है।</div>
-  <div class="flex gap-4">
-    <a href="#" class="hover:underline">Screen Reader Access</a>
-    <span>A- | A | A+</span>
-  </div>
-</div>-->
 
 <!-- ================= MAIN HEADER ================= -->
 <header class="bg-white sticky top-0 z-[60] shadow-md border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 md:px-10 h-16 md:h-24 flex justify-between items-center">
         
-        <div class="flex flex-col cursor-pointer group">
-            <h1 class="text-2xl md:text-4xl font-[900] text-[#1e3a8a] tracking-tighter leading-none transition-all group-hover:tracking-normal">
-                ALLINONE-MP
-            </h1>
-            <div class="flex items-center gap-2 mt-2">
-                <span class="h-[2px] w-8 bg-blue-600"></span>
-                <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase tracking-[4px]">
-                    One Window Service Portal
-                </p>
+        <div class="relative p-[2px] overflow-hidden rounded-xl group cursor-pointer">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-600 to-transparent transition-all duration-1000 group-hover:duration-500 animate-[spin_4s_linear_infinite] opacity-30 group-hover:opacity-100"></div>
+            
+            <div class="relative bg-white px-4 py-2 md:px-6 md:py-3 rounded-[10px] z-10">
+                <h1 class="text-2xl md:text-4xl font-[900] text-[#1e3a8a] tracking-tighter leading-none transition-all group-hover:scale-105">
+                    ALLINONE-MP
+                </h1>
+                <div class="h-[2px] w-0 group-hover:w-full bg-blue-600 mt-1 transition-all duration-500 mx-auto rounded-full"></div>
             </div>
         </div>
+
+        <div class="flex items-center gap-3 md:gap-5">
+            </div>
+
+<style>
+    /* Custom Spin Animation for Border */
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
         
     <div class="flex items-center gap-3 md:gap-5">
       
@@ -77,11 +82,10 @@
                     </span>
                 </a>
 
-             <a href="adminlogin.html" 
-   class="flex items-center gap-2 bg-[#1e3a8a] hover:bg-blue-800 text-white px-4 md:px-8 py-2 md:py-3 rounded-xl font-bold text-sm shadow-xl shadow-blue-900/20 transition-all active:scale-95 text-center justify-center">
-    <i class="fas fa-user-lock text-xs"></i>
-    <span>लॉगिन</span>
-</a>
+                <button class="flex items-center gap-2 bg-[#1e3a8a] hover:bg-blue-800 text-white px-4 md:px-8 py-2 md:py-3 rounded-xl font-bold text-sm shadow-xl shadow-blue-900/20 transition-all active:scale-95">
+                    <i class="fas fa-user-lock text-xs"></i>
+                    <span>लॉगिन</span>
+                </button>
             </div>
     </div>
 </header>
@@ -105,51 +109,44 @@
 </nav>-->
 
 <div class="bg-[#1e3a8a] border-t border-white/10 shadow-lg">
-    <div class="max-w-7xl mx-auto px-2">
+    <div class="max-w-7xl mx-auto px-4">
         <nav class="flex items-center">
-            <ul class="flex overflow-x-auto whitespace-nowrap py-1 gap-1 no-scrollbar list-none">
+            <ul id="nav-menu" class="flex overflow-x-auto whitespace-nowrap py-0 gap-3 md:gap-6 no-scrollbar list-none items-center">
                 
                 <li class="relative">
-                    <a href="index.html" class="flex items-center gap-2 px-4 py-3 text-white text-xs md:text-sm font-medium transition-all">
-                        <i class="fas fa-home text-blue-300 text-[10px]"></i> 
-                        मुख्य पृष्ठ
+                    <a href="index.html" class="nav-link flex items-center gap-2 px-2 py-2.5 text-white/80 text-[13px] md:text-[14px] font-medium transition-all duration-300 hover:text-white border-b-4 border-transparent">
+                        <i class="fas fa-home text-[11px]"></i> मुख्य पृष्ठ
                     </a>
-                    <div class="absolute bottom-1 left-4 right-4 h-0.5 bg-white rounded-full"></div>
                 </li>
 
-                <li class="relative group">
-                    <a href="nagrik.html" class="flex items-center gap-2 px-4 py-3 text-white/80 text-xs md:text-sm font-medium transition-all group-hover:text-white">
+                <li class="relative">
+                    <a href="nagrik.html" class="nav-link flex items-center gap-2 px-2 py-2.5 text-white/80 text-[13px] md:text-[14px] font-medium transition-all duration-300 hover:text-white border-b-4 border-transparent">
                         नागरिक सेवाएँ
                     </a>
-                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-8"></div>
                 </li>
 
-                <li class="relative group">
-                    <a href="yojna.html" class="flex items-center gap-2 px-4 py-3 text-white/80 text-xs md:text-sm font-medium transition-all group-hover:text-white">
+                <li class="relative">
+                    <a href="yojna.html" class="nav-link flex items-center gap-2 px-2 py-2.5 text-white/80 text-[13px] md:text-[14px] font-medium transition-all duration-300 hover:text-white border-b-4 border-transparent">
                         योजनाएँ
                     </a>
-                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-8"></div>
                 </li>
 
-                <li class="relative group">
-                    <a href="vibhageey.html" class="flex items-center gap-2 px-4 py-3 text-white/80 text-xs md:text-sm font-medium transition-all group-hover:text-white">
+                <li class="relative">
+                    <a href="vibhageey.html" class="nav-link flex items-center gap-2 px-2 py-2.5 text-white/80 text-[13px] md:text-[14px] font-medium transition-all duration-300 hover:text-white border-b-4 border-transparent">
                         विभागीय डैशबोर्ड
                     </a>
-                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-8"></div>
                 </li>
 
-                <li class="relative group">
-                    <a href="help.html" class="flex items-center gap-2 px-4 py-3 text-white/80 text-xs md:text-sm font-medium transition-all group-hover:text-white">
+                <li class="relative">
+                    <a href="help.html" class="nav-link flex items-center gap-2 px-2 py-2.5 text-white/80 text-[13px] md:text-[14px] font-medium transition-all duration-300 hover:text-white border-b-4 border-transparent">
                         शिकायत निवारण
                     </a>
-                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-8"></div>
                 </li>
 
-                <li class="relative group">
-                    <a href="About.html" class="flex items-center gap-2 px-4 py-3 text-white/80 text-xs md:text-sm font-medium transition-all group-hover:text-white uppercase tracking-tight">
+                <li class="relative">
+                    <a href="About.html" class="nav-link flex items-center gap-2 px-2 py-2.5 text-white/80 text-[13px] md:text-[14px] font-medium transition-all duration-300 hover:text-white border-b-4 border-transparent uppercase">
                         About Us
                     </a>
-                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-8"></div>
                 </li>
 
             </ul>
@@ -158,47 +155,105 @@
 </div>
 
 <style>
-    /* Mobile scrolling smooth karne ke liye */
     .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-    
-    /* Mobile View Fixes */
-    @media (max-width: 768px) {
-        nav ul {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-        nav ul li a {
-            padding-left: 12px;
-            padding-right: 12px;
-        }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Active Tab Style */
+    .nav-active {
+        color: white !important;
+        font-weight: 700 !important;
+        border-bottom-color: white !important;
+    }
+
+    /* Hover Underline */
+    .nav-link:not(.nav-active):hover {
+        border-bottom-color: rgba(255, 255, 255, 0.4);
     }
 </style>
 
 <style>
-    /* Hide scrollbar for clean look */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Subtle Calm Hover */
-    nav ul li a:hover {
-        backdrop-filter: blur(4px);
+
+    /* ✅ Active Tab Style (Page Load hone par) */
+    .nav-active {
+        color: white !important;
+        font-weight: 800 !important;
+        border-bottom-color: white !important; /* Niche solid line */
+        background: linear-gradient(to top, rgba(255, 255, 255, 0.1), transparent);
+    }
+
+    /* ✅ Smooth Hover Underline */
+    .nav-link:not(.nav-active):hover {
+        border-bottom-color: rgba(255, 255, 255, 0.4);
     }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Current URL se page name nikalna
+        const currentPath = window.location.pathname.split("/").pop() || "index.html";
+        const links = document.querySelectorAll(".nav-link");
+
+        links.forEach(link => {
+            const linkPath = link.getAttribute("href");
+            if (linkPath === currentPath) {
+                link.classList.add("nav-active");
+                // Mobile auto-scroll fix
+                link.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+            }
+        });
+    });
+</script>
 <!-- ================= TICKER ================= -->
-<div class="ticker-wrapper py-2">
-  <div class="ticker-text text-sm text-red-600 font-bold">
-    📢 सूचना: लाड़ली बहना योजना के अंतर्गत केवाईसी (e-KYC) पूर्ण करना अनिवार्य है। |
-    मुख्यमंत्री सीखो-कमाओ योजना हेतु पंजीकरण प्रारंभ। |
-    समग्र आईडी में आधार लिंक करने की प्रक्रिया निःशुल्क है।
-  </div>
+<div class="bg-red-50 border-y border-red-100 relative overflow-hidden flex items-center h-8"> 
+    
+    <div class="bg-red-600 text-white px-3 h-full flex items-center font-bold text-[10px] md:text-xs z-10 shadow-md relative shrink-0">
+        <i class="fas fa-bullhorn mr-1.5 text-[9px] animate-bounce"></i> सूचना
+        <div class="absolute -right-3 top-0 bottom-0 w-3 bg-red-600 clip-triangle"></div>
+    </div>
+
+    <div class="flex-1 overflow-hidden relative">
+        <div class="animate-marquee whitespace-nowrap flex items-center">
+            <span class="text-[11px] md:text-xs font-semibold text-red-700 mx-4">
+                📢 लाड़ली बहना योजना के अंतर्गत केवाईसी (e-KYC) पूर्ण करना अनिवार्य है।
+            </span>
+            <span class="text-red-300">|</span>
+            <span class="text-[11px] md:text-xs font-semibold text-red-700 mx-4">
+                मुख्यमंत्री सीखो-कमाओ योजना हेतु पंजीकरण प्रारंभ।
+            </span>
+            <span class="text-red-300">|</span>
+            <span class="text-[11px] md:text-xs font-semibold text-red-700 mx-4">
+                समग्र आईडी में आधार लिंक करने की प्रक्रिया निःशुल्क है।
+            </span>
+            <span class="text-red-300">|</span>
+            <span class="text-[11px] md:text-xs font-semibold text-red-700 mx-4">
+                📢 लाड़ली बहना योजना के अंतर्गत केवाईसी (e-KYC) पूर्ण करना अनिवार्य है।
+            </span>
+        </div>
+    </div>
 </div>
 
+<style>
+    /* Smooth Scrolling Animation */
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+        animation: marquee 30s linear infinite; /* Chhote text ke liye speed halki kam ki hai */
+        display: inline-flex;
+    }
+    .animate-marquee:hover {
+        animation-play-state: paused;
+    }
+    /* Simple Triangle Shape */
+    .clip-triangle {
+        clip-path: polygon(0 0, 0% 100%, 100% 50%);
+    }
+</style>
 </body>
 </html>
-
-
-
 
 
 
