@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Dashboard - All In One</title>
+    <title>Super Admin Dashboard</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,8 +16,21 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+
+        /* Scrollbar Styling */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -30,40 +43,61 @@
     <aside id="sidebar" class="w-64 bg-slate-900 text-white transition-all duration-300 flex flex-col shadow-xl z-20">
         <div class="h-16 flex items-center justify-center border-b border-slate-800">
             <span id="brand-full" class="text-xl font-bold tracking-wider">SUPER<span class="text-blue-400">ADMIN</span></span>
+            <span id="brand-short" class="text-xl font-bold hidden">SA</span>
         </div>
         
         <nav class="flex-1 py-6 space-y-1">
-            <button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-blue-500 bg-slate-800 text-blue-400" data-tab="dashboard">
+            <button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium transition-colors border-l-4 border-blue-500 bg-slate-800 text-blue-400" data-tab="dashboard">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                <span class="ml-3">Dashboard</span>
+                <span class="ml-3 sidebar-text">Dashboard</span>
             </button>
-            <button onclick="switchTab('create-form')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="create-form">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                <span class="ml-3">Add Application</span>
+            <button onclick="switchTab('create-form')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium transition-colors border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="create-form">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+                <span class="ml-3 sidebar-text">Add Form</span>
             </button>
-            <button onclick="switchTab('users')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="users">
-                <i data-lucide="file-clock" class="w-5 h-5"></i>
-                <span class="ml-3">Activity Logs</span>
+            <button onclick="switchTab('users')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium transition-colors border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="users">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span class="ml-3 sidebar-text">Users & Logs</span>
+            </button>
+            <button class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium transition-colors border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span class="ml-3 sidebar-text">Settings</span>
             </button>
         </nav>
 
         <div class="p-4 border-t border-slate-800">
-            <div class="text-xs text-slate-500 text-center">Connected to Firestore</div>
+            <button class="flex items-center text-slate-400 hover:text-white transition-colors w-full">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span class="ml-3 text-sm font-medium sidebar-text">Logout System</span>
+            </button>
         </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Header -->
-        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
-            <h2 id="page-title" class="text-xl font-semibold text-gray-800">Overview</h2>
+        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10 shrink-0">
+            <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-gray-100 text-gray-600">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
             
             <div class="flex items-center space-x-4">
+                <div class="relative hidden md:block">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 transition-all">
+                </div>
+                <button class="relative p-2 rounded-full hover:bg-gray-100 text-gray-600">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                </button>
                 <div class="flex items-center space-x-2 border-l pl-4 ml-2">
-                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">SA</div>
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+                        SA
+                    </div>
                     <div class="hidden md:block text-sm">
                         <p class="font-medium text-gray-700">Admin User</p>
+                        <p class="text-xs text-gray-500">Super Administrator</p>
                     </div>
                 </div>
             </div>
@@ -72,137 +106,149 @@
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 relative">
             
-            <!-- Toast -->
-            <div id="toast" class="hidden absolute top-4 right-6 z-50 animate-fade-in">
-                <div class="px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-white bg-green-600">
+            <!-- Toast Notification -->
+            <div id="toast" class="hidden absolute top-4 right-6 z-50 animate-slide-in">
+                <div id="toast-content" class="px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-white bg-green-600">
                     <i data-lucide="check-circle" class="w-4 h-4"></i>
-                    <span id="toast-message" class="text-sm font-medium">Success</span>
+                    <span id="toast-message" class="text-sm font-medium">Operation Successful</span>
                 </div>
             </div>
 
-            <!-- Loading Overlay -->
-            <div id="loading" class="hidden absolute inset-0 bg-white/80 z-40 flex flex-col items-center justify-center">
-                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-                <p class="mt-4 text-gray-500 font-medium">Syncing Data...</p>
+            <!-- Loading Indicator -->
+            <div id="loading" class="hidden absolute top-0 left-0 w-full h-full bg-white/80 z-40 flex flex-col items-center justify-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p class="mt-4 text-gray-500 font-medium">Connecting to Database...</p>
             </div>
 
             <div class="max-w-7xl mx-auto">
-                
+                <div class="mb-6">
+                    <h1 id="page-title" class="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+                    <p class="text-sm text-gray-500">Welcome back to your control panel.</p>
+                </div>
+
                 <!-- DASHBOARD VIEW -->
                 <div id="view-dashboard" class="space-y-6 animate-fade-in">
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Total -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition-all">
                             <div>
-                                <p class="text-gray-500 text-sm">Total Applications</p>
-                                <h3 id="stat-total" class="text-3xl font-bold text-gray-800 mt-1">0</h3>
+                                <p class="text-gray-500 text-sm font-medium">Total Forms</p>
+                                <h3 id="stat-total" class="text-3xl font-bold mt-2 text-gray-800">0</h3>
+                                <p class="text-xs mt-2 font-medium text-green-500">All time</p>
                             </div>
-                            <div class="p-3 bg-blue-100 text-blue-600 rounded-full"><i data-lucide="files" class="w-6 h-6"></i></div>
+                            <div class="p-4 rounded-full bg-blue-500 text-white">
+                                <i data-lucide="file-text" class="w-6 h-6"></i>
+                            </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                        <!-- Pending -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition-all">
                             <div>
-                                <p class="text-gray-500 text-sm">Pending</p>
-                                <h3 id="stat-pending" class="text-3xl font-bold text-yellow-600 mt-1">0</h3>
+                                <p class="text-gray-500 text-sm font-medium">Pending Review</p>
+                                <h3 id="stat-pending" class="text-3xl font-bold mt-2 text-gray-800">0</h3>
+                                <p class="text-xs mt-2 font-medium text-yellow-600">Needs Action</p>
                             </div>
-                            <div class="p-3 bg-yellow-100 text-yellow-600 rounded-full"><i data-lucide="clock" class="w-6 h-6"></i></div>
+                            <div class="p-4 rounded-full bg-yellow-500 text-white">
+                                <i data-lucide="clock" class="w-6 h-6"></i>
+                            </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                        <!-- Accepted -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition-all">
                             <div>
-                                <p class="text-gray-500 text-sm">Accepted</p>
-                                <h3 id="stat-accepted" class="text-3xl font-bold text-green-600 mt-1">0</h3>
+                                <p class="text-gray-500 text-sm font-medium">Accepted</p>
+                                <h3 id="stat-accepted" class="text-3xl font-bold mt-2 text-gray-800">0</h3>
+                                <p class="text-xs mt-2 font-medium text-green-500">Approved</p>
                             </div>
-                            <div class="p-3 bg-green-100 text-green-600 rounded-full"><i data-lucide="check-circle" class="w-6 h-6"></i></div>
+                            <div class="p-4 rounded-full bg-green-500 text-white">
+                                <i data-lucide="check-circle" class="w-6 h-6"></i>
+                            </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                        <!-- Rejected -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition-all">
                             <div>
-                                <p class="text-gray-500 text-sm">Rejected</p>
-                                <h3 id="stat-rejected" class="text-3xl font-bold text-red-600 mt-1">0</h3>
+                                <p class="text-gray-500 text-sm font-medium">Rejected</p>
+                                <h3 id="stat-rejected" class="text-3xl font-bold mt-2 text-gray-800">0</h3>
+                                <p class="text-xs mt-2 font-medium text-red-500">Declined</p>
                             </div>
-                            <div class="p-3 bg-red-100 text-red-600 rounded-full"><i data-lucide="x-circle" class="w-6 h-6"></i></div>
+                            <div class="p-4 rounded-full bg-red-500 text-white">
+                                <i data-lucide="x-circle" class="w-6 h-6"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Applications Table -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                            <h3 class="font-semibold text-gray-800">Recent Applications</h3>
-                            <span class="text-xs text-gray-500">Live from 'applications' collection</span>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Activity Logs -->
+                        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                <h3 class="font-semibold text-gray-800">User Activity Logs</h3>
+                                <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded border">Real-time</span>
+                            </div>
+                            <div id="logs-container" class="max-h-[400px] overflow-y-auto">
+                                <div class="p-4 text-center text-gray-400 text-sm">Waiting for data...</div>
+                            </div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
-                                    <tr>
-                                        <th class="px-6 py-3">App Number / Service</th>
-                                        <th class="px-6 py-3">Applicant</th>
-                                        <th class="px-6 py-3">Applied On</th>
-                                        <th class="px-6 py-3">Status</th>
-                                        <th class="px-6 py-3 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="forms-table-body" class="divide-y divide-gray-100">
-                                    <tr><td colspan="5" class="p-6 text-center text-gray-400">Loading data...</td></tr>
-                                </tbody>
-                            </table>
+
+                        <!-- Recent Forms Table -->
+                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                <h3 class="font-semibold text-gray-800">Recent Form Submissions</h3>
+                                <button onclick="switchTab('create-form')" class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                    <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Add New
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
+                                        <tr>
+                                            <th class="px-6 py-3">Form Name</th>
+                                            <th class="px-6 py-3">Applicant</th>
+                                            <th class="px-6 py-3">Status</th>
+                                            <th class="px-6 py-3 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="forms-table-body" class="divide-y divide-gray-100">
+                                        <tr><td colspan="4" class="p-4 text-center text-gray-400">Loading forms...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ADD APPLICATION VIEW (Simulating User Form) -->
+                <!-- CREATE FORM VIEW -->
                 <div id="view-create-form" class="hidden animate-fade-in">
                     <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
                         <div class="p-6 border-b border-gray-100 bg-blue-50">
                             <h2 class="text-xl font-bold text-blue-900 flex items-center">
-                                <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> New Application Entry
+                                <i data-lucide="plus" class="w-5 h-5 mr-2"></i> Create/Add New Form
                             </h2>
-                            <p class="text-blue-600 text-sm mt-1">Simulate a new user submission (Admin Entry)</p>
+                            <p class="text-blue-600 text-sm mt-1">Configure a new form requirement for users.</p>
                         </div>
-                        <form id="admin-entry-form" class="p-8 space-y-5">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
-                                    <select id="entry-service" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                                        <option value="Pan Card">Pan Card</option>
-                                        <option value="Aadhaar Update">Aadhaar Update</option>
-                                        <option value="Income Certificate">Income Certificate</option>
-                                        <option value="Domicile Certificate">Domicile Certificate</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name</label>
-                                    <input type="text" id="entry-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Full Name" required>
-                                </div>
+                        <form id="create-form-element" class="p-8 space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Form Title</label>
+                                <input type="text" id="new-form-title" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" placeholder="e.g., Annual Leave Request 2024" required>
                             </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                    <input type="email" id="entry-email" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="applicant@example.com">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number</label>
-                                    <input type="text" id="entry-aadhaar" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="XXXX-XXXX-XXXX" maxlength="14">
-                                    <p class="text-xs text-gray-400 mt-1">Will store last 4 digits only</p>
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description / Instructions</label>
+                                <textarea id="new-form-desc" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all h-32" placeholder="Enter details about this form..."></textarea>
                             </div>
-                            
-                            <div class="pt-4 border-t border-gray-100">
-                                <button type="submit" class="w-full py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md transition-all flex justify-center items-center">
-                                    <i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit Application
-                                </button>
+                            <div class="flex justify-end space-x-3 pt-4">
+                                <button type="button" onclick="switchTab('dashboard')" class="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors">Cancel</button>
+                                <button type="submit" class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all">Publish Form</button>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <!-- LOGS VIEW -->
+                <!-- USERS VIEW -->
                 <div id="view-users" class="hidden animate-fade-in">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                            <h2 class="text-lg font-bold">System Activity Logs</h2>
-                            <button onclick="clearLogs()" class="text-sm text-red-500 hover:text-red-700">Clear Logs</button>
+                        <div class="p-6 border-b border-gray-100">
+                            <h2 class="text-lg font-bold">Detailed User Activity Logs</h2>
                         </div>
-                        <div id="logs-container" class="max-h-[500px] overflow-y-auto">
-                            <!-- Logs injected here -->
+                        <div id="users-view-logs-container" class="p-0">
+                            <!-- Duplicate logs here -->
                         </div>
                     </div>
                 </div>
@@ -213,56 +259,45 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script type="module">
+        // Import Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
         // --- Configuration ---
         const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
         const appId = window.__app_id || 'default-app-id';
         
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- Constants ---
-        // Using 'applications' to match user's structure
-        // In sandbox: artifacts/{appId}/public/data/applications
-        const COLLECTION_NAME = 'applications'; 
-        const LOGS_COLLECTION = 'logs';
-
-        // --- State ---
-        let applications = [];
+        // --- State Data ---
+        let forms = [];
         let logs = [];
+        let stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
         let currentUser = null;
 
-        // --- Init ---
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             
-            // Handle Admin Entry Form (Simulating the user's form.js)
-            document.getElementById('admin-entry-form').addEventListener('submit', async (e) => {
+            // Handle Add Form Submit
+            document.getElementById('create-form-element').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const serviceType = document.getElementById('entry-service').value;
-                const applicantName = document.getElementById('entry-name').value;
-                const email = document.getElementById('entry-email').value;
-                const aadhaar = document.getElementById('entry-aadhaar').value;
+                const title = document.getElementById('new-form-title').value;
+                const desc = document.getElementById('new-form-desc').value;
                 
-                const data = {
-                    serviceType,
-                    applicantName,
-                    email,
-                    aadhaarNumber: aadhaar // Will be processed
-                };
-
-                await submitApplication(data);
-                
-                // Reset form
-                e.target.reset();
+                if (title && currentUser) {
+                    await addNewForm(title, desc);
+                    document.getElementById('new-form-title').value = '';
+                    document.getElementById('new-form-desc').value = '';
+                }
             });
         });
 
-        // --- Auth ---
+        // --- Firebase Auth & Listeners ---
         const initAuth = async () => {
             document.getElementById('loading').classList.remove('hidden');
             try {
@@ -273,7 +308,7 @@
                 }
             } catch (error) {
                 console.error("Auth failed:", error);
-                showToast("Auth failed");
+                showToast("Auth failed, check console");
             }
         };
 
@@ -285,210 +320,202 @@
             }
         });
 
+        // Trigger Auth
         initAuth();
 
-        // --- Listeners ---
         function setupRealtimeListeners() {
-            // 1. Listen for Applications
-            const appRef = collection(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME);
-            onSnapshot(appRef, (snapshot) => {
-                applications = [];
-                let stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
+            // 1. Listen for Forms
+            const formsRef = collection(db, 'artifacts', appId, 'public', 'data', 'forms');
+            onSnapshot(formsRef, (snapshot) => {
+                forms = [];
+                stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
                 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    applications.push({ id: doc.id, ...data });
+                    forms.push({ id: doc.id, ...data });
                     
-                    // Stats logic
+                    // Update Stats
                     stats.total++;
-                    const st = (data.status || 'pending').toLowerCase();
-                    if(st === 'pending') stats.pending++;
-                    else if(st === 'accepted') stats.accepted++;
-                    else if(st === 'rejected') stats.rejected++;
+                    if(data.status === 'Pending') stats.pending++;
+                    else if(data.status === 'Accepted') stats.accepted++;
+                    else if(data.status === 'Rejected') stats.rejected++;
                 });
 
-                // Sort by date desc
-                applications.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                // Sort forms by timestamp (Client side sorting)
+                forms.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-                updateStatsUI(stats);
-                renderTable();
-            });
+                renderDashboard();
+            }, (error) => console.error("Forms listener error:", error));
 
             // 2. Listen for Logs
-            const logsRef = collection(db, 'artifacts', appId, 'public', 'data', LOGS_COLLECTION);
+            const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'logs');
             onSnapshot(logsRef, (snapshot) => {
                 logs = [];
                 snapshot.forEach(doc => {
                     logs.push({ id: doc.id, ...doc.data() });
                 });
+
+                // Sort logs by timestamp
                 logs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                renderLogs();
-            });
+
+                renderDashboard();
+            }, (error) => console.error("Logs listener error:", error));
         }
 
-        // --- Actions (Matching User Logic) ---
+        // --- Database Actions ---
 
-        async function submitApplication(formData) {
+        async function addNewForm(title, desc) {
             try {
-                document.getElementById('loading').classList.remove('hidden');
-
-                // 1. Prepare Data
-                const data = {
-                    serviceType: formData.serviceType,
-                    applicantName: formData.applicantName,
-                    email: formData.email,
-                    status: "pending",
-                    createdAt: serverTimestamp()
-                };
-
-                // Aadhaar Logic (from user snippet)
-                if (formData.aadhaarNumber) {
-                    data.aadhaarLast4 = formData.aadhaarNumber.slice(-4);
-                    // delete data.aadhaarNumber; // Not storing full number
-                }
-
-                // 2. Add Doc
-                const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME), data);
-
-                // 3. Generate Application Number (AIO-...)
-                const applicationNumber = "AIO-" + docRef.id.substring(0, 8).toUpperCase();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME, docRef.id), {
-                    applicationNumber
+                // Add to Firestore
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forms'), {
+                    title: title,
+                    description: desc,
+                    applicant: "System Admin", // Hardcoded for now, could be dynamic
+                    status: "Pending",
+                    createdAt: serverTimestamp(),
+                    date: new Date().toISOString().split('T')[0]
                 });
 
-                // 4. Log
-                await logActivity("New Submission", `App #${applicationNumber} received for ${formData.serviceType}`, "info");
+                // Add Log
+                await logActivity("Create Form", `Created new form: ${title}`, "success");
 
-                // 5. Success
-                document.getElementById('loading').classList.add('hidden');
-                showToast(`Application ${applicationNumber} Submitted!`);
+                showToast("New Form Added to Database");
                 switchTab('dashboard');
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading').classList.add('hidden');
-                showToast("Submission Failed");
+            } catch (error) {
+                console.error("Error adding form:", error);
+                showToast("Error adding form");
             }
         }
 
-        async function updateStatus(id, newStatus) {
+        async function updateFormStatus(id, newStatus) {
             try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME, id), {
-                    status: newStatus.toLowerCase()
+                const formRef = doc(db, 'artifacts', appId, 'public', 'data', 'forms', id);
+                await updateDoc(formRef, {
+                    status: newStatus
                 });
-                
-                await logActivity("Status Update", `Application ID ${id.substring(0,5)}... marked as ${newStatus}`, newStatus === 'Accepted' ? 'success' : 'warning');
+
+                // Log the action
+                const statusType = newStatus === 'Accepted' ? 'success' : 'error';
+                await logActivity("Update Status", `Form marked as ${newStatus}`, statusType);
+
                 showToast(`Status updated to ${newStatus}`);
-            } catch (e) {
-                console.error(e);
-                showToast("Update Failed");
+            } catch (error) {
+                console.error("Error updating status:", error);
+                showToast("Failed to update status");
             }
         }
 
         async function logActivity(action, details, type) {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', LOGS_COLLECTION), {
-                action, details, type,
-                createdAt: serverTimestamp(),
-                time: new Date().toLocaleTimeString()
-            });
+            try {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
+                    user: "Super Admin", // Current user
+                    action: action,
+                    details: details,
+                    time: timeString,
+                    date: "Today",
+                    status: type === 'success' ? 'success' : type === 'error' ? 'offline' : 'online',
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.error("Logging failed", e);
+            }
         }
+
+        // --- Expose functions to global scope (for HTML onclick handlers) ---
+        window.updateFormStatus = updateFormStatus;
+        window.switchTab = switchTab;
+        window.toggleSidebar = toggleSidebar;
 
         // --- Render UI ---
 
-        function updateStatsUI(stats) {
+        function renderDashboard() {
+            // Update Stats UI
             document.getElementById('stat-total').innerText = stats.total;
             document.getElementById('stat-pending').innerText = stats.pending;
             document.getElementById('stat-accepted').innerText = stats.accepted;
             document.getElementById('stat-rejected').innerText = stats.rejected;
-        }
 
-        function renderTable() {
-            const tbody = document.getElementById('forms-table-body');
-            if (applications.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400">No applications found in database.</td></tr>`;
-                return;
-            }
+            // Render Logs
+            const logsHTML = logs.length ? logs.map(log => createLogHTML(log)).join('') : '<div class="p-4 text-center text-gray-400 text-sm">No activity logs yet</div>';
+            document.getElementById('logs-container').innerHTML = logsHTML;
+            document.getElementById('users-view-logs-container').innerHTML = logsHTML;
 
-            tbody.innerHTML = applications.map(app => {
-                const status = (app.status || 'pending').toLowerCase(); // normalize
-                let badgeClass = 'bg-yellow-100 text-yellow-700';
-                if (status === 'accepted') badgeClass = 'bg-green-100 text-green-700';
-                if (status === 'rejected') badgeClass = 'bg-red-100 text-red-700';
-
-                // Format Date
-                let dateStr = "Just now";
-                if(app.createdAt && app.createdAt.seconds) {
-                    dateStr = new Date(app.createdAt.seconds * 1000).toLocaleDateString();
-                }
-
-                // Actions
-                let actions = '';
-                if (status === 'pending') {
-                    actions = `
-                        <button onclick="window.updateStatus('${app.id}', 'Accepted')" class="p-1.5 text-green-600 hover:bg-green-100 rounded mr-1" title="Accept"><i data-lucide="check" class="w-5 h-5"></i></button>
-                        <button onclick="window.updateStatus('${app.id}', 'Rejected')" class="p-1.5 text-red-600 hover:bg-red-100 rounded" title="Reject"><i data-lucide="x" class="w-5 h-5"></i></button>
-                    `;
-                } else {
-                    actions = `<span class="text-xs uppercase font-bold text-gray-400">${status}</span>`;
-                }
-
-                return `
-                <tr class="hover:bg-gray-50 border-b border-gray-100 last:border-0">
-                    <td class="px-6 py-4">
-                        <div class="font-bold text-gray-800">${app.applicationNumber || 'Processing...'}</div>
-                        <div class="text-xs text-blue-600 font-medium">${app.serviceType || 'Unknown Service'}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900 font-medium">${app.applicantName || 'N/A'}</div>
-                        <div class="text-xs text-gray-500">${app.email || ''}</div>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">${dateStr}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-3 py-1 rounded-full text-xs font-medium capitalize ${badgeClass}">${status}</span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        ${actions}
-                    </td>
-                </tr>
-                `;
-            }).join('');
+            // Render Forms Table
+            const formsHTML = forms.length ? forms.slice(0, 10).map(form => createFormRowHTML(form)).join('') : '<tr><td colspan="4" class="p-4 text-center text-gray-400">No forms found</td></tr>';
+            document.getElementById('forms-table-body').innerHTML = formsHTML;
             
+            // Re-initialize icons
             lucide.createIcons();
         }
 
-        function renderLogs() {
-            const container = document.getElementById('logs-container');
-            if(logs.length === 0) {
-                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-sm">No activity logs yet</div>';
-                return;
-            }
+        function createLogHTML(log) {
+            let statusClass = "bg-gray-200 text-gray-600";
+            if (log.status === 'success' || log.action === 'Login') statusClass = "bg-green-100 text-green-700";
+            if (log.status === 'offline' || log.status === 'error') statusClass = "bg-red-100 text-red-700";
             
-            container.innerHTML = logs.map(log => {
-                let color = "text-gray-600";
-                if(log.type === 'success') color = "text-green-600";
-                if(log.type === 'warning') color = "text-red-600";
-                
-                return `
-                <div class="flex items-center p-3 border-b border-gray-50 last:border-0 hover:bg-gray-50">
-                    <div class="w-2 h-2 rounded-full bg-gray-300 mr-3"></div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium ${color}">${log.action}</p>
-                        <p class="text-xs text-gray-500">${log.details}</p>
+            return `
+            <div class="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 px-4 transition-colors">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                        ${(log.user || 'U').charAt(0)}
                     </div>
-                    <div class="text-xs text-gray-400">${log.time || ''}</div>
                 </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">${log.user || 'Unknown User'}</p>
+                    <p class="text-sm text-gray-500 truncate">${log.details || log.action}</p>
+                </div>
+                <div class="inline-flex flex-col items-end text-sm text-gray-500">
+                    <span class="px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}">${log.time}</span>
+                    <span class="text-xs mt-1 text-gray-400">${log.date}</span>
+                </div>
+            </div>
+            `;
+        }
+
+        function createFormRowHTML(form) {
+            let badgeClass = 'bg-yellow-100 text-yellow-700';
+            if (form.status === 'Accepted') badgeClass = 'bg-green-100 text-green-700';
+            if (form.status === 'Rejected') badgeClass = 'bg-red-100 text-red-700';
+
+            let actions = '';
+            if (form.status === 'Pending') {
+                actions = `
+                    <button onclick="updateFormStatus('${form.id}', 'Accepted')" class="p-1.5 text-green-600 hover:bg-green-100 rounded transition-colors" title="Accept">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="updateFormStatus('${form.id}', 'Rejected')" class="p-1.5 text-red-600 hover:bg-red-100 rounded transition-colors" title="Reject">
+                        <i data-lucide="x-circle" class="w-5 h-5"></i>
+                    </button>
                 `;
-            }).join('');
+            } else {
+                 actions = `<span class="text-xs text-gray-400">Completed</span>`;
+            }
+
+            return `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">
+                    <div class="font-medium text-gray-900">${form.title}</div>
+                    <div class="text-xs text-gray-500">${form.date}</div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600">${form.applicant}</td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-medium ${badgeClass}">${form.status}</span>
+                </td>
+                <td class="px-6 py-4 text-right space-x-2 flex justify-end items-center">
+                    ${actions}
+                </td>
+            </tr>
+            `;
         }
 
-        async function clearLogs() {
-             // Optional: Implementation to delete log docs
-        }
+        // --- UI Interactions ---
 
-        // --- Global Access ---
-        window.switchTab = (tabId) => {
+        function switchTab(tabId) {
             document.querySelectorAll('.nav-item').forEach(el => {
-                if(el.dataset.tab === tabId) {
+                if (el.dataset.tab === tabId) {
                     el.classList.remove('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
                     el.classList.add('border-blue-500', 'bg-slate-800', 'text-blue-400');
                 } else {
@@ -496,26 +523,49 @@
                     el.classList.remove('border-blue-500', 'bg-slate-800', 'text-blue-400');
                 }
             });
-            
+
             document.getElementById('view-dashboard').classList.add('hidden');
             document.getElementById('view-create-form').classList.add('hidden');
             document.getElementById('view-users').classList.add('hidden');
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
             
-            const titles = {'dashboard': 'Overview', 'create-form': 'Admin Entry', 'users': 'System Logs'};
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'create-form': 'Form Management',
+                'users': 'User Activity Logs'
+            };
             document.getElementById('page-title').innerText = titles[tabId];
-        };
+        }
 
-        window.showToast = (msg) => {
-            const el = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = msg;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 3000);
-        };
-        
-        window.updateStatus = updateStatus;
-        window.clearLogs = clearLogs;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const brandFull = document.getElementById('brand-full');
+            const brandShort = document.getElementById('brand-short');
+            const texts = document.querySelectorAll('.sidebar-text');
+            const isSidebarOpen = !sidebar.classList.contains('w-20');
 
+            if (isSidebarOpen) {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                brandFull.classList.add('hidden');
+                brandShort.classList.remove('hidden');
+                texts.forEach(t => t.classList.add('hidden'));
+            } else {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                brandFull.classList.remove('hidden');
+                brandShort.classList.add('hidden');
+                texts.forEach(t => t.classList.remove('hidden'));
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
     </script>
 </body>
 </html>
