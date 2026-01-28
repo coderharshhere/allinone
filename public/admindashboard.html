@@ -459,7 +459,7 @@
                     else if (st === "accepted") stats.accepted++;
                     else if (st === "rejected") stats.rejected++;
 
-                    const type = data.serviceType || "Other";
+const type = data.serviceType || data.formType || "Other";
                     serviceCounts[type] = (serviceCounts[type] || 0) + 1;
                 });
 
@@ -538,7 +538,7 @@
                     applicationNumber
                 });
 
-                await logActivity("New Submission", `App #${applicationNumber} - ${formData.serviceType}`, "info");
+                await logActivity("New Submission", `App #${applicationNumber} - ${(formData.serviceType || formData.formType)}`, "info");
 
                 document.getElementById('loading').classList.add('hidden');
                 showToast(`Application ${applicationNumber} Submitted!`);
@@ -728,7 +728,9 @@
                 return `
                 <tr class="hover:bg-gray-50 border-b border-gray-100 last:border-0">
                     <td class="px-6 py-4">
-                        <div class="font-bold text-gray-800">${app.serviceType || 'Unknown'}</div>
+<div class="font-bold text-gray-800">
+  ${app.serviceType || app.formType || 'Unknown'}
+</div>
                         <div class="text-xs text-blue-600 font-medium">${app.applicationNumber || 'Processing...'}</div>
                     </td>
                     <td class="px-6 py-4">
