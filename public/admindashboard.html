@@ -47,11 +47,15 @@
             </button>
         </nav>
 
-        <div class="p-4 border-t border-slate-800">
+        <div class="p-4 border-t border-slate-800 space-y-4">
             <div class="text-xs text-slate-500 text-center flex items-center justify-center">
                 <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                 Connected to DB
             </div>
+            <!-- Logout Button Added -->
+            <button onclick="logoutSystem()" class="flex items-center justify-center text-red-400 hover:text-red-300 transition-colors w-full text-sm font-medium py-2 rounded hover:bg-slate-800">
+                <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Logout System
+            </button>
         </div>
     </aside>
 
@@ -135,10 +139,11 @@
                          <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="text-gray-500 text-xs font-medium uppercase">Active Admins</p>
-                                    <h3 class="text-2xl font-bold text-purple-600 mt-1">1</h3>
+                                    <!-- Updated to show Total Users from DB -->
+                                    <p class="text-gray-500 text-xs font-medium uppercase">Total Users</p>
+                                    <h3 id="stat-users" class="text-2xl font-bold text-purple-600 mt-1">0</h3>
                                 </div>
-                                <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                                <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="users" class="w-5 h-5"></i></div>
                             </div>
                         </div>
                     </div>
@@ -249,7 +254,7 @@
     <!-- JAVASCRIPT LOGIC -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
         // --- Configuration (Based on your provided form.js) ---
@@ -271,6 +276,7 @@
         // CRITICAL FIX: Using 'applications' root collection to match your form.js data
         const COLLECTION_NAME = 'applications'; 
         const LOGS_COLLECTION = 'admin_logs';
+        const USERS_COLLECTION = 'users'; // New collection for users
 
         // --- State ---
         let applications = [];
@@ -378,6 +384,16 @@
                 });
                 logs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 renderLogs();
+            });
+
+            // 3. Listen for Users (New Logic for Total Users)
+            const usersRef = collection(db, USERS_COLLECTION);
+            onSnapshot(usersRef, (snapshot) => {
+                const count = snapshot.size || 0;
+                document.getElementById('stat-users').innerText = count;
+            }, (error) => {
+                console.log("Users collection access denied or empty");
+                document.getElementById('stat-users').innerText = "0";
             });
         }
 
@@ -608,6 +624,26 @@
         
         window.updateStatus = updateStatus;
         window.clearLogs = clearLogs;
+
+        // --- NEW LOGOUT FUNCTION ---
+        window.logoutSystem = async () => {
+            try {
+                // Log the logout action first
+                await logActivity("Logout", "User manually logged out", "warning");
+                
+                // Sign out from Firebase
+                await signOut(auth);
+                
+                // Show feedback and reload/redirect
+                showToast("Logged out successfully");
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 1000);
+            } catch (error) {
+                console.error("Logout failed:", error);
+                showToast("Logout failed, try again");
+            }
+        };
 
     </script>
 </body>
