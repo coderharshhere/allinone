@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -15,6 +16,7 @@
 
   <!-- ✅ Custom Header CSS (ticker, animation, extra style) -->
   <link rel="stylesheet" href="assets/css/header.css">
+
 </head>
 
 <body>
@@ -30,11 +32,11 @@
   <!-- RIGHT : Fixed content -->
   <div class="access-tools">
     <span>Screen Reader Access</span>
-    <span class="font-controls">
-      <button>A-|</button>
-      <button>A|</button>
-      <button>A+</button>
-    </span>
+    <div class="flex border border-white/20 rounded-md overflow-hidden bg-white/5">
+                    <button class="px-2 py-0.5 border-r border-white/20 hover:bg-white/10 transition">A- </button>
+                    <button class="px-2 py-0.5 border-r border-white/20 hover:bg-white/10 transition font-bold">A </button>
+                    <button class="px-2 py-0.5 hover:bg-white/10 transition">A+</button>
+                </div>
   </div>
 </div>
 
@@ -49,41 +51,41 @@
 </div>-->
 
 <!-- ================= MAIN HEADER ================= -->
-<header class="bg-white border-b-2 border-gray-100 shadow-sm sticky top-0 z-50">
-  <div class="container mx-auto px-4 py-2 flex items-center justify-between">
-
-    <div class="flex items-center gap-3">
-      <img src="assets/logo(2).png" class="h-12 md:h-16 w-auto" alt="Logo">
-      <div class="flex flex-col border-l-2 border-gray-200 pl-3">
-        <h1 class="text-xl md:text-2xl font-black text-blue-900 tracking-tight leading-none uppercase">
-          AllInOne-MP
-        </h1>
-        <p class="hidden sm:block text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
-          One Window Service Portal
-        </p>
-      </div>
-    </div>
-
+<header class="bg-white sticky top-0 z-[60] shadow-md border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 h-16 md:h-24 flex justify-between items-center">
+        
+        <div class="flex flex-col cursor-pointer group">
+            <h1 class="text-2xl md:text-4xl font-[900] text-[#1e3a8a] tracking-tighter leading-none transition-all group-hover:tracking-normal">
+                ALLINONE-MP
+            </h1>
+            <div class="flex items-center gap-2 mt-2">
+                <span class="h-[2px] w-8 bg-blue-600"></span>
+                <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase tracking-[4px]">
+                    One Window Service Portal
+                </p>
+            </div>
+        </div>
+        
     <div class="flex items-center gap-3 md:gap-5">
       
-      <a href="https://wa.me/918435273042" target="_blank" 
-         class="flex items-center justify-center bg-[#25D366] hover:bg-[#20ba5a] text-white w-10 h-10 md:w-auto md:px-4 md:py-2 rounded-full transition-all duration-300 shadow-lg hover:shadow-green-200 group">
-        <i class="fab fa-whatsapp text-xl md:mr-2"></i>
-        <span class="hidden md:inline-block font-bold text-sm">Help Desk</span>
-      </a>
+      <div class="flex items-center gap-2 md:gap-5">
+                <a href="https://wa.me/918435273042" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/20 transition-all active:scale-90 relative">
+                    <i class="fab fa-whatsapp text-xl md:text-2xl"></i>
+                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500 border border-white"></span>
+                    </span>
+                </a>
 
-      <a href="/adminlogin.html"
-         class="bg-blue-900 text-white px-5 py-2 md:px-7 md:py-2.5 rounded-lg shadow-md font-bold text-sm md:text-base 
-                hover:bg-blue-950 transition-all flex items-center gap-2">
-        <i class="fas fa-lock text-xs"></i>
-        <span>लॉगिन</span>
-      </a>
+                <button class="flex items-center gap-2 bg-[#1e3a8a] hover:bg-blue-800 text-white px-4 md:px-8 py-2 md:py-3 rounded-xl font-bold text-sm shadow-xl shadow-blue-900/20 transition-all active:scale-95">
+                    <i class="fas fa-user-lock text-xs"></i>
+                    <span>लॉगिन</span>
+                </button>
+            </div>
     </div>
-
-  </div>
 </header>
 
-<!-- ================= NAV BAR ================= -->
+<!-- ================= NAV BAR ================= ->
 <nav class="bg-blue-800 text-white">
   <div class="container mx-auto px-4">
     <ul class="flex overflow-x-auto whitespace-nowrap py-3 gap-8">
@@ -99,7 +101,51 @@
       <li><a href="About.html" class="hover:text-blue-200">ABOUT US </a></li>
     </ul>
   </div>
-</nav>
+</nav>-->
+
+<div class="bg-[#1e3a8a] shadow-inner border-t border-white/5">
+    <div class="max-w-7xl mx-auto">
+        <nav class="flex items-center overflow-x-auto no-scrollbar py-1.5 px-2">
+            
+            <a href="index.html" class="flex items-center gap-2 px-6 py-2.5 text-white text-xs md:text-sm font-bold whitespace-nowrap bg-white/10 rounded-lg">
+                <i class="fas fa-home text-blue-300"></i> 
+                मुख्य पृष्ठ
+            </a>
+
+            <a href="nagrik.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
+                नागरिक सेवाएँ
+            </a>
+
+            <a href="yojna.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
+                योजनाएँ
+            </a>
+
+            <a href="vibhageey.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
+                विभागीय डैशबोर्ड
+            </a>
+
+            <a href="help.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
+                शिकायत निवारण
+            </a>
+
+            <a href="About.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300 uppercase">
+                About Us
+            </a>
+
+        </nav>
+    </div>
+</div>
+
+<style>
+  /* Scrollbar chhupane ke liye taaki clean dikhe */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  /* Active Tab Glowing Effect */
+  .active-tab {
+    background: linear-gradient(to top, rgba(37, 99, 235, 0.05), transparent);
+  }
+</style>
 
 <!-- ================= TICKER ================= -->
 <div class="ticker-wrapper py-2">
