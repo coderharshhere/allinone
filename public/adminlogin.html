@@ -133,9 +133,184 @@
 
     <!-- ================= STANDARD FOOTER END ================= -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+/* ================= FIREBASE IMPORTS ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+/* ================= FIREBASE CONFIG ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+  authDomain: "allinone-aa89.firebaseapp.com",
+  projectId: "allinone-aa89"
+};
+
+/* ================= INIT ================= */
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ================= COLLECTION NAMES ================= */
+const APPLICATIONS = "applications";
+const ADMINS = "admins";
+const LOGS = "admin_logs";
+
+/* ================= AUTH GUARD (SUPER ADMIN ONLY) ================= */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "adminlogin.html";
+    return;
+  }
+
+  try {
+    const adminRef = doc(db, ADMINS, user.uid);
+    const adminSnap = await getDoc(adminRef);
+
+    if (!adminSnap.exists()) {
+      alert("Access denied ❌");
+      await signOut(auth);
+      window.location.href = "adminlogin.html";
+      return;
+    }
+
+    const adminData = adminSnap.data();
+
+    if (adminData.role !== "super_admin" || adminData.status !== "active") {
+      alert("Admin blocked or unauthorized ❌");
+      await signOut(auth);
+      window.location.href = "adminlogin.html";
+      return;
+    }
+
+    // ✅ Authorized
+    loadDashboard();
+
+  } catch (err) {
+    console.error("Auth check failed", err);
+    await signOut(auth);
+    window.location.href = "adminlogin.html";
+  }
+});
+
+/* ================= LOAD DASHBOARD ================= */
+function loadDashboard() {
+  listenApplications();
+}
+
+/* ================= REALTIME APPLICATION LISTENER ================= */
+function listenApplications() {
+  const appRef = collection(db, APPLICATIONS);
+
+  onSnapshot(appRef, (snapshot) => {
+    let total = 0, pending = 0, accepted = 0, rejected = 0;
+
+    snapshot.forEach(docSnap => {
+      const d = docSnap.data();
+      total++;
+
+      if (d.status === "pending") pending++;
+      if (d.status === "accepted") accepted++;
+      if (d.status === "rejected") rejected++;
+    });
+
+    document.getElementById("stat-total").innerText = total;
+    document.getElementById("stat-pending").innerText = pending;
+    document.getElementById("stat-accepted").innerText = accepted;
+    document.getElementById("stat-rejected").innerText = rejected;
+
+    renderTable(snapshot);
+  });
+}
+
+/* ================= RENDER TABLE ================= */
+function renderTable(snapshot) {
+  const tbody = document.getElementById("forms-table-body");
+
+  if (snapshot.empty) {
+    tbody.innerHTML = `<tr>
+      <td colspan="4" class="p-6 text-center text-gray-400">No applications found</td>
+    </tr>`;
+    return;
+  }
+
+  let html = "";
+
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    const id = docSnap.id;
+
+    html += `
+    <tr class="border-b">
+      <td class="px-6 py-3">
+        <div class="font-bold">${d.serviceType || "N/A"}</div>
+        <div class="text-xs text-blue-600">${d.applicationNumber || ""}</div>
+      </td>
+      <td class="px-6 py-3">${d.applicantName || "-"}</td>
+      <td class="px-6 py-3 capitalize">${d.status}</td>
+      <td class="px-6 py-3 text-right">
+        ${
+          d.status === "pending"
+            ? `
+            <button onclick="updateStatus('${id}','accepted')" class="text-green-600 mr-2">✔</button>
+            <button onclick="updateStatus('${id}','rejected')" class="text-red-600">✖</button>
+            `
+            : `<span class="text-gray-400 text-xs">Done</span>`
+        }
+      </td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+}
+
+/* ================= UPDATE STATUS ================= */
+window.updateStatus = async function (id, status) {
+  try {
+    await updateDoc(doc(db, APPLICATIONS, id), {
+      status
+    });
+
+    await addDoc(collection(db, LOGS), {
+      action: "STATUS_UPDATE",
+      details: `Application ${id} → ${status}`,
+      createdAt: serverTimestamp()
+    });
+
+  } catch (err) {
+    alert("Update failed");
+  }
+};
+
+/* ================= LOGOUT ================= */
+window.logoutSystem = async function () {
+  try {
+    await signOut(auth);
+    window.location.href = "adminlogin.html";
+  } catch (err) {
+    alert("Logout failed");
+  }
+};
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from
+  "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from
+  "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
@@ -147,59 +322,43 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ================= LOGIN =================
 const form = document.getElementById("loginForm");
 
-form.addEventListener("submit", async function (e) {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const email = form.email.value;
   const password = form.password.value;
 
   try {
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    const user = result.user;
+    const res = await signInWithEmailAndPassword(auth, email, password);
+    const user = res.user;
 
-    // Admin collection check
-    const adminRef = doc(db, "admins", user.uid);
-    const snap = await getDoc(adminRef);
+    const adminSnap = await getDoc(doc(db, "admins", user.uid));
 
-    if (snap.exists()) {
-      // 🔐 ADMIN / SUPER ADMIN
-      if (snap.data().status !== "active") {
-        alert("Admin account blocked ❌");
-        await auth.signOut();
-        return;
-      }
-
-      window.location.href = "admindashboard.html";
-    } else {
-      // 👤 NORMAL USER
-      window.location.href = "dashboard.html";
+    if (!adminSnap.exists()) {
+      alert("You are not admin ❌");
+      return;
     }
 
-  } catch (error) {
-    console.error(error);
-    alert("Login error ❌\n" + error.message);
+    const admin = adminSnap.data();
+
+    if (admin.role !== "super_admin" || admin.status !== "active") {
+      alert("Admin blocked ❌");
+      return;
+    }
+
+    // ✅ SUCCESS
+    window.location.href = "admindashboard.html";
+
+  } catch (err) {
+    alert("Login failed ❌");
+    console.error(err);
   }
 });
-
-// ================= HEADER =================
-fetch("./header.html")
-  .then(res => res.text())
-  .then(html => {
-    const h = document.getElementById("header");
-    if (h) h.innerHTML = html;
-  });
-
-// ================= FOOTER =================
-fetch("./footer.html")
-  .then(res => res.text())
-  .then(html => {
-    const f = document.getElementById("footer");
-    if (f) f.innerHTML = html;
-  });
+    
 </script>
+
 
 </body>
 </html>
