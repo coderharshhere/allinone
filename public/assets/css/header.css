@@ -1,6 +1,6 @@
 /* ===== TOP BAR ===== */
 .top-bar {
-  background-color: #1e3a8a; /* blue-900 */
+  background-color: #0f172a; /* blue-900 */
   color: white;
   font-size: 12px;
 }
@@ -112,6 +112,7 @@
     transform: translateX(-100%);
   }
 }
+
 
 
 
