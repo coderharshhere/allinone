@@ -139,6 +139,7 @@ import { getAuth, signInWithEmailAndPassword } from
 import { getFirestore, doc, getDoc } from
   "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+/* Firebase Config */
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
@@ -158,32 +159,44 @@ form.addEventListener("submit", async (e) => {
   const password = form.password.value;
 
   try {
+    // 1️⃣ Login
     const res = await signInWithEmailAndPassword(auth, email, password);
     const user = res.user;
 
+    // 2️⃣ Admin check
     const adminSnap = await getDoc(doc(db, "admins", user.uid));
 
     if (!adminSnap.exists()) {
-      alert("You are not admin ❌");
+      alert("❌ आप admin नहीं हैं");
       return;
     }
 
     const admin = adminSnap.data();
 
-    if (admin.role !== "super_admin" || admin.status !== "active") {
-      alert("Admin blocked ❌");
+    // 3️⃣ Status check
+    if (admin.status !== "active") {
+      alert("❌ आपका account बंद है");
       return;
     }
 
-    // ✅ SUCCESS
-    window.location.href = "admindashboard.html";
+    // 4️⃣ ROLE BASED REDIRECT (तुम्हारी requirement)
+    if (admin.role === "super_admin") {
+      window.location.href = "admindashboard.html";
+    } 
+    else if (admin.role === "admin") {
+      window.location.href = "dashboard.html";
+    } 
+    else {
+      alert("❌ Invalid role");
+    }
 
   } catch (err) {
-    alert("Login failed ❌");
     console.error(err);
+    alert("❌ Login failed");
   }
 });
 </script>
+
 
 
 
