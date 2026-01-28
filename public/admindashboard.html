@@ -505,41 +505,46 @@ const formsRef = collection(db, 'applications');
             `;
         }
 
-        function createFormRowHTML(form) {
-            let badgeClass = 'bg-yellow-100 text-yellow-700';
-            if (form.status === 'Accepted') badgeClass = 'bg-green-100 text-green-700';
-            if (form.status === 'Rejected') badgeClass = 'bg-red-100 text-red-700';
+       function createFormRowHTML(form) {
+  let badgeClass = 'bg-yellow-100 text-yellow-700';
+  if (form.status === 'Accepted') badgeClass = 'bg-green-100 text-green-700';
+  if (form.status === 'Rejected') badgeClass = 'bg-red-100 text-red-700';
 
-            let actions = '';
-            if (form.status === 'Pending') {
-                actions = `
-                    <button onclick="updateFormStatus('${form.id}', 'Accepted')" class="p-1.5 text-green-600 hover:bg-green-100 rounded transition-colors" title="Accept">
-                        <i data-lucide="check-circle" class="w-5 h-5"></i>
-                    </button>
-                    <button onclick="updateFormStatus('${form.id}', 'Rejected')" class="p-1.5 text-red-600 hover:bg-red-100 rounded transition-colors" title="Reject">
-                        <i data-lucide="x-circle" class="w-5 h-5"></i>
-                    </button>
-                `;
-            } else {
-                 actions = `<span class="text-xs text-gray-400">Completed</span>`;
-            }
+  let actions = '';
+  if (form.status === 'Pending') {
+    actions = `
+      <button onclick="updateApplicationStatus('${form.id}', 'Accepted')" class="p-1.5 text-green-600 hover:bg-green-100 rounded">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+      </button>
+      <button onclick="updateApplicationStatus('${form.id}', 'Rejected')" class="p-1.5 text-red-600 hover:bg-red-100 rounded">
+        <i data-lucide="x-circle" class="w-5 h-5"></i>
+      </button>
+    `;
+  } else {
+    actions = `<span class="text-xs text-gray-400">Completed</span>`;
+  }
 
-            return `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4">
-                    <div class="font-medium text-gray-900">${form.title}</div>
-                    <div class="text-xs text-gray-500">${form.date}</div>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-600">${form.applicant}</td>
-                <td class="px-6 py-4">
-                    <span class="px-3 py-1 rounded-full text-xs font-medium ${badgeClass}">${form.status}</span>
-                </td>
-                <td class="px-6 py-4 text-right space-x-2 flex justify-end items-center">
-                    ${actions}
-                </td>
-            </tr>
-            `;
-        }
+  return `
+    <tr class="hover:bg-gray-50">
+      <td class="px-6 py-4">
+        <div class="font-medium text-gray-900">${form.formType}</div>
+        <div class="text-xs text-gray-500">${form.applicationNumber || ''}</div>
+      </td>
+      <td class="px-6 py-4 text-sm text-gray-600">
+        ${form.applicantName || '-'}
+      </td>
+      <td class="px-6 py-4">
+        <span class="px-3 py-1 rounded-full text-xs font-medium ${badgeClass}">
+          ${form.status}
+        </span>
+      </td>
+      <td class="px-6 py-4 text-right">
+        ${actions}
+      </td>
+    </tr>
+  `;
+}
+
 
         // --- UI Interactions ---
 
