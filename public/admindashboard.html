@@ -397,14 +397,14 @@ const formsRef = collection(db, 'applications');
         async function addNewForm(title, desc) {
             try {
                 // Add to Firestore
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forms'), {
-                    title: title,
-                    description: desc,
-                    applicant: "System Admin", // Hardcoded for now, could be dynamic
-                    status: "Pending",
-                    createdAt: serverTimestamp(),
-                    date: new Date().toISOString().split('T')[0]
-                });
+               await addDoc(collection(db, 'applications'), {
+  formType: title,
+  description: desc,
+  applicantName: "System Admin",
+  status: "Pending",
+  createdAt: serverTimestamp()
+});
+
 
                 // Add Log
                 await logActivity("Create Form", `Created new form: ${title}`, "success");
@@ -417,23 +417,23 @@ const formsRef = collection(db, 'applications');
             }
         }
 
-        async function updateFormStatus(id, newStatus) {
-            try {
-                const formRef = doc(db, 'artifacts', appId, 'public', 'data', 'forms', id);
-                await updateDoc(formRef, {
-                    status: newStatus
-                });
+        async function updateApplicationStatus(id, newStatus) {
+  try {
+    const ref = doc(db, 'applications', id);
+    await updateDoc(ref, { status: newStatus });
 
-                // Log the action
-                const statusType = newStatus === 'Accepted' ? 'success' : 'error';
-                await logActivity("Update Status", `Form marked as ${newStatus}`, statusType);
+    await logActivity(
+      "Update Status",
+      `Application marked as ${newStatus}`,
+      newStatus === 'Accepted' ? 'success' : 'error'
+    );
 
-                showToast(`Status updated to ${newStatus}`);
-            } catch (error) {
-                console.error("Error updating status:", error);
-                showToast("Failed to update status");
-            }
-        }
+    showToast(`Status updated to ${newStatus}`);
+  } catch (error) {
+    console.error("Status update failed:", error);
+    showToast("Failed to update status");
+  }
+}
 
         async function logActivity(action, details, type) {
             try {
@@ -455,7 +455,7 @@ const formsRef = collection(db, 'applications');
         }
 
         // --- Expose functions to global scope (for HTML onclick handlers) ---
-        window.updateFormStatus = updateFormStatus;
+window.updateApplicationStatus = updateApplicationStatus;
         window.switchTab = switchTab;
         window.toggleSidebar = toggleSidebar;
 
