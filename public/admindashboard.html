@@ -65,16 +65,12 @@
             </button>
         </nav>
 
-    <div class="p-4 border-t border-slate-800">
-  <button 
-    onclick="logoutSystem()"
-    class="flex items-center text-slate-400 hover:text-white transition-colors w-full"
-  >
-    <i data-lucide="log-out" class="w-5 h-5"></i>
-    <span class="ml-3 text-sm font-medium sidebar-text">Logout System</span>
-  </button>
-</div>
-
+        <div class="p-4 border-t border-slate-800">
+            <button onclick="logoutSystem()" class="flex items-center text-slate-400 hover:text-white transition-colors w-full">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span class="ml-3 text-sm font-medium sidebar-text">Logout System</span>
+            </button>
+        </div>
     </aside>
 
     <!-- Main Content Wrapper -->
@@ -111,7 +107,7 @@
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 relative">
             
             <!-- Toast Notification -->
-            <div id="toast" class="hidden absolute top-4 right-6 z-50 animate-slide-in">
+            <div id="toast" class="hidden fixed top-4 right-6 z-50 animate-slide-in">
                 <div id="toast-content" class="px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-white bg-green-600">
                     <i data-lucide="check-circle" class="w-4 h-4"></i>
                     <span id="toast-message" class="text-sm font-medium">Operation Successful</span>
@@ -119,7 +115,7 @@
             </div>
 
             <!-- Loading Indicator -->
-            <div id="loading" class="hidden absolute top-0 left-0 w-full h-full bg-white/80 z-40 flex flex-col items-center justify-center">
+            <div id="loading" class="hidden fixed top-0 left-0 w-full h-full bg-white/80 z-40 flex flex-col items-center justify-center">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 <p class="mt-4 text-gray-500 font-medium">Connecting to Database...</p>
             </div>
@@ -265,38 +261,37 @@
     <script type="module">
         // Import Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-import {
-  getAuth,
-  signInAnonymously,
-  onAuthStateChanged,
-  signInWithCustomToken,
-  signOut
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-window.logoutSystem = async function () {
-  try {
-    await signOut(auth);
-    window.location.href = "https://allinonemp.harshtiwari.in";
-  } catch (e) {
-    console.error("Logout error:", e);
-  }
-};
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            updateDoc, 
+            doc, 
+            onSnapshot, 
+            serverTimestamp,
+            query,
+            orderBy 
+        } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import {
+            getAuth,
+            signInAnonymously,
+            onAuthStateChanged,
+            signInWithCustomToken,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         // --- Configuration ---
-       // ✅ REAL FIREBASE CONFIG (Firebase Console से)
-const firebaseConfig = {
-   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-  authDomain: "allinone-aa89.firebaseapp.com",
-  projectId: "allinone-aa89",
-storageBucket: "allinone-aa89.appspot.com",
-  messagingSenderId: "924003122498",
-  appId: "1:924003122498:web:2c86505457236e60055cdb",
-  measurementId: "G-45N39T3BB6"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+            authDomain: "allinone-aa89.firebaseapp.com",
+            projectId: "allinone-aa89",
+            storageBucket: "allinone-aa89.appspot.com",
+            messagingSenderId: "924003122498",
+            appId: "1:924003122498:web:2c86505457236e60055cdb",
+            measurementId: "G-45N39T3BB6"
+        };
 
-// ✅ FIXED APP ID (same everywhere)
-const appId = "super-admin-dashboard";
+        const appId = "super-admin-dashboard";
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -309,7 +304,7 @@ const appId = "super-admin-dashboard";
         let stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
         let currentUser = null;
 
-        // --- Initialization ---
+        // --- DOM Ready ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             
@@ -323,6 +318,8 @@ const appId = "super-admin-dashboard";
                     await addNewForm(title, desc);
                     document.getElementById('new-form-title').value = '';
                     document.getElementById('new-form-desc').value = '';
+                } else if (!currentUser) {
+                    showToast("Please wait for authentication", "error");
                 }
             });
         });
@@ -331,38 +328,51 @@ const appId = "super-admin-dashboard";
         const initAuth = async () => {
             document.getElementById('loading').classList.remove('hidden');
             try {
-                if (window.__initial_auth_token) {
-                    await signInWithCustomToken(auth, window.__initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                // Try anonymous auth first
+                const userCredential = await signInAnonymously(auth);
+                currentUser = userCredential.user;
+                console.log("Signed in anonymously:", currentUser.uid);
+                
+                // Setup listeners after auth
+                setupRealtimeListeners();
+                document.getElementById('loading').classList.add('hidden');
+                
             } catch (error) {
                 console.error("Auth failed:", error);
-                showToast("Auth failed, check console");
+                showToast("Authentication failed. Please refresh.", "error");
+                document.getElementById('loading').innerHTML = `
+                    <div class="text-center">
+                        <div class="text-red-500 mb-4">
+                            <i data-lucide="alert-circle" class="w-12 h-12 mx-auto"></i>
+                        </div>
+                        <p class="text-gray-500 font-medium">Authentication Error</p>
+                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Retry</button>
+                    </div>
+                `;
+                lucide.createIcons();
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('loading').classList.add('hidden');
-                setupRealtimeListeners();
-            }
-        });
-
-        // Trigger Auth
+        // Start authentication
         initAuth();
 
+        // --- Firebase Listeners Setup ---
         function setupRealtimeListeners() {
-            // 1. Listen for Forms
-const formsRef = collection(db, 'applications');
-            onSnapshot(formsRef, (snapshot) => {
+            // 1. Listen for Forms from correct collection
+            const formsRef = collection(db, 'artifacts', appId, 'public', 'data', 'forms');
+            const formsQuery = query(formsRef, orderBy('createdAt', 'desc'));
+            
+            const formsUnsubscribe = onSnapshot(formsQuery, (snapshot) => {
                 forms = [];
                 stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
                 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    forms.push({ id: doc.id, ...data });
+                    forms.push({ 
+                        id: doc.id, 
+                        ...data,
+                        createdAt: data.createdAt || { seconds: 0 }
+                    });
                     
                     // Update Stats
                     stats.total++;
@@ -371,82 +381,102 @@ const formsRef = collection(db, 'applications');
                     else if(data.status === 'Rejected') stats.rejected++;
                 });
 
-                // Sort forms by timestamp (Client side sorting)
-                forms.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
                 renderDashboard();
-            }, (error) => console.error("Forms listener error:", error));
+            }, (error) => {
+                console.error("Forms listener error:", error);
+                showToast("Error loading forms", "error");
+            });
 
             // 2. Listen for Logs
             const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'logs');
-            onSnapshot(logsRef, (snapshot) => {
+            const logsQuery = query(logsRef, orderBy('createdAt', 'desc'));
+            
+            const logsUnsubscribe = onSnapshot(logsQuery, (snapshot) => {
                 logs = [];
                 snapshot.forEach(doc => {
-                    logs.push({ id: doc.id, ...doc.data() });
+                    logs.push({ 
+                        id: doc.id, 
+                        ...doc.data(),
+                        createdAt: doc.data().createdAt || { seconds: 0 }
+                    });
                 });
 
-                // Sort logs by timestamp
-                logs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
                 renderDashboard();
-            }, (error) => console.error("Logs listener error:", error));
+            }, (error) => {
+                console.error("Logs listener error:", error);
+                showToast("Error loading logs", "error");
+            });
+
+            // Store unsubscribe functions for cleanup
+            window._unsubscribes = {
+                forms: formsUnsubscribe,
+                logs: logsUnsubscribe
+            };
         }
 
         // --- Database Actions ---
-
         async function addNewForm(title, desc) {
             try {
+                const loadingToast = showToast("Creating form...", "info", false);
+                
                 // Add to Firestore
-               await addDoc(collection(db, 'applications'), {
-  formType: title,
-  description: desc,
-  applicantName: "System Admin",
-  status: "Pending",
-  createdAt: serverTimestamp()
-});
-
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'forms'), {
+                    title: title,
+                    description: desc,
+                    applicant: "System Admin",
+                    status: "Pending",
+                    createdAt: serverTimestamp(),
+                    date: new Date().toISOString().split('T')[0],
+                    updatedAt: serverTimestamp()
+                });
 
                 // Add Log
                 await logActivity("Create Form", `Created new form: ${title}`, "success");
 
-                showToast("New Form Added to Database");
+                loadingToast.remove();
+                showToast("New Form Added Successfully", "success");
                 switchTab('dashboard');
             } catch (error) {
                 console.error("Error adding form:", error);
-                showToast("Error adding form");
+                showToast("Error adding form: " + error.message, "error");
             }
         }
 
-        async function updateApplicationStatus(id, newStatus) {
-  try {
-    const ref = doc(db, 'applications', id);
-    await updateDoc(ref, { status: newStatus });
+        async function updateFormStatus(id, newStatus) {
+            try {
+                const loadingToast = showToast("Updating status...", "info", false);
+                
+                const formRef = doc(db, 'artifacts', appId, 'public', 'data', 'forms', id);
+                await updateDoc(formRef, {
+                    status: newStatus,
+                    updatedAt: serverTimestamp()
+                });
 
-    await logActivity(
-      "Update Status",
-      `Application marked as ${newStatus}`,
-      newStatus === 'Accepted' ? 'success' : 'error'
-    );
+                // Log the action
+                const statusType = newStatus === 'Accepted' ? 'success' : 'error';
+                await logActivity("Update Status", `Form marked as ${newStatus}`, statusType);
 
-    showToast(`Status updated to ${newStatus}`);
-  } catch (error) {
-    console.error("Status update failed:", error);
-    showToast("Failed to update status");
-  }
-}
+                loadingToast.remove();
+                showToast(`Status updated to ${newStatus}`, "success");
+            } catch (error) {
+                console.error("Error updating status:", error);
+                showToast("Failed to update status", "error");
+            }
+        }
 
         async function logActivity(action, details, type) {
             try {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateString = now.toLocaleDateString();
                 
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
-                    user: "Super Admin", // Current user
+                    user: "Super Admin",
                     action: action,
                     details: details,
                     time: timeString,
-                    date: "Today",
-                    status: type === 'success' ? 'success' : type === 'error' ? 'offline' : 'online',
+                    date: dateString,
+                    status: type === 'success' ? 'success' : type === 'error' ? 'error' : 'info',
                     createdAt: serverTimestamp()
                 });
             } catch (e) {
@@ -454,13 +484,7 @@ const formsRef = collection(db, 'applications');
             }
         }
 
-        // --- Expose functions to global scope (for HTML onclick handlers) ---
-window.updateApplicationStatus = updateApplicationStatus;
-        window.switchTab = switchTab;
-        window.toggleSidebar = toggleSidebar;
-
-        // --- Render UI ---
-
+        // --- UI Rendering Functions ---
         function renderDashboard() {
             // Update Stats UI
             document.getElementById('stat-total').innerText = stats.total;
@@ -469,12 +493,18 @@ window.updateApplicationStatus = updateApplicationStatus;
             document.getElementById('stat-rejected').innerText = stats.rejected;
 
             // Render Logs
-            const logsHTML = logs.length ? logs.map(log => createLogHTML(log)).join('') : '<div class="p-4 text-center text-gray-400 text-sm">No activity logs yet</div>';
+            const logsHTML = logs.length > 0 ? 
+                logs.map(log => createLogHTML(log)).join('') : 
+                '<div class="p-8 text-center text-gray-400"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2"></i><p>No activity logs yet</p></div>';
+            
             document.getElementById('logs-container').innerHTML = logsHTML;
             document.getElementById('users-view-logs-container').innerHTML = logsHTML;
 
             // Render Forms Table
-            const formsHTML = forms.length ? forms.slice(0, 10).map(form => createFormRowHTML(form)).join('') : '<tr><td colspan="4" class="p-4 text-center text-gray-400">No forms found</td></tr>';
+            const formsHTML = forms.length > 0 ? 
+                forms.slice(0, 10).map(form => createFormRowHTML(form)).join('') : 
+                '<tr><td colspan="4" class="p-8 text-center text-gray-400"><i data-lucide="file-question" class="w-12 h-12 mx-auto mb-2"></i><p>No forms found</p></td></tr>';
+            
             document.getElementById('forms-table-body').innerHTML = formsHTML;
             
             // Re-initialize icons
@@ -483,8 +513,15 @@ window.updateApplicationStatus = updateApplicationStatus;
 
         function createLogHTML(log) {
             let statusClass = "bg-gray-200 text-gray-600";
-            if (log.status === 'success' || log.action === 'Login') statusClass = "bg-green-100 text-green-700";
-            if (log.status === 'offline' || log.status === 'error') statusClass = "bg-red-100 text-red-700";
+            let icon = "info";
+            
+            if (log.status === 'success' || log.action === 'Login') {
+                statusClass = "bg-green-100 text-green-700";
+                icon = "check-circle";
+            } else if (log.status === 'error' || log.status === 'offline') {
+                statusClass = "bg-red-100 text-red-700";
+                icon = "alert-circle";
+            }
             
             return `
             <div class="flex items-start space-x-4 py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 px-4 transition-colors">
@@ -498,79 +535,82 @@ window.updateApplicationStatus = updateApplicationStatus;
                     <p class="text-sm text-gray-500 truncate">${log.details || log.action}</p>
                 </div>
                 <div class="inline-flex flex-col items-end text-sm text-gray-500">
-                    <span class="px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}">${log.time}</span>
-                    <span class="text-xs mt-1 text-gray-400">${log.date}</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}">${log.time || '--:--'}</span>
+                    <span class="text-xs mt-1 text-gray-400">${log.date || 'Today'}</span>
                 </div>
             </div>
             `;
         }
 
-       function createFormRowHTML(form) {
-  let badgeClass = 'bg-yellow-100 text-yellow-700';
-  if (form.status === 'Accepted') badgeClass = 'bg-green-100 text-green-700';
-  if (form.status === 'Rejected') badgeClass = 'bg-red-100 text-red-700';
+        function createFormRowHTML(form) {
+            let badgeClass = 'bg-yellow-100 text-yellow-700';
+            if (form.status === 'Accepted') badgeClass = 'bg-green-100 text-green-700';
+            if (form.status === 'Rejected') badgeClass = 'bg-red-100 text-red-700';
 
-  let actions = '';
-  if (form.status === 'Pending') {
-    actions = `
-      <button onclick="updateApplicationStatus('${form.id}', 'Accepted')" class="p-1.5 text-green-600 hover:bg-green-100 rounded">
-        <i data-lucide="check-circle" class="w-5 h-5"></i>
-      </button>
-      <button onclick="updateApplicationStatus('${form.id}', 'Rejected')" class="p-1.5 text-red-600 hover:bg-red-100 rounded">
-        <i data-lucide="x-circle" class="w-5 h-5"></i>
-      </button>
-    `;
-  } else {
-    actions = `<span class="text-xs text-gray-400">Completed</span>`;
-  }
+            let actions = '';
+            if (form.status === 'Pending') {
+                actions = `
+                    <button onclick="updateFormStatus('${form.id}', 'Accepted')" class="p-1.5 text-green-600 hover:bg-green-100 rounded transition-colors" title="Accept">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="updateFormStatus('${form.id}', 'Rejected')" class="p-1.5 text-red-600 hover:bg-red-100 rounded transition-colors" title="Reject">
+                        <i data-lucide="x-circle" class="w-5 h-5"></i>
+                    </button>
+                `;
+            } else {
+                actions = `<span class="text-xs text-gray-400">Completed</span>`;
+            }
 
-  return `
-    <tr class="hover:bg-gray-50">
-      <td class="px-6 py-4">
-        <div class="font-medium text-gray-900">${form.formType}</div>
-        <div class="text-xs text-gray-500">${form.applicationNumber || ''}</div>
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-600">
-        ${form.applicantName || '-'}
-      </td>
-      <td class="px-6 py-4">
-        <span class="px-3 py-1 rounded-full text-xs font-medium ${badgeClass}">
-          ${form.status}
-        </span>
-      </td>
-      <td class="px-6 py-4 text-right">
-        ${actions}
-      </td>
-    </tr>
-  `;
-}
-
+            return `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">
+                    <div class="font-medium text-gray-900">${form.title || 'Untitled'}</div>
+                    <div class="text-xs text-gray-500">${form.date || 'No date'}</div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600">${form.applicant || 'Unknown'}</td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-medium ${badgeClass}">${form.status || 'Pending'}</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <div class="flex justify-end items-center space-x-2">
+                        ${actions}
+                    </div>
+                </td>
+            </tr>
+            `;
+        }
 
         // --- UI Interactions ---
-
         function switchTab(tabId) {
+            // Update navigation
             document.querySelectorAll('.nav-item').forEach(el => {
                 if (el.dataset.tab === tabId) {
                     el.classList.remove('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
                     el.classList.add('border-blue-500', 'bg-slate-800', 'text-blue-400');
                 } else {
-                    el.classList.add('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
                     el.classList.remove('border-blue-500', 'bg-slate-800', 'text-blue-400');
+                    el.classList.add('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
                 }
             });
 
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-create-form').classList.add('hidden');
-            document.getElementById('view-users').classList.add('hidden');
+            // Hide all views
+            document.querySelectorAll('[id^="view-"]').forEach(view => {
+                view.classList.add('hidden');
+            });
             
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            // Show selected view
+            const selectedView = document.getElementById(`view-${tabId}`);
+            if (selectedView) {
+                selectedView.classList.remove('hidden');
+            }
 
+            // Update page title
             const titles = {
                 'dashboard': 'Dashboard Overview',
                 'create-form': 'Form Management',
                 'users': 'User Activity Logs'
             };
-            document.getElementById('page-title').innerText = titles[tabId];
+            document.getElementById('page-title').innerText = titles[tabId] || 'Dashboard';
         }
 
         function toggleSidebar() {
@@ -578,29 +618,102 @@ window.updateApplicationStatus = updateApplicationStatus;
             const brandFull = document.getElementById('brand-full');
             const brandShort = document.getElementById('brand-short');
             const texts = document.querySelectorAll('.sidebar-text');
-            const isSidebarOpen = !sidebar.classList.contains('w-20');
-
-            if (isSidebarOpen) {
-                sidebar.classList.remove('w-64');
-                sidebar.classList.add('w-20');
-                brandFull.classList.add('hidden');
-                brandShort.classList.remove('hidden');
-                texts.forEach(t => t.classList.add('hidden'));
-            } else {
+            
+            const isCollapsed = sidebar.classList.contains('w-20');
+            
+            if (isCollapsed) {
+                // Expand
                 sidebar.classList.remove('w-20');
                 sidebar.classList.add('w-64');
                 brandFull.classList.remove('hidden');
                 brandShort.classList.add('hidden');
                 texts.forEach(t => t.classList.remove('hidden'));
+            } else {
+                // Collapse
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                brandFull.classList.add('hidden');
+                brandShort.classList.remove('hidden');
+                texts.forEach(t => t.classList.add('hidden'));
             }
         }
 
-        function showToast(message) {
+        function showToast(message, type = "success", autoHide = true) {
             const toast = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = message;
+            const toastContent = document.getElementById('toast-content');
+            const toastMessage = document.getElementById('toast-message');
+            const toastIcon = toastContent.querySelector('i');
+            
+            // Set message
+            toastMessage.innerText = message;
+            
+            // Set color based on type
+            const colors = {
+                success: 'bg-green-600',
+                error: 'bg-red-600',
+                info: 'bg-blue-600',
+                warning: 'bg-yellow-600'
+            };
+            
+            // Set icon based on type
+            const icons = {
+                success: 'check-circle',
+                error: 'alert-circle',
+                info: 'info',
+                warning: 'alert-triangle'
+            };
+            
+            // Update toast appearance
+            toastContent.className = `px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-white ${colors[type] || colors.success}`;
+            if (toastIcon) {
+                toastIcon.setAttribute('data-lucide', icons[type] || 'check-circle');
+                lucide.createIcons();
+            }
+            
+            // Show toast
             toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+            
+            // Auto hide after 3 seconds
+            if (autoHide) {
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+            
+            // Return toast element for manual removal
+            return toast;
         }
+
+        // --- Global Functions ---
+        window.updateFormStatus = updateFormStatus;
+        window.switchTab = switchTab;
+        window.toggleSidebar = toggleSidebar;
+        window.showToast = showToast;
+        
+        window.logoutSystem = async function() {
+            try {
+                // Clean up listeners
+                if (window._unsubscribes) {
+                    Object.values(window._unsubscribes).forEach(unsubscribe => {
+                        if (typeof unsubscribe === 'function') {
+                            unsubscribe();
+                        }
+                    });
+                }
+                
+                // Sign out
+                await signOut(auth);
+                
+                // Redirect
+                window.location.href = "https://allinonemp.harshtiwari.in";
+            } catch (e) {
+                console.error("Logout error:", e);
+                showToast("Logout failed: " + e.message, "error");
+            }
+        };
+
+        // Initial tab
+        switchTab('dashboard');
     </script>
 </body>
 </html>
