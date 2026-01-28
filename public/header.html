@@ -103,50 +103,63 @@
   </div>
 </nav>-->
 
-<div class="bg-[#1e3a8a] shadow-inner border-t border-white/5">
-    <div class="max-w-7xl mx-auto">
-        <nav class="flex items-center overflow-x-auto no-scrollbar py-1.5 px-2">
-            
-            <a href="index.html" class="flex items-center gap-2 px-6 py-2.5 text-white text-xs md:text-sm font-bold whitespace-nowrap bg-white/10 rounded-lg">
-                <i class="fas fa-home text-blue-300"></i> 
-                मुख्य पृष्ठ
-            </a>
+<div class="bg-[#1e3a8a] shadow-md border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4">
+        <nav class="flex items-center">
+            <ul class="flex overflow-x-auto whitespace-nowrap py-2 gap-2 no-scrollbar list-none">
+                
+                <li>
+                    <a href="index.html" class="flex items-center gap-2 px-5 py-2.5 text-white text-xs md:text-sm font-medium bg-white/10 rounded-md transition-all">
+                        <i class="fas fa-home text-blue-300 text-[10px]"></i> 
+                        मुख्य पृष्ठ
+                    </a>
+                </li>
 
-            <a href="nagrik.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
-                नागरिक सेवाएँ
-            </a>
+                <li> <a href="nagrik.html" class="flex items-center gap-2 px-5 py-2.5 text-white/90 text-xs md:text-sm font-medium rounded-md transition-all hover:bg-white/5 hover:text-white group">
+                         नागरिक सेवाएँ
+                        <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-blue-300/50"></span>
+                    </a>
+                </li>
 
-            <a href="yojna.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
-                योजनाएँ
-            </a>
+                <li>
+                    <a href="yojna.html" class="flex items-center gap-2 px-5 py-2.5 text-white/90 text-xs md:text-sm font-medium rounded-md transition-all hover:bg-white/5 hover:text-white">
+                        योजनाएँ
+                    </a>
+                </li>
 
-            <a href="vibhageey.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
-                विभागीय डैशबोर्ड
-            </a>
+                <li>
+                    <a href="vibhageey.html" class="flex items-center gap-2 px-5 py-2.5 text-white/90 text-xs md:text-sm font-medium rounded-md transition-all hover:bg-white/5 hover:text-white">
+                        विभागीय डैशबोर्ड
+                    </a>
+                </li>
 
-            <a href="help.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300">
-                शिकायत निवारण
-            </a>
+                <li>
+                    <a href="help.html" class="flex items-center gap-2 px-5 py-2.5 text-white/90 text-xs md:text-sm font-medium rounded-md transition-all hover:bg-white/5 hover:text-white">
+                        शिकायत निवारण
+                    </a>
+                </li>
 
-            <a href="About.html" class="flex items-center gap-2 px-6 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-all border-b-2 border-transparent hover:border-blue-300 uppercase">
-                About Us
-            </a>
+                <li>
+                    <a href="About.html" class="flex items-center gap-2 px-5 py-2.5 text-white/90 text-xs md:text-sm font-medium rounded-md transition-all hover:bg-white/5 hover:text-white uppercase tracking-tight">
+                        About Us
+                    </a>
+                </li>
 
+            </ul>
         </nav>
     </div>
 </div>
 
 <style>
-  /* Scrollbar chhupane ke liye taaki clean dikhe */
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  
-  /* Active Tab Glowing Effect */
-  .active-tab {
-    background: linear-gradient(to top, rgba(37, 99, 235, 0.05), transparent);
-  }
+    /* Hide scrollbar for clean look */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Subtle Calm Hover */
+    nav ul li a:hover {
+        backdrop-filter: blur(4px);
+    }
 </style>
-
 <!-- ================= TICKER ================= -->
 <div class="ticker-wrapper py-2">
   <div class="ticker-text text-sm text-red-600 font-bold">
@@ -158,6 +171,7 @@
 
 </body>
 </html>
+
 
 
 
