@@ -17,6 +17,41 @@ const firebaseConfig = {
   authDomain: "allinone-aa89.firebaseapp.com",
   projectId: "allinone-aa89"
 };
+const payBtn = document.getElementById("payNowBtn");
+const form = document.querySelector("form");
+
+payBtn.addEventListener("click", () => {
+
+  // 1️⃣ Form validation
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  // 2️⃣ Razorpay options
+  var options = {
+    key: "rzp_test_S9jk2wxqonRqth", // ✅ KEY_ID
+    amount: 9900, // ₹99 = 9900 paise
+    currency: "INR",
+    name: "AllInOne MP",
+    description: "Income Certificate Application Fee",
+
+    handler: function (response) {
+      alert("Payment Successful ✅\nPayment ID: " + response.razorpay_payment_id);
+
+      // 👉 यहाँ आगे form submit / firebase save होगा
+      console.log("Payment ID:", response.razorpay_payment_id);
+    },
+
+    theme: {
+      color: "#16a34a"
+    }
+  };
+
+  // 3️⃣ Open Razorpay popup
+  var rzp = new Razorpay(options);
+  rzp.open();
+});
 
 /* ================= INIT ================= */
 const app = initializeApp(firebaseConfig);
