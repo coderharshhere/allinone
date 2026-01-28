@@ -399,60 +399,15 @@
 
     <!-- Custom Script -->
     <script>
-       
-            // Razorpay Payment Integration
-            async function initiatePayment() {
-                if (!validateForm()) {
-                    return;
-                }
+       <!-- Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-                // Show loading
-                loadingOverlay.style.display = 'flex';
+<!-- Firebase / Common -->
+<script src="assets/js/common.js?v=1.0" defer></script>
 
-                try {
-                    // First, create order on your backend
-                    const orderResponse = await fetch('/create-order', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            amount: 9900, // ₹99 in paise
-                            currency: 'INR',
-                            receipt: 'rcpt_' + Date.now()
-                        })
-                    });
-
-                    if (!orderResponse.ok) {
-                        throw new Error('Order creation failed');
-                    }
-
-                    const orderData = await orderResponse.json();
-
-                    // Razorpay options
-                    const options = {
-                        key: "rzp_test_S9Jk2wxqonRqth", // Replace with your Razorpay Key ID
-                        amount: orderData.amount,
-                        currency: "INR",
-                        name: "AllInOne MP",
-                        description: "आय प्रमाण पत्र आवेदन शुल्क",
-                        order_id: orderData.id,
-                        handler: async function(response) {
-                            // Payment success - send data to backend
-                            const formData = new FormData(form);
-                            const data = Object.fromEntries(formData);
-                            
-                            // Add payment details
-                            data.paymentId = response.razorpay_payment_id;
-                            data.orderId = response.razorpay_order_id;
-                            data.signature = response.razorpay_signature;
-                            data.paymentStatus = 'success';
-                            data.applicationDate = new Date().toISOString();
-                            data.applicationId = 'INC-' + Date.now();
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    <script src="assets/js/common.js?v=1.0" defer></script>
+<!-- Payment + Form Logic -->
 <script type="module" src="assets/js/form.js?v=1.0"></script>
-                          ;
+   ;
     </script>
 
 </body>
