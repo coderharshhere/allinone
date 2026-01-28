@@ -160,27 +160,27 @@ form.addEventListener("submit", async function (e) {
     const result = await signInWithEmailAndPassword(auth, email, password);
     const user = result.user;
 
+    // Admin collection check
     const adminRef = doc(db, "admins", user.uid);
     const snap = await getDoc(adminRef);
 
-    if (!snap.exists()) {
-      alert("आपको Admin Access नहीं है ❌");
-      await auth.signOut();
-      return;
+    if (snap.exists()) {
+      // 🔐 ADMIN / SUPER ADMIN
+      if (snap.data().status !== "active") {
+        alert("Admin account blocked ❌");
+        await auth.signOut();
+        return;
+      }
+
+      window.location.href = "admindashboard.html";
+    } else {
+      // 👤 NORMAL USER
+      window.location.href = "dashboard.html";
     }
 
-    if (snap.data().status !== "active") {
-      alert("आपका Admin account blocked है ❌");
-      await auth.signOut();
-      return;
-    }
-
-    alert("Admin Login सफल ✅");
-    window.location.href = "dashboard.html";
-
-  } catch (err) {
-    console.error(err);
-    alert("Error: " + err.message);
+  } catch (error) {
+    console.error(error);
+    alert("Login error ❌\n" + error.message);
   }
 });
 
