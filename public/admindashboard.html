@@ -355,7 +355,7 @@ const appId = "super-admin-dashboard";
 
         function setupRealtimeListeners() {
             // 1. Listen for Forms
-const formsRef = collection(db, 'forms');
+const formsRef = collection(db, 'applications');
             onSnapshot(formsRef, (snapshot) => {
                 forms = [];
                 stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
