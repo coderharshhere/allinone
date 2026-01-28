@@ -14,7 +14,10 @@ const firebaseConfig = {
   authDomain: "allinone-aa89.firebaseapp.com",
   projectId: "allinone-aa89"
 };
-const app = initializeApp(firebaseConfig);
+import { app } from "./common.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+const db = getFirestore(app);
 const db = getFirestore(app);
 
 /* 🔥 ELEMENTS */
