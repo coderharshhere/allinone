@@ -289,7 +289,7 @@ const firebaseConfig = {
    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
   projectId: "allinone-aa89",
-  storageBucket: "allinone-aa89.firebasestorage.app",
+storageBucket: "allinone-aa89.appspot.com",
   messagingSenderId: "924003122498",
   appId: "1:924003122498:web:2c86505457236e60055cdb",
   measurementId: "G-45N39T3BB6"
@@ -355,7 +355,7 @@ const appId = "super-admin-dashboard";
 
         function setupRealtimeListeners() {
             // 1. Listen for Forms
-            const formsRef = collection(db, 'artifacts', appId, 'public', 'data', 'forms');
+const formsRef = collection(db, 'forms');
             onSnapshot(formsRef, (snapshot) => {
                 forms = [];
                 stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
