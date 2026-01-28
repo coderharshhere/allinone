@@ -31,43 +31,43 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       try {
-        const serviceType = form.dataset.service;
-        const collectionName =
-          form.dataset.collection || "applications";
+        /* 🔹 FORM TYPE (Income / Samagra / Khasra / MP Bhoj) */
+        const formType = form.dataset.service; // 👈 REQUIRED
 
+        /* 🔥 MASTER DATA OBJECT */
         const data = {
-          serviceType,
-          status: "pending",
+          formType,                     // 👈 VERY IMPORTANT
+          status: "Pending",            // 👈 Admin logic
           createdAt: serverTimestamp()
         };
 
-        // 🔹 form ke sab fields auto collect
+        /* 🔹 Auto collect all form fields */
         new FormData(form).forEach((value, key) => {
           data[key] = value;
         });
 
-        // 🔹 Aadhaar safety (Samagra)
+        /* 🔐 Aadhaar safety (store only last 4 digits) */
         if (data.aadhaarNumber) {
           data.aadhaarLast4 = data.aadhaarNumber.slice(-4);
           delete data.aadhaarNumber;
         }
 
-        /* 1️⃣ SAVE */
+        /* 1️⃣ SAVE → ONLY applications collection */
         const docRef = await addDoc(
-          collection(db, collectionName),
+          collection(db, "applications"),
           data
         );
 
-        /* 2️⃣ APPLICATION NUMBER */
+        /* 2️⃣ GENERATE APPLICATION NUMBER */
         const applicationNumber =
           "AIO-" + docRef.id.substring(0, 8).toUpperCase();
 
         await updateDoc(
-          doc(db, collectionName, docRef.id),
+          doc(db, "applications", docRef.id),
           { applicationNumber }
         );
 
-        /* 3️⃣ EMAIL */
+        /* 3️⃣ EMAIL CONFIRMATION (optional) */
         if (window.emailjs && data.email) {
           await emailjs.send(
             "service_allinone",
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
               to_email: data.email,
               to_name: data.applicantName || "Applicant",
               application_no: applicationNumber,
-              service_type: serviceType
+              service_type: formType
             }
           );
         }
