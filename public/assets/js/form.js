@@ -5,8 +5,8 @@ import {
   collection,
   addDoc,
   serverTimestamp,
-  doc,       // ✅ Added missing import
-  updateDoc  // ✅ Added missing import
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 /* 🔥 FIREBASE CONFIGURATION */
@@ -17,20 +17,18 @@ const firebaseConfig = {
 };
 
 /* ================= INIT FIREBASE ================= */
-// ✅ Initialize App & DB only once
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* ================= LOGIC WRAPPER ================= */
-// Wraps everything in an event listener to ensure HTML is loaded
 document.addEventListener("DOMContentLoaded", () => {
   
   /* -----------------------------------------------------
-     SECTION A: RAZORPAY PAYMENT LOGIC
-     (Runs only if 'payNowBtn' exists on the page)
+      SECTION A: RAZORPAY PAYMENT LOGIC
+      (Runs only if 'payNowBtn' exists on the page)
   ----------------------------------------------------- */
   const payBtn = document.getElementById("payNowBtn");
-  const paymentForm = document.querySelector("form"); // Assumes the payment button is associated with the first form
+  const paymentForm = document.querySelector("form"); 
 
   if (payBtn && paymentForm) {
     payBtn.addEventListener("click", async () => {
@@ -41,13 +39,19 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // Check declaration
+      const declaration = document.getElementById('declarationCheck');
+      if (declaration && !declaration.checked) {
+          alert("कृपया घोषणा पत्र (Declaration) को स्वीकार करें।");
+          return;
+      }
+
       const originalText = payBtn.innerText;
-      payBtn.innerText = "Processing...";
+      payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
       payBtn.disabled = true;
 
       try {
         // 2️⃣ CREATE ORDER (BACKEND CALL)
-        // Ensure this Cloud Function exists and allows CORS
         const response = await fetch(
           "https://us-central1-allinone-aa89.cloudfunctions.net/createOrder",
           { method: "POST" }
@@ -58,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 3️⃣ RAZORPAY CHECKOUT
         const options = {
-          key: "rzp_test_S9jk2wxqonRqth",
+          key: "rzp_test_S9jk2wxqonRqth", // ✅ अपनी Live Key से बदलें जब लाइव जाएं
           order_id: order.id,
           amount: order.amount,
           currency: "INR",
@@ -67,26 +71,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
           handler: async function (res) {
             try {
+              // Status update to user
+              payBtn.innerText = "Saving Data...";
+
               // 4️⃣ Collect form data
               const data = {};
               new FormData(paymentForm).forEach((v, k) => data[k] = v);
 
-              // 5️⃣ Payment info
+              // 5️⃣ Add Payment info
               data.payment = {
                 paymentId: res.razorpay_payment_id,
                 orderId: res.razorpay_order_id,
                 status: "PAID"
               };
               data.createdAt = serverTimestamp();
+              data.formType = paymentForm.dataset.service || "Income Certificate";
+
+              // 🔐 Aadhaar Safety (Masking)
+              if (data.aadhaar) { // Note: HTML name attr should match
+                 data.aadhaarLast4 = data.aadhaar.slice(-4);
+                 delete data.aadhaar;
+              }
 
               // 6️⃣ Save to Firestore
-              await addDoc(collection(db, "applications"), data);
+              const docRef = await addDoc(collection(db, "applications"), data);
 
-              alert("✅ Payment Successful & Application Submitted");
-              window.location.href = "/thank-you.html";
+              // 7️⃣ Generate & Update Application Number
+              const applicationNumber = "AIO-" + docRef.id.substring(0, 8).toUpperCase();
+              await updateDoc(doc(db, "applications", docRef.id), {
+                 applicationNumber
+              });
+
+              // 8️⃣ SEND EMAIL (✅ ADDED THIS IMPORTANT STEP)
+              if (window.emailjs && data.email) {
+                 console.log("Sending Email...");
+                 await emailjs.send(
+                   "service_allinone",  // Service ID
+                   "template_7x246oi",  // Template ID
+                   {
+                     to_email: data.email,
+                     to_name: data.applicantName || "Applicant",
+                     application_no: applicationNumber,
+                     payment_id: res.razorpay_payment_id,
+                     service_type: data.formType,
+                     amount: (order.amount / 100) // Convert paise to rupees
+                   }
+                 );
+              }
+
+              alert(`✅ आवेदन और पेमेंट सफल!\n\nआवेदन क्रमांक: ${applicationNumber}\nPayment ID: ${res.razorpay_payment_id}`);
+              
+              // Redirect or Reload
+              window.location.href = "thank-you.html"; // या window.location.reload();
+              
             } catch (error) {
-              console.error("Save Error:", error);
-              alert("Payment success but failed to save data. Contact support.");
+              console.error("Save/Email Error:", error);
+              alert("Payment successful but data save/email failed. Please take a screenshot of this payment: " + res.razorpay_payment_id);
             }
           },
           modal: {
@@ -97,12 +137,18 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
 
-        // Check if Razorpay is loaded
         if (window.Razorpay) {
           const rzp = new Razorpay(options);
+          
+          rzp.on('payment.failed', function (response){
+                alert("Payment Failed: " + response.error.description);
+                payBtn.disabled = false;
+                payBtn.innerText = originalText;
+          });
+
           rzp.open();
         } else {
-          alert("Razorpay SDK not loaded. Check your internet or HTML.");
+          alert("Razorpay SDK not loaded.");
           payBtn.disabled = false;
           payBtn.innerText = originalText;
         }
@@ -117,8 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* -----------------------------------------------------
-     SECTION B: GENERAL SERVICE FORMS
-     (Runs for any form with data-service attribute)
+      SECTION B: GENERAL SERVICE FORMS
+      (Runs for non-payment forms)
   ----------------------------------------------------- */
   const serviceForms = document.querySelectorAll("form[data-service]");
 
@@ -149,15 +195,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         /* 🔐 Aadhaar Safety */
-        if (data.aadhaarNumber) {
-          data.aadhaarLast4 = data.aadhaarNumber.slice(-4);
-          delete data.aadhaarNumber;
+        if (data.aadhaar) {
+          data.aadhaarLast4 = data.aadhaar.slice(-4);
+          delete data.aadhaar;
         }
 
         /* 1️⃣ SAVE to Firestore */
         const docRef = await addDoc(collection(db, "applications"), data);
 
-        /* 2️⃣ GENERATE APPLICATION NUMBER (AIO-XXXXXXXX) */
+        /* 2️⃣ GENERATE APPLICATION NUMBER */
         const applicationNumber = "AIO-" + docRef.id.substring(0, 8).toUpperCase();
 
         await updateDoc(doc(db, "applications", docRef.id), {
@@ -173,7 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
               to_email: data.email,
               to_name: data.applicantName || "Applicant",
               application_no: applicationNumber,
-              service_type: formType
+              service_type: formType,
+              payment_id: "N/A (Free Service)"
             }
           );
         }
