@@ -8,20 +8,20 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+/* 🔥 FIREBASE INIT */
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
   projectId: "allinone-aa89"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ================= ELEMENTS ================= */
+/* 🔥 ELEMENTS */
 const payBtn = document.getElementById("payNowBtn");
 const form = document.querySelector("form");
 
-/* ================= PAY FLOW ================= */
+/* 🔥 PAY NOW */
 payBtn.addEventListener("click", async () => {
 
   // 1️⃣ Validate form
@@ -30,40 +30,42 @@ payBtn.addEventListener("click", async () => {
     return;
   }
 
-  payBtn.disabled = true;
   payBtn.innerText = "Processing...";
+  payBtn.disabled = true;
 
-  // 2️⃣ CREATE ORDER (BACKEND)
-  const res = await fetch(
-    "https://us-central1-allinone-aa89.cloudfunctions.net/createOrder"
+  // 2️⃣ CREATE ORDER (BACKEND CALL)
+  const response = await fetch(
+    "https://us-central1-allinone-aa89.cloudfunctions.net/createOrder",
+    { method: "POST" }
   );
-  const order = await res.json();
 
-  // 3️⃣ OPEN RAZORPAY
+  const order = await response.json();
+
+  // 3️⃣ RAZORPAY CHECKOUT
   const options = {
     key: "rzp_test_S9jk2wxqonRqth",
-    order_id: order.id,
+    order_id: order.id,        // ✅ MOST IMPORTANT
     amount: order.amount,
     currency: "INR",
     name: "AllInOne MP",
     description: "Income Certificate Fee",
 
-    handler: async function (response) {
+    handler: async function (res) {
 
-      // 4️⃣ COLLECT FORM DATA
+      // 4️⃣ Collect form data
       const data = {};
       new FormData(form).forEach((v, k) => data[k] = v);
 
-      // 5️⃣ PAYMENT INFO
+      // 5️⃣ Payment info
       data.payment = {
-        paymentId: response.razorpay_payment_id,
-        orderId: response.razorpay_order_id,
+        paymentId: res.razorpay_payment_id,
+        orderId: res.razorpay_order_id,
         status: "PAID"
       };
 
       data.createdAt = serverTimestamp();
 
-      // 6️⃣ SAVE TO FIRESTORE
+      // 6️⃣ Save to Firestore
       await addDoc(collection(db, "applications"), data);
 
       alert("✅ Payment Successful & Application Submitted");
