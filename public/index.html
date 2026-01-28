@@ -340,96 +340,13 @@ window.trackApplication = async function () {
 
 
 
+ <script>src="assets/js/script.js?v=1.0"></script>
 
-
-
- 
-    const el = document.getElementById("moveable-notif");
-    let isDragging = false;
-    let offset = { x: 0, y: 0 };
-
-    // --- Drag Logic for Mobile ---
-    el.addEventListener('touchstart', (e) => {
-        isDragging = false; // Start me dragging false
-        const touch = e.touches[0];
-        offset.x = touch.clientX - el.getBoundingClientRect().left;
-        offset.y = touch.clientY - el.getBoundingClientRect().top;
-    });
-
-    el.addEventListener('touchmove', (e) => {
-        isDragging = true; // Agar move kiya toh click function nahi chalega
-        e.preventDefault();
-        const touch = e.touches[0];
-        
-        let x = touch.clientX - offset.x;
-        let y = touch.clientY - offset.y;
-
-        // Screen ke bahar na jaye uske liye limits
-        x = Math.max(0, Math.min(x, window.innerWidth - el.offsetWidth));
-        y = Math.max(0, Math.min(y, window.innerHeight - el.offsetHeight));
-
-        el.style.left = x + 'px';
-        el.style.top = y + 'px';
-        el.style.bottom = 'auto'; // Default bottom hatane ke liye
-        el.style.transform = 'none'; // Initial translate hatane ke liye
-    });
-
-    // --- Popup Toggle Logic ---
-    function toggleNotifWithVibration() {
-        if (isDragging) return; // Agar drag kar rahe hain toh popup nahi khulega
-
-        if (navigator.vibrate) navigator.vibrate(50);
-        
-        const drawer = document.getElementById('notif-drawer');
-        const overlay = document.getElementById('notif-overlay');
-        
-        drawer.classList.toggle('translate-x-full');
-        overlay.classList.toggle('hidden');
-        
-        document.body.style.overflow = overlay.classList.contains('hidden') ? 'auto' : 'hidden';
-    }
-
-    function toggleNotif() {
-        toggleNotifWithVibration();
-    }
-
-
- 
- src="assets/js/script.js?v=1.0"></script>
-
-     <div id="moveable-notif" 
-     class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] md:hidden touch-none"
-     style="cursor: move;">
-    <div class="relative">
-        <button onclick="toggleNotifWithVibration()" 
-                id="notif-btn"
-                class="bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center border-4 border-white active:scale-90 transition-transform duration-200">
-            <i class="fas fa-bell text-2xl"></i>
-            <span class="absolute -top-1 -right-1 w-6 h-6 bg-red-600 border-2 border-white rounded-full text-[10px] flex items-center justify-center font-extrabold shadow-sm">
-                2
-            </span>
-        </button>
-        <span class="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-20 -z-10"></span>
-    </div>
-</div>
-
-<div id="notif-drawer" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[100] transform translate-x-full transition-transform duration-300 ease-in-out border-l border-gray-200">
-    <div class="p-4 bg-blue-900 text-white flex justify-between items-center">
-        <h3 class="font-bold">सूचनाएं (Updates)</h3>
-        <button onclick="toggleNotif()"><i class="fas fa-times text-xl"></i></button>
-    </div>
-    <div class="p-4 space-y-4 overflow-y-auto h-full bg-gray-50" id="notif-list">
-        <div class="p-3 bg-white border-l-4 border-blue-600 rounded shadow-sm">
-            <p class="text-[12px] font-bold text-blue-900">New Update!</p>
-            <p class="text-[11px] text-gray-700 mt-1">Sarkari Yojna list update ho gayi hai.</p>
-        </div>
-    </div>
-</div>
-<div id="notif-overlay" onclick="toggleNotif()" class="fixed inset-0 bg-black/60 z-[90] hidden backdrop-blur-sm"></div>
-
+    
 
 </body>
 </html>
+
 
 
 
