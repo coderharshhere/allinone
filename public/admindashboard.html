@@ -9,307 +9,881 @@
 <!-- Lucide Icons -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <!-- Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Inter', sans-serif; }
+body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+.animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #764ba2, #667eea); }
 #dashboard-view { display: none; }
-.modal { transition: opacity 0.25s ease; }
+.modal { transition: opacity 0.3s ease, transform 0.3s ease; }
 body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
 /* Custom Scrollbar for Drawer */
-#drawer-notif-list::-webkit-scrollbar { width: 4px; }
+#drawer-notif-list::-webkit-scrollbar { width: 6px; }
 /* Fixed dynamic color classes */
-.status-badge-green { background-color: #d1fae5; color: #065f46; border-color: #a7f3d0; }
-.status-badge-red { background-color: #fee2e2; color: #991b1b; border-color: #fecaca; }
-.status-badge-yellow { background-color: #fef3c7; color: #92400e; border-color: #fde68a; }
+.status-badge-green { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+.status-badge-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
+.status-badge-yellow { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
+.status-badge-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); }
+/* Card Hover Effect */
+.card-hover { transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2); }
+/* Gradient Button */
+.btn-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+.btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6); }
+.btn-gradient:active { transform: translateY(0); }
+/* Pulse Animation for Live Badge */
+.pulse-badge { animation: pulse 2s infinite; }
+/* Glassmorphism Effect */
+.glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); }
+/* Skeleton Loading */
+.skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+@keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+/* Custom Checkbox */
+.custom-checkbox { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; border: 2px solid #cbd5e1; border-radius: 6px; cursor: pointer; position: relative; transition: all 0.2s ease; }
+.custom-checkbox:checked { background: linear-gradient(135deg, #667eea, #764ba2); border-color: transparent; }
+.custom-checkbox:checked::after { content: '✓'; position: absolute; color: white; font-size: 12px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+/* Floating Action Button */
+.fab { position: fixed; bottom: 40px; right: 40px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5); cursor: pointer; transition: all 0.3s ease; z-index: 100; }
+.fab:hover { transform: scale(1.1) rotate(10deg); box-shadow: 0 15px 40px rgba(102, 126, 234, 0.7); }
+.fab i { width: 28px; height: 28px; }
+/* Notification Badge */
+.notification-badge { position: absolute; top: -4px; right: -4px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; font-size: 10px; font-weight: bold; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+/* Table Row Hover */
+.table-row-hover:hover { background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05)); }
+/* Badge Styles */
+.badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+/* Theme Toggle Switch */
+.theme-toggle { position: relative; display: inline-block; width: 50px; height: 26px; }
+.theme-toggle input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+input:checked + .slider { background-color: #667eea; }
+input:checked + .slider:before { transform: translateX(24px); }
+/* Search Input with Icon */
+.search-container { position: relative; }
+.search-container input { padding-left: 36px; width: 100%; }
+.search-container i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+/* Progress Bar Animation */
+@keyframes progress { 0% { width: 0%; } 100% { width: var(--width); } }
+.progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 3px; animation: progress 1s ease-out; }
 </style>
 </head>
-<body class="bg-gray-50 text-gray-900 h-screen overflow-hidden">
+<body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 text-gray-900 h-screen overflow-hidden">
 <!-- ================= MESSAGE BOX (Custom Alert) ================= -->
 <div id="message-box" class="fixed inset-0 z-[200] flex items-center justify-center hidden">
 <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-<div class="bg-white p-6 rounded-xl shadow-2xl z-10 max-w-sm w-full mx-4 transform animate-fade-in">
-<h3 id="msg-title" class="text-lg font-bold mb-2">Notice</h3>
-<p id="msg-body" class="text-gray-600 mb-6 text-sm"></p>
-<button onclick="closeMsg()" class="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">Understood</button>
+<div class="bg-white p-6 rounded-2xl shadow-2xl z-10 max-w-sm w-full mx-4 transform animate-fade-in border border-gray-100">
+<div class="flex items-start mb-4">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
+<i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+</div>
+<div class="flex-1">
+<h3 id="msg-title" class="text-lg font-bold text-gray-800 mb-1">Notice</h3>
+<p id="msg-body" class="text-gray-600 text-sm leading-relaxed"></p>
 </div>
 </div>
+<button onclick="closeMsg()" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg">Understood</button>
+</div>
+</div>
+
+<!-- ================= CONFIRMATION MODAL ================= -->
+<div id="confirm-modal" class="fixed inset-0 z-[210] flex items-center justify-center hidden">
+<div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+<div class="bg-white p-6 rounded-2xl shadow-2xl z-10 max-w-md w-full mx-4 transform animate-fade-in border border-gray-100">
+<div class="flex items-start mb-4">
+<div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3 flex-shrink-0">
+<i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i>
+</div>
+<div class="flex-1">
+<h3 id="confirm-title" class="text-lg font-bold text-gray-800 mb-2">Are you sure?</h3>
+<p id="confirm-body" class="text-gray-600 text-sm leading-relaxed mb-4"></p>
+<div class="flex gap-3">
+<button onclick="cancelConfirm()" class="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all">Cancel</button>
+<button onclick="executeConfirm()" id="confirm-btn" class="flex-1 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-medium hover:from-red-700 hover:to-red-800 transition-all shadow-lg">Confirm</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
 <!-- ================= SECURITY LOADER ================= -->
-<div id="auth-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
-<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-<p class="mt-4 text-gray-500 font-medium">Verifying Access...</p>
-<p class="text-xs text-gray-400 mt-2">Checking Super Admin Privileges</p>
+<div id="auth-loader" class="fixed inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+<div class="relative">
+<div class="animate-spin rounded-full h-16 w-16 border-4 border-white/30 border-t-white"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-8 h-8 rounded-full bg-white animate-pulse"></div>
 </div>
+</div>
+<p class="mt-6 text-white font-bold text-lg">Verifying Access...</p>
+<p class="text-white/80 text-sm mt-2">Checking Super Admin Privileges</p>
+<div class="mt-8 w-64 h-2 bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-white animate-pulse" style="width: 30%;"></div>
+</div>
+</div>
+
 <!-- ================= DASHBOARD VIEW ================= -->
 <div id="dashboard-view" class="w-full h-full flex">
 <!-- Sidebar -->
-<aside id="sidebar" class="w-64 bg-slate-900 text-white transition-all duration-300 flex flex-col shadow-xl z-20">
-<div class="h-16 flex items-center justify-center border-b border-slate-800">
-<span id="brand-full" class="text-xl font-bold tracking-wider uppercase">Super<span class="text-blue-400">Admin</span></span>
+<aside id="sidebar" class="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white transition-all duration-300 flex flex-col shadow-2xl z-20">
+<div class="h-16 flex items-center justify-center border-b border-slate-700/50">
+<span id="brand-full" class="text-xl font-bold tracking-wider uppercase flex items-center">
+<span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Super</span>
+<span class="ml-1 text-white/90">Admin</span>
+</span>
 </div>
-<nav class="flex-1 py-6 space-y-1">
-<button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-blue-500 bg-slate-800 text-blue-400" data-tab="dashboard">
-<i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-<span class="ml-3">Dashboard</span>
+<nav class="flex-1 py-6 space-y-1 overflow-y-auto max-h-[calc(100vh-120px)]">
+<button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-blue-500 bg-slate-800/50 text-blue-400" data-tab="dashboard">
+<i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+<span class="flex-1 text-left">Dashboard</span>
+<span class="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded-full">New</span>
 </button>
-<button onclick="switchTab('create-form')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="create-form">
-<i data-lucide="plus-circle" class="w-5 h-5"></i>
-<span class="ml-3">Add Application</span>
+<button onclick="switchTab('create-form')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-300 hover:bg-slate-800 hover:text-white transition-all" data-tab="create-form">
+<i data-lucide="file-plus" class="w-5 h-5 mr-3"></i>
+<span class="flex-1 text-left">Add Application</span>
 </button>
-<button onclick="switchTab('admins')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="admins">
-<i data-lucide="shield" class="w-5 h-5"></i>
-<span class="ml-3">Admin Management</span>
+<button onclick="switchTab('admins')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-300 hover:bg-slate-800 hover:text-white transition-all" data-tab="admins">
+<i data-lucide="users" class="w-5 h-5 mr-3"></i>
+<span class="flex-1 text-left">Admin Management</span>
+</button>
+<button onclick="switchTab('analytics')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-300 hover:bg-slate-800 hover:text-white transition-all" data-tab="analytics">
+<i data-lucide="bar-chart-2" class="w-5 h-5 mr-3"></i>
+<span class="flex-1 text-left">Analytics</span>
+</button>
+<button onclick="switchTab('settings')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-300 hover:bg-slate-800 hover:text-white transition-all" data-tab="settings">
+<i data-lucide="settings" class="w-5 h-5 mr-3"></i>
+<span class="flex-1 text-left">Settings</span>
 </button>
 </nav>
-<div class="p-4 border-t border-slate-800 space-y-4">
-<div class="text-xs text-slate-500 text-center flex items-center justify-center">
-<span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+<div class="p-4 border-t border-slate-700/50 space-y-3">
+<div class="flex items-center justify-between text-xs">
+<span class="text-slate-400 flex items-center">
+<i data-lucide="cloud" class="w-3 h-3 mr-1"></i>
 Live Cloud Sync
+</span>
+<span class="pulse-badge w-2 h-2 bg-green-500 rounded-full"></span>
 </div>
-<button onclick="logoutSystem()" class="flex items-center justify-center text-red-400 hover:text-red-300 transition-colors w-full text-sm font-medium py-2 rounded hover:bg-slate-800 cursor-pointer">
-<i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Logout System
+<div class="theme-toggle">
+<input type="checkbox" id="theme-switch" onchange="toggleTheme()">
+<label for="theme-switch" class="slider"></label>
+</div>
+<button onclick="logoutSystem()" class="flex items-center justify-center text-red-400 hover:text-red-300 transition-colors w-full text-sm font-medium py-2.5 rounded-lg hover:bg-slate-800/50 cursor-pointer group">
+<i data-lucide="log-out" class="w-4 h-4 mr-2 group-hover:animate-pulse"></i> Logout System
 </button>
 </div>
 </aside>
+
 <!-- Main Content -->
 <div class="flex-1 flex flex-col h-screen overflow-hidden">
 <!-- Header -->
 <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
-<h2 id="page-title" class="text-xl font-semibold text-gray-800">Overview</h2>
 <div class="flex items-center space-x-4">
-<button onclick="openNotif()" class="relative p-2 hover:bg-gray-100 rounded-full">
-<i data-lucide="bell" class="w-5 h-5"></i>
-<span id="notif-count" class="absolute top-0 right-0 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
+<h2 id="page-title" class="text-xl font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Overview</h2>
+<span class="text-xs bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-3 py-1 rounded-full font-medium">v2.0</span>
+</div>
+<div class="flex items-center space-x-4">
+<!-- Search Bar -->
+<div class="search-container hidden md:block">
+<input type="text" id="search-input" placeholder="Search applications..." class="w-64 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" oninput="searchApplications()">
+<i data-lucide="search" class="w-4 h-4"></i>
+</div>
+<!-- Quick Actions -->
+<div class="hidden md:flex items-center space-x-2">
+<button onclick="exportData('csv')" class="p-2 hover:bg-gray-100 rounded-lg transition-all group" title="Export CSV">
+<i data-lucide="file-text" class="w-4 h-4 text-gray-600 group-hover:text-blue-600"></i>
 </button>
-<div class="flex items-center space-x-2 border-l pl-4 ml-2">
-<div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">SA</div>
-<div class="hidden md:block text-sm">
-<p id="admin-email-display" class="font-medium text-gray-700 truncate max-w-[150px]">Loading...</p>
+<button onclick="exportData('excel')" class="p-2 hover:bg-gray-100 rounded-lg transition-all group" title="Export Excel">
+<i data-lucide="file-spreadsheet" class="w-4 h-4 text-gray-600 group-hover:text-green-600"></i>
+</button>
+</div>
+<!-- Notifications -->
+<button onclick="openNotif()" class="relative p-2 hover:bg-gray-100 rounded-lg transition-all group">
+<i data-lucide="bell" class="w-5 h-5 text-gray-600 group-hover:text-blue-600"></i>
+<span id="notif-count" class="notification-badge hidden">0</span>
+</button>
+<!-- User Profile -->
+<div class="flex items-center space-x-3 border-l pl-4 ml-2">
+<div class="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-md">SA</div>
+<div class="hidden md:block text-left">
+<p id="admin-email-display" class="font-medium text-gray-700 text-sm truncate max-w-[150px]">Loading...</p>
+<p class="text-xs text-gray-400">Super Admin</p>
 </div>
 </div>
 </div>
 </header>
+
 <!-- Main Content Area -->
 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 relative">
 <!-- Toast -->
-<div id="toast" class="hidden fixed top-20 right-6 z-[150] animate-fade-in">
-<div class="px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-white bg-green-600">
-<i data-lucide="check-circle" class="w-4 h-4"></i>
-<span id="toast-message" class="text-sm font-medium">Success</span>
+<div id="toast" class="hidden fixed top-20 right-6 z-[150] animate-slide-up">
+<div class="px-5 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-white bg-gradient-to-r from-green-600 to-emerald-600">
+<i data-lucide="check-circle" class="w-5 h-5"></i>
+<span id="toast-message" class="text-sm font-semibold">Success</span>
 </div>
 </div>
+
 <!-- Loading Overlay -->
-<div id="loading" class="hidden absolute inset-0 bg-white/80 z-40 flex flex-col items-center justify-center">
-<div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-<p class="mt-4 text-gray-500 font-medium">Processing Request...</p>
+<div id="loading" class="hidden absolute inset-0 bg-white/90 z-40 flex flex-col items-center justify-center backdrop-blur-sm">
+<div class="relative">
+<div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-4 h-4 rounded-full bg-blue-600 animate-pulse"></div>
 </div>
+</div>
+<p class="mt-4 text-gray-600 font-medium">Processing Request...</p>
+</div>
+
+<!-- Floating Action Button -->
+<div class="fab" onclick="openQuickActions()" title="Quick Actions">
+<i data-lucide="plus"></i>
+</div>
+
+<!-- Quick Actions Menu -->
+<div id="quick-actions-menu" class="fixed bottom-24 right-10 bg-white rounded-xl shadow-2xl p-3 z-[99] hidden animate-fade-in border border-gray-100">
+<button onclick="switchTab('create-form'); closeQuickActions()" class="flex items-center w-full px-3 py-2.5 hover:bg-gray-50 rounded-lg transition-all group">
+<i data-lucide="file-plus" class="w-5 h-5 text-blue-600 mr-2"></i>
+<span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">New Application</span>
+</button>
+<button onclick="toggleModal('add-admin-modal'); closeQuickActions()" class="flex items-center w-full px-3 py-2.5 hover:bg-gray-50 rounded-lg transition-all group">
+<i data-lucide="user-plus" class="w-5 h-5 text-green-600 mr-2"></i>
+<span class="text-sm font-medium text-gray-700 group-hover:text-green-600">Add Admin</span>
+</button>
+<button onclick="publishNotification(); closeQuickActions()" class="flex items-center w-full px-3 py-2.5 hover:bg-gray-50 rounded-lg transition-all group">
+<i data-lucide="megaphone" class="w-5 h-5 text-purple-600 mr-2"></i>
+<span class="text-sm font-medium text-gray-700 group-hover:text-purple-600">Broadcast</span>
+</button>
+</div>
+
 <!-- MODALS -->
 <div id="add-admin-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-[120]">
-<div class="absolute w-full h-full bg-gray-900/50 backdrop-blur-sm" onclick="toggleModal('add-admin-modal')"></div>
-<div class="bg-white w-full max-w-md mx-4 rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in">
-<div class="p-6 border-b flex justify-between items-center">
-<h3 class="text-xl font-bold text-gray-800">Add New Admin</h3>
-<button onclick="toggleModal('add-admin-modal')" class="text-gray-400 hover:text-gray-600">
-<i data-lucide="x" class="w-6 h-6"></i>
-</button>
+<div class="absolute w-full h-full bg-gray-900/60 backdrop-blur-sm" onclick="toggleModal('add-admin-modal')"></div>
+<div class="bg-white w-full max-w-md mx-4 rounded-2xl shadow-2xl z-50 overflow-hidden animate-fade-in border border-gray-100">
+<div class="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+<h3 class="text-xl font-bold text-gray-800 flex items-center">
+<i data-lucide="user-plus" class="w-5 h-5 mr-2 text-blue-600"></i>
+Add New Admin
+</h3>
+<p class="text-sm text-gray-500 mt-1">Create a new administrator account with custom permissions</p>
 </div>
 <div class="p-6">
 <form id="new-admin-form" class="space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+<input type="text" id="new-admin-firstname" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="John" required>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+<input type="text" id="new-admin-lastname" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Doe">
+</div>
+</div>
 <div>
 <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-<input type="email" id="new-admin-email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin@example.com" required>
+<input type="email" id="new-admin-email" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin@example.com" required>
 </div>
+<div class="grid grid-cols-2 gap-4">
 <div>
 <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-<input type="password" id="new-admin-password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Min. 6 characters" required minlength="6">
+<input type="password" id="new-admin-password" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Min. 8 characters" required minlength="8">
 </div>
 <div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-<select id="new-admin-role" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-<option value="super_admin">Super Admin</option>
-<option value="admin">Standard Admin</option>
-<option value="moderator">Moderator</option>
+<label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+<input type="password" id="new-admin-confirm-password" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Re-enter password" required>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Role & Permissions</label>
+<select id="new-admin-role" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+<option value="super_admin">Super Admin (Full Access)</option>
+<option value="admin" selected>Standard Admin (Manage Applications)</option>
+<option value="moderator">Moderator (View Only)</option>
 </select>
 </div>
 <div class="mt-6 flex gap-3">
-<button type="button" class="flex-1 px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50" onclick="toggleModal('add-admin-modal')">Cancel</button>
-<button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Create Account</button>
+<button type="button" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-all" onclick="toggleModal('add-admin-modal')">Cancel</button>
+<button type="submit" class="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 font-bold transition-all shadow-lg">Create Account</button>
 </div>
 </form>
 </div>
 </div>
 </div>
+
+<!-- EDIT ADMIN MODAL -->
+<div id="edit-admin-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-[120]">
+<div class="absolute w-full h-full bg-gray-900/60 backdrop-blur-sm" onclick="toggleModal('edit-admin-modal')"></div>
+<div class="bg-white w-full max-w-md mx-4 rounded-2xl shadow-2xl z-50 overflow-hidden animate-fade-in border border-gray-100">
+<div class="p-6 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
+<h3 class="text-xl font-bold text-gray-800 flex items-center">
+<i data-lucide="user" class="w-5 h-5 mr-2 text-purple-600"></i>
+Edit Admin Profile
+</h3>
+</div>
+<div class="p-6">
+<form id="edit-admin-form" class="space-y-4">
+<input type="hidden" id="edit-admin-id">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+<input type="text" id="edit-admin-firstname" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" required>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+<input type="text" id="edit-admin-lastname" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+<input type="email" id="edit-admin-email" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" required>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Role & Permissions</label>
+<select id="edit-admin-role" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white">
+<option value="super_admin">Super Admin (Full Access)</option>
+<option value="admin">Standard Admin (Manage Applications)</option>
+<option value="moderator">Moderator (View Only)</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+<select id="edit-admin-status" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white">
+<option value="active">Active</option>
+<option value="inactive">Inactive</option>
+<option value="suspended">Suspended</option>
+</select>
+</div>
+<div class="mt-6 flex gap-3">
+<button type="button" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-all" onclick="toggleModal('edit-admin-modal')">Cancel</button>
+<button type="submit" class="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 font-bold transition-all shadow-lg">Update Profile</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
 <div class="max-w-7xl mx-auto">
 <!-- VIEW: DASHBOARD -->
 <div id="view-dashboard" class="space-y-6 animate-fade-in">
 <!-- Notification Publisher -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 max-w-xl">
-<h3 class="font-bold text-gray-800 mb-3 flex items-center">
-<i data-lucide="megaphone" class="w-4 h-4 mr-2 text-blue-500"></i> Publish Announcement
+<div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 max-w-xl card-hover">
+<h3 class="font-bold text-gray-800 mb-4 flex items-center">
+<i data-lucide="megaphone" class="w-5 h-5 mr-2 text-blue-600"></i> 
+<span>Publish Announcement</span>
+<span class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Global</span>
 </h3>
-<input id="notif-title" type="text" placeholder="Title (e.g., Server Maintenance)" class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none">
-<textarea id="notif-message" rows="3" placeholder="Detailed message for all users..." class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-<button onclick="publishNotification()" class="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center">
+<div class="space-y-3">
+<input id="notif-title" type="text" placeholder="Title (e.g., Server Maintenance)" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 mb-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+<textarea id="notif-message" rows="4" placeholder="Detailed message for all users..." class="w-full border border-gray-200 rounded-lg px-4 py-2.5 mb-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none transition-all"></textarea>
+<div class="flex gap-3">
+<button onclick="publishNotification()" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2.5 rounded-lg font-bold hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center shadow-lg">
 <i data-lucide="send" class="w-4 h-4 mr-2"></i> Post Notification
 </button>
+<button onclick="clearNotificationForm()" class="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all">
+<i data-lucide="x" class="w-4 h-4 mr-1"></i> Clear
+</button>
 </div>
+</div>
+</div>
+
 <!-- Stats Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+<div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 card-hover">
 <div class="flex justify-between items-start">
 <div>
-<p class="text-gray-500 text-xs font-medium uppercase">Total Entries</p>
-<h3 id="stat-total" class="text-2xl font-bold text-gray-800 mt-1">0</h3>
+<p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Total Entries</p>
+<h3 id="stat-total" class="text-3xl font-bold text-gray-800 mt-1">0</h3>
+<p class="text-xs text-gray-400 mt-1">All time applications</p>
 </div>
-<div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="files" class="w-5 h-5"></i></div>
+<div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="files" class="w-6 h-6"></i></div>
 </div>
 </div>
-<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+<div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 card-hover">
 <div class="flex justify-between items-start">
 <div>
-<p class="text-gray-500 text-xs font-medium uppercase">Pending</p>
-<h3 id="stat-pending" class="text-2xl font-bold text-yellow-600 mt-1">0</h3>
+<p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Pending</p>
+<h3 id="stat-pending" class="text-3xl font-bold text-yellow-600 mt-1">0</h3>
+<p class="text-xs text-gray-400 mt-1">Awaiting review</p>
 </div>
-<div class="p-2 bg-yellow-50 text-yellow-600 rounded-lg"><i data-lucide="clock" class="w-5 h-5"></i></div>
+<div class="p-3 bg-yellow-100 text-yellow-600 rounded-xl"><i data-lucide="clock" class="w-6 h-6"></i></div>
 </div>
 </div>
-<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+<div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 card-hover">
 <div class="flex justify-between items-start">
 <div>
-<p class="text-gray-500 text-xs font-medium uppercase">Accepted</p>
-<h3 id="stat-accepted" class="text-2xl font-bold text-green-600 mt-1">0</h3>
+<p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Accepted</p>
+<h3 id="stat-accepted" class="text-3xl font-bold text-green-600 mt-1">0</h3>
+<p class="text-xs text-gray-400 mt-1">Successfully processed</p>
 </div>
-<div class="p-2 bg-green-50 text-green-600 rounded-lg"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+<div class="p-3 bg-green-100 text-green-600 rounded-xl"><i data-lucide="check-circle" class="w-6 h-6"></i></div>
 </div>
 </div>
-<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+<div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 card-hover">
 <div class="flex justify-between items-start">
 <div>
-<p class="text-gray-500 text-xs font-medium uppercase">Rejected</p>
-<h3 id="stat-rejected" class="text-2xl font-bold text-red-600 mt-1">0</h3>
+<p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Rejected</p>
+<h3 id="stat-rejected" class="text-3xl font-bold text-red-600 mt-1">0</h3>
+<p class="text-xs text-gray-400 mt-1">Declined applications</p>
 </div>
-<div class="p-2 bg-red-50 text-red-600 rounded-lg"><i data-lucide="x-circle" class="w-5 h-5"></i></div>
+<div class="p-3 bg-red-100 text-red-600 rounded-xl"><i data-lucide="x-circle" class="w-6 h-6"></i></div>
 </div>
 </div>
-<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+<div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 card-hover">
 <div class="flex justify-between items-start">
 <div>
-<p class="text-gray-500 text-xs font-medium uppercase">Admins</p>
-<h3 id="stat-users" class="text-2xl font-bold text-purple-600 mt-1">0</h3>
+<p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Active Admins</p>
+<h3 id="stat-users" class="text-3xl font-bold text-purple-600 mt-1">0</h3>
+<p class="text-xs text-gray-400 mt-1">Currently online</p>
 </div>
-<div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="users" class="w-5 h-5"></i></div>
+<div class="p-3 bg-purple-100 text-purple-600 rounded-xl"><i data-lucide="users" class="w-6 h-6"></i></div>
 </div>
 </div>
 </div>
+
+<!-- Quick Actions Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-2xl shadow-lg text-white card-hover">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-lg mb-1">Quick Actions</h4>
+<p class="text-blue-100 text-sm">Manage your workflow</p>
+</div>
+<i data-lucide="zap" class="w-8 h-8 opacity-80"></i>
+</div>
+<div class="mt-4 grid grid-cols-2 gap-3">
+<button onclick="switchTab('create-form')" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-lg text-sm font-medium transition-all flex flex-col items-center justify-center">
+<i data-lucide="file-plus" class="w-5 h-5 mb-1"></i>
+<span>Add Form</span>
+</button>
+<button onclick="toggleModal('add-admin-modal')" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-lg text-sm font-medium transition-all flex flex-col items-center justify-center">
+<i data-lucide="user-plus" class="w-5 h-5 mb-1"></i>
+<span>Add Admin</span>
+</button>
+<button onclick="openNotif()" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-lg text-sm font-medium transition-all flex flex-col items-center justify-center">
+<i data-lucide="bell" class="w-5 h-5 mb-1"></i>
+<span>Notifications</span>
+</button>
+<button onclick="exportData('pdf')" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-lg text-sm font-medium transition-all flex flex-col items-center justify-center">
+<i data-lucide="download" class="w-5 h-5 mb-1"></i>
+<span>Export</span>
+</button>
+</div>
+</div>
+
+<div class="bg-gradient-to-br from-green-500 to-emerald-600 p-6 rounded-2xl shadow-lg text-white card-hover">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-lg mb-1">System Health</h4>
+<p class="text-green-100 text-sm">Performance metrics</p>
+</div>
+<i data-lucide="activity" class="w-8 h-8 opacity-80"></i>
+</div>
+<div class="mt-4 space-y-3">
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span>Database</span>
+<span>98%</span>
+</div>
+<div class="progress-bar">
+<div class="progress-fill" style="--width: 98%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span>API Response</span>
+<span>99%</span>
+</div>
+<div class="progress-bar">
+<div class="progress-fill" style="--width: 99%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span>Storage</span>
+<span>75%</span>
+</div>
+<div class="progress-bar">
+<div class="progress-fill" style="--width: 75%"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="bg-gradient-to-br from-purple-500 to-pink-600 p-6 rounded-2xl shadow-lg text-white card-hover">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-lg mb-1">Recent Activity</h4>
+<p class="text-purple-100 text-sm">Latest updates</p>
+</div>
+<i data-lucide="trending-up" class="w-8 h-8 opacity-80"></i>
+</div>
+<div class="mt-4 space-y-3">
+<div class="flex items-center">
+<i data-lucide="check" class="w-4 h-4 text-green-300 mr-2"></i>
+<span class="text-sm">New application submitted</span>
+</div>
+<div class="flex items-center">
+<i data-lucide="user-plus" class="w-4 h-4 text-blue-300 mr-2"></i>
+<span class="text-sm">Admin account created</span>
+</div>
+<div class="flex items-center">
+<i data-lucide="bell" class="w-4 h-4 text-yellow-300 mr-2"></i>
+<span class="text-sm">Notification broadcasted</span>
+</div>
+<div class="flex items-center">
+<i data-lucide="download" class="w-4 h-4 text-purple-300 mr-2"></i>
+<span class="text-sm">Data exported successfully</span>
+</div>
+</div>
+</div>
+</div>
+
 <!-- Data Breakdown & Table -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-<h3 class="font-bold text-gray-800 mb-4 flex items-center">
-<i data-lucide="pie-chart" class="w-4 h-4 mr-2 text-blue-500"></i> Forms Breakdown
+<div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 card-hover">
+<h3 class="font-bold text-gray-800 mb-5 flex items-center">
+<i data-lucide="pie-chart" class="w-5 h-5 mr-2 text-blue-600"></i> Forms Breakdown
 </h3>
 <div id="service-breakdown" class="space-y-4">
 <div class="text-sm text-gray-400 italic">Calculating...</div>
 </div>
 </div>
-<div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-<div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-<h3 class="font-semibold text-gray-800">Recent Applications</h3>
-<span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Live Sync</span>
+
+<div class="lg:col-span-2 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+<div class="p-5 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50 gap-4">
+<div>
+<h3 class="font-bold text-gray-800 text-lg">Recent Applications</h3>
+<p class="text-xs text-gray-500 mt-1">Last 10 entries • Live Sync</p>
+</div>
+<div class="flex gap-2">
+<button onclick="filterStatus('all')" class="px-3 py-1.5 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all">All</button>
+<button onclick="filterStatus('pending')" class="px-3 py-1.5 text-xs bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-all">Pending</button>
+<button onclick="filterStatus('accepted')" class="px-3 py-1.5 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-all">Accepted</button>
+<button onclick="filterStatus('rejected')" class="px-3 py-1.5 text-xs bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-all">Rejected</button>
+</div>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-left">
-<thead class="bg-gray-50 text-gray-400 text-[10px] uppercase font-bold tracking-widest border-b">
+<thead class="bg-gray-50 text-gray-500 text-xs font-bold uppercase tracking-wider border-b">
 <tr>
-<th class="px-6 py-3">Type / Reference</th>
-<th class="px-6 py-3">Applicant Details</th>
-<th class="px-6 py-3">Status</th>
-<th class="px-6 py-3 text-right">Review</th>
+<th class="px-6 py-4">Type / Reference</th>
+<th class="px-6 py-4">Applicant Details</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-right">Actions</th>
 </tr>
 </thead>
 <tbody id="forms-table-body" class="divide-y divide-gray-100">
-<tr><td colspan="4" class="p-10 text-center text-gray-400">Fetching applications...</td></tr>
+<tr><td colspan="4" class="p-12 text-center text-gray-400">Fetching applications...</td></tr>
 </tbody>
 </table>
 </div>
+<div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+<button onclick="switchTab('analytics')" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center">
+View All Analytics <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+</button>
+<span class="text-xs text-gray-500">Updated in real-time</span>
 </div>
 </div>
 </div>
+</div>
+
 <!-- VIEW: ADD FORM -->
 <div id="view-create-form" class="hidden animate-fade-in">
-<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-<div class="p-6 border-b border-gray-100 bg-blue-600 text-white">
-<h2 class="text-xl font-bold flex items-center">
-<i data-lucide="file-plus" class="w-5 h-5 mr-2"></i> Manual Application Entry
+<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden card-hover">
+<div class="p-7 border-b border-gray-100 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+<h2 class="text-2xl font-bold flex items-center">
+<i data-lucide="file-plus" class="w-6 h-6 mr-3"></i> Manual Application Entry
 </h2>
-<p class="text-blue-100 text-sm mt-1">Create a new record directly in the system.</p>
+<p class="text-blue-100 text-sm mt-2">Create a new record directly in the system. All fields marked with * are required.</p>
 </div>
-<form id="admin-entry-form" class="p-8 space-y-5">
+<form id="admin-entry-form" class="p-8 space-y-6">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Service Category</label>
-<select id="entry-service" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+<label class="block text-sm font-medium text-gray-700 mb-2">Service Category <span class="text-red-500">*</span></label>
+<select id="entry-service" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all">
 <option value="Income Certificate">Income Certificate (आय प्रमाण पत्र)</option>
 <option value="Samagra ID">Samagra ID (समग्र आईडी)</option>
 <option value="MP Bhoj">MP Bhoj Form (एमपी भोज)</option>
 <option value="Pan Card">Pan Card (पैन कार्ड)</option>
 <option value="Aadhaar Update">Aadhaar Update (आधार सुधार)</option>
 <option value="Domicile Certificate">Domicile Certificate (मूल निवासी)</option>
+<option value="Caste Certificate">Caste Certificate (जाति प्रमाण पत्र)</option>
+<option value="Birth Certificate">Birth Certificate (जन्म प्रमाण पत्र)</option>
 </select>
 </div>
 <div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-<input type="text" id="entry-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter applicant name" required>
+<label class="block text-sm font-medium text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
+<input type="text" id="entry-name" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter applicant name" required>
 </div>
 </div>
+
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
-<input type="email" id="entry-email" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="email@example.com">
+<label class="block text-sm font-medium text-gray-700 mb-2">Contact Email <span class="text-red-500">*</span></label>
+<input type="email" id="entry-email" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="email@example.com" required>
 </div>
 <div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number (Optional)</label>
-<input type="text" id="entry-aadhaar" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="XXXX-XXXX-XXXX" maxlength="14">
+<label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+<input type="tel" id="entry-phone" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="+91 9876543210" pattern="[0-9]{10}">
 </div>
 </div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Aadhaar Number (Optional)</label>
+<input type="text" id="entry-aadhaar" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="XXXX-XXXX-XXXX" maxlength="14">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Application Number (Auto-generated)</label>
+<input type="text" id="entry-app-number" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500" value="Auto-generated" readonly>
+</div>
+</div>
+
 <div class="pt-6 border-t">
-<button type="submit" class="w-full py-4 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all flex justify-center items-center gap-2">
-<i data-lucide="save" class="w-5 h-5"></i> Finalize Submission
+<div class="flex gap-4">
+<button type="submit" class="flex-1 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold hover:from-blue-700 hover:to-indigo-700 shadow-xl shadow-blue-200 transition-all flex justify-center items-center gap-2">
+<i data-lucide="save" class="w-5 h-5"></i> Finalize & Submit Application
+</button>
+<button type="button" onclick="resetForm()" class="px-6 py-4 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all flex items-center gap-2">
+<i data-lucide="refresh-ccw" class="w-5 h-5"></i> Reset Form
 </button>
 </div>
 </form>
 </div>
 </div>
+</div>
+
 <!-- VIEW: ADMIN LIST -->
 <div id="view-admins" class="hidden animate-fade-in">
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-<div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center bg-slate-50 gap-4">
+<div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover">
+<div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-purple-50 to-pink-50 gap-4">
 <div>
-<h2 class="text-lg font-bold text-slate-800">Account Control Center</h2>
-<div class="text-xs text-slate-500">Manage system-level access and permissions.</div>
+<h2 class="text-xl font-bold text-gray-800">Admin Management</h2>
+<p class="text-sm text-gray-500 mt-1">Manage system-level access and permissions</p>
 </div>
-<button onclick="toggleModal('add-admin-modal')" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center transition-all shadow-md">
+<div class="flex gap-3">
+<div class="search-container w-64">
+<input type="text" id="admin-search" placeholder="Search admins..." class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-sm" oninput="searchAdmins()">
+<i data-lucide="search" class="w-4 h-4"></i>
+</div>
+<button onclick="toggleModal('add-admin-modal')" class="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center transition-all shadow-lg">
 <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Register New Admin
 </button>
 </div>
+</div>
 <div class="overflow-x-auto">
 <table class="w-full text-left">
-<thead class="bg-slate-100 text-slate-500 text-[10px] uppercase font-bold tracking-widest">
+<thead class="bg-gray-50 text-gray-500 text-xs font-bold uppercase tracking-wider">
 <tr>
 <th class="px-6 py-4">Identity</th>
-<th class="px-6 py-4">Permission Level</th>
+<th class="px-6 py-4">Role</th>
 <th class="px-6 py-4">Status</th>
-<th class="px-6 py-4 text-right">Operations</th>
+<th class="px-6 py-4">Last Active</th>
+<th class="px-6 py-4 text-right">Actions</th>
 </tr>
 </thead>
 <tbody id="admins-table-body" class="divide-y divide-gray-100">
-<tr><td colspan="4" class="p-10 text-center text-gray-400">Loading admin ledger...</td></tr>
+<tr><td colspan="5" class="p-10 text-center text-gray-400">Loading admin ledger...</td></tr>
 </tbody>
 </table>
+</div>
+<div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+<div class="text-sm text-gray-600">
+<span id="admin-total-count">0</span> total admins • 
+<span id="admin-active-count">0</span> active
+</div>
+<button onclick="exportAdmins()" class="flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium">
+<i data-lucide="download" class="w-4 h-4 mr-1"></i> Export List
+</button>
+</div>
+</div>
+</div>
+
+<!-- VIEW: ANALYTICS -->
+<div id="view-analytics" class="hidden animate-fade-in">
+<div class="space-y-6">
+<!-- Analytics Header -->
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<div class="flex justify-between items-center">
+<div>
+<h2 class="text-2xl font-bold text-gray-800">Analytics Dashboard</h2>
+<p class="text-gray-500 mt-1">Comprehensive insights and performance metrics</p>
+</div>
+<div class="flex gap-2">
+<button onclick="setDateRange('week')" class="px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all">Week</button>
+<button onclick="setDateRange('month')" class="px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all">Month</button>
+<button onclick="setDateRange('year')" class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Year</button>
+</div>
+</div>
+</div>
+
+<!-- Charts Placeholder (You can integrate Chart.js here) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<h3 class="font-bold text-gray-800 mb-4 flex items-center">
+<i data-lucide="bar-chart-2" class="w-5 h-5 mr-2 text-blue-600"></i> Applications Over Time
+</h3>
+<div class="h-64 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl flex items-center justify-center">
+<div class="text-center">
+<i data-lucide="chart-bar" class="w-16 h-16 text-blue-300 mb-3"></i>
+<p class="text-gray-500">Chart visualization will appear here</p>
+<p class="text-sm text-gray-400 mt-2">Integrate Chart.js for dynamic charts</p>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<h3 class="font-bold text-gray-800 mb-4 flex items-center">
+<i data-lucide="pie-chart" class="w-5 h-5 mr-2 text-purple-600"></i> Status Distribution
+</h3>
+<div class="h-64 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl flex items-center justify-center">
+<div class="text-center">
+<i data-lucide="pie-chart" class="w-16 h-16 text-purple-300 mb-3"></i>
+<p class="text-gray-500">Pie chart visualization will appear here</p>
+<p class="text-sm text-gray-400 mt-2">Shows pending/accepted/rejected ratio</p>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<h3 class="font-bold text-gray-800 mb-4 flex items-center">
+<i data-lucide="trending-up" class="w-5 h-5 mr-2 text-green-600"></i> Service Type Analytics
+</h3>
+<div class="space-y-4">
+<!-- This will be populated dynamically -->
+<div id="analytics-service-breakdown" class="text-center py-12 text-gray-400">
+Loading analytics...
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<h3 class="font-bold text-gray-800 mb-4 flex items-center">
+<i data-lucide="users" class="w-5 h-5 mr-2 text-orange-600"></i> Admin Activity
+</h3>
+<div class="space-y-4">
+<div id="admin-activity-list" class="text-center py-12 text-gray-400">
+Loading admin activity...
+</div>
+</div>
+</div>
+</div>
+
+<!-- Export Section -->
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<h3 class="font-bold text-gray-800 mb-4">Export Data</h3>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<button onclick="exportData('csv')" class="p-4 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center">
+<i data-lucide="file-text" class="w-8 h-8 text-blue-600 mb-2"></i>
+<span class="font-medium text-gray-700">Export CSV</span>
+<span class="text-xs text-gray-500 mt-1">Comma-separated values</span>
+</button>
+<button onclick="exportData('excel')" class="p-4 border-2 border-green-200 rounded-xl hover:border-green-400 hover:bg-green-50 transition-all flex flex-col items-center justify-center">
+<i data-lucide="file-spreadsheet" class="w-8 h-8 text-green-600 mb-2"></i>
+<span class="font-medium text-gray-700">Export Excel</span>
+<span class="text-xs text-gray-500 mt-1">Microsoft Excel format</span>
+</button>
+<button onclick="exportData('pdf')" class="p-4 border-2 border-red-200 rounded-xl hover:border-red-400 hover:bg-red-50 transition-all flex flex-col items-center justify-center">
+<i data-lucide="file-text" class="w-8 h-8 text-red-600 mb-2"></i>
+<span class="font-medium text-gray-700">Export PDF</span>
+<span class="text-xs text-gray-500 mt-1">Portable Document</span>
+</button>
+<button onclick="exportData('json')" class="p-4 border-2 border-purple-200 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-all flex flex-col items-center justify-center">
+<i data-lucide="code" class="w-8 h-8 text-purple-600 mb-2"></i>
+<span class="font-medium text-gray-700">Export JSON</span>
+<span class="text-xs text-gray-500 mt-1">Raw data format</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- VIEW: SETTINGS -->
+<div id="view-settings" class="hidden animate-fade-in">
+<div class="space-y-6">
+<!-- General Settings -->
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<h2 class="text-xl font-bold text-gray-800 mb-6">General Settings</h2>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+<div>
+<h3 class="font-medium text-gray-800">Dark Mode</h3>
+<p class="text-sm text-gray-500">Enable dark theme for better visibility</p>
+</div>
+<label class="theme-toggle">
+<input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+<div>
+<h3 class="font-medium text-gray-800">Notifications</h3>
+<p class="text-sm text-gray-500">Enable desktop notifications</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" id="notif-toggle" class="custom-checkbox" checked>
+</label>
+</div>
+
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+<div>
+<h3 class="font-medium text-gray-800">Auto-refresh</h3>
+<p class="text-sm text-gray-500">Auto-refresh data every 30 seconds</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" id="auto-refresh-toggle" class="custom-checkbox" checked>
+</label>
+</div>
+</div>
+</div>
+
+<!-- System Information -->
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+<h2 class="text-xl font-bold text-gray-800 mb-6">System Information</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="p-4 bg-blue-50 rounded-lg">
+<h3 class="font-medium text-blue-800 mb-2">Firebase Project</h3>
+<p class="text-sm text-blue-600 break-all">allinone-aa89</p>
+</div>
+<div class="p-4 bg-green-50 rounded-lg">
+<h3 class="font-medium text-green-800 mb-2">Database</h3>
+<p class="text-sm text-green-600">Cloud Firestore</p>
+</div>
+<div class="p-4 bg-purple-50 rounded-lg">
+<h3 class="font-medium text-purple-800 mb-2">Current Version</h3>
+<p class="text-sm text-purple-600">v2.0.0</p>
+</div>
+<div class="p-4 bg-orange-50 rounded-lg">
+<h3 class="font-medium text-orange-800 mb-2">Last Updated</h3>
+<p class="text-sm text-orange-600" id="last-updated">Loading...</p>
+</div>
+</div>
+</div>
+
+<!-- Danger Zone -->
+<div class="bg-white rounded-2xl shadow-lg p-6 card-hover border border-red-100">
+<h2 class="text-xl font-bold text-gray-800 mb-6 text-red-600 flex items-center">
+<i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i> Danger Zone
+</h2>
+<div class="space-y-4">
+<div class="p-4 bg-red-50 rounded-lg border border-red-200">
+<h3 class="font-medium text-red-800 mb-2">Clear Cache</h3>
+<p class="text-sm text-red-600 mb-3">Clear all cached data and reload</p>
+<button onclick="clearCache()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-all">Clear Cache</button>
+</div>
+
+<div class="p-4 bg-red-50 rounded-lg border border-red-200">
+<h3 class="font-medium text-red-800 mb-2">Reset Dashboard</h3>
+<p class="text-sm text-red-600 mb-3">Reset all dashboard preferences</p>
+<button onclick="resetDashboard()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-all">Reset Preferences</button>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -317,30 +891,50 @@ Live Cloud Sync
 </main>
 </div>
 </div>
+
 <!-- NOTIFICATION DRAWER -->
-<div id="notif-drawer" class="fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-[210] transform translate-x-full transition-transform duration-300 border-l">
-<div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+<div id="notif-drawer" class="fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-[210] transform translate-x-full transition-transform duration-300 border-l border-gray-100">
+<div class="p-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex justify-between items-center">
 <div>
-<h3 class="font-bold text-lg">Broadcast History</h3>
-<p class="text-xs opacity-70">Logs of all global notices</p>
+<h3 class="font-bold text-lg flex items-center">
+<i data-lucide="bell" class="w-5 h-5 mr-2"></i> Notifications
+</h3>
+<p class="text-xs opacity-70 mt-1">Broadcast history & alerts</p>
 </div>
-<button onclick="closeNotif()" class="p-2 hover:bg-slate-800 rounded-full transition-colors">
+<button onclick="closeNotif()" class="p-2 hover:bg-slate-700 rounded-lg transition-colors">
 <i data-lucide="x" class="w-5 h-5"></i>
 </button>
 </div>
-<div id="drawer-notif-list" class="p-4 space-y-4 overflow-y-auto h-[calc(100%-80px)] bg-gray-50">
+
+<div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+<div class="text-sm font-medium text-gray-700">Recent Broadcasts</div>
+<button onclick="clearAllNotifications()" class="text-xs text-red-600 hover:text-red-700 font-medium flex items-center">
+<i data-lucide="trash-2" class="w-3 h-3 mr-1"></i> Clear All
+</button>
+</div>
+
+<div id="drawer-notif-list" class="p-4 space-y-3 overflow-y-auto h-[calc(100%-100px)]">
 <div class="text-center text-gray-400 py-12">
-<i data-lucide="bell-off" class="w-8 h-8 mx-auto mb-2 opacity-20"></i>
-<p class="text-sm">No recent history</p>
+<i data-lucide="bell-off" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+<p class="text-sm font-medium">No notifications yet</p>
+<p class="text-xs text-gray-500 mt-1">Create your first announcement</p>
 </div>
 </div>
+
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100">
+<button onclick="closeNotif(); switchTab('dashboard')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg flex items-center justify-center">
+<i data-lucide="home" class="w-4 h-4 mr-2"></i> Back to Dashboard
+</button>
 </div>
+</div>
+
 <!-- FIREBASE & LOGIC -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-import { getFirestore, collection, addDoc, updateDoc, getDoc, setDoc, doc, onSnapshot, serverTimestamp, deleteDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+import { getFirestore, collection, addDoc, updateDoc, getDoc, setDoc, doc, onSnapshot, serverTimestamp, deleteDoc, query, orderBy, where } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithCustomToken, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-// --- Firebase Configuration (Replace with your actual config) ---
+
+// --- Firebase Configuration ---
 const firebaseConfig = {
 apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
 authDomain: "allinone-aa89.firebaseapp.com",
@@ -350,38 +944,50 @@ messagingSenderId: "924003122498",
 appId: "1:924003122498:web:2c86505457236e60055cdb",
 measurementId: "G-45N39T3BB6"
 };
-// --- App ID (Set your own) ---
+
+// --- App ID ---
 const appId = "all-in-one-dashboard";
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// --- Paths (Rule 1) ---
+
+// --- Paths ---
 const APPS_PATH   = collection(db, 'applications');
 const ADMINS_PATH = collection(db, 'admins');
 const NOTIF_PATH  = collection(db, 'notifications');
+
 // --- State ---
 let applications = [];
 let adminList = [];
+let filteredApplications = [];
+let filteredAdmins = [];
+let currentFilter = 'all';
 let unsubscribeApps, unsubscribeAdmins, unsubscribeNotifs;
-// --- Auth Setup (Rule 3) ---
+let confirmCallback = null;
+
+// --- Auth Setup ---
 onAuthStateChanged(auth, async (user) => {
 const authLoader = document.getElementById("auth-loader");
 const dashboardView = document.getElementById("dashboard-view");
+
 if (!user) {
 location.href = "adminlogin.html";
 return;
 }
+
 try {
-// ⚠️ IMPORTANT: same path everywhere
 const adminRef = doc(db, "admins", user.uid);
 const snap = await getDoc(adminRef);
+
 if (!snap.exists()) {
 alert("Access denied");
 await signOut(auth);
 location.href = "adminlogin.html";
 return;
 }
+
 const admin = snap.data();
 if (admin.role !== "super_admin" || admin.status !== "active") {
 alert("Only Super Admin allowed");
@@ -389,14 +995,17 @@ await signOut(auth);
 location.href = "adminlogin.html";
 return;
 }
+
 // ✅ SUCCESS
 document.getElementById("admin-email-display").innerText =
 user.email || `Admin-${user.uid.slice(0, 5)}`;
+
 authLoader.style.opacity = "0";
 setTimeout(() => {
 authLoader.style.display = "none";
 dashboardView.style.display = "flex";
 setupListeners(user.uid);
+document.getElementById('last-updated').innerText = new Date().toLocaleString();
 }, 300);
 } catch (err) {
 console.error(err);
@@ -405,53 +1014,76 @@ await signOut(auth);
 location.href = "adminlogin.html";
 }
 });
+
 function setupListeners(uid) {
 // Admins
 unsubscribeAdmins = onSnapshot(ADMINS_PATH, (snap) => {
 adminList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+filteredAdmins = [...adminList];
 document.getElementById("stat-users").innerText = adminList.filter(a => a.status === 'active').length;
+document.getElementById("admin-total-count").innerText = adminList.length;
+document.getElementById("admin-active-count").innerText = adminList.filter(a => a.status === 'active').length;
 renderAdmins();
 }, (err) => console.error("Admin Listener Error", err));
+
 // Applications
 unsubscribeApps = onSnapshot(APPS_PATH, (snap) => {
 applications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+filteredApplications = [...applications];
+
 let stats = { total: applications.length, pending: 0, accepted: 0, rejected: 0 };
 let serviceCounts = {};
+
 applications.forEach(data => {
 const st = (data.status || "pending").toLowerCase();
 if (stats.hasOwnProperty(st)) stats[st]++;
 const type = data.serviceType || "Other";
 serviceCounts[type] = (serviceCounts[type] || 0) + 1;
 });
+
 updateStatsUI(stats);
 renderServiceBreakdown(serviceCounts, stats.total);
 renderTable();
+applyCurrentFilter();
 });
+
 // Notifications
 const notifQuery = query(NOTIF_PATH, orderBy("createdAt", "desc"));
 unsubscribeNotifs = onSnapshot(notifQuery, (snap) => {
 const drawer = document.getElementById("drawer-notif-list");
 const countBadge = document.getElementById("notif-count");
+
 let activeNotifs = snap.docs.filter(d => d.data().active !== false);
+
 if (activeNotifs.length === 0) {
-drawer.innerHTML = `<div class="text-center py-20 text-gray-400">No announcements</div>`;
+drawer.innerHTML = `
+<div class="text-center py-12 text-gray-400">
+<i data-lucide="bell-off" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+<p class="text-sm font-medium">No notifications yet</p>
+<p class="text-xs text-gray-500 mt-1">Create your first announcement</p>
+</div>`;
 countBadge.classList.add('hidden');
 } else {
 countBadge.innerText = activeNotifs.length;
 countBadge.classList.remove('hidden');
+
 drawer.innerHTML = activeNotifs.map(docSnap => {
 const n = docSnap.data();
+const date = n.createdAt?.seconds ? new Date(n.createdAt.seconds * 1000) : new Date();
 return `
-<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group">
 <div class="flex justify-between items-start mb-2">
+<div>
 <h4 class="font-bold text-gray-800 text-sm">${n.title || 'No title'}</h4>
-<button onclick="deleteNotif('${docSnap.id}')" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-all opacity-0 group-hover:opacity-100">
+<span class="text-[10px] text-blue-600 font-medium mt-1">${n.createdBy || 'Admin'}</span>
+</div>
+<button onclick="deleteNotif('${docSnap.id}')" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100">
 <i data-lucide="trash-2" class="w-4 h-4"></i>
 </button>
 </div>
-<p class="text-xs text-gray-600 leading-relaxed">${n.message || 'No message'}</p>
-<div class="mt-3 flex items-center justify-between pt-2 border-t border-gray-100">
-<span class="text-[10px] text-gray-400">${n.createdAt?.seconds ? new Date(n.createdAt.seconds*1000).toLocaleString() : 'Just now'}</span>
+<p class="text-xs text-gray-600 leading-relaxed mb-2">${n.message || 'No message'}</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100">
+<span class="text-[10px] text-gray-400">${date.toLocaleDateString()} • ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
 <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded">Global</span>
 </div>
 </div>`;
@@ -460,11 +1092,14 @@ return `
 lucide.createIcons();
 });
 }
+
 // --- Actions ---
 window.publishNotification = async () => {
 const title = document.getElementById("notif-title").value.trim();
 const message = document.getElementById("notif-message").value.trim();
+
 if (!title || !message) return showMsg("Input Required", "Title and message cannot be empty.");
+
 try {
 setLoading(true);
 await addDoc(NOTIF_PATH, {
@@ -474,28 +1109,37 @@ createdBy: auth.currentUser?.email || "Admin"
 });
 document.getElementById("notif-title").value = "";
 document.getElementById("notif-message").value = "";
-showToast("Notice Published!");
+showToast("Notice Published Successfully!");
 } catch (e) {
 console.error(e);
 showMsg("Error", "Failed to broadcast notice.");
 }
 finally { setLoading(false); }
 };
+
+window.clearNotificationForm = () => {
+document.getElementById("notif-title").value = "";
+document.getElementById("notif-message").value = "";
+};
+
 window.submitManualEntry = async (e) => {
 e.preventDefault();
 const formData = {
 serviceType: document.getElementById('entry-service').value,
 applicantName: document.getElementById('entry-name').value,
 email: document.getElementById('entry-email').value,
+phone: document.getElementById('entry-phone')?.value || '',
 aadhaar: document.getElementById('entry-aadhaar').value
 };
+
 try {
 setLoading(true);
 const docRef = await addDoc(APPS_PATH, {
 ...formData,
 status: "pending",
 createdAt: serverTimestamp(),
-applicationNumber: "AIO-" + Math.random().toString(36).substring(2, 10).toUpperCase()
+applicationNumber: "AIO-" + Math.random().toString(36).substring(2, 10).toUpperCase(),
+createdBy: auth.currentUser?.email || "Admin"
 });
 showToast("Application Saved Successfully!");
 e.target.reset();
@@ -506,35 +1150,79 @@ showMsg("Failure", "Database write rejected.");
 }
 finally { setLoading(false); }
 };
+
 window.updateAppStatus = async (id, status) => {
 try {
 await updateDoc(doc(db, 'applications', id), { status: status.toLowerCase() });
-showToast(`Marked as ${status}`);
+showToast(`Application marked as ${status}`);
 } catch (e) {
 console.error(e);
 showMsg("Error", "Failed to update status");
 }
 };
-// ✅ FIXED: Notification Delete Function
+
 window.deleteNotif = async (id) => {
+showConfirm("Delete Notification", "Are you sure you want to delete this notification?", async () => {
 try {
 await updateDoc(doc(db, 'notifications', id), { active: false });
-showToast("Notice removed.");
+showToast("Notification removed successfully");
 } catch (e) {
 console.error(e);
 showMsg("Error", "Failed to delete notification");
 }
+});
 };
+
 window.deleteAdmin = async (id, email) => {
-if (!confirm(`Revoke all admin rights for ${email}?`)) return;
+showConfirm("Delete Admin", `Revoke all admin rights for ${email}? This action cannot be undone.`, async () => {
 try {
 await deleteDoc(doc(db, 'admins', id));
-showToast("Access Revoked");
+showToast("Admin access revoked successfully");
 } catch (e) {
 console.error(e);
 showMsg("Error", "Insufficient permissions to delete user.");
 }
+});
 };
+
+window.editAdmin = async (id) => {
+const admin = adminList.find(a => a.id === id);
+if (!admin) return;
+
+document.getElementById('edit-admin-id').value = admin.id;
+document.getElementById('edit-admin-firstname').value = admin.firstname || '';
+document.getElementById('edit-admin-lastname').value = admin.lastname || '';
+document.getElementById('edit-admin-email').value = admin.email || '';
+document.getElementById('edit-admin-role').value = admin.role || 'admin';
+document.getElementById('edit-admin-status').value = admin.status || 'active';
+
+toggleModal('edit-admin-modal');
+};
+
+window.saveAdminChanges = async (e) => {
+e.preventDefault();
+const id = document.getElementById('edit-admin-id').value;
+const firstname = document.getElementById('edit-admin-firstname').value;
+const lastname = document.getElementById('edit-admin-lastname').value;
+const email = document.getElementById('edit-admin-email').value;
+const role = document.getElementById('edit-admin-role').value;
+const status = document.getElementById('edit-admin-status').value;
+
+try {
+setLoading(true);
+await updateDoc(doc(db, 'admins', id), {
+firstname, lastname, email, role, status,
+updatedAt: serverTimestamp()
+});
+showToast("Admin profile updated successfully");
+toggleModal('edit-admin-modal');
+} catch (e) {
+console.error(e);
+showMsg("Error", "Failed to update admin profile");
+}
+finally { setLoading(false); }
+};
+
 // UI Helpers
 function updateStatsUI(s) {
 document.getElementById('stat-total').innerText = s.total;
@@ -542,202 +1230,393 @@ document.getElementById('stat-pending').innerText = s.pending;
 document.getElementById('stat-accepted').innerText = s.accepted;
 document.getElementById('stat-rejected').innerText = s.rejected;
 }
+
 function renderTable() {
 const tbody = document.getElementById('forms-table-body');
 if (applications.length === 0) {
 tbody.innerHTML = `<tr><td colspan="4" class="p-20 text-center text-gray-300 italic">No applications found in the ledger</td></tr>`;
 return;
 }
-tbody.innerHTML = applications
-.slice()
-.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
-.slice(0, 10) // Show only recent 10
-.map(app => {
+
+const displayApps = filteredApplications.slice(0, 10);
+
+tbody.innerHTML = displayApps.map(app => {
 const s = app.status || 'pending';
 let badgeClass = 'status-badge-yellow';
 if (s === 'accepted') badgeClass = 'status-badge-green';
 if (s === 'rejected') badgeClass = 'status-badge-red';
+
+const date = app.createdAt?.seconds ? new Date(app.createdAt.seconds * 1000) : null;
+
 return `
-<tr class="hover:bg-blue-50/30 transition-colors">
+<tr class="table-row-hover transition-colors">
 <td class="px-6 py-4">
 <div class="font-bold text-gray-800 text-sm">${app.serviceType || 'Unknown'}</div>
-<div class="text-[10px] font-mono text-blue-500">${app.applicationNumber || 'REF-N/A'}</div>
+<div class="text-[10px] font-mono text-blue-600 mt-1">${app.applicationNumber || 'REF-N/A'}</div>
 </td>
 <td class="px-6 py-4">
 <div class="text-sm font-medium text-gray-700">${app.applicantName || 'No name'}</div>
-<div class="text-[10px] text-gray-400">${app.email || 'No Email'}</div>
+<div class="text-[10px] text-gray-500 mt-1">${app.email || 'No Email'}</div>
+${app.phone ? `<div class="text-[10px] text-gray-400">📱 ${app.phone}</div>` : ''}
 </td>
 <td class="px-6 py-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
-${s}
+<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+${s.charAt(0).toUpperCase() + s.slice(1)}
 </span>
 </td>
 <td class="px-6 py-4 text-right space-x-2">
 ${s === 'pending' ? `
-<button onclick="updateAppStatus('${app.id}', 'Accepted')" class="p-1.5 bg-green-50 text-green-600 rounded hover:bg-green-600 hover:text-white transition-all">
+<button onclick="updateAppStatus('${app.id}', 'Accepted')" class="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-all" title="Accept">
 <i data-lucide="check" class="w-4 h-4"></i>
 </button>
-<button onclick="updateAppStatus('${app.id}', 'Rejected')" class="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-600 hover:text-white transition-all">
+<button onclick="updateAppStatus('${app.id}', 'Rejected')" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all" title="Reject">
 <i data-lucide="x" class="w-4 h-4"></i>
 </button>
 ` : `<span class="text-[10px] text-gray-400 italic">Processed</span>`}
 </td>
 </tr>`;
 }).join('');
+
 lucide.createIcons();
 }
+
 function renderAdmins() {
 const container = document.getElementById('admins-table-body');
 if (adminList.length === 0) {
-container.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-gray-400">No admin accounts found</td></tr>`;
+container.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-400">No admin accounts found</td></tr>`;
 return;
 }
-container.innerHTML = adminList.map(a => `
-<tr class="hover:bg-slate-50 transition-colors">
-<td class="px-6 py-4 font-medium text-slate-700 text-sm">${a.email || 'Anonymous User'}</td>
+
+const displayAdmins = filteredAdmins;
+
+container.innerHTML = displayAdmins.map(a => {
+const isActive = a.status === 'active';
+const isSelf = auth.currentUser && auth.currentUser.uid === a.id;
+
+return `
+<tr class="hover:bg-gray-50 transition-colors">
 <td class="px-6 py-4">
-<span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-wider">
-${a.role || 'Admin'}
+<div class="font-medium text-gray-800 text-sm">${a.firstname || ''} ${a.lastname || ''}</div>
+<div class="text-[10px] text-gray-500 mt-1">${a.email || 'Anonymous User'}</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-[10px] font-bold uppercase tracking-wider">
+${a.role === 'super_admin' ? 'Super Admin' : a.role === 'admin' ? 'Admin' : 'Moderator'}
 </span>
 </td>
 <td class="px-6 py-4">
-<span class="flex items-center text-[10px] font-bold ${a.status === 'active' ? 'text-green-500' : 'text-red-500'} uppercase">
-<span class="w-1.5 h-1.5 rounded-full bg-current mr-2 animate-pulse"></span>
+<span class="flex items-center text-[10px] font-bold ${isActive ? 'text-green-600' : 'text-red-600'} uppercase">
+<span class="w-2 h-2 rounded-full bg-current mr-2 ${isActive ? 'animate-pulse' : ''}"></span>
 ${a.status || 'Active'}
 </span>
 </td>
-<td class="px-6 py-4 text-right">
-${auth.currentUser && auth.currentUser.uid !== a.id ? `
-<button onclick="deleteAdmin('${a.id}', '${a.email}')" class="text-slate-300 hover:text-red-500 transition-colors p-1">
-<i data-lucide="user-minus" class="w-4 h-4"></i>
-</button>
-` : `<span class="text-[10px] italic text-gray-300">Self</span>`}
+<td class="px-6 py-4 text-[10px] text-gray-400">
+${a.lastActive ? new Date(a.lastActive.seconds * 1000).toLocaleDateString() : 'Never'}
 </td>
-</tr>`).join('');
+<td class="px-6 py-4 text-right space-x-2">
+${!isSelf ? `
+<button onclick="editAdmin('${a.id}')" class="text-blue-600 hover:text-blue-800 p-1" title="Edit">
+<i data-lucide="edit" class="w-4 h-4"></i>
+</button>
+<button onclick="deleteAdmin('${a.id}', '${a.email}')" class="text-red-600 hover:text-red-800 p-1" title="Delete">
+<i data-lucide="trash-2" class="w-4 h-4"></i>
+</button>
+` : `<span class="text-[10px] italic text-gray-400">Self</span>`}
+</td>
+</tr>`;
+}).join('');
+
 lucide.createIcons();
 }
+
 function renderServiceBreakdown(counts, total) {
 const container = document.getElementById('service-breakdown');
 if (total === 0) {
 container.innerHTML = `<p class="text-xs text-gray-400">Waiting for data...</p>`;
 return;
 }
-const entries = Object.entries(counts);
+
+const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
 if (entries.length === 0) {
 container.innerHTML = `<p class="text-xs text-gray-400">No service data available</p>`;
 return;
 }
-container.innerHTML = entries.map(([name, count]) => {
+
+container.innerHTML = entries.map(([name, count], index) => {
 const perc = Math.round((count / total) * 100);
+const colors = ['bg-blue-600', 'bg-purple-600', 'bg-green-600', 'bg-yellow-600', 'bg-red-600', 'bg-indigo-600'];
 return `
-<div class="space-y-1">
-<div class="flex justify-between text-xs font-bold text-gray-600">
-<span>${name}</span>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold text-gray-700">
+<span class="flex items-center">
+<span class="w-2 h-2 ${colors[index]} rounded-full mr-2"></span>
+${name}
+</span>
 <span>${count} (${perc}%)</span>
 </div>
-<div class="w-full bg-gray-100 rounded-full h-1.5">
-<div class="bg-blue-600 h-1.5 rounded-full" style="width: ${perc}%"></div>
+<div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+<div class="${colors[index]} h-full rounded-full transition-all duration-500" style="width: ${perc}%"></div>
 </div>
 </div>`;
 }).join('');
 }
+
+// Search & Filter Functions
+window.searchApplications = function() {
+const searchTerm = document.getElementById('search-input').value.toLowerCase();
+filteredApplications = applications.filter(app => 
+(app.serviceType?.toLowerCase().includes(searchTerm) ||
+app.applicantName?.toLowerCase().includes(searchTerm) ||
+app.email?.toLowerCase().includes(searchTerm) ||
+app.applicationNumber?.toLowerCase().includes(searchTerm))
+);
+renderTable();
+};
+
+window.searchAdmins = function() {
+const searchTerm = document.getElementById('admin-search').value.toLowerCase();
+filteredAdmins = adminList.filter(admin => 
+(admin.email?.toLowerCase().includes(searchTerm) ||
+admin.firstname?.toLowerCase().includes(searchTerm) ||
+admin.lastname?.toLowerCase().includes(searchTerm))
+);
+renderAdmins();
+};
+
+window.filterStatus = function(status) {
+currentFilter = status;
+applyCurrentFilter();
+};
+
+function applyCurrentFilter() {
+if (currentFilter === 'all') {
+filteredApplications = [...applications];
+} else {
+filteredApplications = applications.filter(app => 
+(app.status || 'pending').toLowerCase() === currentFilter.toLowerCase()
+);
+}
+renderTable();
+}
+
+// Export Functions
+window.exportData = function(format) {
+showToast(`Exporting data as ${format.toUpperCase()}...`);
+// Implement actual export logic here
+};
+
+window.exportAdmins = function() {
+showToast("Exporting admin list...");
+};
+
+// Theme & Settings
+window.toggleTheme = function() {
+// Implement theme toggle logic
+};
+
+window.toggleDarkMode = function() {
+document.body.classList.toggle('dark');
+};
+
+// Confirmation Modal
+window.showConfirm = function(title, message, callback) {
+document.getElementById('confirm-title').innerText = title;
+document.getElementById('confirm-body').innerText = message;
+confirmCallback = callback;
+document.getElementById('confirm-modal').classList.remove('hidden');
+};
+
+window.cancelConfirm = function() {
+document.getElementById('confirm-modal').classList.add('hidden');
+confirmCallback = null;
+};
+
+window.executeConfirm = function() {
+if (confirmCallback) {
+confirmCallback();
+}
+cancelConfirm();
+};
+
+// Quick Actions
+window.openQuickActions = function() {
+document.getElementById('quick-actions-menu').classList.toggle('hidden');
+};
+
+window.closeQuickActions = function() {
+document.getElementById('quick-actions-menu').classList.add('hidden');
+};
+
+window.clearAllNotifications = function() {
+showConfirm("Clear All Notifications", "Are you sure you want to clear all notifications?", async () => {
+try {
+const notifs = await getDocs(NOTIF_PATH);
+for (const docSnap of notifs.docs) {
+await updateDoc(doc(db, 'notifications', docSnap.id), { active: false });
+}
+showToast("All notifications cleared");
+} catch (e) {
+console.error(e);
+showMsg("Error", "Failed to clear notifications");
+}
+});
+};
+
 // Global Utility Functions
 window.switchTab = (tabId) => {
 document.querySelectorAll('.nav-item').forEach(el => {
 const isActive = el.dataset.tab === tabId;
 el.classList.toggle('border-blue-500', isActive);
-el.classList.toggle('bg-slate-800', isActive);
+el.classList.toggle('bg-slate-800/50', isActive);
 el.classList.toggle('text-blue-400', isActive);
 el.classList.toggle('border-transparent', !isActive);
-el.classList.toggle('text-slate-400', !isActive);
+el.classList.toggle('text-slate-300', !isActive);
 });
-['dashboard', 'create-form', 'admins'].forEach(t => {
+
+['dashboard', 'create-form', 'admins', 'analytics', 'settings'].forEach(t => {
 const view = document.getElementById(`view-${t}`);
 if (view) view.classList.add('hidden');
 });
+
 const view = document.getElementById(`view-${tabId}`);
 if (view) view.classList.remove('hidden');
-const titles = {'dashboard': 'Overview', 'create-form': 'Admin Entry', 'admins': 'Admin Management'};
-document.getElementById('page-title').innerText = titles[tabId] || 'Dashboard';
+
+const titles = {
+'dashboard': 'Dashboard Overview',
+'create-form': 'Add New Application',
+'admins': 'Admin Management',
+'analytics': 'Analytics & Reports',
+'settings': 'System Settings'
 };
+
+document.getElementById('page-title').innerText = titles[tabId] || 'Dashboard';
+document.getElementById('search-input').value = '';
+filteredApplications = [...applications];
+currentFilter = 'all';
+};
+
 window.toggleModal = (id) => {
 const el = document.getElementById(id);
 if (!el) return;
+
 const isOpen = el.classList.contains('opacity-0');
 el.classList.toggle('opacity-0', !isOpen);
 el.classList.toggle('pointer-events-none', !isOpen);
 document.body.classList.toggle('modal-active', isOpen);
+
+if (isOpen) {
+setTimeout(() => {
+el.querySelector('input')?.focus();
+}, 300);
+}
 };
+
 window.showToast = (msg) => {
 const el = document.getElementById('toast');
 const toastMsg = document.getElementById('toast-message');
 if (!el || !toastMsg) return;
+
 toastMsg.innerText = msg;
 el.classList.remove('hidden');
-setTimeout(() => el.classList.add('hidden'), 3000);
+
+setTimeout(() => {
+el.classList.add('hidden');
+}, 4000);
 };
+
 window.showMsg = (title, body) => {
 const titleEl = document.getElementById('msg-title');
 const bodyEl = document.getElementById('msg-body');
 const msgBox = document.getElementById('message-box');
+
 if (titleEl) titleEl.innerText = title;
 if (bodyEl) bodyEl.innerText = body;
 if (msgBox) msgBox.classList.remove('hidden');
 };
+
 window.closeMsg = () => {
 const msgBox = document.getElementById('message-box');
 if (msgBox) msgBox.classList.add('hidden');
 };
+
 window.openNotif = () => {
 const drawer = document.getElementById("notif-drawer");
 if (drawer) drawer.classList.remove("translate-x-full");
 };
+
 window.closeNotif = () => {
 const drawer = document.getElementById("notif-drawer");
 if (drawer) drawer.classList.add("translate-x-full");
 };
+
 window.logoutSystem = async () => {
 if (unsubscribeApps) unsubscribeApps();
 if (unsubscribeAdmins) unsubscribeAdmins();
 if (unsubscribeNotifs) unsubscribeNotifs();
+
 await signOut(auth);
 localStorage.removeItem('admin_auth_token');
 location.reload();
 };
+
 function setLoading(val) {
 const loadingEl = document.getElementById('loading');
 if (loadingEl) loadingEl.classList.toggle('hidden', !val);
 }
+
+function resetForm() {
+document.getElementById('admin-entry-form').reset();
+showToast("Form reset successfully");
+}
+
 // Initialize form handlers
 document.addEventListener('DOMContentLoaded', () => {
 const adminForm = document.getElementById('admin-entry-form');
 if (adminForm) {
 adminForm.addEventListener('submit', window.submitManualEntry);
 }
+
 const newAdminForm = document.getElementById('new-admin-form');
 if (newAdminForm) {
 newAdminForm.addEventListener('submit', async (e) => {
 e.preventDefault();
+const firstname = document.getElementById('new-admin-firstname')?.value;
+const lastname = document.getElementById('new-admin-lastname')?.value;
 const email = document.getElementById('new-admin-email')?.value;
 const password = document.getElementById('new-admin-password')?.value;
+const confirmPassword = document.getElementById('new-admin-confirm-password')?.value;
 const role = document.getElementById('new-admin-role')?.value;
+
 if (!email || !password) {
 showMsg("Error", "Email and password are required");
 return;
 }
+
+if (password !== confirmPassword) {
+showMsg("Error", "Passwords do not match");
+return;
+}
+
+if (password.length < 8) {
+showMsg("Error", "Password must be at least 8 characters");
+return;
+}
+
 try {
 setLoading(true);
-// Create auth user
 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 const userId = userCredential.user.uid;
-// Create admin record
+
 await setDoc(doc(db, 'admins', userId), {
-email,
+firstname, lastname, email,
 role: role || 'admin',
 status: 'active',
-createdAt: serverTimestamp()
+createdAt: serverTimestamp(),
+createdBy: auth.currentUser?.email || "System"
 });
-showToast("Admin access provisioned.");
+
+showToast("Admin account created successfully!");
 toggleModal('add-admin-modal');
 e.target.reset();
 } catch (err) {
@@ -747,7 +1626,22 @@ showMsg("Error", "Failed to register new admin: " + err.message);
 finally { setLoading(false); }
 });
 }
+
+const editAdminForm = document.getElementById('edit-admin-form');
+if (editAdminForm) {
+editAdminForm.addEventListener('submit', window.saveAdminChanges);
+}
+
 lucide.createIcons();
+});
+
+// Auto-refresh toggle
+document.getElementById('auto-refresh-toggle')?.addEventListener('change', (e) => {
+if (e.target.checked) {
+setInterval(() => {
+// Refresh logic here
+}, 30000);
+}
 });
 </script>
 </body>
