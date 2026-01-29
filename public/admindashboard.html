@@ -400,9 +400,9 @@ const firebaseConfig = {
         const db = getFirestore(app);
 
         // --- Paths (Rule 1) ---
-        const APPS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
-        const ADMINS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admins');
-        const NOTIF_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'notifications');
+        const APPS_PATH   = collection(db, 'applications');
+const ADMINS_PATH = collection(db, 'admins');
+const NOTIF_PATH  = collection(db, 'notifications');
 
         // --- State ---
         let applications = [];
@@ -422,7 +422,7 @@ const firebaseConfig = {
 
   try {
     // ⚠️ IMPORTANT: same path everywhere
-    const adminRef = doc(db, "artifacts", appId, "public", "data", "admins", user.uid);
+const adminRef = doc(db, "admins", user.uid);
     const snap = await getDoc(adminRef);
 
     if (!snap.exists()) {
