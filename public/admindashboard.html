@@ -30,6 +30,11 @@
 
         /* Custom Scrollbar for Drawer */
         #drawer-notif-list::-webkit-scrollbar { width: 4px; }
+        
+        /* Fixed dynamic color classes */
+        .status-badge-green { background-color: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+        .status-badge-red { background-color: #fee2e2; color: #991b1b; border-color: #fecaca; }
+        .status-badge-yellow { background-color: #fef3c7; color: #92400e; border-color: #fde68a; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 h-screen overflow-hidden">
@@ -46,9 +51,9 @@
 
     <!-- ================= SECURITY LOADER ================= -->
     <div id="auth-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
-        <div id="loader-spinner" class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p id="loader-text" class="mt-4 text-gray-500 font-medium">Verifying Access...</p>
-        <p id="loader-subtext" class="text-xs text-gray-400 mt-2">Checking Super Admin Privileges</p>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p class="mt-4 text-gray-500 font-medium">Verifying Access...</p>
+        <p class="text-xs text-gray-400 mt-2">Checking Super Admin Privileges</p>
     </div>
 
     <!-- ================= DASHBOARD VIEW ================= -->
@@ -374,57 +379,58 @@
         import { getFirestore, collection, addDoc, updateDoc, getDoc, setDoc, doc, onSnapshot, serverTimestamp, deleteDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithCustomToken, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // --- Firebase Configuration & Initialization (Fixed invalid-api-key) ---
-        let app, auth, db, APPS_PATH, ADMINS_PATH, NOTIF_PATH, LOGS_PATH;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // --- Firebase Configuration (Replace with your actual config) ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // --- App ID (Set your own) ---
+        const appId = "all-in-one-dashboard";
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        const startSystem = async () => {
+        // --- Paths (Rule 1) ---
+        const APPS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
+        const ADMINS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admins');
+        const NOTIF_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'notifications');
+
+        // --- State ---
+        let applications = [];
+        let adminList = [];
+        let unsubscribeApps, unsubscribeAdmins, unsubscribeNotifs;
+
+        // --- Auth Setup (Rule 3) ---
+        const initAuth = async () => {
             try {
-                // Verify configuration exists
-                if (typeof __firebase_config === 'undefined' || !__firebase_config) {
-                    throw new Error("Missing configuration environment variable.");
+                // Try to get stored credentials first
+                const storedToken = localStorage.getItem('admin_auth_token');
+                if (storedToken) {
+                    await signInWithCustomToken(auth, storedToken);
+                } else {
+                    // For demo purposes, sign in anonymously
+                    await signInAnonymously(auth);
                 }
-
-                const firebaseConfig = JSON.parse(__firebase_config);
-                
-                // Final check for the API key to avoid Firebase crash
-                if (!firebaseConfig.apiKey) {
-                    throw new Error("Invalid or empty API key in configuration.");
-                }
-
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Define Paths (Rule 1)
-                APPS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
-                ADMINS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admins');
-                NOTIF_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'notifications');
-                LOGS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admin_logs');
-
-                // Initialize Auth Listener
-                onAuthStateChanged(auth, handleAuthState);
-
             } catch (error) {
-                console.error("Initialization Failed:", error);
-                document.getElementById('loader-spinner').style.display = 'none';
-                document.getElementById('loader-text').innerText = "Configuration Error";
-                document.getElementById('loader-text').classList.add('text-red-500');
-                document.getElementById('loader-subtext').innerText = error.message;
+                console.error("Auth initialization error:", error);
+                // Fallback to anonymous auth
+                await signInAnonymously(auth);
             }
         };
 
-        // --- Auth Setup (Rule 3) ---
-        const handleAuthState = async (user) => {
+        onAuthStateChanged(auth, async (user) => {
             const authLoader = document.getElementById('auth-loader');
             const dashboardView = document.getElementById('dashboard-view');
 
             if (!user) {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                await initAuth();
                 return;
             }
 
@@ -432,38 +438,51 @@
                 // Check if user is in our admins collection
                 const adminDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', user.uid));
                 
-                if (adminDoc.exists() && adminDoc.data()?.status !== "active") {
+                // For demo purposes, allow first user to be super admin
+                const isSuperAdmin = !adminDoc.exists() || (adminDoc.data()?.role === "super_admin");
+
+                if (adminDoc.exists() && adminDoc.data()?.status !== "active" && adminDoc.data()?.status !== undefined) {
                     showMsg("Account Disabled", "Your admin access has been revoked.");
                     await signOut(auth);
                     return;
                 }
 
-                document.getElementById('admin-email-display').innerText = user.email || `User-${user.uid.slice(0,5)}`;
+                // If no admin record exists for this user, create one (demo only)
+                if (!adminDoc.exists()) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', user.uid), {
+                        email: user.email || `admin-${user.uid.slice(0,5)}@system.local`,
+                        role: "super_admin",
+                        status: "active",
+                        createdAt: serverTimestamp()
+                    });
+                }
+
+                document.getElementById('admin-email-display').innerText = user.email || `Admin-${user.uid.slice(0,5)}`;
                 
                 authLoader.style.opacity = '0';
                 setTimeout(() => {
                     authLoader.style.display = 'none';
                     dashboardView.style.display = 'flex'; 
-                    setupListeners();
+                    setupListeners(user.uid);
                 }, 300);
 
             } catch (error) {
                 console.error("Access check failed:", error);
                 showMsg("Security Error", "Unable to verify administrative credentials.");
             }
-        };
+        });
 
-        function setupListeners() {
+        function setupListeners(uid) {
             // Admins
-            onSnapshot(ADMINS_PATH, (snap) => {
-                const adminList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            unsubscribeAdmins = onSnapshot(ADMINS_PATH, (snap) => {
+                adminList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 document.getElementById("stat-users").innerText = adminList.filter(a => a.status === 'active').length;
-                renderAdmins(adminList);
+                renderAdmins();
             }, (err) => console.error("Admin Listener Error", err));
 
             // Applications
-            onSnapshot(APPS_PATH, (snap) => {
-                const applications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            unsubscribeApps = onSnapshot(APPS_PATH, (snap) => {
+                applications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 
                 let stats = { total: applications.length, pending: 0, accepted: 0, rejected: 0 };
                 let serviceCounts = {};
@@ -478,12 +497,12 @@
 
                 updateStatsUI(stats);
                 renderServiceBreakdown(serviceCounts, stats.total);
-                renderTable(applications);
+                renderTable();
             });
 
             // Notifications
             const notifQuery = query(NOTIF_PATH, orderBy("createdAt", "desc"));
-            onSnapshot(notifQuery, (snap) => {
+            unsubscribeNotifs = onSnapshot(notifQuery, (snap) => {
                 const drawer = document.getElementById("drawer-notif-list");
                 const countBadge = document.getElementById("notif-count");
                 
@@ -500,12 +519,12 @@
                         return `
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 group">
                             <div class="flex justify-between items-start mb-1">
-                                <h4 class="font-bold text-gray-800 text-sm">${n.title}</h4>
+                                <h4 class="font-bold text-gray-800 text-sm">${n.title || 'No title'}</h4>
                                 <button onclick="deleteNotif('${docSnap.id}')" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
-                            <p class="text-xs text-gray-600 leading-relaxed">${n.message}</p>
+                            <p class="text-xs text-gray-600 leading-relaxed">${n.message || 'No message'}</p>
                             <div class="mt-2 flex items-center justify-between">
                                 <span class="text-[9px] text-gray-400 italic">${n.createdAt?.seconds ? new Date(n.createdAt.seconds*1000).toLocaleDateString() : 'Just now'}</span>
                                 <span class="text-[9px] font-bold text-blue-500">Global</span>
@@ -534,7 +553,10 @@
                 document.getElementById("notif-title").value = "";
                 document.getElementById("notif-message").value = "";
                 showToast("Notice Published!");
-            } catch (e) { showMsg("Error", "Failed to broadcast notice."); }
+            } catch (e) { 
+                console.error(e);
+                showMsg("Error", "Failed to broadcast notice."); 
+            }
             finally { setLoading(false); }
         };
 
@@ -549,7 +571,7 @@
 
             try {
                 setLoading(true);
-                await addDoc(APPS_PATH, {
+                const docRef = await addDoc(APPS_PATH, {
                     ...formData,
                     status: "pending",
                     createdAt: serverTimestamp(),
@@ -558,7 +580,10 @@
                 showToast("Application Saved Successfully!");
                 e.target.reset();
                 switchTab('dashboard');
-            } catch (e) { showMsg("Failure", "Database write rejected."); }
+            } catch (e) { 
+                console.error(e);
+                showMsg("Failure", "Database write rejected."); 
+            }
             finally { setLoading(false); }
         };
 
@@ -566,14 +591,20 @@
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'applications', id), { status: status.toLowerCase() });
                 showToast(`Marked as ${status}`);
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e);
+                showMsg("Error", "Failed to update status"); 
+            }
         };
 
         window.deleteNotif = async (id) => {
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'notifications', id), { active: false });
                 showToast("Notice removed.");
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e);
+                showMsg("Error", "Failed to delete notification"); 
+            }
         };
 
         window.deleteAdmin = async (id, email) => {
@@ -581,7 +612,10 @@
             try {
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', id));
                 showToast("Access Revoked");
-            } catch (e) { showMsg("Error", "Insufficient permissions to delete user."); }
+            } catch (e) { 
+                console.error(e);
+                showMsg("Error", "Insufficient permissions to delete user."); 
+            }
         };
 
         // UI Helpers
@@ -592,44 +626,59 @@
             document.getElementById('stat-rejected').innerText = s.rejected;
         }
 
-        function renderTable(apps) {
+        function renderTable() {
             const tbody = document.getElementById('forms-table-body');
-            if (apps.length === 0) {
+            if (applications.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-20 text-center text-gray-300 italic">No applications found in the ledger</td></tr>`;
                 return;
             }
-            tbody.innerHTML = apps.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(app => {
-                const s = app.status || 'pending';
-                const color = s === 'accepted' ? 'green' : s === 'rejected' ? 'red' : 'yellow';
-                return `
-                <tr class="hover:bg-blue-50/30 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="font-bold text-gray-800 text-sm">${app.serviceType}</div>
-                        <div class="text-[10px] font-mono text-blue-500">${app.applicationNumber || 'REF-N/A'}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-medium text-gray-700">${app.applicantName}</div>
-                        <div class="text-[10px] text-gray-400">${app.email || 'No Email'}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-${color}-100 text-${color}-700 border border-${color}-200">
-                            ${s}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        ${s === 'pending' ? `
-                            <button onclick="updateAppStatus('${app.id}', 'Accepted')" class="p-1.5 bg-green-50 text-green-600 rounded hover:bg-green-600 hover:text-white transition-all"><i data-lucide="check" class="w-4 h-4"></i></button>
-                            <button onclick="updateAppStatus('${app.id}', 'Rejected')" class="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-600 hover:text-white transition-all"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        ` : `<span class="text-[10px] text-gray-400 italic">Processed</span>`}
-                    </td>
-                </tr>`;
-            }).join('');
+            tbody.innerHTML = applications
+                .slice()
+                .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
+                .slice(0, 10) // Show only recent 10
+                .map(app => {
+                    const s = app.status || 'pending';
+                    let badgeClass = 'status-badge-yellow';
+                    if (s === 'accepted') badgeClass = 'status-badge-green';
+                    if (s === 'rejected') badgeClass = 'status-badge-red';
+                    
+                    return `
+                    <tr class="hover:bg-blue-50/30 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-gray-800 text-sm">${app.serviceType || 'Unknown'}</div>
+                            <div class="text-[10px] font-mono text-blue-500">${app.applicationNumber || 'REF-N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-medium text-gray-700">${app.applicantName || 'No name'}</div>
+                            <div class="text-[10px] text-gray-400">${app.email || 'No Email'}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${s}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            ${s === 'pending' ? `
+                                <button onclick="updateAppStatus('${app.id}', 'Accepted')" class="p-1.5 bg-green-50 text-green-600 rounded hover:bg-green-600 hover:text-white transition-all">
+                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="updateAppStatus('${app.id}', 'Rejected')" class="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-600 hover:text-white transition-all">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                            ` : `<span class="text-[10px] text-gray-400 italic">Processed</span>`}
+                        </td>
+                    </tr>`;
+                }).join('');
             lucide.createIcons();
         }
 
-        function renderAdmins(list) {
+        function renderAdmins() {
             const container = document.getElementById('admins-table-body');
-            container.innerHTML = list.map(a => `
+            if (adminList.length === 0) {
+                container.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-gray-400">No admin accounts found</td></tr>`;
+                return;
+            }
+            container.innerHTML = adminList.map(a => `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-6 py-4 font-medium text-slate-700 text-sm">${a.email || 'Anonymous User'}</td>
                     <td class="px-6 py-4">
@@ -645,7 +694,7 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         ${auth.currentUser && auth.currentUser.uid !== a.id ? `
-                            <button onclick="deleteAdmin('${a.id}', '${a.email}')" class="text-slate-300 hover:text-red-500 transition-colors">
+                            <button onclick="deleteAdmin('${a.id}', '${a.email}')" class="text-slate-300 hover:text-red-500 transition-colors p-1">
                                 <i data-lucide="user-minus" class="w-4 h-4"></i>
                             </button>
                         ` : `<span class="text-[10px] italic text-gray-300">Self</span>`}
@@ -656,14 +705,24 @@
 
         function renderServiceBreakdown(counts, total) {
             const container = document.getElementById('service-breakdown');
-            if (total === 0) return container.innerHTML = `<p class="text-xs text-gray-400">Waiting for data...</p>`;
-            container.innerHTML = Object.entries(counts).map(([name, count]) => {
+            if (total === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400">Waiting for data...</p>`;
+                return;
+            }
+            
+            const entries = Object.entries(counts);
+            if (entries.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400">No service data available</p>`;
+                return;
+            }
+            
+            container.innerHTML = entries.map(([name, count]) => {
                 const perc = Math.round((count / total) * 100);
                 return `
                 <div class="space-y-1">
                     <div class="flex justify-between text-xs font-bold text-gray-600">
                         <span>${name}</span>
-                        <span>${count}</span>
+                        <span>${count} (${perc}%)</span>
                     </div>
                     <div class="w-full bg-gray-100 rounded-full h-1.5">
                         <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${perc}%"></div>
@@ -682,14 +741,19 @@
                 el.classList.toggle('border-transparent', !isActive);
                 el.classList.toggle('text-slate-400', !isActive);
             });
-            ['dashboard', 'create-form', 'admins'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            ['dashboard', 'create-form', 'admins'].forEach(t => {
+                const view = document.getElementById(`view-${t}`);
+                if (view) view.classList.add('hidden');
+            });
+            const view = document.getElementById(`view-${tabId}`);
+            if (view) view.classList.remove('hidden');
             const titles = {'dashboard': 'Overview', 'create-form': 'Admin Entry', 'admins': 'Admin Management'};
-            document.getElementById('page-title').innerText = titles[tabId];
+            document.getElementById('page-title').innerText = titles[tabId] || 'Dashboard';
         };
 
         window.toggleModal = (id) => {
             const el = document.getElementById(id);
+            if (!el) return;
             const isOpen = el.classList.contains('opacity-0');
             el.classList.toggle('opacity-0', !isOpen);
             el.classList.toggle('pointer-events-none', !isOpen);
@@ -698,54 +762,100 @@
 
         window.showToast = (msg) => {
             const el = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = msg;
+            const toastMsg = document.getElementById('toast-message');
+            if (!el || !toastMsg) return;
+            
+            toastMsg.innerText = msg;
             el.classList.remove('hidden');
             setTimeout(() => el.classList.add('hidden'), 3000);
         };
 
         window.showMsg = (title, body) => {
-            document.getElementById('msg-title').innerText = title;
-            document.getElementById('msg-body').innerText = body;
-            document.getElementById('message-box').classList.remove('hidden');
+            const titleEl = document.getElementById('msg-title');
+            const bodyEl = document.getElementById('msg-body');
+            const msgBox = document.getElementById('message-box');
+            
+            if (titleEl) titleEl.innerText = title;
+            if (bodyEl) bodyEl.innerText = body;
+            if (msgBox) msgBox.classList.remove('hidden');
         };
 
-        window.closeMsg = () => document.getElementById('message-box').classList.add('hidden');
+        window.closeMsg = () => {
+            const msgBox = document.getElementById('message-box');
+            if (msgBox) msgBox.classList.add('hidden');
+        };
 
-        window.openNotif = () => document.getElementById("notif-drawer").classList.remove("translate-x-full");
-        window.closeNotif = () => document.getElementById("notif-drawer").classList.add("translate-x-full");
+        window.openNotif = () => {
+            const drawer = document.getElementById("notif-drawer");
+            if (drawer) drawer.classList.remove("translate-x-full");
+        };
+        
+        window.closeNotif = () => {
+            const drawer = document.getElementById("notif-drawer");
+            if (drawer) drawer.classList.add("translate-x-full");
+        };
 
         window.logoutSystem = async () => {
+            if (unsubscribeApps) unsubscribeApps();
+            if (unsubscribeAdmins) unsubscribeAdmins();
+            if (unsubscribeNotifs) unsubscribeNotifs();
             await signOut(auth);
+            localStorage.removeItem('admin_auth_token');
             location.reload();
         };
 
         function setLoading(val) {
-            const loader = document.getElementById('loading');
-            if (loader) loader.classList.toggle('hidden', !val);
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) loadingEl.classList.toggle('hidden', !val);
         }
 
-        document.getElementById('admin-entry-form').addEventListener('submit', window.submitManualEntry);
-        document.getElementById('new-admin-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('new-admin-email').value;
-            const password = document.getElementById('new-admin-password').value;
-            const role = document.getElementById('new-admin-role').value;
-            
-            try {
-                setLoading(true);
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', Math.random().toString(36).substring(7)), {
-                    email, role, status: 'active', createdAt: serverTimestamp()
-                });
-                showToast("Admin access provisioned.");
-                toggleModal('add-admin-modal');
-                e.target.reset();
-            } catch (err) { showMsg("Error", "Failed to register new admin."); }
-            finally { setLoading(false); }
-        });
+        // Initialize form handlers
+        document.addEventListener('DOMContentLoaded', () => {
+            const adminForm = document.getElementById('admin-entry-form');
+            if (adminForm) {
+                adminForm.addEventListener('submit', window.submitManualEntry);
+            }
 
-        // Bootstrap
-        startSystem();
-        lucide.createIcons();
+            const newAdminForm = document.getElementById('new-admin-form');
+            if (newAdminForm) {
+                newAdminForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('new-admin-email')?.value;
+                    const password = document.getElementById('new-admin-password')?.value;
+                    const role = document.getElementById('new-admin-role')?.value;
+                    
+                    if (!email || !password) {
+                        showMsg("Error", "Email and password are required");
+                        return;
+                    }
+
+                    try {
+                        setLoading(true);
+                        // Create auth user
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        const userId = userCredential.user.uid;
+                        
+                        // Create admin record
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', userId), {
+                            email, 
+                            role: role || 'admin', 
+                            status: 'active', 
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        showToast("Admin access provisioned.");
+                        toggleModal('add-admin-modal');
+                        e.target.reset();
+                    } catch (err) { 
+                        console.error(err);
+                        showMsg("Error", "Failed to register new admin: " + err.message); 
+                    }
+                    finally { setLoading(false); }
+                });
+            }
+            
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
