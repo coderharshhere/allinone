@@ -380,14 +380,16 @@
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithCustomToken, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         // --- Firebase Configuration (Replace with your actual config) ---
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+const firebaseConfig = {
+  apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+  authDomain: "allinone-aa89.firebaseapp.com",
+  projectId: "allinone-aa89",
+  storageBucket: "allinone-aa89.appspot.com",
+  messagingSenderId: "924003122498",
+  appId: "1:924003122498:web:2c86505457236e60055cdb",
+  measurementId: "G-45N39T3BB6"
+};
+
         
         // --- App ID (Set your own) ---
         const appId = "all-in-one-dashboard";
@@ -408,69 +410,59 @@
         let unsubscribeApps, unsubscribeAdmins, unsubscribeNotifs;
 
         // --- Auth Setup (Rule 3) ---
-        const initAuth = async () => {
-            try {
-                // Try to get stored credentials first
-                const storedToken = localStorage.getItem('admin_auth_token');
-                if (storedToken) {
-                    await signInWithCustomToken(auth, storedToken);
-                } else {
-                    // For demo purposes, sign in anonymously
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Auth initialization error:", error);
-                // Fallback to anonymous auth
-                await signInAnonymously(auth);
-            }
-        };
+      
+    onAuthStateChanged(auth, async (user) => {
+  const authLoader = document.getElementById("auth-loader");
+  const dashboardView = document.getElementById("dashboard-view");
 
-        onAuthStateChanged(auth, async (user) => {
-            const authLoader = document.getElementById('auth-loader');
-            const dashboardView = document.getElementById('dashboard-view');
+  if (!user) {
+    location.href = "adminlogin.html";
+    return;
+  }
 
-            if (!user) {
-                await initAuth();
-                return;
-            }
+  try {
+    // ⚠️ IMPORTANT: same path everywhere
+    const adminRef = doc(db, "artifacts", appId, "public", "data", "admins", user.uid);
+    const snap = await getDoc(adminRef);
 
-            try {
-                // Check if user is in our admins collection
-                const adminDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', user.uid));
-                
-                // For demo purposes, allow first user to be super admin
-                const isSuperAdmin = !adminDoc.exists() || (adminDoc.data()?.role === "super_admin");
+    if (!snap.exists()) {
+      alert("Access denied");
+      await signOut(auth);
+      location.href = "adminlogin.html";
+      return;
+    }
 
-                if (adminDoc.exists() && adminDoc.data()?.status !== "active" && adminDoc.data()?.status !== undefined) {
-                    showMsg("Account Disabled", "Your admin access has been revoked.");
-                    await signOut(auth);
-                    return;
-                }
+    const admin = snap.data();
 
-                // If no admin record exists for this user, create one (demo only)
-                if (!adminDoc.exists()) {
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', user.uid), {
-                        email: user.email || `admin-${user.uid.slice(0,5)}@system.local`,
-                        role: "super_admin",
-                        status: "active",
-                        createdAt: serverTimestamp()
-                    });
-                }
+    if (admin.role !== "super_admin" || admin.status !== "active") {
+      alert("Only Super Admin allowed");
+      await signOut(auth);
+      location.href = "adminlogin.html";
+      return;
+    }
 
-                document.getElementById('admin-email-display').innerText = user.email || `Admin-${user.uid.slice(0,5)}`;
-                
-                authLoader.style.opacity = '0';
-                setTimeout(() => {
-                    authLoader.style.display = 'none';
-                    dashboardView.style.display = 'flex'; 
-                    setupListeners(user.uid);
-                }, 300);
+    // ✅ SUCCESS
+    document.getElementById("admin-email-display").innerText =
+      user.email || `Admin-${user.uid.slice(0, 5)}`;
 
-            } catch (error) {
-                console.error("Access check failed:", error);
-                showMsg("Security Error", "Unable to verify administrative credentials.");
-            }
-        });
+    authLoader.style.opacity = "0";
+    setTimeout(() => {
+      authLoader.style.display = "none";
+      dashboardView.style.display = "flex";
+      setupListeners(user.uid);
+    }, 300);
+
+  } catch (err) {
+    console.error(err);
+    alert("Admin verification failed");
+    await signOut(auth);
+    location.href = "adminlogin.html";
+  }
+});
+
+
+       
+               
 
         function setupListeners(uid) {
             // Admins
