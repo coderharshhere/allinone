@@ -564,7 +564,7 @@ body {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } 
   from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut, User } 
+import { getAuth, onAuthStateChanged, signOut } 
   from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 /* ===== CONFIG ===== */
@@ -717,7 +717,7 @@ function listen(col) {
     render(allApplications);
     updateStats(allApplications);
   }, error => {
-    console.error("Error loading data: ", error);
+    console.error("Error loading  ", error);
     // Show error state
     document.getElementById('dataTable').innerHTML = `
       <tr>
