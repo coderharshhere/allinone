@@ -350,12 +350,16 @@ class="p-6 md:p-10 space-y-10">
     </label>
 
     <div class="flex gap-4">
-        <button
-  type="button"
+      <a 
+  href="https://rzp.io/i/AbCdEfGh" 
+  target="_blank"
   id="payNowBtn"
-  class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-lg">
+  class="flex-1 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold text-lg text-center transition"
+>
   Pay Now ₹99
-</button>
+</a>
+
+
 
         
         <button type="reset" class="px-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
@@ -369,8 +373,7 @@ class="p-6 md:p-10 space-y-10">
 
     <!-- Simple Footer -->
     <div id="footer"></div>
- <!-- 1️⃣ Razorpay (global object needed in form.js) -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
 <!-- 2️⃣ EmailJS (used inside common.js) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
