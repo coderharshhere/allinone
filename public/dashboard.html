@@ -495,7 +495,7 @@ body {
 </div>
 
 <!-- PDF TEMPLATE -->
-<div id="pdfContent" class="hidden">
+<div id="pdfContent" style="visibility:hidden; position:absolute; left:-9999px;">
   <div class="pdf-page">
     <div class="pdf-header">
       <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
@@ -1028,12 +1028,26 @@ function preparePDFContent(item, appNo) {
   const qrData = `Application: ${originalAppNo}\nName: ${item.applicantName || item.studentName || ""}\nService: ${getServiceName(item)}\nDate: ${today}`;
   
   // Generate QR and convert to image for PDF compatibility
-  const qr = new QRCode(qrContainer, {
-    text: qrData,
-    width: 100,
-    height: 100,
-    correctLevel: QRCode.CorrectLevel.H
-  });
+const qr = new QRCode(qrContainer, {
+  text: qrData,
+  width: 120,
+  height: 120,
+  correctLevel: QRCode.CorrectLevel.H
+});
+
+// 🔥 canvas → image conversion (CRITICAL)
+setTimeout(() => {
+  const canvas = qrContainer.querySelector("canvas");
+  if (canvas) {
+    const img = document.createElement("img");
+    img.src = canvas.toDataURL("image/png");
+    img.style.width = "120px";
+    img.style.height = "120px";
+    qrContainer.innerHTML = "";
+    qrContainer.appendChild(img);
+  }
+}, 300);
+
   
   // Generate table content for PDF
   const pdfTableBody = document.getElementById("pdfDetailsTable");
@@ -1148,8 +1162,7 @@ window.downloadPDF = () => {
         letterRendering: true,  // Critical for Hindi text
         allowTaint: true,
         logging: false,
-        foreignObjectRendering: true, // Better for complex elements
-        windowWidth: 800, // Fixed width for consistent rendering
+        windowWidth: 1200, // Fixed width for consistent rendering
         windowHeight: 1130,
         scrollY: -window.scrollY // Fix scroll position issue
       },
