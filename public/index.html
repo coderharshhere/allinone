@@ -417,8 +417,11 @@ import {
   collection,
   query,
   where,
-  getDocs
+  getDocs,
+  onSnapshot,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
 
 /* ===== FIREBASE CONFIG ===== */
 const firebaseConfig = {
@@ -429,6 +432,39 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+/* ===== NOTIFICATION LISTENER (HOME PAGE) ===== */
+
+const notifQuery = query(
+  collection(db, "notifications"),
+  where("active", "==", true),
+  orderBy("createdAt", "desc")
+);
+
+onSnapshot(notifQuery, (snapshot) => {
+  const drawerBox = document.getElementById("drawer-notif-list");
+  if (!drawerBox) return;
+
+  if (snapshot.empty) {
+    drawerBox.innerHTML = `
+      <p class="text-gray-400 text-sm text-center">
+        कोई नई सूचना नहीं
+      </p>`;
+    return;
+  }
+
+  let html = "";
+  snapshot.forEach(doc => {
+    const n = doc.data();
+    html += `
+      <div class="border-l-4 border-blue-700 bg-blue-50 p-4 rounded-xl shadow-sm">
+        <p class="font-bold text-sm text-gray-800">${n.title}</p>
+        <p class="text-xs text-gray-600 mt-1">${n.message}</p>
+      </div>
+    `;
+  });
+
+  drawerBox.innerHTML = html;
+});
 
 /* ===== TRACK FUNCTION ===== */
 window.trackApplication = async function () {
@@ -598,6 +634,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
