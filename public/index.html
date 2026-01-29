@@ -38,6 +38,23 @@
             background-color: #2563eb;
             color: white;
         }
+
+/* Ye rule automatic saare cards ko center aur sahi size ka rakhega */
+#servicesContainer > .service-card {
+    width: 100%;
+    max-width: 350px; /* Card ka size yahan se control hoga */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Desktop alignment fix */
+@media (min-width: 1024px) {
+    #servicesContainer {
+        width: 100%;
+        display: grid;
+    }
+}
+        
     </style>
 </head>
 <body class="bg-gray-50">
@@ -221,67 +238,62 @@
     <!-- Main Content -->
   
 
-<div class="w-full mb-10">
-    <div class="flex flex-col gap-4">
-        
-        <h3 class="text-gray-800 font-extrabold text-lg md:text-xl flex items-center justify-center gap-3">
-            <span class="w-1.5 h-6 bg-[#1e3a8a] rounded-full hidden md:block"></span>
-            सेवा श्रेणियाँ
-            <span class="w-1.5 h-6 bg-[#1e3a8a] rounded-full hidden md:block"></span>
-        </h3>
 
-        <div class="flex items-center md:justify-center overflow-x-auto no-scrollbar pb-4 flex-nowrap gap-3 px-2">
-            
-            <button onclick="filterServices('all')" 
-                class="category-chip active flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-                <i class="fas fa-th-large"></i> सभी सेवाएँ
-            </button>
+ <div class="flex items-center md:justify-center overflow-x-auto no-scrollbar pb-4 flex-nowrap gap-3 px-2">
+    
+    <button data-category="all" onclick="filterServices('all')" 
+        class="category-tab active flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-th-large"></i> सभी सेवाएँ
+    </button>
 
-            <button onclick="filterServices('social')" 
-                class="category-chip flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-                <i class="fas fa-users"></i> समग्र एवं सामाजिक
-            </button>
+    <button data-category="social" onclick="filterServices('social')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-users"></i> समग्र एवं सामाजिक
+    </button>
 
-            <button onclick="filterServices('land')" 
-                class="category-chip flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-                <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
-            </button>
+    <button data-category="land" onclick="filterServices('land')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
+    </button>
 
-            <button onclick="filterServices('certificates')" 
-                class="category-chip flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-                <i class="fas fa-file-invoice"></i> प्रमाण पत्र
-            </button>
+    <button data-category="certificates" onclick="filterServices('certificates')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-file-invoice"></i> प्रमाण पत्र
+    </button>
 
-            <button onclick="filterServices('form')" 
-                class="category-chip flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-                <i class="fas fa-university"></i> यूनिवर्सिटी/फार्म
-            </button>
-
-        </div>
-    </div>
+    <button data-category="form" onclick="filterServices('form')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-university"></i> यूनिवर्सिटी/फार्म
+    </button>
 </div>
 
+
 <style>
-    /* Mobile Scroll Fix */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { 
-        -ms-overflow-style: none; 
-        scrollbar-width: none; 
-        -webkit-overflow-scrolling: touch;
+    /* 1. Normal State (White) */
+    .category-tab {
+        background-color: white !important;
+        color: #4b5563 !important; /* gray-600 */
+        border: 1px solid #e5e7eb !important; /* gray-200 */
     }
-    
-    /* Active State */
-    .category-chip.active {
-        background-color: #1e3a8a !important;
+
+    /* 2. Active State (Neela) - Jab JS 'active' class add karega */
+    .category-tab.active {
+        background-color: #1e3a8a !important; /* blue-900 */
         color: white !important;
         border-color: #1e3a8a !important;
-        box-shadow: 0 8px 15px rgba(30, 58, 138, 0.2);
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
     }
-</style>
+
+    /* 3. Hover (Optional) */
+    .category-tab:hover:not(.active) {
+        border-color: #1e3a8a !important;
+        color: #1e3a8a !important;
+    }
+
 
             <!-- Grid -->
-            <div class="lg:w-3/4">
-                <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div class="w-full max-w-[1200px] mx-auto">
+    <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">
                     
                     <!-- Samagra Card -->
                     <div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="social">
@@ -602,6 +614,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
