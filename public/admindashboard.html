@@ -46,9 +46,9 @@
 
     <!-- ================= SECURITY LOADER ================= -->
     <div id="auth-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p class="mt-4 text-gray-500 font-medium">Verifying Access...</p>
-        <p class="text-xs text-gray-400 mt-2">Checking Super Admin Privileges</p>
+        <div id="loader-spinner" class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p id="loader-text" class="mt-4 text-gray-500 font-medium">Verifying Access...</p>
+        <p id="loader-subtext" class="text-xs text-gray-400 mt-2">Checking Super Admin Privileges</p>
     </div>
 
     <!-- ================= DASHBOARD VIEW ================= -->
@@ -374,47 +374,57 @@
         import { getFirestore, collection, addDoc, updateDoc, getDoc, setDoc, doc, onSnapshot, serverTimestamp, deleteDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithCustomToken, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // --- Context Variables (Fixed ReferenceError) ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "",
-            authDomain: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: ""
-        };
+        // --- Firebase Configuration & Initialization (Fixed invalid-api-key) ---
+        let app, auth, db, APPS_PATH, ADMINS_PATH, NOTIF_PATH, LOGS_PATH;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
 
-        // --- Paths (Rule 1) ---
-        const APPS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
-        const ADMINS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admins');
-        const NOTIF_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'notifications');
-        const LOGS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admin_logs');
+        const startSystem = async () => {
+            try {
+                // Verify configuration exists
+                if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+                    throw new Error("Missing configuration environment variable.");
+                }
 
-        // --- State ---
-        let applications = [];
-        let adminList = [];
-        let unsubscribeApps, unsubscribeAdmins, unsubscribeNotifs;
+                const firebaseConfig = JSON.parse(__firebase_config);
+                
+                // Final check for the API key to avoid Firebase crash
+                if (!firebaseConfig.apiKey) {
+                    throw new Error("Invalid or empty API key in configuration.");
+                }
 
-        // --- Auth Setup (Rule 3) ---
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Define Paths (Rule 1)
+                APPS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
+                ADMINS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admins');
+                NOTIF_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'notifications');
+                LOGS_PATH = collection(db, 'artifacts', appId, 'public', 'data', 'admin_logs');
+
+                // Initialize Auth Listener
+                onAuthStateChanged(auth, handleAuthState);
+
+            } catch (error) {
+                console.error("Initialization Failed:", error);
+                document.getElementById('loader-spinner').style.display = 'none';
+                document.getElementById('loader-text').innerText = "Configuration Error";
+                document.getElementById('loader-text').classList.add('text-red-500');
+                document.getElementById('loader-subtext').innerText = error.message;
             }
         };
 
-        onAuthStateChanged(auth, async (user) => {
+        // --- Auth Setup (Rule 3) ---
+        const handleAuthState = async (user) => {
             const authLoader = document.getElementById('auth-loader');
             const dashboardView = document.getElementById('dashboard-view');
 
             if (!user) {
-                initAuth();
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
                 return;
             }
 
@@ -422,41 +432,38 @@
                 // Check if user is in our admins collection
                 const adminDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', user.uid));
                 
-                // For this environment, if it's the first user or anonymous, we'll allow access but check role in real app
-                const isSuperAdmin = !adminDoc.exists() || (adminDoc.data()?.role === "super_admin");
-
                 if (adminDoc.exists() && adminDoc.data()?.status !== "active") {
                     showMsg("Account Disabled", "Your admin access has been revoked.");
                     await signOut(auth);
                     return;
                 }
 
-                document.getElementById('admin-email-display').innerText = user.email || `Anon-${user.uid.slice(0,5)}`;
+                document.getElementById('admin-email-display').innerText = user.email || `User-${user.uid.slice(0,5)}`;
                 
                 authLoader.style.opacity = '0';
                 setTimeout(() => {
                     authLoader.style.display = 'none';
                     dashboardView.style.display = 'flex'; 
-                    setupListeners(user.uid);
+                    setupListeners();
                 }, 300);
 
             } catch (error) {
                 console.error("Access check failed:", error);
                 showMsg("Security Error", "Unable to verify administrative credentials.");
             }
-        });
+        };
 
-        function setupListeners(uid) {
+        function setupListeners() {
             // Admins
-            unsubscribeAdmins = onSnapshot(ADMINS_PATH, (snap) => {
-                adminList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            onSnapshot(ADMINS_PATH, (snap) => {
+                const adminList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 document.getElementById("stat-users").innerText = adminList.filter(a => a.status === 'active').length;
-                renderAdmins();
+                renderAdmins(adminList);
             }, (err) => console.error("Admin Listener Error", err));
 
             // Applications
-            unsubscribeApps = onSnapshot(APPS_PATH, (snap) => {
-                applications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            onSnapshot(APPS_PATH, (snap) => {
+                const applications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 
                 let stats = { total: applications.length, pending: 0, accepted: 0, rejected: 0 };
                 let serviceCounts = {};
@@ -471,12 +478,12 @@
 
                 updateStatsUI(stats);
                 renderServiceBreakdown(serviceCounts, stats.total);
-                renderTable();
+                renderTable(applications);
             });
 
             // Notifications
             const notifQuery = query(NOTIF_PATH, orderBy("createdAt", "desc"));
-            unsubscribeNotifs = onSnapshot(notifQuery, (snap) => {
+            onSnapshot(notifQuery, (snap) => {
                 const drawer = document.getElementById("drawer-notif-list");
                 const countBadge = document.getElementById("notif-count");
                 
@@ -542,7 +549,7 @@
 
             try {
                 setLoading(true);
-                const docRef = await addDoc(APPS_PATH, {
+                await addDoc(APPS_PATH, {
                     ...formData,
                     status: "pending",
                     createdAt: serverTimestamp(),
@@ -585,13 +592,13 @@
             document.getElementById('stat-rejected').innerText = s.rejected;
         }
 
-        function renderTable() {
+        function renderTable(apps) {
             const tbody = document.getElementById('forms-table-body');
-            if (applications.length === 0) {
+            if (apps.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-20 text-center text-gray-300 italic">No applications found in the ledger</td></tr>`;
                 return;
             }
-            tbody.innerHTML = applications.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(app => {
+            tbody.innerHTML = apps.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(app => {
                 const s = app.status || 'pending';
                 const color = s === 'accepted' ? 'green' : s === 'rejected' ? 'red' : 'yellow';
                 return `
@@ -620,9 +627,9 @@
             lucide.createIcons();
         }
 
-        function renderAdmins() {
+        function renderAdmins(list) {
             const container = document.getElementById('admins-table-body');
-            container.innerHTML = adminList.map(a => `
+            container.innerHTML = list.map(a => `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-6 py-4 font-medium text-slate-700 text-sm">${a.email || 'Anonymous User'}</td>
                     <td class="px-6 py-4">
@@ -708,9 +715,6 @@
         window.closeNotif = () => document.getElementById("notif-drawer").classList.add("translate-x-full");
 
         window.logoutSystem = async () => {
-            if (unsubscribeApps) unsubscribeApps();
-            if (unsubscribeAdmins) unsubscribeAdmins();
-            if (unsubscribeNotifs) unsubscribeNotifs();
             await signOut(auth);
             location.reload();
         };
@@ -729,7 +733,6 @@
             
             try {
                 setLoading(true);
-                // Provison new admin record in the public data collection
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', Math.random().toString(36).substring(7)), {
                     email, role, status: 'active', createdAt: serverTimestamp()
                 });
@@ -740,6 +743,8 @@
             finally { setLoading(false); }
         });
 
+        // Bootstrap
+        startSystem();
         lucide.createIcons();
     </script>
 </body>
