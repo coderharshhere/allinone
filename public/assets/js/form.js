@@ -74,63 +74,32 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
 
-   /*   alert(
-        `✅ आवेदन सफल!\n\nआवेदन क्रमांक: ${applicationNumber}`
-      );
-
-      window.location.href = "thank-you.html";
+      /* ✅ SUCCESS POPUP */
+      Swal.fire({
+        title: "✅ आवेदन सफल!",
+        html: `
+          <p style="font-size:14px">आपका आवेदन सफलतापूर्वक जमा हो गया है</p>
+          <b>आवेदन क्रमांक:</b><br>
+          <span style="font-size:20px">${applicationNumber}</span>
+        `,
+        icon: "success",
+        confirmButtonText: "ठीक है"
+      }).then(() => {
+        window.location.href = "thank-you.html";
+      });
 
     } catch (err) {
       console.error(err);
-      alert("❌ आवेदन जमा करने में समस्या आई");
+
+      Swal.fire({
+        title: "❌ आवेदन विफल",
+        text: "कृपया पुनः प्रयास करें",
+        icon: "error",
+        confirmButtonText: "ठीक है"
+      });
+
       if (submitBtn) submitBtn.disabled = false;
     }
   });
 
-});*/
-
-try {
-      // ... aapka form submission logic yahan rahega ...
-
-      // 1. SUCCESS POPUP
-      Swal.fire({
-        title: '<span style="font-size: 20px;">✅ आवेदन सफल!</span>',
-        html: `<div style="text-align: center; font-family: 'Hind', sans-serif;">
-                <p style="font-size: 15px; color: #4b5563;">धन्यवाद! आपका फॉर्म सबमिट कर दिया गया है।</p>
-                <div style="background: #eff6ff; padding: 15px; border-radius: 12px; margin: 15px 0; border: 1px dashed #1e3a8a;">
-                    <p style="font-size: 13px; color: #1e3a8a; margin-bottom: 5px;">आपका आवेदन क्रमांक:</p>
-                    <p style="font-size: 22px; font-weight: 800; color: #1e3a8a; letter-spacing: 1px;">${applicationNumber}</p>
-                </div>
-                <p style="font-size: 13px; color: #6b7280;">हमारी टीम आपसे जल्द ही संपर्क करेगी। आप इस नंबर से अपना स्टेटस ट्रैक कर सकते हैं।</p>
-               </div>`,
-        icon: 'success',
-        confirmButtonColor: '#1e3a8a',
-        confirmButtonText: 'ठीक है',
-        allowOutsideClick: false,
-        customClass: {
-            popup: 'my-mobile-popup' // Wahi mobile friendly class jo pehle banayi thi
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = "thank-you.html";
-        }
-      });
-
-    } catch (err) {
-      console.error(err);
-
-      // 2. ERROR POPUP
-      Swal.fire({
-        title: '<span style="font-size: 18px; color: #dc2626;">❌ आवेदन विफल</span>',
-        text: 'सर्वर में समस्या के कारण आपका आवेदन जमा नहीं किया जा सका। कृपया दोबारा प्रयास करें।',
-        icon: 'error',
-        confirmButtonColor: '#dc2626',
-        confirmButtonText: 'फिर से कोशिश करें',
-        customClass: {
-            popup: 'my-mobile-popup'
-        }
-      });
-
-      if (submitBtn) submitBtn.disabled = false;
-    }
-
+});
