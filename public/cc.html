@@ -6,6 +6,7 @@
     <title>चरित्र प्रमाण पत्र आवेदन | AllInOne MP</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -246,101 +247,97 @@
     <!-- FOOTER -->
     <div id="footer"></div>
 
-    <script type="module">
-        fetch("header.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("header").innerHTML = data);
+ <script type="module">
+    // 1. Header/Footer Fetch
+    fetch("header.html").then(res => res.text()).then(data => document.getElementById("header").innerHTML = data);
+    fetch("footer.html").then(res => res.text()).then(data => document.getElementById("footer").innerHTML = data);
 
-    fetch("footer.html")
-      .then(res => res.text())
-      .then(data => document.getElementById("footer").innerHTML = data);
+    // 2. Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    // 3. Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+        authDomain: "allinone-aa89.firebaseapp.com",
+        projectId: "allinone-aa89",
+        storageBucket: "allinone-aa89.firebasestorage.app",
+        messagingSenderId: "924003122498",
+        appId: "1:924003122498:web:2c86505457236e60055cdb"
+    };
 
-        // Firebase Configuration (From User Template)
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-            authDomain: "allinone-aa89.firebaseapp.com",
-            projectId: "allinone-aa89",
-            storageBucket: "allinone-aa89.firebasestorage.app",
-            messagingSenderId: "924003122498",
-            appId: "1:924003122498:web:2c86505457236e60055cdb"
-        };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const form = document.getElementById("casteForm");
+    const submitBtn = form.querySelector('button[type="submit"]');
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const form = document.getElementById("casteForm");
+    // 4. Form Submit Logic
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        // Button ko disable karein taaki double click na ho
+        if (submitBtn) submitBtn.disabled = true;
 
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            try {
-                const formData = new FormData(form);
-                await addDoc(collection(db, "applications"), {
-                    serviceType: "Caste Certificate",
-                    applicantName: formData.get("applicantName"),
-                    fatherName: formData.get("fatherName"),
-                    samagraId: formData.get("samagraId"),
-                    aadhaar: formData.get("aadhaar"),
-                    category: formData.get("category"),
-                    subCaste: formData.get("subCaste"),
-                    mobile: formData.get("mobile"),
-                    status: "pending",
-                    createdAt: serverTimestamp()
-                });
-               /* alert("चरित्र प्रमाण पत्र हेतु आवेदन सफलतापूर्वक जमा हो गया ✅");
-                form.reset();
-            } catch (error) {
-                console.error("Error submitting form: ", error);
-                alert("कुछ त्रुटि हुई, कृपया पुनः प्रयास करें।");
-            }
-        });*/
-          try {
-      // ... aapka form submission logic yahan rahega ...
+        try {
+            const formData = new FormData(form);
+            
+            // Firebase mein data save karein
+            const docRef = await addDoc(collection(db, "applications"), {
+                serviceType: "Caste Certificate",
+                applicantName: formData.get("applicantName"),
+                fatherName: formData.get("fatherName"),
+                samagraId: formData.get("samagraId"),
+                aadhaar: formData.get("aadhaar"),
+                category: formData.get("category"),
+                subCaste: formData.get("subCaste"),
+                mobile: formData.get("mobile"),
+                status: "pending",
+                createdAt: serverTimestamp()
+            });
 
-      // 1. SUCCESS POPUP
-      Swal.fire({
-        title: '<span style="font-size: 20px;">✅ आवेदन सफल!</span>',
-        html: `<div style="text-align: center; font-family: 'Hind', sans-serif;">
-                <p style="font-size: 15px; color: #4b5563;">धन्यवाद! आपका फॉर्म सबमिट कर दिया गया है।</p>
-                <div style="background: #eff6ff; padding: 15px; border-radius: 12px; margin: 15px 0; border: 1px dashed #1e3a8a;">
-                    <p style="font-size: 13px; color: #1e3a8a; margin-bottom: 5px;">आपका आवेदन क्रमांक:</p>
-                    <p style="font-size: 22px; font-weight: 800; color: #1e3a8a; letter-spacing: 1px;">${applicationNumber}</p>
-                </div>
-                <p style="font-size: 13px; color: #6b7280;">हमारी टीम आपसे जल्द ही संपर्क करेगी। आप इस नंबर से अपना स्टेटस ट्रैक कर सकते हैं।</p>
-               </div>`,
-        icon: 'success',
-        confirmButtonColor: '#1e3a8a',
-        confirmButtonText: 'ठीक है',
-        allowOutsideClick: false,
-        customClass: {
-            popup: 'my-mobile-popup' // Wahi mobile friendly class jo pehle banayi thi
+            // Firebase ki ID ko hi Application Number bana dein
+            const applicationNumber = docRef.id.substring(0, 10).toUpperCase();
+
+            // SUCCESS POPUP
+            Swal.fire({
+                title: '<span style="font-size: 20px;">✅ आवेदन सफल!</span>',
+                html: `<div style="text-align: center; font-family: 'Hind', sans-serif;">
+                        <p style="font-size: 15px; color: #4b5563;">धन्यवाद! आपका फॉर्म सबमिट कर दिया गया है।</p>
+                        <div style="background: #eff6ff; padding: 15px; border-radius: 12px; margin: 15px 0; border: 1px dashed #1e3a8a;">
+                            <p style="font-size: 13px; color: #1e3a8a; margin-bottom: 5px;">आपका आवेदन क्रमांक:</p>
+                            <p style="font-size: 22px; font-weight: 800; color: #1e3a8a; letter-spacing: 1px;">AIO-${applicationNumber}</p>
+                        </div>
+                        <p style="font-size: 13px; color: #6b7280;">हमारी टीम आपसे जल्द ही संपर्क करेगी।</p>
+                       </div>`,
+                icon: 'success',
+                confirmButtonColor: '#1e3a8a',
+                confirmButtonText: 'ठीक है',
+                allowOutsideClick: false,
+                customClass: { popup: 'my-mobile-popup' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "index.html"; // Ya thank-you.html
+                }
+            });
+
+        } catch (error) {
+            console.error("Error: ", error);
+            if (submitBtn) submitBtn.disabled = false;
+
+            // ERROR POPUP
+            Swal.fire({
+                title: '<span style="font-size: 18px; color: #dc2626;">❌ आवेदन विफल</span>',
+                text: 'सर्वर में समस्या के कारण आपका आवेदन जमा नहीं किया जा सका।',
+                icon: 'error',
+                confirmButtonColor: '#dc2626',
+                confirmButtonText: 'फिर से कोशिश करें',
+                customClass: { popup: 'my-mobile-popup' }
+            });
         }
-      }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = "thank-you.html";
-        }
-      });
-
-    } catch (err) {
-      console.error(err);
-
-      // 2. ERROR POPUP
-      Swal.fire({
-        title: '<span style="font-size: 18px; color: #dc2626;">❌ आवेदन विफल</span>',
-        text: 'सर्वर में समस्या के कारण आपका आवेदन जमा नहीं किया जा सका। कृपया दोबारा प्रयास करें।',
-        icon: 'error',
-        confirmButtonColor: '#dc2626',
-        confirmButtonText: 'फिर से कोशिश करें',
-        customClass: {
-            popup: 'my-mobile-popup'
-        }
-      });
-
-      if (submitBtn) submitBtn.disabled = false;
-    }       
-    </script>
+    });
+</script>
 </body>
 
 </html>
+
 
