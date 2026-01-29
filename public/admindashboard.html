@@ -158,7 +158,28 @@
                     
                     <!-- DASHBOARD VIEW -->
                     <div id="view-dashboard" class="space-y-6 animate-fade-in">
-                        
+                        <!-- ADD NOTIFICATION BOX -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 max-w-xl">
+    <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+        🔔 Publish Notification
+    </h3>
+
+    <input id="notif-title"
+        type="text"
+        placeholder="Notification Title"
+        class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none">
+
+    <textarea id="notif-message"
+        rows="3"
+        placeholder="Notification Message"
+        class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+
+    <button onclick="addNotification()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+        Publish
+    </button>
+</div>
+
                         <!-- Stats Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <!-- Stats Cards (Same as before) -->
@@ -356,6 +377,14 @@
             createUserWithEmailAndPassword,
             signOut 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { where } from
+"https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+const notifQuery = query(
+  collection(db, NOTIF_COLLECTION),
+  where("active", "==", true),
+  orderBy("createdAt", "desc")
+);
 
         // --- Configuration ---
         const firebaseConfig = {
@@ -923,17 +952,24 @@ window.closeNotif = () => {
 };
 
     </script>
-    <div id="notif-drawer"
+  <div id="notif-drawer"
  class="fixed top-0 right-0 h-full w-96 bg-white shadow-xl z-[110]
  transform translate-x-full transition-transform duration-300 rounded-l-2xl">
 
+    <!-- HEADER -->
     <div class="p-4 bg-blue-900 text-white flex justify-between">
         <h3 class="font-bold">महत्वपूर्ण सूचनाएं</h3>
         <button onclick="closeNotif()">✕</button>
     </div>
 
-    <div id="drawer-notif-list" class="p-4 space-y-3 overflow-y-auto h-full"></div>
+    <!-- OPTIONAL: Admin preview list -->
+    <div id="notif-list" class="p-4 space-y-3 border-b"></div>
+
+    <!-- MAIN DRAWER LIST -->
+    <div id="drawer-notif-list"
+         class="p-4 space-y-3 overflow-y-auto h-full"></div>
 </div>
+
 
 </body>
 </html>
