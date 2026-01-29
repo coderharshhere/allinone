@@ -80,7 +80,10 @@
             <!-- Header -->
             <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
                 <h2 id="page-title" class="text-xl font-semibold text-gray-800">Overview</h2>
-                
+                <button onclick="openNotif()" class="relative">
+    <i data-lucide="bell" class="w-5 h-5"></i>
+</button>
+
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2 border-l pl-4 ml-2">
                         <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">SA</div>
@@ -373,6 +376,7 @@
         const COLLECTION_NAME = 'applications'; 
         const LOGS_COLLECTION = 'admin_logs';
         const ADMINS_COLLECTION = "admins";
+        const NOTIF_COLLECTION = "notifications";
 
         // --- State ---
         let applications = [];
@@ -471,7 +475,36 @@ const type = data.serviceType || data.formType || "Other";
             }, (error) => {
                 console.error("Listener Error:", error);
                 document.getElementById('loading').classList.add('hidden');
-            });       
+            });
+            // ---- Notifications Listener ----
+const notifQuery = query(
+    collection(db, NOTIF_COLLECTION),
+    orderBy("createdAt", "desc")
+);
+
+onSnapshot(notifQuery, (snapshot) => {
+    const adminBox = document.getElementById("notif-list");
+    const drawerBox = document.getElementById("drawer-notif-list");
+
+    let html = "";
+
+    if (snapshot.empty) {
+        html = `<p class="text-gray-400 text-sm">No notifications</p>`;
+    } else {
+        snapshot.forEach(doc => {
+            const n = doc.data();
+            html += `
+            <div class="border-l-4 border-blue-600 bg-blue-50 p-3 rounded">
+                <p class="font-semibold text-sm">${n.title}</p>
+                <p class="text-xs text-gray-600">${n.message}</p>
+            </div>`;
+        });
+    }
+
+    if (adminBox) adminBox.innerHTML = html;
+    if (drawerBox) drawerBox.innerHTML = html;
+});
+
         }
 
         // --- UI Interactions ---
@@ -550,6 +583,34 @@ const type = data.serviceType || data.formType || "Other";
                 showToast("Submission Failed");
             }
         }
+window.addNotification = async () => {
+    const title = document.getElementById("notif-title").value;
+    const message = document.getElementById("notif-message").value;
+
+    if (!title || !message) {
+        alert("Title & message required");
+        return;
+    }
+
+    try {
+        await addDoc(collection(db, NOTIF_COLLECTION), {
+            title: title,
+            message: message,
+            active: true,
+            createdAt: serverTimestamp(),
+            createdBy: auth.currentUser.email
+        });
+
+        document.getElementById("notif-title").value = "";
+        document.getElementById("notif-message").value = "";
+
+        showToast("Notification Published");
+
+    } catch (err) {
+        console.error(err);
+        showToast("Failed to add notification");
+    }
+};
 
         // 2. Create New Admin (The smart way)
         async function createNewAdmin() {
@@ -851,7 +912,28 @@ const type = data.serviceType || data.formType || "Other";
                 showToast("Logout failed");
             }
         };
+window.openNotif = () => {
+    document.getElementById("notif-drawer")
+        .classList.remove("translate-x-full");
+};
+
+window.closeNotif = () => {
+    document.getElementById("notif-drawer")
+        .classList.add("translate-x-full");
+};
 
     </script>
+    <div id="notif-drawer"
+ class="fixed top-0 right-0 h-full w-96 bg-white shadow-xl z-[110]
+ transform translate-x-full transition-transform duration-300 rounded-l-2xl">
+
+    <div class="p-4 bg-blue-900 text-white flex justify-between">
+        <h3 class="font-bold">महत्वपूर्ण सूचनाएं</h3>
+        <button onclick="closeNotif()">✕</button>
+    </div>
+
+    <div id="drawer-notif-list" class="p-4 space-y-3 overflow-y-auto h-full"></div>
+</div>
+
 </body>
 </html>
