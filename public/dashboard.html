@@ -120,6 +120,8 @@ body {
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   position: relative;
   font-family: 'Noto Sans Devanagari', sans-serif;
+  width: 210mm;
+  min-height: 297mm;
 }
 .pdf-header {
   text-align: center;
@@ -241,8 +243,8 @@ body {
             <i class="fas fa-user"></i>
           </div>
           <div class="ml-2 hidden md:block">
-            <p class="font-bold text-sm">अधिकारी जी</p>
-            <p class="text-xs opacity-90">admin@mp.gov.in</p>
+            <p class="font-bold text-sm" id="adminName">लोड हो रहा है...</p>
+            <p class="text-xs opacity-90" id="adminEmail">-</p>
           </div>
           <i class="fas fa-chevron-down ml-1 text-xs hidden md:block"></i>
         </div>
@@ -494,10 +496,16 @@ body {
 <div id="pdfContent" class="hidden">
   <div class="pdf-page">
     <div class="pdf-header">
-      <div class="pdf-logo bg-blue-900 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-        <span class="text-2xl font-bold">MP</span>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+        <div style="background: #1e3a8a; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
+          MP
+        </div>
+        <div style="text-align: left;">
+          <div style="font-size: 18px; font-weight: bold; color: #1e3a8a;">मध्य प्रदेश सरकार</div>
+          <div style="font-size: 14px; color: #4b5563;">Government of Madhya Pradesh</div>
+        </div>
       </div>
-      <h1 class="pdf-title">मध्य प्रदेश सरकार - AllInOne MP पोर्टल</h1>
+      <h1 class="pdf-title">AllInOne MP पोर्टल - आवेदन विवरण</h1>
       <p class="pdf-subtitle">सभी सरकारी सेवाओं के लिए एकल खिड़की प्रणाली</p>
       <div class="pdf-app-no">आवेदन क्रमांक: <span id="pdfApplicationNo">AIO-MP-2024-XXXXX</span></div>
     </div>
@@ -556,7 +564,7 @@ body {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } 
   from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut } 
+import { getAuth, onAuthStateChanged, signOut, User } 
   from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 /* ===== CONFIG ===== */
@@ -571,11 +579,21 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+let currentUser = null;
+
 /* ===== AUTH GUARD ===== */
 onAuthStateChanged(auth, user => {
   if (!user) {
     window.location.href = "login.html";
   } else {
+    // Set current user
+    currentUser = user;
+    
+    // Update admin details in header
+    document.getElementById('adminName').textContent = user.displayName || 'अधिकारी जी';
+    document.getElementById('adminEmail').textContent = user.email || 'admin@mp.gov.in';
+    
+    // Load data
     loadData();
     setupEventListeners();
   }
@@ -870,19 +888,25 @@ window.del = async (id) => {
 };
 
 window.updateStatus = async (status) => {
-  const modal = document.getElementById('detailModal');
-  const appNo = modal.querySelector('#modalApplicationNo').textContent;
-  const id = appNo.split('-').pop(); // This is a simplification
+  const appNoElement = document.getElementById('modalApplicationNo');
+  if (!appNoElement) return;
   
-  const item = allApplications.find(x => x.id.includes(id));
-  if (!item) return;
+  const appNo = appNoElement.textContent;
+  // Extract the actual ID from the application number
+  const item = allApplications.find(x => appNo.includes(x.id.substring(0,5).toUpperCase()));
+  
+  if (!item) {
+    alert("आवेदन नहीं मिला।");
+    return;
+  }
   
   try {
     await updateDoc(doc(db, item._collection, item.id), { status });
     // Close modal after update
     closeDetails();
     // Show success message
-    alert(`आवेदन स्थिति "${status === 'complete' ? 'पूर्ण' : status === 'reject' ? 'अस्वीकृत' : 'लंबित'}" में अपडेट कर दी गई है।`);
+    const statusText = status === 'complete' ? 'पूर्ण' : status === 'reject' ? 'अस्वीकृत' : 'लंबित';
+    alert(`आवेदन स्थिति "${statusText}" में अपडेट कर दी गई है।`);
   } catch (error) {
     console.error("Error updating status: ", error);
     alert("स्थिति अपडेट करने में त्रुटि। कृपया पुनः प्रयास करें।");
@@ -911,9 +935,9 @@ window.openDetails = (id) => {
   let detailsHTML = '';
   
   // Organize fields into sections
-  const personalInfo = ['applicantName', 'studentName', 'fatherName', 'motherName', 'dob', 'gender', 'mobileNumber', 'email'];
+  const personalInfo = ['applicantName', 'studentName', 'fatherName', 'motherName', 'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber'];
   const addressInfo = ['address', 'village', 'tehsil', 'district', 'pincode', 'state'];
-  const applicationInfo = ['memberId', 'applicationType', 'serviceType', 'formType', 'serviceName', 'status', 'createdAt'];
+  const applicationInfo = ['memberId', 'applicationType', 'serviceType', 'formType', 'serviceName', 'status', 'createdAt', 'updatedAt'];
   
   // Personal Information section
   detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mb-3 pb-2 border-b border-blue-100">व्यक्तिगत जानकारी</h3></div>`;
@@ -937,6 +961,9 @@ window.openDetails = (id) => {
     if (item.hasOwnProperty(key) && item[key]) {
       let value = item[key];
       if (key === 'createdAt' && value) {
+        value = formatDate(value);
+      }
+      if (key === 'updatedAt' && value) {
         value = formatDate(value);
       }
       if (key === 'status') {
@@ -986,33 +1013,86 @@ function preparePDFContent(item, appNo) {
   });
   document.getElementById("pdfDownloadDate").textContent = today;
   
-  // Generate QR code
+  // Clear and generate QR code
   const qrContainer = document.getElementById("pdfQR");
   qrContainer.innerHTML = "";
+  
+  // Create QR code with application details
+  const qrData = `आवेदन: ${appNo}\nनाम: ${item.applicantName || item.studentName || ""}\nसेवा: ${getServiceName(item)}\nतारीख: ${today}`;
   new QRCode(qrContainer, {
-    text: `आवेदन: ${appNo}\nनाम: ${item.applicantName || item.studentName || ""}\nसेवा: ${getServiceName(item)}`,
+    text: qrData,
     width: 100,
-    height: 100
+    height: 100,
+    correctLevel: QRCode.CorrectLevel.H
   });
   
-  // Generate table content
+  // Generate table content for PDF
   const pdfTableBody = document.getElementById("pdfDetailsTable");
   let tableRows = '';
   
-  Object.entries(item).forEach(([key, value]) => {
-    if (!['_collection', 'id'].includes(key) && value) {
-      let displayValue = value;
-      if (key === 'createdAt' && value.toDate) {
-        displayValue = formatDate(value);
+  // Define the order of fields for better presentation
+  const fieldOrder = [
+    'applicantName', 'studentName', 'fatherName', 'motherName', 
+    'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber',
+    'address', 'village', 'tehsil', 'district', 'pincode', 'state',
+    'memberId', 'applicationType', 'serviceType', 'formType', 
+    'serviceName', 'status', 'createdAt', 'updatedAt'
+  ];
+  
+  // Add fields in order
+  fieldOrder.forEach(key => {
+    if (item.hasOwnProperty(key) && item[key]) {
+      let displayValue = item[key];
+      
+      // Format dates
+      if ((key === 'createdAt' || key === 'updatedAt') && item[key].toDate) {
+        displayValue = item[key].toDate().toLocaleDateString("hi-IN", {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
       }
+      
+      // Format status
       if (key === 'status') {
-        displayValue = value === 'complete' ? 'पूर्ण' : 
-                       value === 'reject' ? 'अस्वीकृत' : 'लंबित';
+        displayValue = item[key] === 'complete' ? 'पूर्ण' : 
+                       item[key] === 'reject' ? 'अस्वीकृत' : 'लंबित';
+      }
+      
+      // Format gender
+      if (key === 'gender') {
+        displayValue = item[key] === 'male' ? 'पुरुष' : 
+                       item[key] === 'female' ? 'महिला' : 
+                       item[key] === 'other' ? 'अन्य' : item[key];
       }
       
       tableRows += `
         <tr>
-          <td class="font-medium">${formatLabel(key)}</td>
+          <td style="font-weight: bold; background-color: #f8fafc;">${formatLabel(key)}</td>
+          <td>${displayValue || "-"}</td>
+        </tr>
+      `;
+    }
+  });
+  
+  // Add any additional fields not in the order list
+  Object.keys(item).forEach(key => {
+    if (!fieldOrder.includes(key) && !['_collection', 'id'].includes(key) && item[key]) {
+      let displayValue = item[key];
+      
+      if ((key === 'createdAt' || key === 'updatedAt') && item[key].toDate) {
+        displayValue = item[key].toDate().toLocaleDateString("hi-IN", {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+      
+      tableRows += `
+        <tr>
+          <td style="font-weight: bold; background-color: #f8fafc;">${formatLabel(key)}</td>
           <td>${displayValue || "-"}</td>
         </tr>
       `;
@@ -1026,61 +1106,65 @@ window.downloadPDF = () => {
   const pdfContent = document.getElementById("pdfContent");
   pdfContent.classList.remove("hidden");
   
+  // Force reflow to ensure QR code is rendered
+  void pdfContent.offsetWidth;
+  
   // Generate a better filename
   const appNoElement = document.getElementById("pdfApplicationNo");
   const filename = `AllInOneMP_Application_${appNoElement.textContent}.pdf`;
   
   setTimeout(() => {
+    const element = document.getElementById("pdfContent").firstElementChild;
+    
     const opt = {
-      margin: 10,
+      margin: 15,
       filename: filename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true,
+        logging: false,
+        onclone: (document) => {
+          // Ensure QR code is visible in the clone
+          const qr = document.getElementById('pdfQR');
+          if (qr && qr.querySelector('canvas')) {
+            qr.querySelector('canvas').style.display = 'block';
+          }
+        }
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'a4', 
+        orientation: 'portrait',
+        putOnlyUsedFonts: true,
+        floatPrecision: 16
+      }
     };
     
-    html2pdf().from(pdfContent).set(opt).save().then(() => {
+    html2pdf().from(element).set(opt).save().then(() => {
       pdfContent.classList.add("hidden");
+      alert("PDF सफलतापूर्वक डाउनलोड हो गया!");
+    }).catch((error) => {
+      console.error("PDF generation error:", error);
+      pdfContent.classList.add("hidden");
+      alert("PDF जनरेट करने में त्रुटि। कृपया पुनः प्रयास करें।");
     });
-  }, 300);
+  }, 500);
 };
 
 window.printApplication = () => {
   const pdfContent = document.getElementById("pdfContent");
   pdfContent.classList.remove("hidden");
   
-  // Add print styles
-  const style = document.createElement('style');
-  style.innerHTML = `
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #pdfContent, #pdfContent * {
-        visibility: visible;
-      }
-      #pdfContent {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-      }
-      .pdf-page {
-        box-shadow: none !important;
-        padding: 0 !important;
-        border: none !important;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-  
-  window.print();
-  
-  // Cleanup
+  // Wait for QR code to render
   setTimeout(() => {
-    pdfContent.classList.add("hidden");
-    document.head.removeChild(style);
-  }, 500);
+    window.print();
+    
+    // Cleanup after printing
+    setTimeout(() => {
+      pdfContent.classList.add("hidden");
+    }, 500);
+  }, 300);
 };
 
 /* ===== EXPORT TO CSV ===== */
