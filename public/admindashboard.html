@@ -374,9 +374,17 @@
         import { getFirestore, collection, addDoc, updateDoc, getDoc, setDoc, doc, onSnapshot, serverTimestamp, deleteDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithCustomToken, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // --- Context Variables ---
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // --- Context Variables (Fixed ReferenceError) ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "",
+            authDomain: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
+        };
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -629,7 +637,7 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        ${auth.currentUser.uid !== a.id ? `
+                        ${auth.currentUser && auth.currentUser.uid !== a.id ? `
                             <button onclick="deleteAdmin('${a.id}', '${a.email}')" class="text-slate-300 hover:text-red-500 transition-colors">
                                 <i data-lucide="user-minus" class="w-4 h-4"></i>
                             </button>
@@ -708,7 +716,8 @@
         };
 
         function setLoading(val) {
-            document.getElementById('loading').classList.toggle('hidden', !val);
+            const loader = document.getElementById('loading');
+            if (loader) loader.classList.toggle('hidden', !val);
         }
 
         document.getElementById('admin-entry-form').addEventListener('submit', window.submitManualEntry);
@@ -720,9 +729,7 @@
             
             try {
                 setLoading(true);
-                // In a production environment with cloud functions, we'd use them. 
-                // In this environment, we just log the intent and update the collection.
-                // Note: Auth user creation usually triggers logout, so we handle it gracefully.
+                // Provison new admin record in the public data collection
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'admins', Math.random().toString(36).substring(7)), {
                     email, role, status: 'active', createdAt: serverTimestamp()
                 });
