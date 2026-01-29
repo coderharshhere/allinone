@@ -1,4 +1,4 @@
-/* ================= FIREBASE IMPORTS ================= */
+/* ================= FIREBASE ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
   getFirestore,
@@ -9,233 +9,82 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-/* 🔥 FIREBASE CONFIGURATION */
+/* 🔥 CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
   projectId: "allinone-aa89"
 };
 
-/* ================= INIT FIREBASE ================= */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ================= LOGIC WRAPPER ================= */
+/* ================= LOGIC ================= */
 document.addEventListener("DOMContentLoaded", () => {
-  
-  /* -----------------------------------------------------
-      SECTION A: RAZORPAY PAYMENT LOGIC
-      (Runs only if 'payNowBtn' exists on the page)
-  ----------------------------------------------------- */
-  const payBtn = document.getElementById("payNowBtn");
-  const paymentForm = document.querySelector("form"); 
 
-  if (payBtn && paymentForm) {
-    payBtn.addEventListener("click", async () => {
-      
-      // 1️⃣ Validate form
-      if (!paymentForm.checkValidity()) {
-        paymentForm.reportValidity();
-        return;
+  const form = document.querySelector("form[data-service]");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const submitBtn = form.querySelector("button[type='submit']");
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      /* 🔹 DATA COLLECT */
+      const data = {
+        formType: form.dataset.service || "Income Certificate",
+        status: "Payment Done (Manual Verification)",
+        createdAt: serverTimestamp()
+      };
+
+      new FormData(form).forEach((value, key) => {
+        data[key] = value;
+      });
+
+      /* 🔐 Aadhaar safety */
+      if (data.aadhaar) {
+        data.aadhaarLast4 = data.aadhaar.slice(-4);
+        delete data.aadhaar;
       }
 
-      // Check declaration
-      const declaration = document.getElementById('declarationCheck');
-      if (declaration && !declaration.checked) {
-          alert("कृपया घोषणा पत्र (Declaration) को स्वीकार करें।");
-          return;
-      }
+      /* 🔥 SAVE */
+      const docRef = await addDoc(collection(db, "applications"), data);
 
-      const originalText = payBtn.innerText;
-      payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-      payBtn.disabled = true;
+      const applicationNumber =
+        "AIO-" + docRef.id.substring(0, 8).toUpperCase();
 
-      try {
-        // 2️⃣ CREATE ORDER (BACKEND CALL)
-        const response = await fetch(
-          "https://us-central1-allinone-aa89.cloudfunctions.net/createOrder",
-          { method: "POST" }
-        );
+      await updateDoc(doc(db, "applications", docRef.id), {
+        applicationNumber
+      });
 
-        if (!response.ok) throw new Error("Backend Error");
-        const order = await response.json();
-
-        // 3️⃣ RAZORPAY CHECKOUT
-        const options = {
-          key: "rzp_test_S9jk2wxqonRqth", // ✅ अपनी Live Key से बदलें जब लाइव जाएं
-          order_id: order.id,
-          amount: order.amount,
-          currency: "INR",
-          name: "AllInOne MP",
-          description: "Income Certificate Fee",
-
-          handler: async function (res) {
-            try {
-              // Status update to user
-              payBtn.innerText = "Saving Data...";
-
-              // 4️⃣ Collect form data
-              const data = {};
-              new FormData(paymentForm).forEach((v, k) => data[k] = v);
-
-              // 5️⃣ Add Payment info
-              data.payment = {
-                paymentId: res.razorpay_payment_id,
-                orderId: res.razorpay_order_id,
-                status: "PAID"
-              };
-              data.createdAt = serverTimestamp();
-              data.formType = paymentForm.dataset.service || "Income Certificate";
-
-              // 🔐 Aadhaar Safety (Masking)
-              if (data.aadhaar) { // Note: HTML name attr should match
-                 data.aadhaarLast4 = data.aadhaar.slice(-4);
-                 delete data.aadhaar;
-              }
-
-              // 6️⃣ Save to Firestore
-              const docRef = await addDoc(collection(db, "applications"), data);
-
-              // 7️⃣ Generate & Update Application Number
-              const applicationNumber = "AIO-" + docRef.id.substring(0, 8).toUpperCase();
-              await updateDoc(doc(db, "applications", docRef.id), {
-                 applicationNumber
-              });
-
-              // 8️⃣ SEND EMAIL (✅ ADDED THIS IMPORTANT STEP)
-              if (window.emailjs && data.email) {
-                 console.log("Sending Email...");
-                 await emailjs.send(
-                   "service_allinone",  // Service ID
-                   "template_7x246oi",  // Template ID
-                   {
-                     to_email: data.email,
-                     to_name: data.applicantName || "Applicant",
-                     application_no: applicationNumber,
-                     payment_id: res.razorpay_payment_id,
-                     service_type: data.formType,
-                     amount: (order.amount / 100) // Convert paise to rupees
-                   }
-                 );
-              }
-
-              alert(`✅ आवेदन और पेमेंट सफल!\n\nआवेदन क्रमांक: ${applicationNumber}\nPayment ID: ${res.razorpay_payment_id}`);
-              
-              // Redirect or Reload
-              window.location.href = "thank-you.html"; // या window.location.reload();
-              
-            } catch (error) {
-              console.error("Save/Email Error:", error);
-              alert("Payment successful but data save/email failed. Please take a screenshot of this payment: " + res.razorpay_payment_id);
-            }
-          },
-          modal: {
-            ondismiss: () => {
-              payBtn.disabled = false;
-              payBtn.innerText = originalText;
-            }
+      /* 📧 EMAIL */
+      if (window.emailjs && data.email) {
+        await emailjs.send(
+          "service_allinone",
+          "template_7x246oi",
+          {
+            to_email: data.email,
+            to_name: data.applicantName || "Applicant",
+            application_no: applicationNumber,
+            payment_id: data.paymentId || "Provided by user",
+            service_type: data.formType
           }
-        };
-
-        if (window.Razorpay) {
-          const rzp = new Razorpay(options);
-          
-          rzp.on('payment.failed', function (response){
-                alert("Payment Failed: " + response.error.description);
-                payBtn.disabled = false;
-                payBtn.innerText = originalText;
-          });
-
-          rzp.open();
-        } else {
-          alert("Razorpay SDK not loaded.");
-          payBtn.disabled = false;
-          payBtn.innerText = originalText;
-        }
-
-      } catch (error) {
-        console.error("Order Creation Error:", error);
-        alert("Server Error: Could not initiate payment.");
-        payBtn.disabled = false;
-        payBtn.innerText = originalText;
+        );
       }
-    });
-  }
 
-  /* -----------------------------------------------------
-      SECTION B: GENERAL SERVICE FORMS
-      (Runs for non-payment forms)
-  ----------------------------------------------------- */
-  const serviceForms = document.querySelectorAll("form[data-service]");
+      alert(
+        `✅ आवेदन सफल!\n\nआवेदन क्रमांक: ${applicationNumber}`
+      );
 
-  serviceForms.forEach(form => {
-    // Avoid double attaching listener if this form is also the payment form
-    if (payBtn && form === paymentForm) return; 
+      window.location.href = "thank-you.html";
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      try {
-        const submitBtn = form.querySelector("button[type='submit']");
-        if(submitBtn) submitBtn.disabled = true;
-
-        /* 🔹 FORM TYPE */
-        const formType = form.dataset.service;
-
-        /* 🔥 MASTER DATA OBJECT */
-        const data = {
-          formType,
-          status: "Pending",
-          createdAt: serverTimestamp()
-        };
-
-        /* 🔹 Auto collect fields */
-        new FormData(form).forEach((value, key) => {
-          data[key] = value;
-        });
-
-        /* 🔐 Aadhaar Safety */
-        if (data.aadhaar) {
-          data.aadhaarLast4 = data.aadhaar.slice(-4);
-          delete data.aadhaar;
-        }
-
-        /* 1️⃣ SAVE to Firestore */
-        const docRef = await addDoc(collection(db, "applications"), data);
-
-        /* 2️⃣ GENERATE APPLICATION NUMBER */
-        const applicationNumber = "AIO-" + docRef.id.substring(0, 8).toUpperCase();
-
-        await updateDoc(doc(db, "applications", docRef.id), {
-          applicationNumber
-        });
-
-        /* 3️⃣ EMAIL CONFIRMATION */
-        if (window.emailjs && data.email) {
-          await emailjs.send(
-            "service_allinone",
-            "template_7x246oi",
-            {
-              to_email: data.email,
-              to_name: data.applicantName || "Applicant",
-              application_no: applicationNumber,
-              service_type: formType,
-              payment_id: "N/A (Free Service)"
-            }
-          );
-        }
-
-        alert(`✅ आवेदन सफलतापूर्वक जमा हो गया\n\nआवेदन क्रमांक: ${applicationNumber}`);
-        form.reset();
-        if(submitBtn) submitBtn.disabled = false;
-
-      } catch (err) {
-        console.error("FORM ERROR:", err);
-        alert("❌ आवेदन जमा करने में समस्या आई");
-        const submitBtn = form.querySelector("button[type='submit']");
-        if(submitBtn) submitBtn.disabled = false;
-      }
-    });
+    } catch (err) {
+      console.error(err);
+      alert("❌ आवेदन जमा करने में समस्या आई");
+      if (submitBtn) submitBtn.disabled = false;
+    }
   });
 
 });
