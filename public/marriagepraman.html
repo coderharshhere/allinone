@@ -288,6 +288,17 @@
     <!-- FOOTER -->
     <div id="footer"></div>
 
+
+    <style>
+    /* Mobile par popup ki width set karne ke liye */
+.my-mobile-popup {
+    width: 90% !important; /* Mobile pe screen se chipkega nahi */
+    max-width: 400px !important; /* Desktop pe chota rahega */
+    border-radius: 20px !important;
+    padding: 10px !important;
+}
+</style>
+
     <script type="module">
         fetch("header.html")
       .then(res => res.text())
@@ -349,6 +360,51 @@
     window.history.back(); // या home redirect
   }
 
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        title: '<span style="font-size: 18px;">⚠️ महत्वपूर्ण सूचना</span>',
+        html: `<div style="text-align: center; font-family: 'Hind', sans-serif; font-size: 14px; line-height: 1.5;">
+                <p>फॉर्म भरने से पहले अपनी जानकारी अच्छी तरह जाँच लें।</p>
+                <p style="color: #dc2626; font-weight: bold; margin-top: 8px;">
+                गलत जानकारी होने पर फॉर्म रद्द हो जाएगा, जिसके जिम्मेदार आप स्वयं होंगे।
+                </p>
+                <p style="margin-top: 10px; font-weight: 500;">क्या आप आगे बढ़ना चाहते हैं?</p>
+               </div>`,
+        icon: 'warning',
+        iconColor: '#f89406',
+        showCancelButton: true,
+        confirmButtonColor: '#1e3a8a', // Aapka portal blue color
+        cancelButtonColor: '#ef4444',
+        confirmButtonText: 'हाँ, सहमत हूँ',
+        cancelButtonText: 'नहीं, वापस जाएँ',
+        allowOutsideClick: false,
+        customClass: {
+            popup: 'my-mobile-popup', // Hamari custom CSS class
+            confirmButton: 'px-4 py-2 text-sm', // Button size compact kiya
+            cancelButton: 'px-4 py-2 text-sm'
+        },
+        backdrop: `rgba(15, 23, 42, 0.7)` // Darker backdrop for better focus
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Success toast (Chota popup)
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
+            Toast.fire({
+                icon: 'success',
+                title: 'आप फॉर्म भर सकते हैं'
+            });
+        } else {
+            window.location.href = 'index.html'; 
+        }
+    });
+});
+
+        
     </script>
 </body>
 </html>
