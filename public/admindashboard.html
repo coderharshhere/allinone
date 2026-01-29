@@ -1,743 +1,969 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Dashboard - All In One</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard - All In One</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        #dashboard-view { display: none; }
-        .modal { transition: opacity 0.25s ease; }
-        body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
-    </style>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Dashboard hidden by default for security */
+        #dashboard-view { display: none; }
+        
+        /* Modal Styles */
+        .modal { transition: opacity 0.25s ease; }
+        body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-900 h-screen overflow-hidden">
 
-    <!-- ================= SECURITY LOADER ================= -->
-    <div id="auth-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p class="mt-4 text-gray-500 font-medium">Verifying Access...</p>
-    </div>
+    <!-- ================= SECURITY LOADER (Visible by default) ================= -->
+    <div id="auth-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p class="mt-4 text-gray-500 font-medium">Verifying Access...</p>
+        <p class="text-xs text-gray-400 mt-2">Redirecting if not logged in</p>
+    </div>
 
-    <!-- ================= DASHBOARD VIEW ================= -->
-    <div id="dashboard-view" class="w-full h-full flex">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 bg-slate-900 text-white transition-all duration-300 flex flex-col shadow-xl z-20">
-            <div class="h-16 flex items-center justify-center border-b border-slate-800">
-                <span id="brand-full" class="text-xl font-bold tracking-wider">SUPER<span class="text-blue-400">ADMIN</span></span>
-            </div>
-            
-            <nav class="flex-1 py-6 space-y-1">
-                <button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-blue-500 bg-slate-800 text-blue-400" data-tab="dashboard">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                    <span class="ml-3">Dashboard</span>
-                </button>
-                <button onclick="switchTab('create-form')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="create-form">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                    <span class="ml-3">Add Application</span>
-                </button>
-                <button onclick="switchTab('admins')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="admins">
-                    <i data-lucide="shield" class="w-5 h-5"></i>
-                    <span class="ml-3">Admin Details</span>
-                </button>
-            </nav>
+    <!-- ================= DASHBOARD VIEW ================= -->
+    <div id="dashboard-view" class="w-full h-full flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-slate-900 text-white transition-all duration-300 flex flex-col shadow-xl z-20">
+            <div class="h-16 flex items-center justify-center border-b border-slate-800">
+                <span id="brand-full" class="text-xl font-bold tracking-wider">SUPER<span class="text-blue-400">ADMIN</span></span>
+            </div>
+            
+            <nav class="flex-1 py-6 space-y-1">
+                <button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-blue-500 bg-slate-800 text-blue-400" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span class="ml-3">Dashboard</span>
+                </button>
+                <button onclick="switchTab('create-form')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="create-form">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span class="ml-3">Add Application</span>
+                </button>
+                <button onclick="switchTab('admins')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium border-l-4 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white" data-tab="admins">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span class="ml-3">Admin Details</span>
+                </button>
+            </nav>
 
-            <div class="p-4 border-t border-slate-800 space-y-4">
-                <div class="text-xs text-slate-500 text-center flex items-center justify-center">
-                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                    Connected to DB
-                </div>
-                <button onclick="logoutSystem()" class="flex items-center justify-center text-red-400 hover:text-red-300 transition-colors w-full text-sm font-medium py-2 rounded hover:bg-slate-800 cursor-pointer">
-                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Logout System
-                </button>
-            </div>
-        </aside>
+            <div class="p-4 border-t border-slate-800 space-y-4">
+                <div class="text-xs text-slate-500 text-center flex items-center justify-center">
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    Connected to DB
+                </div>
+                <button onclick="logoutSystem()" class="flex items-center justify-center text-red-400 hover:text-red-300 transition-colors w-full text-sm font-medium py-2 rounded hover:bg-slate-800 cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Logout System
+                </button>
+            </div>
+        </aside>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col h-screen overflow-hidden">
-            
-            <!-- Header -->
-            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
-                <h2 id="page-title" class="text-xl font-semibold text-gray-800">Overview</h2>
-                
-                <!-- Notification Bell -->
-                <button onclick="openNotif()" class="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
-                    <i data-lucide="bell" class="w-5 h-5 text-gray-600"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                </button>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden">
+            
+            <!-- Header -->
+            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
+                <h2 id="page-title" class="text-xl font-semibold text-gray-800">Overview</h2>
+                <button onclick="openNotif()" class="relative">
+    <i data-lucide="bell" class="w-5 h-5"></i>
+</button>
 
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2 border-l pl-4 ml-2">
-                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">SA</div>
-                        <div class="hidden md:block text-sm">
-                            <p id="admin-email-display" class="font-medium text-gray-700">Loading...</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 border-l pl-4 ml-2">
+                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">SA</div>
+                        <div class="hidden md:block text-sm">
+                            <p id="admin-email-display" class="font-medium text-gray-700">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 relative">
-                
-                <!-- Toast -->
-                <div id="toast" class="hidden absolute top-4 right-6 z-50 animate-fade-in">
-                    <div class="px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-white bg-green-600">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        <span id="toast-message" class="text-sm font-medium">Success</span>
-                    </div>
-                </div>
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 relative">
+                
+                <!-- Toast -->
+                <div id="toast" class="hidden absolute top-4 right-6 z-50 animate-fade-in">
+                    <div class="px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2 text-white bg-green-600">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span id="toast-message" class="text-sm font-medium">Success</span>
+                    </div>
+                </div>
 
-                <!-- Loading Overlay -->
-                <div id="loading" class="hidden absolute inset-0 bg-white/80 z-40 flex flex-col items-center justify-center">
-                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-                    <p class="mt-4 text-gray-500 font-medium">Processing...</p>
-                </div>
+                <!-- Loading Overlay (Internal for forms) -->
+                <div id="loading" class="hidden absolute inset-0 bg-white/80 z-40 flex flex-col items-center justify-center">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                    <p class="mt-4 text-gray-500 font-medium">Processing...</p>
+                </div>
 
-                <!-- ADD ADMIN MODAL -->
-                <div id="add-admin-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
-                    <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-                    <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto animate-fade-in">
-                        <div class="modal-content py-4 text-left px-6">
-                            <div class="flex justify-between items-center pb-3">
-                                <p class="text-2xl font-bold text-gray-800">Add New Admin</p>
-                                <div class="modal-close cursor-pointer z-50" onclick="toggleModal('add-admin-modal')">
-                                    <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
-                                </div>
-                            </div>
-                            <form id="new-admin-form" class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                    <input type="email" id="new-admin-email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin@example.com" required>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                                    <input type="password" id="new-admin-password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="******" required minlength="6">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                                    <select id="new-admin-role" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                                        <option value="super_admin">Super Admin</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                </div>
-                                <div class="mt-4 flex justify-end pt-2">
-                                    <button type="button" class="px-4 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2" onclick="toggleModal('add-admin-modal')">Cancel</button>
-                                    <button type="submit" class="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">Create Admin</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                <!-- ADD ADMIN MODAL -->
+                <div id="add-admin-modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+                    <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+                    
+                    <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto animate-fade-in">
+                        
+                        <div class="modal-content py-4 text-left px-6">
+                            <!--Title-->
+                            <div class="flex justify-between items-center pb-3">
+                                <p class="text-2xl font-bold text-gray-800">Add New Admin</p>
+                                <div class="modal-close cursor-pointer z-50" onclick="toggleModal('add-admin-modal')">
+                                    <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
+                                </div>
+                            </div>
+                            
+                            <!--Body-->
+                            <form id="new-admin-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                    <input type="email" id="new-admin-email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin@example.com" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                    <input type="password" id="new-admin-password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="******" required minlength="6">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                    <select id="new-admin-role" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="super_admin">Super Admin</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="moderator">Moderator</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mt-4 flex justify-end pt-2">
+                                    <button type="button" class="px-4 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2" onclick="toggleModal('add-admin-modal')">Cancel</button>
+                                    <button type="submit" class="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400">Create Admin</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="max-w-7xl mx-auto">
-                    
-                    <!-- DASHBOARD VIEW -->
-                    <div id="view-dashboard" class="space-y-6 animate-fade-in">
-                        
-                        <!-- NOTIFICATION PUBLISH BOX -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 max-w-xl">
-                            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
-                                <i data-lucide="megaphone" class="w-5 h-5 mr-2 text-blue-500"></i> Publish Notification
-                            </h3>
-                            <div class="space-y-3">
-                                <input id="notif-title" type="text" placeholder="Title (e.g., New Scheme Launched)" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                                <textarea id="notif-message" rows="2" placeholder="Detailed message for public view..." class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-sm"></textarea>
-                                <button onclick="addNotification()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full md:w-auto">
-                                    Publish to Website
-                                </button>
-                            </div>
-                        </div>
+                <div class="max-w-7xl mx-auto">
+                    
+                    <!-- DASHBOARD VIEW -->
+                    <div id="view-dashboard" class="space-y-6 animate-fade-in">
+                        <!-- ADD NOTIFICATION BOX -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 max-w-xl">
+    <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+        🔔 Publish Notification
+    </h3>
 
-                        <!-- Stats Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                            <!-- Total -->
-                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-500 text-xs font-medium uppercase">Total</p>
-                                        <h3 id="stat-total" class="text-2xl font-bold text-gray-800 mt-1">0</h3>
-                                    </div>
-                                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="files" class="w-5 h-5"></i></div>
-                                </div>
-                            </div>
-                            <!-- Pending -->
-                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-500 text-xs font-medium uppercase">Pending</p>
-                                        <h3 id="stat-pending" class="text-2xl font-bold text-yellow-600 mt-1">0</h3>
-                                    </div>
-                                    <div class="p-2 bg-yellow-50 text-yellow-600 rounded-lg"><i data-lucide="clock" class="w-5 h-5"></i></div>
-                                </div>
-                            </div>
-                            <!-- Accepted -->
-                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-500 text-xs font-medium uppercase">Accepted</p>
-                                        <h3 id="stat-accepted" class="text-2xl font-bold text-green-600 mt-1">0</h3>
-                                    </div>
-                                    <div class="p-2 bg-green-50 text-green-600 rounded-lg"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
-                                </div>
-                            </div>
-                            <!-- Rejected -->
-                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-500 text-xs font-medium uppercase">Rejected</p>
-                                        <h3 id="stat-rejected" class="text-2xl font-bold text-red-600 mt-1">0</h3>
-                                    </div>
-                                    <div class="p-2 bg-red-50 text-red-600 rounded-lg"><i data-lucide="x-circle" class="w-5 h-5"></i></div>
-                                </div>
-                            </div>
-                            <!-- Admins -->
-                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-500 text-xs font-medium uppercase">Admins</p>
-                                        <h3 id="stat-users" class="text-2xl font-bold text-purple-600 mt-1">0</h3>
-                                    </div>
-                                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="users" class="w-5 h-5"></i></div>
-                                </div>
-                            </div>
-                        </div>
+    <input id="notif-title"
+        type="text"
+        placeholder="Notification Title"
+        class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none">
 
-                        <!-- Service Breakdown & Table -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Breakdown -->
-                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                                <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                                    <i data-lucide="bar-chart-2" class="w-4 h-4 mr-2 text-blue-500"></i> Form-wise Breakdown
-                                </h3>
-                                <div id="service-breakdown" class="space-y-3">
-                                    <div class="text-sm text-gray-400">Loading breakdown...</div>
-                                </div>
-                            </div>
+    <textarea id="notif-message"
+        rows="3"
+        placeholder="Notification Message"
+        class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
 
-                            <!-- Table -->
-                            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                                    <h3 class="font-semibold text-gray-800">Recent Applications</h3>
-                                    <span class="text-xs text-gray-500">Live Updates</span>
-                                </div>
-                                <div class="overflow-x-auto">
-                                    <table class="w-full text-left">
-                                        <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
-                                            <tr>
-                                                <th class="px-6 py-3">Service / App No</th>
-                                                <th class="px-6 py-3">Applicant</th>
-                                                <th class="px-6 py-3">Status</th>
-                                                <th class="px-6 py-3 text-right">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="forms-table-body" class="divide-y divide-gray-100">
-                                            <tr><td colspan="4" class="p-6 text-center text-gray-400">Loading data...</td></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <button onclick="addNotification()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+        Publish
+    </button>
+</div>
 
-                    <!-- ADD APPLICATION VIEW -->
-                    <div id="view-create-form" class="hidden animate-fade-in">
-                        <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-                            <div class="p-6 border-b border-gray-100 bg-blue-50">
-                                <h2 class="text-xl font-bold text-blue-900 flex items-center">
-                                    <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> New Application Entry
-                                </h2>
-                                <p class="text-blue-600 text-sm mt-1">Select the specific form type below.</p>
-                            </div>
-                            <form id="admin-entry-form" class="p-8 space-y-5">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
-                                        <select id="entry-service" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none">
-                                            <option value="Income Certificate">Income Certificate (आय प्रमाण पत्र)</option>
-                                            <option value="Samagra ID">Samagra ID (समग्र आईडी)</option>
-                                            <option value="MP Bhoj">MP Bhoj Form (एमपी भोज)</option>
-                                            <option value="Pan Card">Pan Card (पैन कार्ड)</option>
-                                            <option value="Aadhaar Update">Aadhaar Update (आधार सुधार)</option>
-                                            <option value="Domicile Certificate">Domicile Certificate (मूल निवासी)</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name</label>
-                                        <input type="text" id="entry-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Full Name" required>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                        <input type="email" id="entry-email" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="applicant@example.com">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number</label>
-                                        <input type="text" id="entry-aadhaar" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="XXXX-XXXX-XXXX" maxlength="14">
-                                        <p class="text-xs text-gray-400 mt-1">Will store last 4 digits only</p>
-                                    </div>
-                                </div>
-                                <div class="pt-4 border-t border-gray-100">
-                                    <button type="submit" class="w-full py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md transition-all flex justify-center items-center">
-                                        <i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit Application
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <!-- Stats Cards (Same as before) -->
+                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-xs font-medium uppercase">Total Forms</p>
+                                        <h3 id="stat-total" class="text-2xl font-bold text-gray-800 mt-1">0</h3>
+                                    </div>
+                                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="files" class="w-5 h-5"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-xs font-medium uppercase">Pending</p>
+                                        <h3 id="stat-pending" class="text-2xl font-bold text-yellow-600 mt-1">0</h3>
+                                    </div>
+                                    <div class="p-2 bg-yellow-50 text-yellow-600 rounded-lg"><i data-lucide="clock" class="w-5 h-5"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-xs font-medium uppercase">Accepted</p>
+                                        <h3 id="stat-accepted" class="text-2xl font-bold text-green-600 mt-1">0</h3>
+                                    </div>
+                                    <div class="p-2 bg-green-50 text-green-600 rounded-lg"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-xs font-medium uppercase">Rejected</p>
+                                        <h3 id="stat-rejected" class="text-2xl font-bold text-red-600 mt-1">0</h3>
+                                    </div>
+                                    <div class="p-2 bg-red-50 text-red-600 rounded-lg"><i data-lucide="x-circle" class="w-5 h-5"></i></div>
+                                </div>
+                            </div>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-xs font-medium uppercase">Active Admins</p>
+                                        <h3 id="stat-users" class="text-2xl font-bold text-purple-600 mt-1">0</h3>
+                                    </div>
+                                    <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="users" class="w-5 h-5"></i></div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- ADMIN DETAILS VIEW -->
-                    <div id="view-admins" class="hidden animate-fade-in">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
-                                <div>
-                                    <h2 class="text-lg font-bold text-slate-800">Admin Management</h2>
-                                    <div class="text-xs text-slate-500">Add or Remove System Administrators</div>
-                                </div>
-                                <button onclick="toggleModal('add-admin-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
-                                    <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Add New Admin
-                                </button>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
-                                        <tr>
-                                            <th class="px-6 py-4">Admin Email</th>
-                                            <th class="px-6 py-4">Role</th>
-                                            <th class="px-6 py-4">Status</th>
-                                            <th class="px-6 py-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="admins-table-body" class="divide-y divide-gray-100">
-                                        <tr><td colspan="4" class="p-6 text-center text-gray-400">Loading admin details...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                        <!-- Service Breakdown & Table -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Chart -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                                <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                                    <i data-lucide="bar-chart-2" class="w-4 h-4 mr-2 text-blue-500"></i> Form-wise Breakdown
+                                </h3>
+                                <div id="service-breakdown" class="space-y-3">
+                                    <div class="text-sm text-gray-400">Loading breakdown...</div>
+                                </div>
+                            </div>
 
-                </div>
-            </main>
-        </div>
-    </div>
+                            <!-- Table -->
+                            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                    <h3 class="font-semibold text-gray-800">Recent Applications</h3>
+                                    <span class="text-xs text-gray-500">Live Updates from Database</span>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left">
+                                        <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
+                                            <tr>
+                                                <th class="px-6 py-3">Service / App No</th>
+                                                <th class="px-6 py-3">Applicant</th>
+                                                <th class="px-6 py-3">Status</th>
+                                                <th class="px-6 py-3 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="forms-table-body" class="divide-y divide-gray-100">
+                                            <tr><td colspan="4" class="p-6 text-center text-gray-400">Loading data...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- NOTIFICATION DRAWER (Right Side) -->
-    <div id="notif-drawer" class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-[150] transform translate-x-full transition-transform duration-300 flex flex-col">
-        <!-- Drawer Header -->
-        <div class="p-5 bg-slate-900 text-white flex justify-between items-center shadow-md">
-            <div class="flex items-center">
-                <i data-lucide="bell" class="w-5 h-5 mr-2 text-yellow-400"></i>
-                <h3 class="font-bold tracking-wide">Notifications</h3>
-            </div>
-            <button onclick="closeNotif()" class="text-slate-400 hover:text-white transition-colors">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
-        </div>
+                    <!-- ADD APPLICATION VIEW -->
+                    <div id="view-create-form" class="hidden animate-fade-in">
+                        <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                            <!-- ... existing form ... -->
+                            <div class="p-6 border-b border-gray-100 bg-blue-50">
+                                <h2 class="text-xl font-bold text-blue-900 flex items-center">
+                                    <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i> New Application Entry
+                                </h2>
+                                <p class="text-blue-600 text-sm mt-1">Select the specific form type below.</p>
+                            </div>
+                            <form id="admin-entry-form" class="p-8 space-y-5">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
+                                        <select id="entry-service" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none">
+                                            <option value="Income Certificate">Income Certificate (आय प्रमाण पत्र)</option>
+                                            <option value="Samagra ID">Samagra ID (समग्र आईडी)</option>
+                                            <option value="MP Bhoj">MP Bhoj Form (एमपी भोज)</option>
+                                            <option value="Pan Card">Pan Card (पैन कार्ड)</option>
+                                            <option value="Aadhaar Update">Aadhaar Update (आधार सुधार)</option>
+                                            <option value="Domicile Certificate">Domicile Certificate (मूल निवासी)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Applicant Name</label>
+                                        <input type="text" id="entry-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Full Name" required>
+                                    </div>
+                                </div>
 
-        <!-- Drawer Body (List) -->
-        <div id="drawer-notif-list" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-            <p class="text-center text-gray-500 text-sm mt-10">Loading notifications...</p>
-        </div>
-        
-        <div class="p-3 bg-gray-100 border-t text-center text-xs text-gray-500">
-            Visible on Index Page
-        </div>
-    </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input type="email" id="entry-email" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="applicant@example.com">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number</label>
+                                        <input type="text" id="entry-aadhaar" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="XXXX-XXXX-XXXX" maxlength="14">
+                                        <p class="text-xs text-gray-400 mt-1">Will store last 4 digits only</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-4 border-t border-gray-100">
+                                    <button type="submit" class="w-full py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md transition-all flex justify-center items-center">
+                                        <i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit Application
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            updateDoc, 
-            getDoc,
-            setDoc,
-            doc, 
-            onSnapshot, 
-            serverTimestamp, 
-            deleteDoc,
-            orderBy,
-            query 
-        } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInWithEmailAndPassword,
-            createUserWithEmailAndPassword,
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+                    <!-- ADMIN DETAILS VIEW -->
+                    <div id="view-admins" class="hidden animate-fade-in">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-800">Admin Management</h2>
+                                    <div class="text-xs text-slate-500">Add or Remove System Administrators</div>
+                                </div>
+                                <button onclick="toggleModal('add-admin-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors shadow-sm">
+                                    <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Add New Admin
+                                </button>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+                                        <tr>
+                                            <th class="px-6 py-4">Admin Email</th>
+                                            <th class="px-6 py-4">Role</th>
+                                            <th class="px-6 py-4">Status</th>
+                                            <th class="px-6 py-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admins-table-body" class="divide-y divide-gray-100">
+                                        <tr><td colspan="4" class="p-6 text-center text-gray-400">Loading admin details...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            updateDoc, 
+            getDoc,
+            setDoc,
+            doc, 
+            onSnapshot, 
+            serverTimestamp, 
+            deleteDoc,
+            orderBy,
+            query 
+        } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 
-        // --- Configuration ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-            authDomain: "allinone-aa89.firebaseapp.com",
-            projectId: "allinone-aa89",
-            storageBucket: "allinone-aa89.appspot.com",
-            messagingSenderId: "924003122498",
-            appId: "1:924003122498:web:2c86505457236e60055cdb",
-            measurementId: "G-45N39T3BB6"
-        };
+        // --- Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+            authDomain: "allinone-aa89.firebaseapp.com",
+            projectId: "allinone-aa89",
+            storageBucket: "allinone-aa89.appspot.com",
+            messagingSenderId: "924003122498",
+            appId: "1:924003122498:web:2c86505457236e60055cdb",
+            measurementId: "G-45N39T3BB6"
+        };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // --- Constants ---
-        const COLLECTION_NAME = 'applications'; 
-        const LOGS_COLLECTION = 'admin_logs';
-        const ADMINS_COLLECTION = "admins";
-        const NOTIF_COLLECTION = "notifications";
+        // --- Constants ---
+        const COLLECTION_NAME = 'applications'; 
+        const LOGS_COLLECTION = 'admin_logs';
+        const ADMINS_COLLECTION = "admins";
+        const NOTIF_COLLECTION = "notifications";
 
-        // --- State ---
-        let applications = [];
-        let adminList = []; 
-        let unsubscribeApps = null;
-        let unsubscribeAdmins = null;
+        // --- State ---
+        let applications = [];
+        let adminList = []; 
+        let unsubscribeApps = null;
+        let unsubscribeAdmins = null;
 
-        // --- Auth Logic ---
-        onAuthStateChanged(auth, async (user) => {
-            const authLoader = document.getElementById('auth-loader');
-            const dashboardView = document.getElementById('dashboard-view');
+        // --- Auth Logic (STRICT SECURITY) ---
+        onAuthStateChanged(auth, async (user) => {
+            const authLoader = document.getElementById('auth-loader');
+            const dashboardView = document.getElementById('dashboard-view');
 
-            if (!user) {
-                window.location.href = "adminlogin.html"; 
-                return;
-            }
+            if (!user) {
+                window.location.href = "adminlogin.html"; 
+                return;
+            }
 
-            try {
-                const snap = await getDoc(doc(db, ADMINS_COLLECTION, user.uid));
-                
-                if (!snap.exists()) {
-                    alert("Access denied: Not a registered admin.");
-                    await signOut(auth);
-                    window.location.href = "adminlogin.html";
-                    return;
-                }
+            try {
+                const snap = await getDoc(doc(db, ADMINS_COLLECTION, user.uid));
+                
+                if (!snap.exists()) {
+                    alert("Access denied: Not a registered admin.");
+                    await signOut(auth);
+                    window.location.href = "adminlogin.html";
+                    return;
+                }
 
-                const admin = snap.data();
-                if (admin.role !== "super_admin" && admin.role !== "admin") {
-                     // Allow both super_admin and admin to login, but enforce strict check if needed
-                     if(admin.status !== "active") {
-                         alert("Your account is inactive.");
-                         await signOut(auth);
-                         return;
-                     }
-                }
+                const admin = snap.data();
+                if (admin.role !== "super_admin" || admin.status !== "active") {
+                    alert("Restricted Access: Super Admin only.");
+                    await signOut(auth);
+                    window.location.href = "adminlogin.html";
+                    return;
+                }
 
-                document.getElementById('admin-email-display').innerText = user.email || "Admin";
-                
-                authLoader.style.opacity = '0';
-                setTimeout(() => {
-                    authLoader.style.display = 'none';
-                    dashboardView.style.display = 'flex'; 
-                }, 300);
+                document.getElementById('admin-email-display').innerText = user.email || "Super Admin";
+                
+                authLoader.style.opacity = '0';
+                setTimeout(() => {
+                    authLoader.style.display = 'none';
+                    dashboardView.style.display = 'flex'; 
+                }, 300);
 
-                setupRealtimeListeners();
+                setupRealtimeListeners();
 
-            } catch (error) {
-                console.error("Auth verification failed:", error);
-                await signOut(auth);
-                window.location.href = "adminlogin.html";
-            }
-        });
+            } catch (error) {
+                console.error("Auth verification failed:", error);
+                await signOut(auth);
+                window.location.href = "adminlogin.html";
+            }
+        });
 
-        // --- Listeners ---
-        function setupRealtimeListeners() {
-            // Admins
-            const adminsRef = collection(db, ADMINS_COLLECTION);
-            unsubscribeAdmins = onSnapshot(adminsRef, (snapshot) => {
-                let totalAdmins = 0;
-                adminList = [];
-                snapshot.forEach(docSnap => {
-                    const d = docSnap.data();
-                    adminList.push({ id: docSnap.id, ...d }); 
-                    if (d.status === "active") totalAdmins++;
-                });
-                document.getElementById("stat-users").innerText = totalAdmins;
-                renderAdmins();
-            }, (error) => console.log("Admin stats require auth"));
+        // --- Listeners ---
+        function setupRealtimeListeners() {
+            const adminsRef = collection(db, ADMINS_COLLECTION);
+            unsubscribeAdmins = onSnapshot(adminsRef, (snapshot) => {
+                let totalAdmins = 0;
+                adminList = [];
 
-            // Applications
-            const appRef = collection(db, COLLECTION_NAME);
-            unsubscribeApps = onSnapshot(appRef, (snapshot) => {
-                applications = [];
-                let stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
-                let serviceCounts = {};
+                snapshot.forEach(docSnap => {
+                    const d = docSnap.data();
+                    adminList.push({ id: docSnap.id, ...d }); 
+                    if (d.status === "active") totalAdmins++;
+                });
+                
+                document.getElementById("stat-users").innerText = totalAdmins;
+                renderAdmins();
 
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    applications.push({ id: docSnap.id, ...data });
+            }, (error) => console.log("Admin stats require auth"));
 
-                    stats.total++;
-                    const st = (data.status || "pending").toLowerCase();
-                    if (st === "pending") stats.pending++;
-                    else if (st === "accepted") stats.accepted++;
-                    else if (st === "rejected") stats.rejected++;
+            const appRef = collection(db, COLLECTION_NAME);
+            unsubscribeApps = onSnapshot(appRef, (snapshot) => {
+                applications = [];
+                let stats = { total: 0, pending: 0, accepted: 0, rejected: 0 };
+                let serviceCounts = {};
 
-                    const type = data.serviceType || data.formType || "Other";
-                    serviceCounts[type] = (serviceCounts[type] || 0) + 1;
-                });
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    applications.push({ id: docSnap.id, ...data });
 
-                updateStatsUI(stats);
-                renderServiceBreakdown(serviceCounts, stats.total);
-                renderTable();
-                
-                document.getElementById('loading').classList.add('hidden');
-            });
+                    stats.total++;
+                    const st = (data.status || "pending").toLowerCase();
+                    if (st === "pending") stats.pending++;
+                    else if (st === "accepted") stats.accepted++;
+                    else if (st === "rejected") stats.rejected++;
 
-            // Notifications
-            const notifQuery = query(
-                collection(db, NOTIF_COLLECTION),
-                orderBy("createdAt", "desc")
-            );
+const type = data.serviceType || data.formType || "Other";
+                    serviceCounts[type] = (serviceCounts[type] || 0) + 1;
+                });
 
-            onSnapshot(notifQuery, (snapshot) => {
-                const drawerBox = document.getElementById("drawer-notif-list");
-                let html = "";
+                updateStatsUI(stats);
+                renderServiceBreakdown(serviceCounts, stats.total);
+                renderTable();
+                
+                document.getElementById('loading').classList.add('hidden');
+            }, (error) => {
+                console.error("Listener Error:", error);
+                document.getElementById('loading').classList.add('hidden');
+            });
+            // ---- Notifications Listener ----
+const notifQuery = query(
+    collection(db, NOTIF_COLLECTION),
+    orderBy("createdAt", "desc")
+);
 
-                if (snapshot.empty) {
-                    html = `
-                    <div class="flex flex-col items-center justify-center pt-10 text-gray-400">
-                        <i data-lucide="bell-off" class="w-10 h-10 mb-2"></i>
-                        <p class="text-sm">No Active Notifications</p>
-                    </div>`;
-                } else {
-                    snapshot.forEach(docSnap => {
-                        const n = docSnap.data();
-                        const date = n.createdAt ? new Date(n.createdAt.seconds * 1000).toLocaleDateString() : 'Just now';
-                        
-                        html += `
-                        <div class="relative bg-white border-l-4 border-blue-600 shadow-sm p-4 rounded-r-lg group hover:shadow-md transition-shadow">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="font-bold text-gray-800 text-sm">${n.title}</p>
-                                    <p class="text-xs text-gray-500 mt-1 mb-2">${date}</p>
-                                </div>
-                                <button onclick="window.deleteNotif('${docSnap.id}')" class="text-gray-300 hover:text-red-500 transition-colors p-1" title="Delete Notification">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                            <p class="text-sm text-gray-600 leading-relaxed">${n.message}</p>
-                        </div>`;
-                    });
-                }
+onSnapshot(notifQuery, (snapshot) => {
+    const adminBox = document.getElementById("notif-list");
+    const drawerBox = document.getElementById("drawer-notif-list");
 
-                drawerBox.innerHTML = html;
-                lucide.createIcons();
-            });
-        }
+    let html = "";
 
-        // --- Functions ---
-        
-        // Notification Logic
-        window.addNotification = async () => {
-            const title = document.getElementById("notif-title").value;
-            const message = document.getElementById("notif-message").value;
+    if (snapshot.empty) {
+        html = `<p class="text-gray-400 text-sm">No notifications</p>`;
+    } else {
+        snapshot.forEach(doc => {
+            const n = doc.data();
+            html += `
+            <div class="border-l-4 border-blue-600 bg-blue-50 p-3 rounded">
+                <p class="font-semibold text-sm">${n.title}</p>
+                <p class="text-xs text-gray-600">${n.message}</p>
+            </div>`;
+        });
+    }
 
-            if (!title || !message) {
-                alert("Please enter both Title and Message");
-                return;
-            }
+    if (adminBox) adminBox.innerHTML = html;
+    if (drawerBox) drawerBox.innerHTML = html;
+});
 
-            try {
-                document.getElementById('loading').classList.remove('hidden');
-                await addDoc(collection(db, NOTIF_COLLECTION), {
-                    title: title,
-                    message: message,
-                    active: true,
-                    createdAt: serverTimestamp(),
-                    createdBy: auth.currentUser.email
-                });
+        }
 
-                document.getElementById("notif-title").value = "";
-                document.getElementById("notif-message").value = "";
-                document.getElementById('loading').classList.add('hidden');
+        // --- UI Interactions ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Admin Entry Form
+            document.getElementById('admin-entry-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const serviceType = document.getElementById('entry-service').value;
+                const applicantName = document.getElementById('entry-name').value;
+                const email = document.getElementById('entry-email').value;
+                const aadhaar = document.getElementById('entry-aadhaar').value;
+                
+                const data = {
+                    serviceType,
+                    applicantName,
+                    email,
+                    aadhaarNumber: aadhaar 
+                };
 
-                showToast("Notification Published Successfully");
-                // Open drawer to show the new item
-                openNotif();
+                await submitApplication(data);
+                e.target.reset();
+            });
 
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading').classList.add('hidden');
-                showToast("Failed to publish");
-            }
-        };
+            // New Admin Form
+            document.getElementById('new-admin-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await createNewAdmin();
+            });
+        });
 
-        window.deleteNotif = async (id) => {
-            if(!confirm("Delete this notification? It will be removed from the public website.")) return;
-            try {
-                await deleteDoc(doc(db, NOTIF_COLLECTION, id));
-                showToast("Notification Deleted");
-            } catch(e) {
-                console.error(e);
-                showToast("Delete failed");
-            }
-        }
+        // --- Modal Logic ---
+        window.toggleModal = (modalID) => {
+            const modal = document.getElementById(modalID);
+            modal.classList.toggle('opacity-0');
+            modal.classList.toggle('pointer-events-none');
+            document.body.classList.toggle('modal-active');
+        }
 
-        window.openNotif = () => {
-            const drawer = document.getElementById("notif-drawer");
-            drawer.classList.remove("translate-x-full");
-            // Add click outside listener
-            setTimeout(() => {
-                document.addEventListener('click', closeOnClickOutside);
-            }, 100);
-        };
+        // --- Database Actions ---
 
-        window.closeNotif = () => {
-            document.getElementById("notif-drawer").classList.add("translate-x-full");
-            document.removeEventListener('click', closeOnClickOutside);
-        };
+        // 1. Submit Application
+        async function submitApplication(formData) {
+            try {
+                document.getElementById('loading').classList.remove('hidden');
 
-        function closeOnClickOutside(e) {
-            const drawer = document.getElementById("notif-drawer");
-            const btn = document.querySelector('button[onclick="openNotif()"]');
-            
-            // If clicking inside drawer or on the bell button, do nothing
-            if (drawer.contains(e.target) || (btn && btn.contains(e.target))) return;
-            
-            closeNotif();
-        }
+                const data = {
+                    serviceType: formData.serviceType,
+                    applicantName: formData.applicantName,
+                    email: formData.email,
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                };
 
-        // ... (Other helper functions mostly same as before) ...
+                if (formData.aadhaarNumber) {
+                    data.aadhaarLast4 = formData.aadhaarNumber.slice(-4);
+                }
 
-        // Application Submission
-        document.getElementById('admin-entry-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const serviceType = document.getElementById('entry-service').value;
-            const applicantName = document.getElementById('entry-name').value;
-            const email = document.getElementById('entry-email').value;
-            const aadhaar = document.getElementById('entry-aadhaar').value;
-            
-            const data = {
-                serviceType, applicantName, email,
-                aadhaarLast4: aadhaar ? aadhaar.slice(-4) : '',
-                status: "pending",
-                createdAt: serverTimestamp()
-            };
+                const docRef = await addDoc(collection(db, COLLECTION_NAME), data);
+                const applicationNumber = "AIO-" + docRef.id.substring(0, 8).toUpperCase();
+                
+                await updateDoc(doc(db, COLLECTION_NAME, docRef.id), {
+                    applicationNumber
+                });
 
-            try {
-                document.getElementById('loading').classList.remove('hidden');
-                const docRef = await addDoc(collection(db, COLLECTION_NAME), data);
-                const applicationNumber = "AIO-" + docRef.id.substring(0, 8).toUpperCase();
-                await updateDoc(doc(db, COLLECTION_NAME, docRef.id), { applicationNumber });
-                
-                document.getElementById('loading').classList.add('hidden');
-                e.target.reset();
-                showToast(`App ${applicationNumber} Submitted`);
-                switchTab('dashboard');
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading').classList.add('hidden');
-                showToast("Submission Failed");
-            }
-        });
+                await logActivity("New Submission", `App #${applicationNumber} - ${(formData.serviceType || formData.formType)}`, "info");
 
-        // Add New Admin
-        document.getElementById('new-admin-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('new-admin-email').value;
-            const password = document.getElementById('new-admin-password').value;
-            const role = document.getElementById('new-admin-role').value;
-            
-            try {
-                document.getElementById('loading').classList.remove('hidden');
-                toggleModal('add-admin-modal');
+                document.getElementById('loading').classList.add('hidden');
+                showToast(`Application ${applicationNumber} Submitted!`);
+                switchTab('dashboard');
 
-                // Using secondary app instance to create user without logging out admin
-                const secondaryApp = initializeApp(firebaseConfig, "Secondary");
-                const secondaryAuth = getAuth(secondaryApp);
-                const uc = await createUserWithEmailAndPassword(secondaryAuth, email, password);
-                
-                await setDoc(doc(db, ADMINS_COLLECTION, uc.user.uid), {
-                    email, role, status: 'active', createdAt: serverTimestamp()
-                });
-                
-                await signOut(secondaryAuth); // Clean up secondary auth
-                
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('new-admin-form').reset();
-                showToast("Admin Created Successfully");
-            } catch (error) {
-                document.getElementById('loading').classList.add('hidden');
-                alert("Error: " + error.message);
-            }
-        });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').classList.add('hidden');
+                showToast("Submission Failed");
+            }
+        }
+window.addNotification = async () => {
+    const title = document.getElementById("notif-title").value;
+    const message = document.getElementById("notif-message").value;
 
-        // UI Helpers
-        window.toggleModal = (id) => {
-            const m = document.getElementById(id);
-            m.classList.toggle('opacity-0');
-            m.classList.toggle('pointer-events-none');
-        };
-        
-        window.switchTab = (tabId) => {
-            document.querySelectorAll('.nav-item').forEach(el => {
-                if(el.dataset.tab === tabId) {
-                    el.classList.remove('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
-                    el.classList.add('border-blue-500', 'bg-slate-800', 'text-blue-400');
-                } else {
-                    el.classList.add('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
-                    el.classList.remove('border-blue-500', 'bg-slate-800', 'text-blue-400');
-                }
-            });
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-create-form').classList.add('hidden');
-            document.getElementById('view-admins').classList.add('hidden');
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            
-            const titles = {'dashboard': 'Overview', 'create-form': 'Admin Entry', 'admins': 'Admin Management'};
-            document.getElementById('page-title').innerText = titles[tabId];
-        };
+    if (!title || !message) {
+        alert("Title & message required");
+        return;
+    }
 
-        window.showToast = (msg) => {
-            const el = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = msg;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 3000);
-        };
+    try {
+        await addDoc(collection(db, NOTIF_COLLECTION), {
+            title: title,
+            message: message,
+            active: true,
+            createdAt: serverTimestamp(),
+            createdBy: auth.currentUser.email
+        });
 
-        window.updateStatus = async (id, status) => {
-            await updateDoc(doc(db, COLLECTION_NAME, id), { status: status.toLowerCase() });
-            showToast(`Status: ${status}`);
-        };
+        document.getElementById("notif-title").value = "";
+        document.getElementById("notif-message").value = "";
 
-        window.deleteAdmin = async (id, email) => {
-            if(confirm(`Remove admin ${email}?`)) {
-                await deleteDoc(doc(db, ADMINS_COLLECTION, id));
-                showToast("Admin Removed");
-            }
-        };
+        showToast("Notification Published");
 
-        window.logoutSystem = async () => {
-            await signOut(auth);
-            window.location.href = "adminlogin.html";
-        };
-        
-        // Initial Rendering
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-        });
-    </script>
+    } catch (err) {
+        console.error(err);
+        showToast("Failed to add notification");
+    }
+};
+
+        // 2. Create New Admin (The smart way)
+        async function createNewAdmin() {
+            const email = document.getElementById('new-admin-email').value;
+            const password = document.getElementById('new-admin-password').value;
+            const role = document.getElementById('new-admin-role').value;
+            
+            try {
+                document.getElementById('loading').classList.remove('hidden');
+                window.toggleModal('add-admin-modal');
+
+                // Initialize a SECONDARY App to create user without logging out the current Super Admin
+                const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+                const secondaryAuth = getAuth(secondaryApp);
+
+                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                const newUser = userCredential.user;
+
+                // Add to Firestore 'admins' collection
+                await setDoc(doc(db, ADMINS_COLLECTION, newUser.uid), {
+                    email: email,
+                    role: role,
+                    status: 'active',
+                    createdAt: serverTimestamp()
+                });
+
+                await logActivity("Admin Created", `Added new admin: ${email}`, "success");
+                
+                // Cleanup secondary app logout (just in case)
+                await signOut(secondaryAuth);
+                
+                document.getElementById('new-admin-form').reset();
+                document.getElementById('loading').classList.add('hidden');
+                showToast("New Admin Created Successfully!");
+
+            } catch (error) {
+                console.error("Error creating admin:", error);
+                document.getElementById('loading').classList.add('hidden');
+                
+                let msg = "Failed to create admin";
+                if(error.code === 'auth/email-already-in-use') msg = "Email already registered!";
+                if(error.code === 'auth/weak-password') msg = "Password too weak (min 6 chars)";
+                
+                alert(msg);
+            }
+        }
+
+        // 3. Delete Admin
+        window.deleteAdmin = async (id, email) => {
+            if(!confirm(`Are you sure you want to remove admin access for ${email}?`)) return;
+            
+            try {
+                document.getElementById('loading').classList.remove('hidden');
+                
+                // We delete the document from Firestore. 
+                // Note: The user remains in Auth but loses access because we check the DB on login.
+                await deleteDoc(doc(db, ADMINS_COLLECTION, id));
+                
+                await logActivity("Admin Removed", `Removed admin: ${email}`, "warning");
+                
+                document.getElementById('loading').classList.add('hidden');
+                showToast("Admin Removed Successfully");
+                
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').classList.add('hidden');
+                showToast("Failed to remove admin");
+            }
+        }
+
+        async function updateStatus(id, newStatus) {
+            try {
+                await updateDoc(doc(db, COLLECTION_NAME, id), {
+                    status: newStatus.toLowerCase()
+                });
+                
+                await logActivity("Status Update", `App ID ${id.substring(0,5)}... marked as ${newStatus}`, newStatus === 'Accepted' ? 'success' : 'warning');
+                showToast(`Status updated to ${newStatus}`);
+            } catch (e) {
+                console.error(e);
+                showToast("Update Failed");
+            }
+        }
+
+        async function logActivity(action, details, type) {
+            try {
+                await addDoc(collection(db, LOGS_COLLECTION), {
+                    action, details, type,
+                    createdAt: serverTimestamp(),
+                    time: new Date().toLocaleTimeString()
+                });
+            } catch (e) { console.error("Log error"); }
+        }
+
+        // --- UI Rendering ---
+
+        function updateStatsUI(stats) {
+            document.getElementById('stat-total').innerText = stats.total;
+            document.getElementById('stat-pending').innerText = stats.pending;
+            document.getElementById('stat-accepted').innerText = stats.accepted;
+            document.getElementById('stat-rejected').innerText = stats.rejected;
+        }
+
+        function renderServiceBreakdown(counts, total) {
+            const container = document.getElementById('service-breakdown');
+            if (total === 0) {
+                container.innerHTML = '<div class="text-sm text-gray-400">No data available</div>';
+                return;
+            }
+            // ... (Same logic as before)
+            const services = [
+                { name: 'Income Certificate', icon: 'banknote', color: 'text-green-600', bg: 'bg-green-100' },
+                { name: 'Samagra ID', icon: 'users', color: 'text-blue-600', bg: 'bg-blue-100' },
+                { name: 'MP Bhoj', icon: 'book-open', color: 'text-purple-600', bg: 'bg-purple-100' },
+                { name: 'Pan Card', icon: 'credit-card', color: 'text-orange-600', bg: 'bg-orange-100' },
+                { name: 'Aadhaar Update', icon: 'fingerprint', color: 'text-red-600', bg: 'bg-red-100' },
+                { name: 'Domicile Certificate', icon: 'home', color: 'text-indigo-600', bg: 'bg-indigo-100' }
+            ];
+
+            let html = '';
+            Object.entries(counts).forEach(([serviceName, count]) => {
+                let def = services.find(s => serviceName.includes(s.name) || s.name.includes(serviceName)) || { icon: 'file', color: 'text-gray-600', bg: 'bg-gray-100' };
+                const percentage = Math.round((count / total) * 100);
+
+                html += `
+                <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-md ${def.bg} ${def.color}">
+                            <i data-lucide="${def.icon}" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800 truncate w-32">${serviceName}</p>
+                            <div class="w-24 bg-gray-200 rounded-full h-1.5 mt-1">
+                                <div class="bg-slate-800 h-1.5 rounded-full" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-bold text-gray-900">${count}</p>
+                        <p class="text-xs text-gray-500">${percentage}%</p>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('forms-table-body');
+            if (applications.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400">No applications found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = applications.map(app => {
+                const status = (app.status || 'pending').toLowerCase(); 
+                let badgeClass = 'bg-yellow-100 text-yellow-700';
+                if (status === 'accepted') badgeClass = 'bg-green-100 text-green-700';
+                if (status === 'rejected') badgeClass = 'bg-red-100 text-red-700';
+
+                let dateStr = "N/A";
+                if(app.createdAt && app.createdAt.seconds) {
+                    dateStr = new Date(app.createdAt.seconds * 1000).toLocaleDateString();
+                }
+
+                let actions = '';
+                if (status === 'pending') {
+                    actions = `
+                        <button onclick="window.updateStatus('${app.id}', 'Accepted')" class="p-1.5 text-green-600 hover:bg-green-100 rounded mr-1" title="Accept"><i data-lucide="check" class="w-5 h-5"></i></button>
+                        <button onclick="window.updateStatus('${app.id}', 'Rejected')" class="p-1.5 text-red-600 hover:bg-red-100 rounded" title="Reject"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    `;
+                } else {
+                    actions = `<span class="text-xs uppercase font-bold text-gray-400">${status}</span>`;
+                }
+
+                return `
+                <tr class="hover:bg-gray-50 border-b border-gray-100 last:border-0">
+                    <td class="px-6 py-4">
+<div class="font-bold text-gray-800">
+  ${app.serviceType || app.formType || 'Unknown'}
+</div>
+                        <div class="text-xs text-blue-600 font-medium">${app.applicationNumber || 'Processing...'}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 font-medium">${app.applicantName || 'N/A'}</div>
+                        <div class="text-xs text-gray-500">${dateStr}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-medium capitalize ${badgeClass}">${status}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        ${actions}
+                    </td>
+                </tr>
+                `;
+            }).join('');
+            
+            lucide.createIcons();
+        }
+
+        function renderAdmins() {
+            const container = document.getElementById('admins-table-body');
+            if(adminList.length === 0) {
+                container.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400 text-sm">No admins found</td></tr>';
+                return;
+            }
+            
+            container.innerHTML = adminList.map(admin => {
+                const isMe = auth.currentUser && auth.currentUser.uid === admin.id;
+                
+                let roleColor = admin.role === 'super_admin' ? 'text-purple-600 bg-purple-100' : 'text-blue-600 bg-blue-100';
+                let statusColor = admin.status === 'active' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+                
+                // --- Delete Button Logic ---
+                // Show delete button ONLY if it's not the current user
+                let deleteBtn = '';
+                if (!isMe) {
+                    deleteBtn = `
+                        <button onclick="window.deleteAdmin('${admin.id}', '${admin.email}')" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors" title="Remove Admin">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                } else {
+                    deleteBtn = `<span class="text-xs text-gray-400 italic">Current User</span>`;
+                }
+
+                return `
+                <tr class="hover:bg-slate-50 border-b border-gray-100 last:border-0 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs mr-3">
+                                ${admin.email ? admin.email.charAt(0).toUpperCase() : 'A'}
+                            </div>
+                            <span class="text-sm font-medium text-slate-700">${admin.email || 'No Email'}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-semibold capitalize ${roleColor}">
+                            ${admin.role ? admin.role.replace('_', ' ') : 'User'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="flex items-center w-fit px-2.5 py-1 rounded-full text-xs font-medium ${statusColor}">
+                            <span class="w-1.5 h-1.5 rounded-full ${admin.status === 'active' ? 'bg-green-500' : 'bg-red-500'} mr-2"></span>
+                            ${admin.status || 'Unknown'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        ${deleteBtn}
+                    </td>
+                </tr>
+                `;
+            }).join('');
+            
+            lucide.createIcons();
+        }
+
+        // --- Global Exports ---
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                if(el.dataset.tab === tabId) {
+                    el.classList.remove('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
+                    el.classList.add('border-blue-500', 'bg-slate-800', 'text-blue-400');
+                } else {
+                    el.classList.add('border-transparent', 'text-slate-400', 'hover:bg-slate-800');
+                    el.classList.remove('border-blue-500', 'bg-slate-800', 'text-blue-400');
+                }
+            });
+            
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-create-form').classList.add('hidden');
+            document.getElementById('view-admins').classList.add('hidden'); 
+            
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            
+            const titles = {'dashboard': 'Overview', 'create-form': 'Admin Entry', 'admins': 'Admin Management'};
+            document.getElementById('page-title').innerText = titles[tabId];
+        };
+
+        window.showToast = (msg) => {
+            const el = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3000);
+        };
+        
+        window.updateStatus = updateStatus;
+        window.logoutSystem = async () => {
+            try {
+                if(unsubscribeApps) unsubscribeApps();
+                if(unsubscribeAdmins) unsubscribeAdmins();
+                
+                await logActivity("Logout", "User manually logged out", "warning");
+                await signOut(auth);
+                window.location.href = "adminlogin.html";
+                
+            } catch (error) {
+                console.error("Logout failed:", error);
+                showToast("Logout failed");
+            }
+        };
+window.openNotif = () => {
+    document.getElementById("notif-drawer")
+        .classList.remove("translate-x-full");
+};
+
+window.closeNotif = () => {
+    document.getElementById("notif-drawer")
+        .classList.add("translate-x-full");
+};
+
+    </script>
+  <div id="notif-drawer"
+ class="fixed top-0 right-0 h-full w-96 bg-white shadow-xl z-[110]
+ transform translate-x-full transition-transform duration-300 rounded-l-2xl">
+
+    <!-- HEADER -->
+    <div class="p-4 bg-blue-900 text-white flex justify-between">
+        <h3 class="font-bold">महत्वपूर्ण सूचनाएं</h3>
+        <button onclick="closeNotif()">✕</button>
+    </div>
+
+    <!-- OPTIONAL: Admin preview list -->
+    <div id="notif-list" class="p-4 space-y-3 border-b"></div>
+
+    <!-- MAIN DRAWER LIST -->
+    <div id="drawer-notif-list"
+         class="p-4 space-y-3 overflow-y-auto h-full"></div>
+</div>
+
+
 </body>
 </html>
+isme notification jo yahi icon par click karne par dikh raha hai mai chahta hu ye notification index.html me dikhe ye sahi karo fir mai index ki file dunga use sahi karna 
