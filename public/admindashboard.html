@@ -377,14 +377,7 @@
             createUserWithEmailAndPassword,
             signOut 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { where } from
-"https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-const notifQuery = query(
-  collection(db, NOTIF_COLLECTION),
-  where("active", "==", true),
-  orderBy("createdAt", "desc")
-);
 
         // --- Configuration ---
         const firebaseConfig = {
