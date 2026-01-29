@@ -341,48 +341,32 @@ class="p-6 md:p-10 space-y-10">
 </section>
 
                 <!-- Final Submit Section -->
-              <div class="pt-6 border-t space-y-4">
-    <label class="flex items-start gap-3 cursor-pointer">
-        <input type="checkbox" id="declarationCheck" class="mt-1 h-4 w-4 text-blue-600 rounded" required>
-        <span class="text-xs text-gray-600 italic">
-            मैं एतद् द्वारा यह घोषणा करता/करती हूँ कि आवेदन में दी गई समस्त जानकारी पूर्णतः सत्य है।
-        </span>
-    </label>
+                <div class="pt-6 border-t space-y-4">
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded" required>
+                        <span class="text-xs text-gray-600 italic">
+                            मैं एतद् द्वारा यह घोषणा करता/करती हूँ कि आवेदन में दी गई समस्त जानकारी पूर्णतः सत्य है। किसी भी त्रुटि की स्थिति में मैं स्वयं जिम्मेदार रहूँगा/रहूँगी।
+                        </span>
+                    </label>
 
-    <div class="flex gap-4">
-      <a 
-  href="https://rzp.io/rzp/O4pBDA7" 
-  target="_blank"
-  id="payNowBtn"
-  class="flex-1 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold text-lg text-center transition"
->
-  Pay Now ₹99
-</a>
+                    <div class="flex gap-4">
+                        <button type="submit" class="flex-1 bg-blue-700 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-800 shadow-xl shadow-blue-200 transition active:scale-95">
+                            आवेदन जमा करें
+                        </button>
+                        <button type="reset" class="px-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
+                            रीसेट
+                        </button>
+                    </div>
+                </div>
 
-
-
-        
-        <button type="reset" class="px-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
-            रीसेट
-        </button>
-    </div>
-</div>
             </form>
         </div>
     </main>
 
     <!-- Simple Footer -->
     <div id="footer"></div>
-
-
-<!-- 2️⃣ EmailJS (used inside common.js) -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
-<!-- 3️⃣ Common JS (header, footer, pincode, emailjs.init) -->
-<script src="assets/js/common.js?v=1.0" defer></script>
-
-<!-- 4️⃣ Form + Payment Logic (ES Module) -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="assets/js/common.js?v=1.0" defer></script>
 <script type="module" src="assets/js/form.js?v=1.0"></script>
-
 </body>
 </html>
