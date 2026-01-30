@@ -1,316 +1,4 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AllInOne MP – Admin Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-/* ... (same CSS as before - no changes needed) ... */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
-:root {
---primary-color: #1e3a8a;
---secondary-color: #3b82f6;
---success-color: #22c55e;
---warning-color: #f59e0b;
---danger-color: #ef4444;
---sidebar-width: 280px;
-}
-body {
-font-family: 'Noto Sans Devanagari', sans-serif;
-background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-overflow-x: hidden;
-}
-/* ... (rest of CSS remains same) ... */
-</style>
-</head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
-<!-- LOADING SCREEN -->
-<div id="loadingScreen" class="loading-screen">
-<div class="text-center">
-<div class="loading-spinner"></div>
-<p class="mt-4 text-gray-600 font-medium">लोड हो रहा है...</p>
-</div>
-</div>
-
-<!-- SIDEBAR -->
-<aside class="sidebar bg-gradient-to-b from-blue-900 to-blue-700 text-white h-screen fixed left-0 top-0 z-40 shadow-2xl">
-<div class="p-5 border-b border-blue-600">
-<div class="flex items-center justify-between mb-6">
-<div class="flex items-center gap-3">
-<div class="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
-<div class="bg-white w-10 h-10 rounded flex items-center justify-center">
-<span class="text-blue-900 font-bold text-xl">MP</span>
-</div>
-</div>
-<div class="sidebar-text">
-<h1 class="text-xl font-bold">AllInOne-MP</h1>
-<p class="text-xs opacity-90 mt-1">Admin Panel</p>
-</div>
-</div>
-<button id="sidebarToggle" class="sidebar-text p-2 hover:bg-white/10 rounded-lg transition">
-<i class="fas fa-chevron-left"></i>
-</button>
-</div>
-<div class="mb-2 sidebar-text">
-<div class="bg-white/10 backdrop-blur-sm p-3 rounded-lg">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-xs opacity-90">सक्रिय उपयोगकर्ता</p>
-<p class="font-bold mt-1" id="sidebarAdminName">लोड हो रहा है...</p>
-</div>
-<div class="bg-yellow-300 text-blue-900 font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm">
-<i class="fas fa-user"></i>
-</div>
-</div>
-</div>
-</div>
-</div>
-<nav class="mt-2 p-3">
-<ul class="space-y-1">
-<li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm w-full sidebar-text">
-<i class="fas fa-home text-xl"></i>
-<span class="font-medium">डैशबोर्ड</span>
-</a>
-</li>
-<li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
-<i class="fas fa-list text-xl"></i>
-<span class="font-medium">आवेदन सूची</span>
-</a>
-</li>
-<li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
-<i class="fas fa-chart-bar text-xl"></i>
-<span class="font-medium">विश्लेषण</span>
-</a>
-</li>
-<li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
-<i class="fas fa-users text-xl"></i>
-<span class="font-medium">उपयोगकर्ता</span>
-</a>
-</li>
-<li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
-<i class="fas fa-cog text-xl"></i>
-<span class="font-medium">सेटिंग्स</span>
-</a>
-</li>
-</ul>
-</nav>
-<div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-600">
-<div class="flex items-center justify-between sidebar-text">
-<div>
-<p class="text-xs opacity-90">© 2026 AllInOne MP</p>
-<p class="text-xs mt-1 opacity-75">संस्करण 2.0</p>
-</div>
-<button onclick="logout()" class="p-2 hover:bg-white/10 rounded-lg transition" title="लॉगआउट">
-<i class="fas fa-sign-out-alt text-lg"></i>
-</button>
-</div>
-</div>
-</aside>
-
-<!-- MAIN CONTENT -->
-<main class="main-content flex-1 ml-72 container mx-auto px-4 py-6 transition-all">
-<!-- HEADER -->
-<header class="bg-white rounded-2xl shadow-lg p-5 mb-6 fade-in">
-<div class="flex flex-col md:flex-row justify-between items-center gap-4">
-<div>
-<h1 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
-<i class="fas fa-tachometer-alt text-blue-600"></i>
-एडमिन डैशबोर्ड
-</h1>
-<p class="text-gray-500 mt-1 text-sm">मध्य प्रदेश सरकार - एक विंडो समाधान</p>
-</div>
-<div class="flex items-center gap-4">
-<div class="relative group">
-<button class="relative p-2 hover:bg-gray-100 rounded-full transition" id="notificationBtn">
-<i class="fas fa-bell text-xl text-gray-700"></i>
-<span class="notification-badge">5</span>
-</button>
-<div class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl py-2 hidden z-50" id="notificationDropdown">
-<div class="p-3 border-b border-gray-100">
-<h3 class="font-bold text-gray-800">सूचनाएं</h3>
-<p class="text-xs text-gray-500 mt-1">5 नई सूचनाएं</p>
-</div>
-<div class="max-h-96 overflow-y-auto">
-<div class="notification-item unread p-3 hover:bg-blue-50 transition cursor-pointer">
-<div class="flex items-start justify-between">
-<div>
-<p class="font-medium text-gray-800">नया आवेदन प्राप्त हुआ</p>
-<p class="text-xs text-gray-500 mt-1">समग्र आईडी के लिए नया आवेदन</p>
-</div>
-<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">अभी</span>
-</div>
-</div>
-<div class="notification-item unread p-3 hover:bg-blue-50 transition cursor-pointer">
-<div class="flex items-start justify-between">
-<div>
-<p class="font-medium text-gray-800">आवेदन स्वीकृत</p>
-<p class="text-xs text-gray-500 mt-1">MP भोज योजना आवेदन #AIO-123456</p>
-</div>
-<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">5 मिनट पहले</span>
-</div>
-</div>
-</div>
-<div class="p-3 border-t border-gray-100 text-center">
-<button class="text-blue-600 hover:text-blue-800 font-medium text-sm">सभी सूचनाएं देखें</button>
-</div>
-</div>
-</div>
-<div class="relative group">
-<div class="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-100 rounded-full transition" id="profileButton">
-<div class="bg-gradient-to-br from-yellow-300 to-yellow-400 text-blue-900 font-bold w-10 h-10 rounded-full flex items-center justify-center text-lg">
-<i class="fas fa-user"></i>
-</div>
-<div class="hidden md:block">
-<p class="font-bold text-sm" id="adminName">लोड हो रहा है...</p>
-<p class="text-xs text-gray-500" id="adminEmail">-</p>
-</div>
-<i class="fas fa-chevron-down text-xs hidden md:block"></i>
-</div>
-<div class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl py-2 hidden z-50" id="profileDropdown">
-<div class="p-4 border-b border-gray-100">
-<div class="flex items-center gap-3 mb-2">
-<div class="bg-gradient-to-br from-yellow-300 to-yellow-400 text-blue-900 font-bold w-12 h-12 rounded-full flex items-center justify-center text-xl">
-<i class="fas fa-user"></i>
-</div>
-<div>
-<p class="font-bold text-gray-800" id="profileDropdownName">लोड हो रहा है...</p>
-<p class="text-xs text-gray-500" id="profileDropdownEmail">-</p>
-<p class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded mt-1 inline-block" id="profileDropdownRole">-</p>
-</div>
-</div>
-<div class="grid grid-cols-2 gap-2 mt-3 text-xs">
-<div class="bg-gray-100 p-2 rounded">
-<p class="text-gray-500">स्थिति</p>
-<p class="font-bold text-green-600" id="profileDropdownStatus">-</p>
-</div>
-<div class="bg-gray-100 p-2 rounded">
-<p class="text-gray-500">लॉगिन समय</p>
-<p class="font-bold text-blue-600" id="profileDropdownLoginTime">-</p>
-</div>
-</div>
-</div>
-<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition" onclick="viewProfile()">
-<i class="fas fa-user-circle mr-3 text-blue-600"></i> प्रोफ़ाइल देखें
-</a>
-<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
-<i class="fas fa-cog mr-3 text-blue-600"></i> सेटिंग्स
-</a>
-<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
-<i class="fas fa-history mr-3 text-blue-600"></i> एक्टिविटी लॉग
-</a>
-<div class="border-t my-1"></div>
-<a href="#" onclick="logout()" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition">
-<i class="fas fa-sign-out-alt mr-3"></i> लॉगआउट
-</a>
-</div>
-</div>
-</div>
-</div>
-</header>
-
-<!-- Rest of the dashboard content (same as before) -->
-<!-- Search and Filters -->
-<div class="filter-container fade-in">
-<!-- ... (same as original code) ... -->
-</div>
-
-<!-- Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 fade-in">
-<!-- ... (same as original code) ... -->
-</div>
-
-<!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 fade-in-delay">
-<!-- ... (same as original code) ... -->
-</div>
-
-<!-- Applications Table -->
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in-delay">
-<!-- ... (same as original code) ... -->
-</div>
-</main>
-
-<!-- DETAILS MODAL -->
-<div id="detailModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
-<!-- ... (same as original code) ... -->
-</div>
-
-<!-- PROFILE MODAL -->
-<div id="profileModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
-<div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl">
-<div class="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-6 rounded-t-2xl">
-<h2 class="font-bold text-xl flex items-center">
-<i class="fas fa-user-circle mr-3"></i>
-प्रोफ़ाइल विवरण
-</h2>
-</div>
-<div id="profileModalContent" class="p-6">
-<!-- Content will be dynamically inserted -->
-</div>
-<div class="p-5 bg-gray-50 border-t border-gray-100 rounded-b-2xl flex justify-end">
-<button onclick="closeProfileModal()" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition">
-<i class="fas fa-times mr-2"></i> बंद करें
-</button>
-</div>
-</div>
-</div>
-
-<!-- PDF TEMPLATE -->
-<div id="pdfContent">
-<div class="pdf-page" style="font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif; font-size: 14px;">
-<div class="pdf-header" style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #1e3a8a; padding-bottom: 15px;">
-<div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
-<div style="background: #1e3a8a; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">
-MP
-</div>
-<div style="text-align: left;">
-<div style="font-size: 20px; font-weight: bold; color: #1e3a8a;">मध्य प्रदेश सरकार</div>
-<div style="font-size: 14px; color: #4b5563;">Government of Madhya Pradesh</div>
-</div>
-</div>
-<h1 style="font-size: 24px; font-weight: 700; color: #1e3a8a; margin: 5px 0;">AllInOne MP पोर्टल - आवेदन विवरण</h1>
-<p style="font-size: 14px; color: #4b5563; margin: 5px 0;">सभी सरकारी सेवाओं के लिए एकल खिड़की प्रणाली</p>
-<div style="font-size: 16px; font-weight: bold; color: #1e3a8a; margin-top: 10px;">
-आवेदन क्रमांक: <span id="pdfApplicationNo">AIO-XXXXXXXX</span>
-</div>
-</div>
-<div id="pdfQR" style="position: absolute; top: 95px; right: 95px; width: 120px; height: 120px; border: 1px solid #cbd5e1; padding: 8px; background: white; border-radius: 8px; box-sizing: border-box;">
-</div>
-<table style="width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 13px;">
-<thead>
-<tr>
-<th style="width: 35%; background-color: #f8fafc; font-weight: bold; padding: 12px 15px; border: 1px solid #cbd5e1; text-align: left;">विवरण</th>
-<th style="width: 65%; background-color: #f8fafc; font-weight: bold; padding: 12px 15px; border: 1px solid #cbd5e1; text-align: left;">मान</th>
-</tr>
-</thead>
-<tbody id="pdfDetailsTable">
-<!-- Content will be dynamically inserted here -->
-</tbody>
-</table>
-<div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e2e8f0; text-align: center; color: #64748b; font-size: 11px;">
-<p style="margin: 5px 0;">यह दस्तावेज़ डिजिटल रूप से जनरेट किया गया है और इस पर अधिकारी के हस्ताक्षर की आवश्यकता नहीं है।</p>
-<p style="margin: 5px 0;">पोर्टल: allinone.mp.gov.in | सहायता: 8435273042</p>
-<p style="margin: 5px 0; margin-top: 10px;">डाउनलोड तिथि: <span id="pdfDownloadDate"></span></p>
-</div>
-</div>
-</div>
-
-<!-- FOOTER -->
-<footer class="bg-gray-900 text-gray-300 py-8 px-4 mt-auto">
-<!-- ... (same as original code) ... -->
-</footer>
-
-<!-- ✅ FIXED JAVASCRIPT CODE -->
+<!-- ✅ सही किया हुआ JAVASCRIPT CODE -->
 <script type="module">
 /* ===== IMPORTS ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -321,9 +9,9 @@ from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 /* ===== CONFIG ===== */
 const firebaseConfig = {
-apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-authDomain: "allinone-aa89.firebaseapp.com",
-projectId: "allinone-aa89"
+    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+    authDomain: "allinone-aa89.firebaseapp.com",
+    projectId: "allinone-aa89"
 };
 
 /* ===== INIT ===== */
@@ -334,1038 +22,1040 @@ let currentUser = null;
 let currentAdminData = null;
 let isAuthCheckComplete = false;
 
-/* ===== ✅ FIXED AUTH GUARD WITH ADMIN CHECK ===== */
+/* ===== ✅ फिक्स्ड AUTH GUARD WITH ADMIN CHECK ===== */
 onAuthStateChanged(auth, async (user) => {
-const currentPath = window.location.pathname;
-const isLoginPage = currentPath.includes('adminlogin.html') || currentPath.includes('adminlogin');
-if (!user) {
-console.log("User not authenticated");
-clearAuthData();
-if (!isLoginPage) {
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-}
-return;
-}
+    const currentPath = window.location.pathname;
+    const isLoginPage = currentPath.includes('adminlogin.html') || currentPath.includes('adminlogin');
+    
+    if (!user) {
+        console.log("User not authenticated");
+        clearAuthData();
+        if (!isLoginPage) {
+            window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+        }
+        return;
+    }
 
-console.log("User authenticated:", user.email);
-try {
-const adminDocRef = doc(db, "admins", user.uid);
-const adminDoc = await getDoc(adminDocRef);
-if (!adminDoc.exists()) {
-console.log("User is not an admin");
-alert("❌ आप एडमिन नहीं हैं। लॉगआउट हो रहा है...");
-await signOut(auth);
-clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-return;
-}
+    console.log("User authenticated:", user.email);
+    
+    try {
+        const adminDocRef = doc(db, "admins", user.uid);
+        const adminDoc = await getDoc(adminDocRef);
+        
+        if (!adminDoc.exists()) {
+            console.log("User is not an admin");
+            alert("❌ आप एडमिन नहीं हैं। लॉगआउट हो रहा है...");
+            await signOut(auth);
+            clearAuthData();
+            window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+            return;
+        }
 
-const adminData = adminDoc.data();
-if (adminData.status !== "active") {
-console.log("Admin account is inactive");
-alert("❌ आपका खाता निष्क्रिय है। लॉगआउट हो रहा है...");
-await signOut(auth);
-clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-return;
-}
+        const adminData = adminDoc.data();
+        
+        if (adminData.status !== "active") {
+            console.log("Admin account is inactive");
+            alert("❌ आपका खाता निष्क्रिय है। लॉगआउट हो रहा है...");
+            await signOut(auth);
+            clearAuthData();
+            window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+            return;
+        }
 
-console.log("Valid admin user:", adminData);
-currentUser = user;
-currentAdminData = adminData;
+        console.log("Valid admin user:", adminData);
+        currentUser = user;
+        currentAdminData = adminData;
 
-if (isLoginPage) {
-window.location.replace('https://allinonemp.harshtiwari.in/admin.html');
-return;
-}
+        if (isLoginPage) {
+            window.location.replace('https://allinonemp.harshtiwari.in/admin.html');
+            return;
+        }
 
-const loginTime = localStorage.getItem('loginTime');
-if (!loginTime) {
-localStorage.setItem('loginTime', new Date().getTime().toString());
-}
+        const loginTime = localStorage.getItem('loginTime');
+        if (!loginTime) {
+            localStorage.setItem('loginTime', new Date().getTime().toString());
+        }
 
-localStorage.setItem('adminLoggedIn', 'true');
-localStorage.setItem('adminToken', await user.getIdToken());
-localStorage.setItem('adminEmail', user.email || 'allinoneofficial@gmail.com');
-localStorage.setItem('adminName', adminData.name || user.displayName || user.email?.split('@')[0] || 'Admin');
-localStorage.setItem('adminRole', adminData.role || 'admin');
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminToken', await user.getIdToken());
+        localStorage.setItem('adminEmail', user.email || 'allinoneofficial@gmail.com');
+        localStorage.setItem('adminName', adminData.name || user.displayName || user.email?.split('@')[0] || 'Admin');
+        localStorage.setItem('adminRole', adminData.role || 'admin');
 
-updateUserInfo(user, adminData);
+        updateUserInfo(user, adminData);
 
-const loadingScreen = document.getElementById('loadingScreen');
-if (loadingScreen) loadingScreen.style.display = 'none';
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) loadingScreen.style.display = 'none';
 
-if (!isLoginPage) {
-await loadData();
-setupEventListeners();
-initializeCharts();
-isAuthCheckComplete = true;
-}
-} catch (error) {
-console.error("Error checking admin status:", error);
-alert("❌ एडमिन स्टेटस चेक करने में त्रुटि। लॉगआउट हो रहा है...");
-await signOut(auth);
-clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-}
+        if (!isLoginPage) {
+            await loadData();
+            setupEventListeners();
+            initializeCharts();
+            isAuthCheckComplete = true;
+        }
+    } catch (error) {
+        console.error("Error checking admin status:", error);
+        alert("❌ एडमिन स्टेटस चेक करने में त्रुटि। लॉगआउट हो रहा है...");
+        await signOut(auth);
+        clearAuthData();
+        window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+    }
 });
 
 /* ===== HELPER FUNCTIONS ===== */
 function clearAuthData() {
-localStorage.removeItem('adminLoggedIn');
-localStorage.removeItem('adminToken');
-localStorage.removeItem('loginTime');
-localStorage.removeItem('adminEmail');
-localStorage.removeItem('adminName');
-localStorage.removeItem('adminRole');
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('loginTime');
+    localStorage.removeItem('adminEmail');
+    localStorage.removeItem('adminName');
+    localStorage.removeItem('adminRole');
 }
 
 function updateUserInfo(user, adminData) {
-const displayName = adminData?.name || user.displayName || user.email?.split('@')[0] || 'Admin';
-const email = user.email || 'allinoneofficial@gmail.com';
-const role = adminData?.role || 'admin';
-const status = adminData?.status || 'active';
-const loginTime = localStorage.getItem('loginTime');
+    const displayName = adminData?.name || user.displayName || user.email?.split('@')[0] || 'Admin';
+    const email = user.email || 'allinoneofficial@gmail.com';
+    const role = adminData?.role || 'admin';
+    const status = adminData?.status || 'active';
+    const loginTime = localStorage.getItem('loginTime');
 
-document.getElementById('adminName').textContent = displayName;
-document.getElementById('adminEmail').textContent = email;
-document.getElementById('sidebarAdminName').textContent = displayName;
+    document.getElementById('adminName').textContent = displayName;
+    document.getElementById('adminEmail').textContent = email;
+    document.getElementById('sidebarAdminName').textContent = displayName;
 
-document.getElementById('profileDropdownName').textContent = displayName;
-document.getElementById('profileDropdownEmail').textContent = email;
-document.getElementById('profileDropdownRole').textContent = role.toUpperCase();
-document.getElementById('profileDropdownStatus').textContent = status === 'active' ? 'सक्रिय' : 'निष्क्रिय';
+    document.getElementById('profileDropdownName').textContent = displayName;
+    document.getElementById('profileDropdownEmail').textContent = email;
+    document.getElementById('profileDropdownRole').textContent = role.toUpperCase();
+    document.getElementById('profileDropdownStatus').textContent = status === 'active' ? 'सक्रिय' : 'निष्क्रिय';
 
-if (loginTime) {
-const loginDate = new Date(parseInt(loginTime));
-document.getElementById('profileDropdownLoginTime').textContent = 
-loginDate.toLocaleDateString("hi-IN", {
-day: '2-digit',
-month: 'short',
-year: 'numeric',
-hour: '2-digit',
-minute: '2-digit'
-});
-}
+    if (loginTime) {
+        const loginDate = new Date(parseInt(loginTime));
+        document.getElementById('profileDropdownLoginTime').textContent = 
+        loginDate.toLocaleDateString("hi-IN", {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
 }
 
 /* ===== DATA ===== */
 let allApplications = [];
 let currentFilters = {
-search: '',
-service: '',
-status: '',
-dateFrom: '',
-dateTo: ''
+    search: '',
+    service: '',
+    status: '',
+    dateFrom: '',
+    dateTo: ''
 };
 
-/* ===== ✅ FIXED QR CODE GENERATION ===== */
+/* ===== ✅ फिक्स्ड QR CODE GENERATION ===== */
 function generateQRImage(text, size = 120) {
-return new Promise((resolve) => {
-try {
-const qrContainer = document.createElement('div');
-qrContainer.style.position = 'fixed';
-qrContainer.style.left = '-9999px';
-qrContainer.style.top = '0';
-qrContainer.style.width = `${size}px`;
-qrContainer.style.height = `${size}px`;
-document.body.appendChild(qrContainer);
+    return new Promise((resolve) => {
+        try {
+            const qrContainer = document.createElement('div');
+            qrContainer.style.position = 'fixed';
+            qrContainer.style.left = '-9999px';
+            qrContainer.style.top = '0';
+            qrContainer.style.width = `${size}px`;
+            qrContainer.style.height = `${size}px`;
+            document.body.appendChild(qrContainer);
 
-const qr = new QRCode(qrContainer, {
-text: text,
-width: size,
-height: size,
-correctLevel: QRCode.CorrectLevel.H
-});
+            const qr = new QRCode(qrContainer, {
+                text: text,
+                width: size,
+                height: size,
+                correctLevel: QRCode.CorrectLevel.H
+            });
 
-setTimeout(() => {
-const canvas = qrContainer.querySelector('canvas');
-if (canvas) {
-const imgData = canvas.toDataURL('image/png');
-document.body.removeChild(qrContainer);
-resolve(imgData);
-} else {
-document.body.removeChild(qrContainer);
-resolve(null);
-}
-}, 500);
-} catch (error) {
-console.error("QR Generation Error:", error);
-resolve(null);
-}
-});
+            setTimeout(() => {
+                const canvas = qrContainer.querySelector('canvas');
+                if (canvas) {
+                    const imgData = canvas.toDataURL('image/png');
+                    document.body.removeChild(qrContainer);
+                    resolve(imgData);
+                } else {
+                    document.body.removeChild(qrContainer);
+                    resolve(null);
+                }
+            }, 500);
+        } catch (error) {
+            console.error("QR Generation Error:", error);
+            resolve(null);
+        }
+    });
 }
 
 /* ===== ✅ VIEW PROFILE FUNCTION ===== */
 function viewProfile() {
-const modal = document.getElementById('profileModal');
-const content = document.getElementById('profileModalContent');
+    const modal = document.getElementById('profileModal');
+    const content = document.getElementById('profileModalContent');
 
-if (!currentAdminData || !currentUser) {
-alert("प्रोफ़ाइल डेटा उपलब्ध नहीं है।");
-return;
-}
+    if (!currentAdminData || !currentUser) {
+        alert("प्रोफ़ाइल डेटा उपलब्ध नहीं है।");
+        return;
+    }
 
-const loginTime = localStorage.getItem('loginTime');
-const loginDate = loginTime ? new Date(parseInt(loginTime)) : new Date();
+    const loginTime = localStorage.getItem('loginTime');
+    const loginDate = loginTime ? new Date(parseInt(loginTime)) : new Date();
 
-let html = `
-<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-user mr-2"></i> पूरा नाम
-</div>
-<div class="font-bold text-gray-800 text-lg">${currentAdminData.name || 'N/A'}</div>
-</div>
+    let html = `
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-user mr-2"></i> पूरा नाम
+            </div>
+            <div class="font-bold text-gray-800 text-lg">${currentAdminData.name || 'N/A'}</div>
+        </div>
 
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-envelope mr-2"></i> ईमेल
-</div>
-<div class="font-bold text-gray-800">${currentUser.email || 'N/A'}</div>
-</div>
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-envelope mr-2"></i> ईमेल
+            </div>
+            <div class="font-bold text-gray-800">${currentUser.email || 'N/A'}</div>
+        </div>
 
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-id-badge mr-2"></i> भूमिका
-</div>
-<div class="font-bold text-gray-800">${(currentAdminData.role || 'admin').toUpperCase()}</div>
-</div>
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-id-badge mr-2"></i> भूमिका
+            </div>
+            <div class="font-bold text-gray-800">${(currentAdminData.role || 'admin').toUpperCase()}</div>
+        </div>
 
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-user-check mr-2"></i> स्थिति
-</div>
-<div class="font-bold text-green-600">${currentAdminData.status === 'active' ? 'सक्रिय ✓' : 'निष्क्रिय'}</div>
-</div>
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-user-check mr-2"></i> स्थिति
+            </div>
+            <div class="font-bold text-green-600">${currentAdminData.status === 'active' ? 'सक्रिय ✓' : 'निष्क्रिय'}</div>
+        </div>
 
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-clock mr-2"></i> लॉगिन समय
-</div>
-<div class="font-bold text-gray-800">
-${loginDate.toLocaleDateString("hi-IN", {
-day: '2-digit',
-month: 'long',
-year: 'numeric',
-hour: '2-digit',
-minute: '2-digit'
-})}
-</div>
-</div>
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-clock mr-2"></i> लॉगिन समय
+            </div>
+            <div class="font-bold text-gray-800">
+                ${loginDate.toLocaleDateString("hi-IN", {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}
+            </div>
+        </div>
 
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-calendar-plus mr-2"></i> खाता निर्माण
-</div>
-<div class="font-bold text-gray-800">
-${currentAdminData.createdAt ? 
-new Date(currentAdminData.createdAt.toDate()).toLocaleDateString("hi-IN", {
-day: '2-digit',
-month: 'long',
-year: 'numeric'
-}) : 'N/A'}
-</div>
-</div>
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-calendar-plus mr-2"></i> खाता निर्माण
+            </div>
+            <div class="font-bold text-gray-800">
+                ${currentAdminData.createdAt ? 
+                new Date(currentAdminData.createdAt.toDate()).toLocaleDateString("hi-IN", {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                }) : 'N/A'}
+            </div>
+        </div>
 
-${currentAdminData.department ? `
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100 md:col-span-2">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-building mr-2"></i> विभाग
-</div>
-<div class="font-bold text-gray-800">${currentAdminData.department}</div>
-</div>
-` : ''}
+        ${currentAdminData.department ? `
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 md:col-span-2">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-building mr-2"></i> विभाग
+            </div>
+            <div class="font-bold text-gray-800">${currentAdminData.department}</div>
+        </div>
+        ` : ''}
 
-${currentAdminData.mobileNumber ? `
-<div class="bg-blue-50 p-4 rounded-lg border border-blue-100 md:col-span-2">
-<div class="text-xs text-blue-700 font-medium flex items-center mb-2">
-<i class="fas fa-phone mr-2"></i> मोबाइल नंबर
-</div>
-<div class="font-bold text-gray-800">${currentAdminData.mobileNumber}</div>
-</div>
-` : ''}
-</div>
-`;
+        ${currentAdminData.mobileNumber ? `
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 md:col-span-2">
+            <div class="text-xs text-blue-700 font-medium flex items-center mb-2">
+                <i class="fas fa-phone mr-2"></i> मोबाइल नंबर
+            </div>
+            <div class="font-bold text-gray-800">${currentAdminData.mobileNumber}</div>
+        </div>
+        ` : ''}
+    </div>
+    `;
 
-content.innerHTML = html;
-modal.classList.remove('hidden');
-modal.classList.add('flex');
+    content.innerHTML = html;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 }
 
 function closeProfileModal() {
-const modal = document.getElementById('profileModal');
-if (modal) modal.classList.add('hidden');
+    const modal = document.getElementById('profileModal');
+    if (modal) modal.classList.add('hidden');
 }
 
 /* ===== SETUP EVENT LISTENERS ===== */
 function setupEventListeners() {
-document.getElementById('profileButton')?.addEventListener('click', (e) => {
-e.stopPropagation();
-const dropdown = document.getElementById('profileDropdown');
-dropdown.classList.toggle('hidden');
-});
+    document.getElementById('profileButton')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('hidden');
+    });
 
-document.getElementById('notificationBtn')?.addEventListener('click', (e) => {
-e.stopPropagation();
-const dropdown = document.getElementById('notificationDropdown');
-dropdown.classList.toggle('hidden');
-});
+    document.getElementById('notificationBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dropdown = document.getElementById('notificationDropdown');
+        dropdown.classList.toggle('hidden');
+    });
 
-document.addEventListener('click', (e) => {
-const profileDropdown = document.getElementById('profileDropdown');
-const profileButton = document.getElementById('profileButton');
-const notificationDropdown = document.getElementById('notificationDropdown');
-const notificationButton = document.getElementById('notificationBtn');
+    document.addEventListener('click', (e) => {
+        const profileDropdown = document.getElementById('profileDropdown');
+        const profileButton = document.getElementById('profileButton');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationButton = document.getElementById('notificationBtn');
 
-if (profileDropdown && profileButton && !profileDropdown.contains(e.target) && !profileButton.contains(e.target)) {
-profileDropdown.classList.add('hidden');
-}
+        if (profileDropdown && profileButton && !profileDropdown.contains(e.target) && !profileButton.contains(e.target)) {
+            profileDropdown.classList.add('hidden');
+        }
 
-if (notificationDropdown && notificationButton && !notificationDropdown.contains(e.target) && !notificationButton.contains(e.target)) {
-notificationDropdown.classList.add('hidden');
-}
-});
+        if (notificationDropdown && notificationButton && !notificationDropdown.contains(e.target) && !notificationButton.contains(e.target)) {
+            notificationDropdown.classList.add('hidden');
+        }
+    });
 
-document.getElementById('searchInput')?.addEventListener('input', (e) => {
-currentFilters.search = e.target.value.toLowerCase();
-applyFilters();
-});
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
+        currentFilters.search = e.target.value.toLowerCase();
+        applyFilters();
+    });
 
-document.getElementById('serviceFilter')?.addEventListener('change', (e) => {
-currentFilters.service = e.target.value;
-applyFilters();
-});
+    document.getElementById('serviceFilter')?.addEventListener('change', (e) => {
+        currentFilters.service = e.target.value;
+        applyFilters();
+    });
 
-document.getElementById('statusFilter')?.addEventListener('change', (e) => {
-currentFilters.status = e.target.value;
-applyFilters();
-});
+    document.getElementById('statusFilter')?.addEventListener('change', (e) => {
+        currentFilters.status = e.target.value;
+        applyFilters();
+    });
 
-document.getElementById('dateFrom')?.addEventListener('change', (e) => {
-currentFilters.dateFrom = e.target.value;
-applyFilters();
-});
+    document.getElementById('dateFrom')?.addEventListener('change', (e) => {
+        currentFilters.dateFrom = e.target.value;
+        applyFilters();
+    });
 
-document.getElementById('dateTo')?.addEventListener('change', (e) => {
-currentFilters.dateTo = e.target.value;
-applyFilters();
-});
+    document.getElementById('dateTo')?.addEventListener('change', (e) => {
+        currentFilters.dateTo = e.target.value;
+        applyFilters();
+    });
 
-document.getElementById('clearFilters')?.addEventListener('click', () => {
-document.getElementById('searchInput').value = '';
-document.getElementById('serviceFilter').value = '';
-document.getElementById('statusFilter').value = '';
-document.getElementById('dateFrom').value = '';
-document.getElementById('dateTo').value = '';
-currentFilters = { search: '', service: '', status: '', dateFrom: '', dateTo: '' };
-render(allApplications);
-updateStats(allApplications);
-});
+    document.getElementById('clearFilters')?.addEventListener('click', () => {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('serviceFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        currentFilters = { search: '', service: '', status: '', dateFrom: '', dateTo: '' };
+        render(allApplications);
+        updateStats(allApplications);
+    });
 
-document.getElementById('resetFilters')?.addEventListener('click', () => {
-document.getElementById('searchInput').value = '';
-document.getElementById('serviceFilter').value = '';
-document.getElementById('statusFilter').value = '';
-currentFilters.search = '';
-currentFilters.service = '';
-currentFilters.status = '';
-render(allApplications);
-updateStats(allApplications);
-document.getElementById('emptyState').classList.add('hidden');
-document.getElementById('dataTable').classList.remove('hidden');
-});
+    document.getElementById('resetFilters')?.addEventListener('click', () => {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('serviceFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        currentFilters.search = '';
+        currentFilters.service = '';
+        currentFilters.status = '';
+        render(allApplications);
+        updateStats(allApplications);
+        document.getElementById('emptyState').classList.add('hidden');
+        document.getElementById('dataTable').classList.remove('hidden');
+    });
 
-document.getElementById('exportCSV')?.addEventListener('click', exportToCSV);
+    document.getElementById('exportCSV')?.addEventListener('click', exportToCSV);
 
-document.getElementById('exportExcel')?.addEventListener('click', () => {
-alert("Excel export feature will be available in the next update!");
-});
+    document.getElementById('exportExcel')?.addEventListener('click', () => {
+        alert("Excel export feature will be available in the next update!");
+    });
 
-document.getElementById('printView')?.addEventListener('click', () => {
-printApplication();
-});
+    document.getElementById('printView')?.addEventListener('click', () => {
+        printApplication();
+    });
 
-document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-const sidebar = document.querySelector('.sidebar');
-const mainContent = document.querySelector('.main-content');
-sidebar.classList.toggle('collapsed');
-mainContent.classList.toggle('sidebar-collapsed');
-document.getElementById('sidebarToggle').innerHTML = sidebar.classList.contains('collapsed') ?
-'<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
-});
+    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('sidebar-collapsed');
+        document.getElementById('sidebarToggle').innerHTML = sidebar.classList.contains('collapsed') ?
+        '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
+    });
 }
 
 /* ===== LOAD DATA ===== */
 function loadData() {
-return new Promise((resolve) => {
-listen("applications");
-listen("samagra_ekyc_requests");
-listen("mpbhojApplications");
-setTimeout(() => resolve(), 1000);
-});
+    return new Promise((resolve) => {
+        listen("applications");
+        listen("samagra_ekyc_requests");
+        listen("mpbhojApplications");
+        setTimeout(() => resolve(), 1000);
+    });
 }
 
 function listen(col) {
-const q = query(collection(db, col), orderBy('createdAt', 'desc'));
-onSnapshot(q, snap => {
-allApplications = allApplications.filter(i => i._collection !== col);
-const data = snap.docs.map(d => ({
-id: d.id,
-_collection: col,
-...d.data()
-}));
-allApplications = [...allApplications, ...data].sort((a, b) =>
-(b.createdAt?.toDate?.() || new Date()) - (a.createdAt?.toDate?.() || new Date())
-);
-render(allApplications);
-updateStats(allApplications);
-updateCharts();
-}, error => {
-console.error("Error loading data:", error);
-const tableBody = document.getElementById('dataTable');
-if (tableBody) {
-tableBody.innerHTML = `
-<tr>
-<td colspan="7" class="p-8 text-center">
-<i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
-<p class="mt-3 text-red-600 font-medium text-lg">डेटा लोड करने में त्रुटि</p>
-<p class="text-gray-500 mt-2">कृपया अपना नेटवर्क कनेक्शन जांचें या बाद में पुनः प्रयास करें।</p>
-</td>
-</tr>
-`;
-}
-});
+    const q = query(collection(db, col), orderBy('createdAt', 'desc'));
+    onSnapshot(q, snap => {
+        allApplications = allApplications.filter(i => i._collection !== col);
+        const data = snap.docs.map(d => ({
+            id: d.id,
+            _collection: col,
+            ...d.data()
+        }));
+        allApplications = [...allApplications, ...data].sort((a, b) =>
+        (b.createdAt?.toDate?.() || new Date()) - (a.createdAt?.toDate?.() || new Date())
+        );
+        render(allApplications);
+        updateStats(allApplications);
+        updateCharts();
+    }, error => {
+        console.error("Error loading ", error);
+        const tableBody = document.getElementById('dataTable');
+        if (tableBody) {
+            tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="p-8 text-center">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
+                    <p class="mt-3 text-red-600 font-medium text-lg">डेटा लोड करने में त्रुटि</p>
+                    <p class="text-gray-500 mt-2">कृपया अपना नेटवर्क कनेक्शन जांचें या बाद में पुनः प्रयास करें।</p>
+                </td>
+            </tr>
+            `;
+        }
+    });
 }
 
 /* ===== APPLY FILTERS ===== */
 function applyFilters() {
-let filteredData = [...allApplications];
+    let filteredData = [...allApplications];
 
-if (currentFilters.search) {
-filteredData = filteredData.filter(app => {
-const name = (app.studentName || app.applicantName || '').toLowerCase();
-const id = (app.memberId || '').toLowerCase();
-return name.includes(currentFilters.search) || id.includes(currentFilters.search);
-});
-}
+    if (currentFilters.search) {
+        filteredData = filteredData.filter(app => {
+            const name = (app.studentName || app.applicantName || '').toLowerCase();
+            const id = (app.memberId || '').toLowerCase();
+            return name.includes(currentFilters.search) || id.includes(currentFilters.search);
+        });
+    }
 
-if (currentFilters.service) {
-filteredData = filteredData.filter(app => {
-const service = getServiceName(app).toLowerCase();
-return service.includes(currentFilters.service);
-});
-}
+    if (currentFilters.service) {
+        filteredData = filteredData.filter(app => {
+            const service = getServiceName(app).toLowerCase();
+            return service.includes(currentFilters.service);
+        });
+    }
 
-if (currentFilters.status) {
-filteredData = filteredData.filter(app => app.status === currentFilters.status);
-}
+    if (currentFilters.status) {
+        filteredData = filteredData.filter(app => app.status === currentFilters.status);
+    }
 
-if (currentFilters.dateFrom || currentFilters.dateTo) {
-filteredData = filteredData.filter(app => {
-if (!app.createdAt) return false;
-const appDate = new Date(app.createdAt.toDate());
-const fromDate = currentFilters.dateFrom ? new Date(currentFilters.dateFrom) : null;
-const toDate = currentFilters.dateTo ? new Date(currentFilters.dateTo) : null;
-if (fromDate && appDate < fromDate) return false;
-if (toDate && appDate > toDate) return false;
-return true;
-});
-}
+    if (currentFilters.dateFrom || currentFilters.dateTo) {
+        filteredData = filteredData.filter(app => {
+            if (!app.createdAt) return false;
+            const appDate = new Date(app.createdAt.toDate());
+            const fromDate = currentFilters.dateFrom ? new Date(currentFilters.dateFrom) : null;
+            const toDate = currentFilters.dateTo ? new Date(currentFilters.dateTo) : null;
+            if (fromDate && appDate < fromDate) return false;
+            if (toDate && appDate > toDate) return false;
+            return true;
+        });
+    }
 
-render(filteredData);
-updateStats(filteredData);
-updateCharts(filteredData);
+    render(filteredData);
+    updateStats(filteredData);
+    updateCharts(filteredData);
 }
 
 /* ===== RENDER TABLE ===== */
 function render(data) {
-const tableBody = document.getElementById("dataTable");
-const emptyState = document.getElementById("emptyState");
-const totalEl = document.getElementById("totalApplications");
+    const tableBody = document.getElementById("dataTable");
+    const emptyState = document.getElementById("emptyState");
+    const totalEl = document.getElementById("totalApplications");
 
-if (totalEl) totalEl.textContent = allApplications.length;
+    if (totalEl) totalEl.textContent = allApplications.length;
 
-if (data.length === 0) {
-if (tableBody) tableBody.classList.add('hidden');
-if (emptyState) emptyState.classList.remove('hidden');
-return;
-} else {
-if (tableBody) tableBody.classList.remove('hidden');
-if (emptyState) emptyState.classList.add('hidden');
-}
+    if (data.length === 0) {
+        if (tableBody) tableBody.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    } else {
+        if (tableBody) tableBody.classList.remove('hidden');
+        if (emptyState) emptyState.classList.add('hidden');
+    }
 
-let rows = '';
-data.slice(0, 50).forEach((i, index) => {
-const appNo = `AIO-${i.id.substring(0, 8).toUpperCase()}`;
-const serviceName = getServiceName(i);
-const statusClass = i.status === 'complete' ? 'status-complete' :
-i.status === 'reject' ? 'status-reject' :
-i.status === 'processing' ? 'status-processing' : 'status-pending';
-const statusText = i.status === 'complete' ? 'पूर्ण' :
-i.status === 'reject' ? 'अस्वीकृत' :
-i.status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
+    let rows = '';
+    data.slice(0, 50).forEach((i, index) => {
+        const appNo = `AIO-${i.id.substring(0, 8).toUpperCase()}`;
+        const serviceName = getServiceName(i);
+        const statusClass = i.status === 'complete' ? 'status-complete' :
+        i.status === 'reject' ? 'status-reject' :
+        i.status === 'processing' ? 'status-processing' : 'status-pending';
+        const statusText = i.status === 'complete' ? 'पूर्ण' :
+        i.status === 'reject' ? 'अस्वीकृत' :
+        i.status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
 
-rows += `
-<tr class="table-row border-b border-gray-100 hover:bg-blue-50 transition">
-<td class="p-4 font-mono font-medium text-blue-700">${appNo}</td>
-<td class="p-4 font-bold text-gray-800">${i.studentName || i.applicantName || "-"}</td>
-<td class="p-4">
-<span class="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">${serviceName}</span>
-</td>
-<td class="p-4 hidden md:table-cell font-mono">${i.memberId || "-"}</td>
-<td class="p-4 hidden sm:table-cell">${formatDate(i.createdAt)}</td>
-<td class="p-4">
-<span class="status-badge ${statusClass}">${statusText}</span>
-</td>
-<td class="p-4">
-<div class="flex space-x-2">
-<button onclick="window.openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
-<i class="fas fa-eye"></i>
-</button>
-<button onclick="window.deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
-<i class="fas fa-trash-alt"></i>
-</button>
-</div>
-</td>
-</tr>
-`;
-});
+        rows += `
+        <tr class="table-row border-b border-gray-100 hover:bg-blue-50 transition">
+            <td class="p-4 font-mono font-medium text-blue-700">${appNo}</td>
+            <td class="p-4 font-bold text-gray-800">${i.studentName || i.applicantName || "-"}</td>
+            <td class="p-4">
+                <span class="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">${serviceName}</span>
+            </td>
+            <td class="p-4 hidden md:table-cell font-mono">${i.memberId || "-"}</td>
+            <td class="p-4 hidden sm:table-cell">${formatDate(i.createdAt)}</td>
+            <td class="p-4">
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </td>
+            <td class="p-4">
+                <div class="flex space-x-2">
+                    <button onclick="window.openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button onclick="window.deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        `;
+    });
 
-if (tableBody) tableBody.innerHTML = rows;
+    if (tableBody) tableBody.innerHTML = rows;
 }
 
 /* ===== UPDATE STATS ===== */
 function updateStats(data) {
-const statTotal = document.getElementById('statTotal');
-const statPending = document.getElementById('statPending');
-const statComplete = document.getElementById('statComplete');
-const statRejected = document.getElementById('statRejected');
-const statPendingCount = document.getElementById('statPendingCount');
-const statCompleteRate = document.getElementById('statCompleteRate');
-const statRejectionRate = document.getElementById('statRejectionRate');
+    const statTotal = document.getElementById('statTotal');
+    const statPending = document.getElementById('statPending');
+    const statComplete = document.getElementById('statComplete');
+    const statRejected = document.getElementById('statRejected');
+    const statPendingCount = document.getElementById('statPendingCount');
+    const statCompleteRate = document.getElementById('statCompleteRate');
+    const statRejectionRate = document.getElementById('statRejectionRate');
 
-if (statTotal) statTotal.textContent = data.length;
+    if (statTotal) statTotal.textContent = data.length;
 
-const pending = data.filter(a => a.status === 'pending').length;
-const complete = data.filter(a => a.status === 'complete').length;
-const rejected = data.filter(a => a.status === 'reject').length;
+    const pending = data.filter(a => a.status === 'pending').length;
+    const complete = data.filter(a => a.status === 'complete').length;
+    const rejected = data.filter(a => a.status === 'reject').length;
 
-if (statPending) statPending.textContent = pending;
-if (statComplete) statComplete.textContent = complete;
-if (statRejected) statRejected.textContent = rejected;
-if (statPendingCount) statPendingCount.textContent = pending;
-if (statCompleteRate) statCompleteRate.textContent = data.length > 0 ? Math.round((complete / data.length) * 100) + '%' : '0%';
-if (statRejectionRate) statRejectionRate.textContent = data.length > 0 ? Math.round((rejected / data.length) * 100) + '%' : '0%';
+    if (statPending) statPending.textContent = pending;
+    if (statComplete) statComplete.textContent = complete;
+    if (statRejected) statRejected.textContent = rejected;
+    if (statPendingCount) statPendingCount.textContent = pending;
+    if (statCompleteRate) statCompleteRate.textContent = data.length > 0 ? Math.round((complete / data.length) * 100) + '%' : '0%';
+    if (statRejectionRate) statRejectionRate.textContent = data.length > 0 ? Math.round((rejected / data.length) * 100) + '%' : '0%';
 }
 
 /* ===== CHARTS INITIALIZATION ===== */
 let applicationsChart, servicesChart;
 
 function initializeCharts() {
-const ctx1 = document.getElementById('applicationsChart');
-if (ctx1) {
-applicationsChart = new Chart(ctx1.getContext('2d'), {
-type: 'line',
-data: {
-labels: ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून'],
-datasets: [{
-label: 'आवेदन',
-data: [65, 59, 80, 81, 56, 55],
-borderColor: '#3b82f6',
-backgroundColor: 'rgba(59, 130, 246, 0.1)',
-borderWidth: 3,
-fill: true,
-tension: 0.4,
-pointBackgroundColor: '#3b82f6',
-pointBorderColor: '#fff',
-pointBorderWidth: 2,
-pointRadius: 5,
-pointHoverRadius: 7
-}]
-},
-options: {
-responsive: true,
-maintainAspectRatio: false,
-plugins: {
-legend: { display: false }
-},
-scales: {
-y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-x: { grid: { display: false } }
-}
-}
-});
-}
+    const ctx1 = document.getElementById('applicationsChart');
+    if (ctx1) {
+        applicationsChart = new Chart(ctx1.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून'],
+                datasets: [{
+                    label: 'आवेदन',
+                    data: [65, 59, 80, 81, 56, 55],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
 
-const ctx2 = document.getElementById('servicesChart');
-if (ctx2) {
-servicesChart = new Chart(ctx2.getContext('2d'), {
-type: 'doughnut',
-data: {
-labels: ['समग्र आईडी', 'ई-केवाईसी', 'एमपी भोज', 'छात्रवृत्ति', 'पेंशन'],
-datasets: [{
-data: [30, 25, 20, 15, 10],
-backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'],
-borderWidth: 0,
-hoverOffset: 20
-}]
-},
-options: {
-responsive: true,
-maintainAspectRatio: false,
-plugins: { legend: { position: 'bottom' } },
-cutout: '65%'
-}
-});
-}
+    const ctx2 = document.getElementById('servicesChart');
+    if (ctx2) {
+        servicesChart = new Chart(ctx2.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['समग्र आईडी', 'ई-केवाईसी', 'एमपी भोज', 'छात्रवृत्ति', 'पेंशन'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'],
+                    borderWidth: 0,
+                    hoverOffset: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                cutout: '65%'
+            }
+        });
+    }
 }
 
 function updateCharts(filteredData = null) {
-const data = filteredData || allApplications;
+    const data = filteredData || allApplications;
 
-const monthlyData = [0, 0, 0, 0, 0, 0];
-data.forEach(app => {
-if (app.createdAt) {
-const month = app.createdAt.toDate().getMonth();
-if (month >= 0 && month <= 5) {
-monthlyData[month]++;
-}
-}
-});
+    const monthlyData = [0, 0, 0, 0, 0, 0];
+    data.forEach(app => {
+        if (app.createdAt) {
+            const month = app.createdAt.toDate().getMonth();
+            if (month >= 0 && month <= 5) {
+                monthlyData[month]++;
+            }
+        }
+    });
 
-if (applicationsChart) {
-applicationsChart.data.datasets[0].data = monthlyData;
-applicationsChart.update();
-}
+    if (applicationsChart) {
+        applicationsChart.data.datasets[0].data = monthlyData;
+        applicationsChart.update();
+    }
 
-const serviceCounts = {
-'samagra': 0, 'ekyc': 0, 'mpbhoj': 0, 'scholarship': 0, 'pension': 0
-};
+    const serviceCounts = {
+        'samagra': 0, 'ekyc': 0, 'mpbhoj': 0, 'scholarship': 0, 'pension': 0
+    };
 
-data.forEach(app => {
-const service = getServiceName(app).toLowerCase();
-if (service.includes('samagra')) serviceCounts.samagra++;
-else if (service.includes('ekyc')) serviceCounts.ekyc++;
-else if (service.includes('mpbhoj') || service.includes('भोज')) serviceCounts.mpbhoj++;
-else if (service.includes('scholarship') || service.includes('छात्रवृत्ति')) serviceCounts.scholarship++;
-else if (service.includes('pension') || service.includes('पेंशन')) serviceCounts.pension++;
-});
+    data.forEach(app => {
+        const service = getServiceName(app).toLowerCase();
+        if (service.includes('samagra')) serviceCounts.samagra++;
+        else if (service.includes('ekyc')) serviceCounts.ekyc++;
+        else if (service.includes('mpbhoj') || service.includes('भोज')) serviceCounts.mpbhoj++;
+        else if (service.includes('scholarship') || service.includes('छात्रवृत्ति')) serviceCounts.scholarship++;
+        else if (service.includes('pension') || service.includes('पेंशन')) serviceCounts.pension++;
+    });
 
-if (servicesChart) {
-servicesChart.data.datasets[0].data = [
-serviceCounts.samagra,
-serviceCounts.ekyc,
-serviceCounts.mpbhoj,
-serviceCounts.scholarship,
-serviceCounts.pension
-];
-servicesChart.update();
-}
+    if (servicesChart) {
+        servicesChart.data.datasets[0].data = [
+            serviceCounts.samagra,
+            serviceCounts.ekyc,
+            serviceCounts.mpbhoj,
+            serviceCounts.scholarship,
+            serviceCounts.pension
+        ];
+        servicesChart.update();
+    }
 }
 
 /* ===== HELPERS ===== */
 function getServiceName(app) {
-return app.serviceType || app.formType || app.serviceName || app.service || app.applicationType || 'अन्य';
+    return app.serviceType || app.formType || app.serviceName || app.service || app.applicationType || 'अन्य';
 }
 
 function formatDate(ts) {
-if (!ts) return "-";
-try {
-return ts.toDate().toLocaleDateString("hi-IN", {
-day: '2-digit',
-month: 'short',
-year: 'numeric'
-});
-} catch (e) {
-return "-";
-}
+    if (!ts) return "-";
+    try {
+        return ts.toDate().toLocaleDateString("hi-IN", {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+    } catch (e) {
+        return "-";
+    }
 }
 
 function formatLabel(key) {
-return key
-.replace(/_/g, " ")
-.replace(/([A-Z])/g, " $1")
-.replace(/^./, s => s.toUpperCase())
-.replace('Id', 'ID');
+    return key
+    .replace(/_/g, " ")
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, s => s.toUpperCase())
+    .replace('Id', 'ID');
 }
 
 /* ===== ACTIONS ===== */
 window.deleteFunc = async (id) => {
-if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।")) {
-return;
-}
-const item = allApplications.find(x => x.id === id);
-if (!item) return;
-try {
-await deleteDoc(doc(db, item._collection, id));
-alert("आवेदन सफलतापूर्वक हटा दिया गया!");
-} catch (error) {
-console.error("Error deleting document: ", error);
-alert("आवेदन हटाने में त्रुटि। कृपया पुनः प्रयास करें।");
-}
+    if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।")) {
+        return;
+    }
+    const item = allApplications.find(x => x.id === id);
+    if (!item) return;
+    try {
+        await deleteDoc(doc(db, item._collection, id));
+        alert("आवेदन सफलतापूर्वक हटा दिया गया!");
+    } catch (error) {
+        console.error("Error deleting document: ", error);
+        alert("आवेदन हटाने में त्रुटि। कृपया पुनः प्रयास करें।");
+    }
 };
 
 window.updateStatus = async (status) => {
-const appNoElement = document.getElementById('modalApplicationNo');
-if (!appNoElement) return;
-const appNo = appNoElement.textContent;
-const item = allApplications.find(x => appNo.includes(x.id.substring(0,8).toUpperCase()));
-if (!item) {
-alert("आवेदन नहीं मिला।");
-return;
-}
-try {
-await updateDoc(doc(db, item._collection, item.id), { status });
-closeDetails();
-const statusText = status === 'complete' ? 'पूर्ण' :
-status === 'reject' ? 'अस्वीकृत' : 'लंबित';
-alert(`आवेदन स्थिति "${statusText}" में अपडेट कर दी गई है।`);
-loadData();
-} catch (error) {
-console.error("Error updating status: ", error);
-alert("स्थिति अपडेट करने में त्रुटि। कृपया पुनः प्रयास करें।");
-}
+    const appNoElement = document.getElementById('modalApplicationNo');
+    if (!appNoElement) return;
+    const appNo = appNoElement.textContent;
+    const item = allApplications.find(x => appNo.includes(x.id.substring(0,8).toUpperCase()));
+    if (!item) {
+        alert("आवेदन नहीं मिला।");
+        return;
+    }
+    try {
+        await updateDoc(doc(db, item._collection, item.id), { status });
+        closeDetails();
+        const statusText = status === 'complete' ? 'पूर्ण' :
+        status === 'reject' ? 'अस्वीकृत' : 'लंबित';
+        alert(`आवेदन स्थिति "${statusText}" में अपडेट कर दी गई है।`);
+        loadData();
+    } catch (error) {
+        console.error("Error updating status: ", error);
+        alert("स्थिति अपडेट करने में त्रुटि। कृपया पुनः प्रयास करें।");
+    }
 };
 
 window.logout = () => {
-if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
-signOut(auth).then(() => {
-clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-}).catch((error) => {
-console.error("Logout error:", error);
-alert("लॉगआउट में त्रुटि। कृपया पुनः प्रयास करें।");
-});
-}
+    if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
+        signOut(auth).then(() => {
+            clearAuthData();
+            window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+        }).catch((error) => {
+            console.error("Logout error:", error);
+            alert("लॉगआउट में त्रुटि। कृपया पुनः प्रयास करें।");
+        });
+    }
 };
 
 /* ===== DETAILS MODAL ===== */
 window.openDetailsFunc = (id) => {
-const item = allApplications.find(a => a.id === id);
-if (!item) return;
+    const item = allApplications.find(a => a.id === id);
+    if (!item) return;
 
-const appNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
-const appNoElement = document.getElementById("modalApplicationNo");
-if (appNoElement) {
-appNoElement.textContent = appNo;
-appNoElement.dataset.appId = item.id;
-}
+    const appNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
+    const appNoElement = document.getElementById("modalApplicationNo");
+    if (appNoElement) {
+        appNoElement.textContent = appNo;
+        appNoElement.dataset.appId = item.id;
+    }
 
-const detailBody = document.getElementById("detailBody");
-if (!detailBody) return;
+    const detailBody = document.getElementById("detailBody");
+    if (!detailBody) return;
 
-let detailsHTML = '';
-const personalInfo = ['applicantName', 'studentName', 'fatherName', 'motherName', 'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber'];
-const addressInfo = ['address', 'village', 'tehsil', 'district', 'pincode', 'state'];
-const applicationInfo = ['memberId', 'applicationType', 'serviceType', 'formType', 'serviceName', 'status', 'createdAt', 'updatedAt'];
+    let detailsHTML = '';
+    const personalInfo = ['applicantName', 'studentName', 'fatherName', 'motherName', 'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber'];
+    const addressInfo = ['address', 'village', 'tehsil', 'district', 'pincode', 'state'];
+    const applicationInfo = ['memberId', 'applicationType', 'serviceType', 'formType', 'serviceName', 'status', 'createdAt', 'updatedAt'];
 
-detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mb-3 pb-2 border-b border-blue-100 flex items-center"><i class="fas fa-user mr-2"></i> व्यक्तिगत जानकारी</h3></div>`;
-personalInfo.forEach(key => {
-if (item.hasOwnProperty(key) && item[key]) {
-detailsHTML += createDetailRow(key, item[key]);
-}
-});
+    detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mb-3 pb-2 border-b border-blue-100 flex items-center"><i class="fas fa-user mr-2"></i> व्यक्तिगत जानकारी</h3></div>`;
+    personalInfo.forEach(key => {
+        if (item.hasOwnProperty(key) && item[key]) {
+            detailsHTML += createDetailRow(key, item[key]);
+        }
+    });
 
-detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mt-4 mb-3 pb-2 border-b border-blue-100 flex items-center"><i class="fas fa-map-marker-alt mr-2"></i> पता जानकारी</h3></div>`;
-addressInfo.forEach(key => {
-if (item.hasOwnProperty(key) && item[key]) {
-detailsHTML += createDetailRow(key, item[key]);
-}
-});
+    detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mt-4 mb-3 pb-2 border-b border-blue-100 flex items-center"><i class="fas fa-map-marker-alt mr-2"></i> पता जानकारी</h3></div>`;
+    addressInfo.forEach(key => {
+        if (item.hasOwnProperty(key) && item[key]) {
+            detailsHTML += createDetailRow(key, item[key]);
+        }
+    });
 
-detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mt-4 mb-3 pb-2 border-b border-blue-100 flex items-center"><i class="fas fa-file-alt mr-2"></i> आवेदन विवरण</h3></div>`;
-applicationInfo.forEach(key => {
-if (item.hasOwnProperty(key) && item[key]) {
-let value = item[key];
-if (key === 'createdAt' && value) {
-value = formatDate(value);
-}
-if (key === 'updatedAt' && value) {
-value = formatDate(value);
-}
-if (key === 'status') {
-const statusClass = value === 'complete' ? 'status-complete' :
-value === 'reject' ? 'status-reject' : 'status-pending';
-const statusText = value === 'complete' ? 'पूर्ण' :
-value === 'reject' ? 'अस्वीकृत' : 'लंबित';
-value = `<span class="status-badge ${statusClass}">${statusText}</span>`;
-}
-detailsHTML += createDetailRow(key, value);
-}
-}
-});
+    detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mt-4 mb-3 pb-2 border-b border-blue-100 flex items-center"><i class="fas fa-file-alt mr-2"></i> आवेदन विवरण</h3></div>`;
+    applicationInfo.forEach(key => {
+        if (item.hasOwnProperty(key) && item[key]) {
+            let value = item[key];
+            if (key === 'createdAt' && value) {
+                value = formatDate(value);
+            }
+            if (key === 'updatedAt' && value) {
+                value = formatDate(value);
+            }
+            if (key === 'status') {
+                const statusClass = value === 'complete' ? 'status-complete' :
+                value === 'reject' ? 'status-reject' : 'status-pending';
+                const statusText = value === 'complete' ? 'पूर्ण' :
+                value === 'reject' ? 'अस्वीकृत' : 'लंबित';
+                value = `<span class="status-badge ${statusClass}">${statusText}</span>`;
+            }
+            detailsHTML += createDetailRow(key, value);
+        }
+    }
+    });
 
-detailBody.innerHTML = detailsHTML;
+    detailBody.innerHTML = detailsHTML;
 
-const modal = document.getElementById("detailModal");
-if (modal) {
-modal.classList.remove("hidden");
-modal.classList.add("flex");
-}
+    const modal = document.getElementById("detailModal");
+    if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
 
-preparePDFContent(item, appNo);
+    preparePDFContent(item, appNo);
 };
 
 function createDetailRow(key, value) {
-return `
-<div class="bg-blue-50 p-3.5 rounded-lg border border-blue-100">
-<div class="text-xs text-blue-700 font-medium flex items-center">
-<i class="fas fa-info-circle mr-2 text-blue-500"></i>
-${formatLabel(key)}
-</div>
-<div class="font-semibold text-gray-800 mt-1.5">${value || "-"}</div>
-</div>
-`;
+    return `
+    <div class="bg-blue-50 p-3.5 rounded-lg border border-blue-100">
+        <div class="text-xs text-blue-700 font-medium flex items-center">
+            <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+            ${formatLabel(key)}
+        </div>
+        <div class="font-semibold text-gray-800 mt-1.5">${value || "-"}</div>
+    </div>
+    `;
 }
 
 window.closeDetails = () => {
-const modal = document.getElementById("detailModal");
-if (modal) modal.classList.add("hidden");
+    const modal = document.getElementById("detailModal");
+    if (modal) modal.classList.add("hidden");
 };
 
-/* ===== ✅ FIXED PDF FUNCTIONS ===== */
+/* ===== ✅ फिक्स्ड PDF FUNCTIONS ===== */
 function preparePDFContent(item, appNo) {
-try {
-const originalAppNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
-const pdfAppNoEl = document.getElementById("pdfApplicationNo");
-if (pdfAppNoEl) pdfAppNoEl.textContent = originalAppNo;
+    try {
+        const originalAppNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
+        const pdfAppNoEl = document.getElementById("pdfApplicationNo");
+        if (pdfAppNoEl) pdfAppNoEl.textContent = originalAppNo;
 
-const today = new Date().toLocaleDateString("hi-IN", {
-day: 'numeric',
-month: 'long',
-year: 'numeric'
-});
-const pdfDateEl = document.getElementById("pdfDownloadDate");
-if (pdfDateEl) pdfDateEl.textContent = today;
+        const today = new Date().toLocaleDateString("hi-IN", {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        const pdfDateEl = document.getElementById("pdfDownloadDate");
+        if (pdfDateEl) pdfDateEl.textContent = today;
 
-const qrContainer = document.getElementById("pdfQR");
-if (qrContainer) qrContainer.innerHTML = "";
+        const qrContainer = document.getElementById("pdfQR");
+        if (qrContainer) qrContainer.innerHTML = "";
 
-const pdfTableBody = document.getElementById("pdfDetailsTable");
-if (!pdfTableBody) return originalAppNo;
+        const pdfTableBody = document.getElementById("pdfDetailsTable");
+        if (!pdfTableBody) return originalAppNo;
 
-let tableRows = '';
-const fieldOrder = [
-'applicantName', 'studentName', 'fatherName', 'motherName',
-'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber',
-'address', 'village', 'tehsil', 'district', 'pincode', 'state',
-'memberId', 'applicationType', 'serviceType', 'formType',
-'serviceName', 'status', 'createdAt', 'updatedAt'
-];
+        let tableRows = '';
+        const fieldOrder = [
+            'applicantName', 'studentName', 'fatherName', 'motherName',
+            'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber',
+            'address', 'village', 'tehsil', 'district', 'pincode', 'state',
+            'memberId', 'applicationType', 'serviceType', 'formType',
+            'serviceName', 'status', 'createdAt', 'updatedAt'
+        ];
 
-fieldOrder.forEach(key => {
-if (item.hasOwnProperty(key) && item[key] !== null && item[key] !== undefined && item[key] !== '') {
-let displayValue = item[key];
-let displayKey = formatLabel(key);
+        fieldOrder.forEach(key => {
+            if (item.hasOwnProperty(key) && item[key] !== null && item[key] !== undefined && item[key] !== '') {
+                let displayValue = item[key];
+                let displayKey = formatLabel(key);
 
-if ((key === 'createdAt' || key === 'updatedAt') && item[key]?.toDate) {
-displayValue = item[key].toDate().toLocaleDateString("hi-IN", {
-day: 'numeric',
-month: 'long',
-year: 'numeric',
-hour: '2-digit',
-minute: '2-digit'
-});
-}
+                if ((key === 'createdAt' || key === 'updatedAt') && item[key]?.toDate) {
+                    displayValue = item[key].toDate().toLocaleDateString("hi-IN", {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
 
-if (key === 'status') {
-displayValue = item[key] === 'complete' ? 'पूर्ण' :
-item[key] === 'reject' ? 'अस्वीकृत' : 'लंबित';
-}
+                if (key === 'status') {
+                    displayValue = item[key] === 'complete' ? 'पूर्ण' :
+                    item[key] === 'reject' ? 'अस्वीकृत' : 'लंबित';
+                }
 
-if (key === 'gender') {
-displayValue = item[key] === 'male' ? 'पुरुष' :
-item[key] === 'female' ? 'महिला' :
-item[key] === 'other' ? 'अन्य' : item[key];
-}
+                if (key === 'gender') {
+                    displayValue = item[key] === 'male' ? 'पुरुष' :
+                    item[key] === 'female' ? 'महिला' :
+                    item[key] === 'other' ? 'अन्य' : item[key];
+                }
 
-tableRows += `
-<tr>
-<td style="font-weight: bold; background-color: #f8fafc; padding: 12px 15px; border: 1px solid #cbd5e1;">${displayKey}</td>
-<td style="padding: 12px 15px; border: 1px solid #cbd5e1;">${displayValue || "-"}</td>
-</tr>
-`;
-}
-});
+                tableRows += `
+                <tr>
+                    <td style="font-weight: bold; background-color: #f8fafc; padding: 12px 15px; border: 1px solid #cbd5e1;">${displayKey}</td>
+                    <td style="padding: 12px 15px; border: 1px solid #cbd5e1;">${displayValue || "-"}</td>
+                </tr>
+                `;
+            }
+        });
 
-pdfTableBody.innerHTML = tableRows;
-return originalAppNo;
-} catch (error) {
-console.error("Error preparing PDF content:", error);
-return appNo || 'AIO-UNKNOWN';
-}
+        pdfTableBody.innerHTML = tableRows;
+        return originalAppNo;
+    } catch (error) {
+        console.error("Error preparing PDF content:", error);
+        return appNo || 'AIO-UNKNOWN';
+    }
 }
 
 window.downloadPDF = async () => {
-const appNoElement = document.getElementById("modalApplicationNo");
-const currentAppId = appNoElement?.dataset?.appId || '';
-const currentItem = allApplications.find(a => a.id === currentAppId);
+    const appNoElement = document.getElementById("modalApplicationNo");
+    const currentAppId = appNoElement?.dataset?.appId || '';
+    const currentItem = allApplications.find(a => a.id === currentAppId);
 
-if (!currentItem) {
-alert("आवेदन डेटा उपलब्ध नहीं है।");
-return;
-}
+    if (!currentItem) {
+        alert("आवेदन डेटा उपलब्ध नहीं है।");
+        return;
+    }
 
-const originalBtnText = appNoElement.textContent;
-appNoElement.textContent = "PDF तैयार हो रहा है...";
+    const originalBtnText = appNoElement.textContent;
+    appNoElement.textContent = "PDF तैयार हो रहा है...";
 
-try {
-const pdfContent = document.getElementById("pdfContent");
-pdfContent.style.width = '794px';
-pdfContent.style.height = '1123px';
-pdfContent.style.position = 'fixed';
-pdfContent.style.top = '0';
-pdfContent.style.left = '0';
-pdfContent.style.visibility = 'visible';
-pdfContent.style.opacity = '1';
-pdfContent.style.zIndex = '9999';
-pdfContent.style.pointerEvents = "none";
+    try {
+        const pdfContent = document.getElementById("pdfContent");
+        pdfContent.style.width = '794px';
+        pdfContent.style.height = '1123px';
+        pdfContent.style.position = 'fixed';
+        pdfContent.style.top = '0';
+        pdfContent.style.left = '0';
+        pdfContent.style.visibility = 'visible';
+        pdfContent.style.opacity = '1';
+        pdfContent.style.zIndex = '9999';
+        pdfContent.style.pointerEvents = "none";
 
-const pdfPage = pdfContent.querySelector('.pdf-page');
-pdfPage.style.width = '794px';
-pdfPage.style.minHeight = '1123px';
-pdfPage.style.padding = '95px';
+        const pdfPage = pdfContent.querySelector('.pdf-page');
+        pdfPage.style.width = '794px';
+        pdfPage.style.minHeight = '1123px';
+        pdfPage.style.padding = '95px';
 
-const originalAppNo = preparePDFContent(currentItem, `AIO-${currentItem.id.substring(0,8).toUpperCase()}`);
+        const originalAppNo = preparePDFContent(currentItem, `AIO-${currentItem.id.substring(0,8).toUpperCase()}`);
 
-const qrData = `Application: ${originalAppNo}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
-const qrImage = await generateQRImage(qrData, 120);
+        const qrData = `Application: ${originalAppNo}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
+        const qrImage = await generateQRImage(qrData, 120);
 
-const qrContainer = document.getElementById('pdfQR');
-qrContainer.innerHTML = '';
-if (qrImage) {
-qrContainer.innerHTML = `<img src="${qrImage}" width="120" height="120" style="width:100%;height:100%;display:block;">`;
-} else {
-qrContainer.innerHTML = `<div style="width:120px;height:120px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px;color:#64748b;line-height:1.4;">QR उपलब्ध नहीं</div>`;
-}
+        const qrContainer = document.getElementById('pdfQR');
+        qrContainer.innerHTML = '';
+        if (qrImage) {
+            qrContainer.innerHTML = `<img src="${qrImage}" width="120" height="120" style="width:100%;height:100%;display:block;">`;
+        } else {
+            qrContainer.innerHTML = `<div style="width:120px;height:120px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px;color:#64748b;line-height:1.4;">QR उपलब्ध नहीं</div>`;
+        }
 
-await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 800));
 
-const opt = {
-margin: 10,
-filename: `AllInOneMP_${originalAppNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
-image: { type: 'jpeg', quality: 0.98 },
-html2canvas: {
-scale: 2,
-useCORS: true,
-letterRendering: true,
-logging: false,
-backgroundColor: '#ffffff'
-},
-jsPDF: {
-unit: 'mm',
-format: 'a4',
-orientation: 'portrait'
-}
-};
+        const opt = {
+            margin: 10,
+            filename: `AllInOneMP_${originalAppNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                letterRendering: true,
+                logging: false,
+                backgroundColor: '#ffffff'
+            },
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+            }
+        };
 
-const element = document.querySelector('.pdf-page');
-await html2pdf().set(opt).from(element).save();
+        const element = document.querySelector('.pdf-page');
+        await html2pdf().set(opt).from(element).save();
 
-alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!\nआवेदन क्रमांक: ${originalAppNo}`);
-} catch (error) {
-console.error("PDF Generation Error:", error);
-alert("PDF निर्माण में त्रुटि।\nकृपया Chrome ब्राउज़र में पुनः प्रयास करें।");
-} finally {
-const pdfContent = document.getElementById("pdfContent");
-pdfContent.style.visibility = 'hidden';
-pdfContent.style.position = 'fixed';
-appNoElement.textContent = originalBtnText;
-}
+        alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!\nआवेदन क्रमांक: ${originalAppNo}`);
+    } catch (error) {
+        console.error("PDF Generation Error:", error);
+        alert("PDF निर्माण में त्रुटि।\nकृपया Chrome ब्राउज़र में पुनः प्रयास करें।");
+    } finally {
+        const pdfContent = document.getElementById("pdfContent");
+        pdfContent.style.visibility = 'hidden';
+        pdfContent.style.position = 'fixed';
+        appNoElement.textContent = originalBtnText;
+    }
 };
 
 window.printApplication = () => {
-const pdfContent = document.getElementById("pdfContent");
-pdfContent.style.visibility = 'visible';
-pdfContent.style.position = 'fixed';
-pdfContent.style.left = '0';
-pdfContent.style.top = '0';
+    const pdfContent = document.getElementById("pdfContent");
+    pdfContent.style.visibility = 'visible';
+    pdfContent.style.position = 'fixed';
+    pdfContent.style.left = '0';
+    pdfContent.style.top = '0';
 
-const appNoElement = document.getElementById("modalApplicationNo");
-const currentAppId = appNoElement?.dataset?.appId || '';
-const currentItem = allApplications.find(a => a.id === currentAppId);
+    const appNoElement = document.getElementById("modalApplicationNo");
+    const currentAppId = appNoElement?.dataset?.appId || '';
+    const currentItem = allApplications.find(a => a.id === currentAppId);
 
-if (currentItem) {
-preparePDFContent(currentItem);
-const qrData = `Application: AIO-${currentItem.id.substring(0,8).toUpperCase()}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
-generateQRImage(qrData, 120).then(qrImage => {
-if (qrImage) {
-document.getElementById('pdfQR').innerHTML = `<img src="${qrImage}" width="120" height="120" style="display:block;">`;
-}
-setTimeout(() => {
-window.print();
-pdfContent.style.visibility = 'hidden';
-}, 500);
-});
-} else {
-window.print();
-pdfContent.style.visibility = 'hidden';
-}
+    if (currentItem) {
+        preparePDFContent(currentItem);
+        const qrData = `Application: AIO-${currentItem.id.substring(0,8).toUpperCase()}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
+        generateQRImage(qrData, 120).then(qrImage => {
+            if (qrImage) {
+                document.getElementById('pdfQR').innerHTML = `<img src="${qrImage}" width="120" height="120" style="display:block;">`;
+            }
+            setTimeout(() => {
+                window.print();
+                pdfContent.style.visibility = 'hidden';
+            }, 500);
+        });
+    } else {
+        window.print();
+        pdfContent.style.visibility = 'hidden';
+    }
 };
 
 /* ===== EXPORT FUNCTIONS ===== */
 function exportToCSV() {
-let data = [...allApplications];
+    let data = [...allApplications];
 
-if (currentFilters.search) {
-data = data.filter(app => {
-const name = (app.studentName || app.applicantName || '').toLowerCase();
-const id = (app.memberId || '').toLowerCase();
-return name.includes(currentFilters.search) || id.includes(currentFilters.search);
-});
-}
+    if (currentFilters.search) {
+        data = data.filter(app => {
+            const name = (app.studentName || app.applicantName || '').toLowerCase();
+            const id = (app.memberId || '').toLowerCase();
+            return name.includes(currentFilters.search) || id.includes(currentFilters.search);
+        });
+    }
 
-if (currentFilters.service) {
-data = data.filter(app => {
-const service = getServiceName(app).toLowerCase();
-return service.includes(currentFilters.service);
-});
-}
+    if (currentFilters.service) {
+        data = data.filter(app => {
+            const service = getServiceName(app).toLowerCase();
+            return service.includes(currentFilters.service);
+        });
+    }
 
-if (currentFilters.status) {
-data = data.filter(app => app.status === currentFilters.status);
-}
+    if (currentFilters.status) {
+        data = data.filter(app => app.status === currentFilters.status);
+    }
 
-if (data.length === 0) {
-alert("निर्यात करने के लिए कोई डेटा नहीं है।");
-return;
-}
+    if (data.length === 0) {
+        alert("निर्यात करने के लिए कोई डेटा नहीं है।");
+        return;
+    }
 
-const headers = ['आवेदन क्रमांक', 'नाम', 'सेवा प्रकार', 'समग्र ID', 'तारीख', 'स्थिति', 'मोबाइल नंबर', 'ईमेल'];
-let csvContent = '\uFEFF' + headers.join(',') + '\n';
+    const headers = ['आवेदन क्रमांक', 'नाम', 'सेवा प्रकार', 'समग्र ID', 'तारीख', 'स्थिति', 'मोबाइल नंबर', 'ईमेल'];
+    let csvContent = '\uFEFF' + headers.join(',') + '\n';
 
-data.forEach(app => {
-const appNo = `AIO-${app.id.substring(0, 8).toUpperCase()}`;
-const row = [
-appNo,
-app.studentName || app.applicantName || '-',
-getServiceName(app),
-app.memberId || '-',
-app.createdAt ? formatDate(app.createdAt) : '-',
-app.status === 'complete' ? 'पूर्ण' : app.status === 'reject' ? 'अस्वीकृत' : 'लंबित',
-app.mobileNumber || '-',
-app.email || '-'
-].map(field => `"${field}"`).join(',');
-csvContent += row + '\n';
-});
+    data.forEach(app => {
+        const appNo = `AIO-${app.id.substring(0, 8).toUpperCase()}`;
+        const row = [
+            appNo,
+            app.studentName || app.applicantName || '-',
+            getServiceName(app),
+            app.memberId || '-',
+            app.createdAt ? formatDate(app.createdAt) : '-',
+            app.status === 'complete' ? 'पूर्ण' : app.status === 'reject' ? 'अस्वीकृत' : 'लंबित',
+            app.mobileNumber || '-',
+            app.email || '-'
+        ].map(field => `"${field}"`).join(',');
+        csvContent += row + '\n';
+    });
 
-const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-const link = document.createElement("a");
-const url = URL.createObjectURL(blob);
-link.setAttribute("href", url);
-link.setAttribute("download", `AllInOneMP_Applications_${new Date().toISOString().split('T')[0]}.csv`);
-link.style.visibility = 'hidden';
-document.body.appendChild(link);
-link.click();
-document.body.removeChild(link);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `AllInOneMP_Applications_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 /* ===== INITIALIZATION ===== */
 document.addEventListener('DOMContentLoaded', () => {
-const emptyState = document.getElementById('emptyState');
-if (emptyState) emptyState.classList.add('hidden');
+    const emptyState = document.getElementById('emptyState');
+    if (emptyState) emptyState.classList.add('hidden');
 });
 </script>
-</body>
-</html>
