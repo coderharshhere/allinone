@@ -164,28 +164,30 @@
     
     <button data-category="all" onclick="filterServices('all')" 
         class="category-tab active flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-th-large"></i> सभी सेवाएँ
+      <i class="fas fa-fire"></i> लोकप्रिय सेवाएँ
     </button>
 
     <button data-category="social" onclick="filterServices('social')" 
         class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-users"></i> समग्र एवं सामाजिक
+       <i class="fas fa-file-invoice"></i> प्रमाण पत्र
     </button>
 
-    <button data-category="land" onclick="filterServices('land')" 
+      <button data-category="form" onclick="filterServices('form')" 
         class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
+        <i class="fas fa-university">--></i> यूनिवर्सिटी/फार्म
     </button>
 
+      <button data-category="land" onclick="filterServices('land')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-map-marked-alt"></i> कृषि सेवा (MP)
+    </button>
+     
     <button data-category="certificates" onclick="filterServices('certificates')" 
         class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-file-invoice"></i> प्रमाण पत्र
+        <i class="fas fa-briefcase"></i>रोजगार पंजीयन 
     </button>
 
-    <button data-category="form" onclick="filterServices('form')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-university"></i> यूनिवर्सिटी/फार्म
-    </button>
+ 
 </div>
 
 <style>
@@ -561,6 +563,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
