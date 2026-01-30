@@ -109,23 +109,21 @@ font-size: 1.5rem;
 margin-bottom: 0.5rem;
 font-weight: 600;
 }
-/* ===== CRITICAL FIX: PDF TEMPLATE WITH PROPER A4 DIMENSIONS ===== */
-/* ===== PDF ROOT CONTAINER (SAFE FOR PDF + PRINT) ===== */
+/* ===== PDF STYLES ===== */
 #pdfContent {
 position: fixed;
-top: 0;
-left: 0;
-width: 794px;     /* A4 width */
-min-height: 1123px; /* A4 height */
+top: -9999px;
+left: -9999px;
+width: 794px;
+min-height: 1123px;
 background: #ffffff;
-/* IMPORTANT */
-visibility: hidden;   /* default hidden */
-opacity: 1;           /* NEVER 0 */
-z-index: 9999;        /* NEVER negative */
+visibility: visible;
+opacity: 1;
+z-index: -9999;
 }
 .pdf-page {
 background: white;
-padding: 95px; /* 25mm padding on all sides = 95px */
+padding: 95px;
 position: relative;
 width: 794px !important;
 min-height: 1123px !important;
@@ -198,11 +196,10 @@ color: #64748b !important;
 border-top: 1px solid #e2e8f0;
 padding-top: 15px;
 }
-/* ===== CRITICAL FIX: QR CODE SAFE POSITIONING ===== */
 .pdf-qr-container {
 position: absolute !important;
-top: 95px !important; /* Same as padding-top (25mm = 95px) */
-right: 95px !important; /* Same as padding-right */
+top: 95px !important;
+right: 95px !important;
 width: 120px !important;
 height: 120px !important;
 border: 1px solid #cbd5e1 !important;
@@ -222,10 +219,6 @@ object-fit: contain !important;
 image-rendering: -moz-crisp-edges !important;
 image-rendering: -webkit-crisp-edges !important;
 image-rendering: crisp-edges !important;
-}
-@page {
-size: A4;
-margin: 0;
 }
 @media print {
 body * {
@@ -282,7 +275,7 @@ AllInOne-MP
 <i class="fas fa-chevron-down ml-1 text-xs hidden md:block"></i>
 </div>
 <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl py-2 z-50 hidden" id="profileDropdown">
-<a href="" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
+<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
 <i class="fas fa-user-circle mr-3 text-blue-600"></i> प्रोफ़ाइल
 </a>
 <a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
@@ -292,7 +285,6 @@ AllInOne-MP
 <a href="#" onclick="logout()" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition">
 <i class="fas fa-sign-out-alt mr-3"></i> लॉगआउट
 </a>
-</div>
 </div>
 </div>
 </div>
@@ -447,7 +439,7 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </div>
 <div class="p-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center">
 <p class="text-gray-500 text-sm mb-2 sm:mb-0">प्रति पृष्ठ दिखाएं:
-<select class="border border-gray-300 rounded px-2 py-1 ml-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+<select id="pageSize" class="border border-gray-300 rounded px-2 py-1 ml-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 <option>10</option>
 <option>25</option>
 <option selected>50</option>
@@ -455,9 +447,9 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </select>
 </p>
 <div class="flex items-center space-x-2">
-<button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">पिछला</button>
-<span class="font-medium">1 से 10 का 50</span>
-<button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">अगला</button>
+<button id="prevPage" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">पिछला</button>
+<span id="pageInfo" class="font-medium">1 से 10 का 0</span>
+<button id="nextPage" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">अगला</button>
 </div>
 </div>
 </div>
@@ -506,7 +498,7 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </div>
 </div>
 </div>
-<!-- PDF TEMPLATE - CRITICAL FIXES APPLIED -->
+<!-- PDF TEMPLATE -->
 <div id="pdfContent">
 <div class="pdf-page">
 <div class="pdf-header">
@@ -567,17 +559,19 @@ MP
 </div>
 </div>
 </footer>
-<!-- ... पहले का सारा HTML हेडर, स्टाइल, बॉडी वही रहेगा ... -->
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
   authDomain: "allinone-aa89.firebaseapp.com",
-  projectId: "allinone-aa89"
+  projectId: "allinone-aa89",
+  storageBucket: "allinone-aa89.firebasestorage.app",
+  messagingSenderId: "1090634328590",
+  appId: "1:1090634328590:web:9c043124401353c80e4a20"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -585,7 +579,10 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let allApplications = [];
-let currentApp = null; // PDF के लिए selected application store करने के लिए
+let filteredApplications = [];
+let currentApp = null;
+let currentPage = 1;
+let pageSize = 50;
 
 // =============================================
 // Auth & Data Loading
@@ -601,128 +598,450 @@ onAuthStateChanged(auth, user => {
   setupEventListeners();
 });
 
-function loadData() {
-  const cols = ["applications", "samagra_ekyc_requests", "mpbhojApplications"];
-  cols.forEach(col => listen(col));
-}
-
-function listen(collectionName) {
-  onSnapshot(collection(db, collectionName), snap => {
-    allApplications = allApplications.filter(a => a._collection !== collectionName);
-    const newDocs = snap.docs.map(d => ({
-      id: d.id,
-      _collection: collectionName,
-      ...d.data()
-    }));
-    allApplications.push(...newDocs);
-    render(allApplications);
-    updateStats(allApplications);
-  }, err => {
-    console.error("Firestore error:", err);
-  });
+async function loadData() {
+  try {
+    const collections = ["applications", "samagra_ekyc_requests", "mpbhojApplications"];
+    allApplications = [];
+    
+    for (const col of collections) {
+      const q = query(collection(db, col));
+      const snapshot = await getDocs(q);
+      const docs = snapshot.docs.map(d => ({
+        id: d.id,
+        _collection: col,
+        ...d.data()
+      }));
+      allApplications.push(...docs);
+    }
+    
+    filteredApplications = [...allApplications];
+    renderTable();
+    updateStats();
+    updatePaginationInfo();
+  } catch (error) {
+    console.error("डेटा लोड करने में त्रुटि:", error);
+    document.getElementById("dataTable").innerHTML = `
+      <tr><td colspan="7" class="p-8 text-center text-red-600">
+        <i class="fas fa-exclamation-triangle mb-2 text-2xl"></i><br>
+        डेटा लोड करने में त्रुटि
+      </td></tr>`;
+  }
 }
 
 // =============================================
-// Event Listeners
+// Event Listeners Setup
 // =============================================
 function setupEventListeners() {
-  // search, filters, clear आदि आपके पुराने कोड से
-  document.getElementById('searchInput')?.addEventListener('input', e => {
-    // applyFilters() call करें अगर फिल्टर सिस्टम है
-  });
-
-  // profile dropdown toggle
+  // Profile dropdown
   document.getElementById('profileButton')?.addEventListener('click', () => {
     document.getElementById('profileDropdown')?.classList.toggle('hidden');
   });
-}
-
-// =============================================
-// Table Render & Stats
-// =============================================
-function render(data) {
-  const tbody = document.getElementById("dataTable");
-  if (!tbody) return;
-
-  tbody.innerHTML = "";
-
-  if (data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center">कोई आवेदन नहीं मिला</td></tr>`;
-    return;
-  }
-
-  data.forEach(item => {
-    const appNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
-    const name = item.studentName || item.applicantName || "—";
-    const service = getServiceName(item);
-    const statusText = item.status === 'complete' ? 'पूर्ण' : item.status === 'reject' ? 'अस्वीकृत' : 'लंबित';
-    const statusClass = `status-${item.status || 'pending'}`;
-
-    const row = `
-      <tr class="table-row">
-        <td class="p-4 font-mono text-blue-700">${appNo}</td>
-        <td class="p-4 font-bold">${name}</td>
-        <td class="p-4"><span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${service}</span></td>
-        <td class="p-4 hidden md:table-cell">${item.memberId || "—"}</td>
-        <td class="p-4 hidden sm:table-cell">${formatDate(item.createdAt)}</td>
-        <td class="p-4"><span class="status-badge ${statusClass}">${statusText}</span></td>
-        <td class="p-4 flex gap-2">
-          <button onclick="openDetails('${item.id}')" class="action-btn action-view"><i class="fas fa-eye"></i></button>
-          <button onclick="del('${item.id}')" class="action-btn action-delete"><i class="fas fa-trash-alt"></i></button>
-        </td>
-      </tr>`;
-    tbody.innerHTML += row;
+  
+  // Click outside to close dropdown
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#profileButton') && !e.target.closest('#profileDropdown')) {
+      document.getElementById('profileDropdown')?.classList.add('hidden');
+    }
+  });
+  
+  // Search input
+  document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  
+  // Filters
+  document.getElementById('serviceFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('statusFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('dateFrom')?.addEventListener('change', applyFilters);
+  document.getElementById('dateTo')?.addEventListener('change', applyFilters);
+  
+  // Clear filters
+  document.getElementById('clearFilters')?.addEventListener('click', () => {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('serviceFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    applyFilters();
+  });
+  
+  // Reset filters
+  document.getElementById('resetFilters')?.addEventListener('click', () => {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('serviceFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    applyFilters();
+  });
+  
+  // Pagination
+  document.getElementById('pageSize')?.addEventListener('change', (e) => {
+    pageSize = parseInt(e.target.value);
+    currentPage = 1;
+    renderTable();
+    updatePaginationInfo();
+  });
+  
+  document.getElementById('prevPage')?.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTable();
+      updatePaginationInfo();
+    }
+  });
+  
+  document.getElementById('nextPage')?.addEventListener('click', () => {
+    const totalPages = Math.ceil(filteredApplications.length / pageSize);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTable();
+      updatePaginationInfo();
+    }
+  });
+  
+  // Export CSV
+  document.getElementById('exportCSV')?.addEventListener('click', exportToCSV);
+  
+  // Print View
+  document.getElementById('printView')?.addEventListener('click', () => {
+    window.print();
   });
 }
 
-function updateStats(data) {
-  document.getElementById('statTotal')?.textContent    = data.length;
-  document.getElementById('statPending')?.textContent  = data.filter(a => a.status === 'pending').length;
-  document.getElementById('statComplete')?.textContent = data.filter(a => a.status === 'complete').length;
-  document.getElementById('statRejected')?.textContent = data.filter(a => a.status === 'reject').length;
-  document.getElementById('totalApplications')?.textContent = allApplications.length;
+// =============================================
+// Filter Logic
+// =============================================
+function applyFilters() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const serviceFilter = document.getElementById('serviceFilter').value;
+  const statusFilter = document.getElementById('statusFilter').value;
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo = document.getElementById('dateTo').value;
+  
+  filteredApplications = allApplications.filter(app => {
+    // Search filter
+    const name = (app.applicantName || app.studentName || '').toLowerCase();
+    const appId = app.id.toLowerCase();
+    if (searchTerm && !name.includes(searchTerm) && !appId.includes(searchTerm)) {
+      return false;
+    }
+    
+    // Service filter
+    if (serviceFilter) {
+      const service = getServiceName(app).toLowerCase();
+      if (!service.includes(serviceFilter.toLowerCase())) {
+        return false;
+      }
+    }
+    
+    // Status filter
+    if (statusFilter && app.status !== statusFilter) {
+      return false;
+    }
+    
+    // Date filter
+    if (dateFrom || dateTo) {
+      const appDate = app.createdAt?.toDate ? app.createdAt.toDate() : new Date(app.createdAt || 0);
+      if (dateFrom && appDate < new Date(dateFrom)) {
+        return false;
+      }
+      if (dateTo) {
+        const toDate = new Date(dateTo);
+        toDate.setHours(23, 59, 59, 999);
+        if (appDate > toDate) {
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  });
+  
+  currentPage = 1;
+  renderTable();
+  updateStats();
+  updatePaginationInfo();
+  
+  // Show/hide empty state
+  const emptyState = document.getElementById('emptyState');
+  const table = document.querySelector('tbody');
+  if (filteredApplications.length === 0) {
+    emptyState.classList.remove('hidden');
+    table.classList.add('hidden');
+  } else {
+    emptyState.classList.add('hidden');
+    table.classList.remove('hidden');
+  }
 }
 
 // =============================================
-// Helpers
+// Table Rendering
+// =============================================
+function renderTable() {
+  const tbody = document.getElementById("dataTable");
+  if (!tbody) return;
+  
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const pageApps = filteredApplications.slice(startIndex, endIndex);
+  
+  if (pageApps.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="p-8 text-center">
+          <i class="fas fa-inbox text-4xl text-gray-300 mb-3"></i>
+          <p class="text-gray-600 font-medium">कोई आवेदन नहीं मिला</p>
+        </td>
+      </tr>`;
+    return;
+  }
+  
+  let html = '';
+  pageApps.forEach(item => {
+    const appNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
+    const name = item.studentName || item.applicantName || item.name || "—";
+    const service = getServiceName(item);
+    const statusText = item.status === 'complete' ? 'पूर्ण' : 
+                       item.status === 'reject' ? 'अस्वीकृत' : 'लंबित';
+    const statusClass = `status-${item.status || 'pending'}`;
+    
+    html += `
+      <tr class="table-row border-b border-gray-100">
+        <td class="p-4 font-mono text-blue-700">${appNo}</td>
+        <td class="p-4 font-bold">${name}</td>
+        <td class="p-4"><span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${service}</span></td>
+        <td class="p-4 hidden md:table-cell">${item.memberId || item.samagraId || "—"}</td>
+        <td class="p-4 hidden sm:table-cell">${formatDate(item.createdAt)}</td>
+        <td class="p-4"><span class="status-badge ${statusClass}">${statusText}</span></td>
+        <td class="p-4 flex gap-2">
+          <button onclick="openDetails('${item.id}')" class="action-btn action-view">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button onclick="del('${item.id}')" class="action-btn action-delete">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>`;
+  });
+  
+  tbody.innerHTML = html;
+}
+
+// =============================================
+// Helper Functions
 // =============================================
 function getServiceName(item) {
+  if (item._collection === 'samagra_ekyc_requests') {
+    return 'समग्र ई-केवाईसी';
+  } else if (item._collection === 'mpbhojApplications') {
+    return 'एमपी भोज योजना';
+  }
   return item.serviceType || item.formType || item.serviceName || item.applicationType || 'अन्य';
 }
 
 function formatDate(ts) {
   if (!ts) return "—";
-  const d = ts.toDate ? ts.toDate() : new Date(ts);
-  return d.toLocaleDateString("hi-IN", { day: '2-digit', month: 'short', year: 'numeric' });
+  try {
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString("hi-IN", { 
+      day: '2-digit', 
+      month: 'short', 
+      year: 'numeric' 
+    });
+  } catch {
+    return "—";
+  }
+}
+
+function updateStats() {
+  const total = filteredApplications.length;
+  const pending = filteredApplications.filter(a => a.status === 'pending').length;
+  const complete = filteredApplications.filter(a => a.status === 'complete').length;
+  const rejected = filteredApplications.filter(a => a.status === 'reject').length;
+  
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statComplete').textContent = complete;
+  document.getElementById('statRejected').textContent = rejected;
+  document.getElementById('totalApplications').textContent = total;
+}
+
+function updatePaginationInfo() {
+  const total = filteredApplications.length;
+  const totalPages = Math.ceil(total / pageSize);
+  const start = ((currentPage - 1) * pageSize) + 1;
+  const end = Math.min(currentPage * pageSize, total);
+  
+  document.getElementById('pageInfo').textContent = 
+    `${start} से ${end} का ${total}`;
+  
+  // Enable/disable pagination buttons
+  document.getElementById('prevPage').disabled = currentPage === 1;
+  document.getElementById('nextPage').disabled = currentPage === totalPages || total === 0;
 }
 
 // =============================================
-// QR Code Generation (dataURL method - reliable)
+// Modal Functions
 // =============================================
-async function createQRImageDataUrl(text, size = 110) {
+window.openDetails = (id) => {
+  const item = allApplications.find(a => a.id === id);
+  if (!item) return alert("आवेदन नहीं मिला");
+  
+  const appNo = `AIO-${id.substring(0,8).toUpperCase()}`;
+  currentApp = { item, appNo };
+  
+  document.getElementById("modalApplicationNo").textContent = appNo;
+  document.getElementById("modalApplicationNo").dataset.appId = id;
+  
+  // Prepare modal content
+  const detailBody = document.getElementById("detailBody");
+  detailBody.innerHTML = generateDetailHTML(item);
+  
+  document.getElementById("detailModal").classList.remove("hidden");
+  document.getElementById("detailModal").classList.add("flex");
+};
+
+function generateDetailHTML(item) {
+  return `
+    <div class="col-span-2 md:col-span-1">
+      <h3 class="font-bold text-lg mb-3 text-blue-800 flex items-center">
+        <i class="fas fa-user mr-2"></i> आवेदक विवरण
+      </h3>
+      <div class="space-y-2">
+        <p><strong>नाम:</strong> ${item.applicantName || item.studentName || "—"}</p>
+        <p><strong>पिता का नाम:</strong> ${item.fatherName || "—"}</p>
+        <p><strong>लिंग:</strong> ${item.gender === "male" ? "पुरुष" : item.gender === "female" ? "महिला" : item.gender || "—"}</p>
+        <p><strong>जन्म तिथि:</strong> ${formatDate(item.dob)}</p>
+        <p><strong>आयु:</strong> ${item.age || "—"}</p>
+      </div>
+    </div>
+    
+    <div class="col-span-2 md:col-span-1">
+      <h3 class="font-bold text-lg mb-3 text-blue-800 flex items-center">
+        <i class="fas fa-address-card mr-2"></i> संपर्क विवरण
+      </h3>
+      <div class="space-y-2">
+        <p><strong>मोबाइल:</strong> ${item.phone || item.mobile || "—"}</p>
+        <p><strong>ईमेल:</strong> ${item.email || "—"}</p>
+        <p><strong>पता:</strong> ${item.address || "—"}</p>
+        <p><strong>जिला:</strong> ${item.district || "—"}</p>
+        <p><strong>तहसील:</strong> ${item.tehsil || "—"}</p>
+      </div>
+    </div>
+    
+    <div class="col-span-2 md:col-span-1">
+      <h3 class="font-bold text-lg mb-3 text-blue-800 flex items-center">
+        <i class="fas fa-file-alt mr-2"></i> आवेदन विवरण
+      </h3>
+      <div class="space-y-2">
+        <p><strong>सेवा प्रकार:</strong> ${getServiceName(item)}</p>
+        <p><strong>आवेदन ID:</strong> ${item.id}</p>
+        <p><strong>समग्र ID:</strong> ${item.samagraId || item.memberId || "—"}</p>
+        <p><strong>आवेदन तिथि:</strong> ${formatDate(item.createdAt)}</p>
+        <p><strong>अंतिम अपडेट:</strong> ${formatDate(item.updatedAt)}</p>
+      </div>
+    </div>
+    
+    <div class="col-span-2 md:col-span-1">
+      <h3 class="font-bold text-lg mb-3 text-blue-800 flex items-center">
+        <i class="fas fa-info-circle mr-2"></i> स्थिति विवरण
+      </h3>
+      <div class="space-y-2">
+        <p><strong>वर्तमान स्थिति:</strong> 
+          <span class="status-badge status-${item.status || 'pending'}">
+            ${item.status === 'complete' ? 'पूर्ण' : item.status === 'reject' ? 'अस्वीकृत' : 'लंबित'}
+          </span>
+        </p>
+        <p><strong>टिप्पणी:</strong> ${item.comments || item.remarks || "कोई टिप्पणी नहीं"}</p>
+        <p><strong>अधिकारी नाम:</strong> ${item.officerName || "—"}</p>
+        <p><strong>अनुमोदन तिथि:</strong> ${formatDate(item.approvedAt)}</p>
+      </div>
+    </div>`;
+}
+
+window.closeDetails = () => {
+  document.getElementById("detailModal").classList.add("hidden");
+  document.getElementById("detailModal").classList.remove("flex");
+};
+
+// =============================================
+// Status Update
+// =============================================
+window.updateStatus = async (newStatus) => {
+  if (!currentApp) return;
+  
+  const { item } = currentApp;
+  const confirmMsg = newStatus === 'complete' ? 'क्या आप इस आवेदन को पूर्ण करना चाहते हैं?' :
+                     newStatus === 'reject' ? 'क्या आप इस आवेदन को अस्वीकार करना चाहते हैं?' :
+                     'क्या आप इस आवेदन को लंबित करना चाहते हैं?';
+  
+  if (!confirm(confirmMsg)) return;
+  
+  try {
+    await updateDoc(doc(db, item._collection, item.id), { 
+      status: newStatus,
+      updatedAt: new Date()
+    });
+    
+    alert(`स्थिति अपडेट हो गई: ${newStatus === 'complete' ? 'पूर्ण' : newStatus === 'reject' ? 'अस्वीकृत' : 'लंबित'}`);
+    closeDetails();
+    loadData(); // Reload data to reflect changes
+  } catch (err) {
+    console.error("स्थिति अपडेट में त्रुटि:", err);
+    alert("स्थिति अपडेट में त्रुटि हुई");
+  }
+};
+
+// =============================================
+// Delete Application
+// =============================================
+window.del = async (id) => {
+  if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं? यह क्रिया वापस नहीं की जा सकती।")) return;
+  
+  const item = allApplications.find(x => x.id === id);
+  if (!item) return alert("आवेदन नहीं मिला");
+  
+  try {
+    await deleteDoc(doc(db, item._collection, item.id));
+    alert("आवेदन सफलतापूर्वक हटा दिया गया");
+    loadData(); // Reload data
+  } catch (err) {
+    console.error("हटाने में त्रुटि:", err);
+    alert("आवेदन हटाने में त्रुटि हुई");
+  }
+};
+
+// =============================================
+// QR Code Generation
+// =============================================
+function createQRImageDataUrl(text, size = 110) {
   return new Promise(resolve => {
     const container = document.createElement('div');
     container.style.position = 'absolute';
     container.style.left = '-9999px';
     container.style.top = '-9999px';
     document.body.appendChild(container);
-
+    
     try {
       new QRCode(container, {
-        text: text || "https://allinone.mp.gov.in",
+        text: text,
         width: size,
         height: size,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H
       });
-
+      
       setTimeout(() => {
         const canvas = container.querySelector('canvas');
-        const dataUrl = canvas ? canvas.toDataURL('image/png') : null;
-        document.body.removeChild(container);
-        resolve(dataUrl);
-      }, 600);
+        if (canvas) {
+          const dataUrl = canvas.toDataURL('image/png');
+          document.body.removeChild(container);
+          resolve(dataUrl);
+        } else {
+          document.body.removeChild(container);
+          resolve(null);
+        }
+      }, 500);
     } catch (err) {
       document.body.removeChild(container);
       resolve(null);
@@ -731,73 +1050,78 @@ async function createQRImageDataUrl(text, size = 110) {
 }
 
 // =============================================
-// PDF Content Prepare
+// PDF Functions
 // =============================================
 function preparePDF(item, appNo) {
   document.getElementById("pdfApplicationNo").textContent = appNo;
   document.getElementById("pdfDownloadDate").textContent = new Date().toLocaleDateString("hi-IN", {
-    day: "numeric", month: "long", year: "numeric"
+    day: "numeric", 
+    month: "long", 
+    year: "numeric"
   });
-
+  
   const tbody = document.getElementById("pdfDetailsTable");
-  if (!tbody) return;
-
   tbody.innerHTML = "";
-
+  
   const fields = [
+    {label: "आवेदन क्रमांक", value: appNo},
     {label: "आवेदक का नाम", value: item.applicantName || item.studentName || "—"},
-    {label: "पिता का नाम",  value: item.fatherName || "—"},
-    {label: "लिंग",         value: item.gender === "male" ? "पुरुष" : item.gender === "female" ? "महिला" : item.gender || "—"},
-    {label: "ईमेल",        value: item.email || "—"},
-    {label: "जिला",        value: item.district || "—"},
-    {label: "तहसील",       value: item.tehsil || "—"},
-    {label: "ग्राम",       value: item.village || "—"},
-    {label: "सेवा",        value: getServiceName(item)},
-    {label: "स्थिति",      value: item.status === "complete" ? "पूर्ण" : item.status === "reject" ? "अस्वीकृत" : "लंबित"},
-    {label: "आवेदन तिथि",  value: formatDate(item.createdAt)},
+    {label: "पिता का नाम", value: item.fatherName || "—"},
+    {label: "लिंग", value: item.gender === "male" ? "पुरुष" : item.gender === "female" ? "महिला" : item.gender || "—"},
+    {label: "जन्म तिथि", value: formatDate(item.dob)},
+    {label: "मोबाइल नंबर", value: item.phone || item.mobile || "—"},
+    {label: "ईमेल", value: item.email || "—"},
+    {label: "जिला", value: item.district || "—"},
+    {label: "तहसील", value: item.tehsil || "—"},
+    {label: "ग्राम/वार्ड", value: item.village || item.address || "—"},
+    {label: "सेवा प्रकार", value: getServiceName(item)},
+    {label: "समग्र ID", value: item.samagraId || item.memberId || "—"},
+    {label: "आवेदन तिथि", value: formatDate(item.createdAt)},
+    {label: "स्थिति", value: item.status === "complete" ? "पूर्ण" : item.status === "reject" ? "अस्वीकृत" : "लंबित"},
+    {label: "टिप्पणी", value: item.comments || item.remarks || "कोई टिप्पणी नहीं"}
   ];
-
+  
   fields.forEach(f => {
-    if (f.value && f.value !== "—") {
-      tbody.innerHTML += `
-        <tr>
-          <td style="font-weight:600; background:#f8fafc; padding:12px 16px; border:1px solid #cbd5e1;">${f.label}</td>
-          <td style="padding:12px 16px; border:1px solid #cbd5e1;">${f.value}</td>
-        </tr>`;
-    }
+    tbody.innerHTML += `
+      <tr>
+        <td style="font-weight:600; background:#f8fafc;">${f.label}</td>
+        <td>${f.value}</td>
+      </tr>`;
   });
 }
 
-// =============================================
-// PDF Download (Fixed Version)
-// =============================================
 window.downloadPDF = async () => {
-  if (!currentApp) return alert("कोई आवेदन चुना नहीं गया");
-
+  if (!currentApp) {
+    alert("कृपया पहले एक आवेदन चुनें");
+    return;
+  }
+  
   const { item, appNo } = currentApp;
   const pdfContent = document.getElementById("pdfContent");
   const qrContainer = document.getElementById("pdfQR");
-
+  
   try {
-    // QR पहले img में डालो
+    // Create QR code
     const qrText = `AllInOne MP | ${appNo} | ${item.applicantName || item.studentName || "—"} | ${getServiceName(item)}`;
     const qrDataUrl = await createQRImageDataUrl(qrText, 110);
-
+    
     qrContainer.innerHTML = qrDataUrl
-      ? `<img src="${qrDataUrl}" alt="QR Code" style="width:100%;height:100%;object-fit:contain;">`
-      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#64748b;padding:8px;background:#f1f5f9;border-radius:4px;">QR नहीं बन पाया</div>`;
-
+      ? `<img src="${qrDataUrl}" alt="QR Code">`
+      : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#64748b;">
+           QR कोड उपलब्ध नहीं
+         </div>`;
+    
     preparePDF(item, appNo);
-
+    
+    // Wait for fonts to load
     await document.fonts.ready;
-    await new Promise(r => setTimeout(r, 1000));
-
+    
     const opt = {
       margin: 0,
       filename: `AllInOne_${appNo}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: {
-        scale: 3.0,
+        scale: 3,
         useCORS: true,
         letterRendering: true,
         logging: false,
@@ -814,96 +1138,176 @@ window.downloadPDF = async () => {
         compress: true
       }
     };
-
-    pdfContent.style.visibility = 'visible';
+    
+    // Temporarily move PDF content to visible position
+    const originalPosition = pdfContent.style.position;
+    const originalTop = pdfContent.style.top;
+    const originalLeft = pdfContent.style.left;
+    
+    pdfContent.style.position = 'absolute';
+    pdfContent.style.top = '0';
+    pdfContent.style.left = '0';
     pdfContent.style.zIndex = '99999';
-
+    document.body.appendChild(pdfContent);
+    
+    // Generate PDF
     await html2pdf().set(opt).from(pdfContent).save();
-
+    
     alert("PDF डाउनलोड हो गया ✓");
-
-  } catch (err) {
-    console.error("PDF error:", err);
-    alert("PDF बनाने में त्रुटि हुई");
-  } finally {
-    pdfContent.style.visibility = 'hidden';
+    
+    // Restore original position
+    pdfContent.style.position = originalPosition;
+    pdfContent.style.top = originalTop;
+    pdfContent.style.left = originalLeft;
     pdfContent.style.zIndex = '-9999';
-  }
-};
-
-// =============================================
-// Open Details Modal & Set currentApp
-// =============================================
-window.openDetails = (id) => {
-  const item = allApplications.find(a => a.id === id);
-  if (!item) return alert("आवेदन नहीं मिला");
-
-  const appNo = `AIO-${id.substring(0,8).toUpperCase()}`;
-
-  document.getElementById("modalApplicationNo").textContent = appNo;
-  document.getElementById("modalApplicationNo").dataset.appId = id;
-
-  // modal content भरने का कोड (आपका पुराना तरीका यहाँ रखें)
-  // उदाहरण:
-  // document.getElementById("detailBody").innerHTML = generateDetailHTML(item);
-
-  currentApp = { item, appNo };
-
-  document.getElementById("detailModal").classList.remove("hidden");
-  document.getElementById("detailModal").classList.add("flex");
-};
-
-window.closeDetails = () => {
-  document.getElementById("detailModal").classList.add("hidden");
-  document.getElementById("detailModal").classList.remove("flex");
-};
-
-// =============================================
-// Status Update
-// =============================================
-window.updateStatus = async (newStatus) => {
-  const appNoEl = document.getElementById('modalApplicationNo');
-  const id = appNoEl?.dataset?.appId;
-  if (!id) return alert("कोई आवेदन नहीं चुना");
-
-  const item = allApplications.find(a => a.id === id);
-  if (!item) return alert("आवेदन नहीं मिला");
-
-  try {
-    await updateDoc(doc(db, item._collection, id), { status: newStatus });
-    alert(`स्थिति अपडेट हो गई: ${newStatus}`);
-    closeDetails();
+    document.getElementById('pdfContent').appendChild(pdfContent);
+    
   } catch (err) {
-    console.error(err);
-    alert("स्थिति अपडेट में त्रुटि");
+    console.error("PDF बनाने में त्रुटि:", err);
+    alert("PDF बनाने में त्रुटि हुई");
   }
 };
 
-// =============================================
-// Delete Application
-// =============================================
-window.del = async (id) => {
-  if (!confirm("यह आवेदन स्थायी रूप से हट जाएगा। जारी रखें?")) return;
-
-  const item = allApplications.find(x => x.id === id);
-  if (!item) return alert("आवेदन नहीं मिला");
-
-  try {
-    await deleteDoc(doc(db, item._collection, id));
-    alert("आवेदन हटा दिया गया");
-  } catch (err) {
-    console.error(err);
-    alert("हटाने में त्रुटि");
+window.printApplication = () => {
+  if (!currentApp) {
+    alert("कृपया पहले एक आवेदन चुनें");
+    return;
   }
+  
+  const printWindow = window.open('', '_blank');
+  const { item, appNo } = currentApp;
+  
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>आवेदन विवरण - ${appNo}</title>
+        <style>
+          body { font-family: 'Noto Sans Devanagari', sans-serif; padding: 20px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .app-no { font-size: 18px; font-weight: bold; color: #1e3a8a; margin: 10px 0; }
+          .section { margin-bottom: 20px; }
+          .section h3 { color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 5px; }
+          table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+          td { padding: 8px; border: 1px solid #ddd; }
+          .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+          @media print { .no-print { display: none; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h2>AllInOne MP पोर्टल - आवेदन विवरण</h2>
+          <div class="app-no">आवेदन क्रमांक: ${appNo}</div>
+          <p>मध्य प्रदेश सरकार</p>
+        </div>
+        
+        <div class="section">
+          <h3>आवेदक विवरण</h3>
+          <table>
+            <tr><td>नाम:</td><td>${item.applicantName || item.studentName || "—"}</td></tr>
+            <tr><td>पिता का नाम:</td><td>${item.fatherName || "—"}</td></tr>
+            <tr><td>लिंग:</td><td>${item.gender === "male" ? "पुरुष" : item.gender === "female" ? "महिला" : item.gender || "—"}</td></tr>
+            <tr><td>मोबाइल:</td><td>${item.phone || item.mobile || "—"}</td></tr>
+          </table>
+        </div>
+        
+        <div class="section">
+          <h3>आवेदन विवरण</h3>
+          <table>
+            <tr><td>सेवा प्रकार:</td><td>${getServiceName(item)}</td></tr>
+            <tr><td>आवेदन तिथि:</td><td>${formatDate(item.createdAt)}</td></tr>
+            <tr><td>स्थिति:</td><td>${item.status === "complete" ? "पूर्ण" : item.status === "reject" ? "अस्वीकृत" : "लंबित"}</td></tr>
+          </table>
+        </div>
+        
+        <div class="footer">
+          <p>यह दस्तावेज़ AllInOne MP पोर्टल द्वारा जनरेट किया गया है</p>
+          <p>प्रिंट तिथि: ${new Date().toLocaleDateString("hi-IN")}</p>
+        </div>
+        
+        <div class="no-print">
+          <button onclick="window.print()" style="padding:10px 20px;background:#1e3a8a;color:white;border:none;cursor:pointer;">
+            प्रिंट करें
+          </button>
+          <button onclick="window.close()" style="padding:10px 20px;background:#666;color:white;border:none;cursor:pointer;">
+            बंद करें
+          </button>
+        </div>
+        
+        <script>
+          window.onload = function() {
+            window.print();
+          }
+        </script>
+      </body>
+    </html>
+  `);
+  
+  printWindow.document.close();
 };
+
+// =============================================
+// Export CSV
+// =============================================
+function exportToCSV() {
+  if (filteredApplications.length === 0) {
+    alert("निर्यात करने के लिए कोई डेटा नहीं है");
+    return;
+  }
+  
+  const headers = [
+    'आवेदन ID',
+    'नाम',
+    'पिता का नाम',
+    'सेवा प्रकार',
+    'समग्र ID',
+    'मोबाइल',
+    'जिला',
+    'आवेदन तिथि',
+    'स्थिति'
+  ];
+  
+  const csvData = filteredApplications.map(app => [
+    `AIO-${app.id.substring(0,8).toUpperCase()}`,
+    app.applicantName || app.studentName || '',
+    app.fatherName || '',
+    getServiceName(app),
+    app.samagraId || app.memberId || '',
+    app.phone || app.mobile || '',
+    app.district || '',
+    formatDate(app.createdAt),
+    app.status === 'complete' ? 'पूर्ण' : app.status === 'reject' ? 'अस्वीकृत' : 'लंबित'
+  ]);
+  
+  const csvContent = [
+    headers.join(','),
+    ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+  ].join('\n');
+  
+  const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', `AllInOne_Applications_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  alert("CSV फ़ाइल निर्यात हो गई");
+}
 
 // =============================================
 // Logout
 // =============================================
 window.logout = () => {
-  if (confirm("लॉगआउट करना चाहते हैं?")) {
+  if (confirm("क्या आप लॉगआउट करना चाहते हैं?")) {
     signOut(auth).then(() => {
       window.location.href = "login.html";
+    }).catch(err => {
+      console.error("लॉगआउट में त्रुटि:", err);
+      alert("लॉगआउट में त्रुटि हुई");
     });
   }
 };
