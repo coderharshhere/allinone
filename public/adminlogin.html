@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | AllInOne MP Govt Portal</title>
+    <title>प्रशासक लॉगिन | AllInOne MP Govt Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -36,7 +36,7 @@
     <div id="header"></div>
     <!-- ================= STANDARD HEADER END ================= -->
 
-    <!-- ================= LOGIN MAIN CONTENT START ================= -->
+    <!-- ================= ADMIN LOGIN MAIN CONTENT START ================= -->
     <main class="flex-grow flex items-center justify-center px-4 py-12 login-gradient">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden">
             
@@ -48,16 +48,16 @@
                 <div class="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-user-lock text-blue-600 text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800">पोर्टल लॉगिन</h2>
+                <h2 class="text-2xl font-bold text-gray-800">प्रशासक लॉगिन</h2>
                 <p class="text-sm text-gray-500 mt-2">
-                    सुरक्षित सेवाओं का लाभ लेने के लिए साइन-इन करें
+                    सुरक्षित प्रशासनिक सेवाओं का लाभ लेने के लिए साइन-इन करें
                 </p>
             </div>
 
             <!-- Login Form -->
             <form id="loginForm" class="space-y-6">
 
-                <!-- Email Field - WITH AUTOCOMPLETE -->
+                <!-- Email Field - WITH AUTOCOMPLETE (CRITICAL) -->
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">
                         ईमेल आईडी
@@ -71,7 +71,7 @@
                             id="email" 
                             name="email" 
                             required
-                            autocomplete="username"
+                            autocomplete="username"  <!-- MUST HAVE FOR BROWSER PASSWORD MANAGERS -->
                             placeholder="आपका ईमेल दर्ज करें"
                             class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                             aria-required="true"
@@ -80,7 +80,7 @@
                     <p id="email-error" class="error-message" role="alert"></p>
                 </div>
 
-                <!-- Password Field - WITH AUTOCOMPLETE (CRITICAL FIX) -->
+                <!-- Password Field - WITH AUTOCOMPLETE (CRITICAL) -->
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">
                         पासवर्ड
@@ -94,7 +94,7 @@
                             id="password" 
                             name="password" 
                             required
-                            autocomplete="current-password"
+                            autocomplete="current-password"  <!-- MUST HAVE FOR BROWSER PASSWORD MANAGERS -->
                             minlength="6"
                             placeholder="••••••••"
                             class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
@@ -150,7 +150,7 @@
             </div>
         </div>
     </main>
-    <!-- ================= LOGIN MAIN CONTENT END ================= -->
+    <!-- ================= ADMIN LOGIN MAIN CONTENT END ================= -->
 
     <!-- ================= STANDARD FOOTER START ================= -->
     <div id="footer"></div>
@@ -221,7 +221,7 @@
             if (state) {
                 btnText.textContent = "लॉगिन हो रहा है...";
                 btnSpinner.classList.remove("hidden");
-                loginBtn.disabled = true;
+ loginBtn.disabled = true;
             } else {
                 btnText.textContent = "लॉगिन करें";
                 btnSpinner.classList.add("hidden");
