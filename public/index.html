@@ -156,7 +156,7 @@
   </div>
 </section>
 
-    <!-- Main Content -->
+    <!-- Main Content --
   
 
 
@@ -187,7 +187,6 @@
         <i class="fas fa-university"></i> यूनिवर्सिटी/फार्म
     </button>
 </div>
-<!--
 
 <style>
     /* 1. Normal State (White) */
@@ -213,108 +212,85 @@
 
 </style>-->
 
+    <div class="flex items-center md:justify-center overflow-x-auto no-scrollbar pb-4 flex-nowrap gap-3 px-2">
+    
+    <button data-category="most" onclick="filterServices('most')" 
+        class="category-tab active flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-fire"></i> लोकप्रिय
+    </button>
 
-<style>
-  /* Clean & Sharp Filter Container */
-  .filter-container {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding: 15px 5px;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    max-width: 1100px;
-    margin: 0 auto;
-    justify-content: start;
-  }
-  .filter-container::-webkit-scrollbar { display: none; }
+    <button data-category="social" onclick="filterServices('social')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-users"></i> समग्र एवं सामाजिक
+    </button>
 
-  /* Sharp Professional Chip */
-  .filter-tab {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px; /* Kam curve, zyada professional */
-    color: #334155;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-  }
+    <button data-category="land" onclick="filterServices('land')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
+    </button>
 
-  /* Hover & Active States */
-  .filter-tab:hover {
-    border-color: #000080;
-    background: #f8fafc;
-  }
+    <button data-category="certificates" onclick="filterServices('certificates')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-file-invoice"></i> प्रमाण पत्र
+    </button>
 
-  .filter-tab.active {
-    background: #000080;
-    color: #ffffff !important;
-    border-color: #000080;
-  }
+    <button data-category="form" onclick="filterServices('form')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-university"></i> यूनिवर्सिटी/फॉर्म
+    </button>
 
-  .filter-tab.active i {
-    color: #ffffff !important;
-  }
+    <button data-category="yojna" onclick="filterServices('yojna')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-indian-rupee-sign"></i> सरकारी योजनाएं
+    </button>
 
-  /* Icon Colors (Clear & Distinct) */
-  .filter-tab i { font-size: 14px; }
-</style>
+    <button data-category="job" onclick="filterServices('job')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-briefcase"></i> रोजगार पंजीयन
+    </button>
 
-<!--<div class="filter-container">
-  <div class="filter-tab active" onclick="filterServices('most', this)">
-    <i class="fas fa-star" style="color: #f59e0b;"></i> लोकप्रिय सेवाएँ
-  </div>
-
-  <div class="filter-tab" onclick="filterServices('certificate', this)">
-    <i class="fas fa-file-alt" style="color: #3b82f6;"></i> प्रमाण पत्र
-  </div>
-
-  <div class="filter-tab" onclick="filterServices('university', this)">
-    <i class="fas fa-university" style="color: #8b5cf6;"></i> यूनिवर्सिटी फॉर्म
-  </div>
-
-  <div class="filter-tab" onclick="filterServices('yojna', this)">
-    <i class="fas fa-indian-rupee-sign" style="color: #10b981;"></i> सरकारी योजनाएं
-  </div>
-
-  <div class="filter-tab" onclick="filterServices('agri', this)">
-    <i class="fas fa-tractor" style="color: #059669;"></i> कृषि सेवा (MP)
-  </div>
-
-  <div class="filter-tab" onclick="filterServices('job', this)">
-    <i class="fas fa-briefcase" style="color: #6366f1;"></i> रोजगार पंजीयन
-  </div>
-
-  <div class="filter-tab" onclick="filterServices('bill', this)">
-    <i class="fas fa-lightbulb" style="color: #eab308;"></i> बिल भुगतान
-  </div>
+    <button data-category="bill" onclick="filterServices('bill')" 
+        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
+        <i class="fas fa-lightbulb"></i> बिल भुगतान
+    </button>
 </div>
 
-<!--<script>
-  function filterServices(category, element) {
-    // 1. UI Update
-    document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-    element.classList.add('active');
+<style>
+    /* 1. Normal State (Classic White) */
+    .category-tab {
+        background-color: white !important;
+        color: #4b5563 !important; /* gray-600 */
+        border: 1px solid #e5e7eb !important; /* gray-200 */
+        cursor: pointer;
+    }
 
-    // 2. Filter Logic
-    // Ye tabhi kaam karega jab aapne cards me data-category dala ho
-    let cards = document.querySelectorAll('.group, .state-card, .compact-card');
-    cards.forEach(card => {
-      let cardCat = card.getAttribute('data-category');
-      if (category === 'all' || cardCat === category) {
-        card.style.display = "flex";
-      } else {
-        card.style.display = "none";
-      }
-    });
-  }
-</script>
+    /* 2. Active State (Deep Ashoka Blue) */
+    /* Aapki script jab is class ko add karegi tab ye color dikhega */
+    .category-tab.active {
+        background-color: #1e3a8a !important; /* blue-900 */
+        color: white !important;
+        border-color: #1e3a8a !important;
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    }
+
+    /* 3. Hover State */
+    .category-tab:hover:not(.active) {
+        border-color: #1e3a8a !important;
+        color: #1e3a8a !important;
+        background-color: #f8fafc !important;
+    }
+
+    /* 4. Smooth Scrolling for Mobile */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+
+
     
             <!-- Grid -->
           <div class="w-full max-w-[1200px] mx-auto">
@@ -659,6 +635,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
