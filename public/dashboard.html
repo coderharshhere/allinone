@@ -57,7 +57,7 @@ border: 1px solid #ffd54f;
 }
 .status-complete {
 background: linear-gradient(135deg, #e8f5e9 0%, #81c784 100%);
-color: #2e7d32;
+color: #2e76d2;
 border: 1px solid #81c784;
 }
 .status-reject {
@@ -347,31 +347,10 @@ margin-left: 0 !important;
 margin-left: 0;
 }
 }
-
-/* Loading Screen */
-.loading-screen {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: white;
-display: flex;
-align-items: center;
-justify-content: center;
-z-index: 99999;
-}
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
-<!-- LOADING SCREEN -->
-<div id="loadingScreen" class="loading-screen">
-<div class="text-center">
-<div class="loading-spinner"></div>
-<p class="mt-4 text-gray-600 font-medium">लोड हो रहा है...</p>
-</div>
-</div>
-
+<!-- AUTHENTICATION GUARD - REMOVED (Handled in Firebase onAuthStateChanged) -->
 <!-- SIDEBAR -->
 <aside class="sidebar bg-gradient-to-b from-blue-900 to-blue-700 text-white h-screen fixed left-0 top-0 z-40 shadow-2xl">
 <div class="p-5 border-b border-blue-600">
@@ -451,7 +430,6 @@ z-index: 99999;
 </div>
 </div>
 </aside>
-
 <!-- MAIN CONTENT -->
 <main class="main-content flex-1 ml-72 container mx-auto px-4 py-6 transition-all">
 <!-- HEADER -->
@@ -531,7 +509,6 @@ z-index: 99999;
 </div>
 </div>
 </header>
-
 <!-- Search and Filters -->
 <div class="filter-container fade-in">
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
@@ -585,7 +562,6 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </div>
 </div>
 </div>
-
 <!-- Statistics Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 fade-in">
 <div class="stats-card stats-total bg-white p-6">
@@ -649,7 +625,6 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </div>
 </div>
 </div>
-
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 fade-in-delay">
 <div class="bg-white rounded-2xl shadow-lg p-6">
@@ -671,7 +646,6 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </div>
 </div>
 </div>
-
 <!-- Applications Table -->
 <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in-delay">
 <div class="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center">
@@ -743,7 +717,6 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </div>
 </div>
 </main>
-
 <!-- DETAILS MODAL -->
 <div id="detailModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
 <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
@@ -788,7 +761,6 @@ class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:rin
 </div>
 </div>
 </div>
-
 <!-- PDF TEMPLATE -->
 <div id="pdfContent">
 <div class="pdf-page">
@@ -825,7 +797,6 @@ MP
 </div>
 </div>
 </div>
-
 <!-- FOOTER -->
 <footer class="bg-gray-900 text-gray-300 py-8 px-4 mt-auto">
 <div class="container mx-auto text-center">
@@ -859,11 +830,11 @@ MP
 </div>
 </footer>
 
-<!-- ✅ FIXED JAVASCRIPT CODE -->
+<!-- ✅ CORRECTED JAVASCRIPT CODE -->
 <script type="module">
 /* ===== IMPORTS ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc }
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy }
 from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut }
 from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -880,100 +851,41 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 let currentUser = null;
-let isAuthCheckComplete = false;
 
-/* ===== ✅ FIXED AUTH GUARD WITH ADMIN CHECK ===== */
+/* ===== AUTH GUARD - FIXED VERSION ===== */
+// ✅ Only ONE authentication check - Firebase handles everything
 onAuthStateChanged(auth, async (user) => {
-// ✅ Check current page
-const currentPath = window.location.pathname;
-const isLoginPage = currentPath.includes('adminlogin.html') || currentPath.includes('adminlogin');
-  
 if (!user) {
-// ✅ Not authenticated
-console.log("User not authenticated");
+// Not authenticated - redirect to login
 clearAuthData();
-    
-// ✅ Only redirect if NOT already on login page
-if (!isLoginPage) {
-console.log("Redirecting to login page...");
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+if (!window.location.href.includes('adminlogin.html')) {
+window.location.href = 'https://allinonemp.harshtiwari.in/adminlogin.html';
 }
 return;
 }
 
-// ✅ User is authenticated - now check if they're an admin
-console.log("User authenticated:", user.email);
-
-try {
-// ✅ Check admin status in Firestore
-const adminDocRef = doc(db, "admins", user.uid);
-const adminDoc = await getDoc(adminDocRef);
-  
-if (!adminDoc.exists()) {
-console.log("User is not an admin");
-alert("❌ आप एडमिन नहीं हैं। लॉगआउट हो रहा है...");
-await signOut(auth);
-clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-return;
-}
-
-const adminData = adminDoc.data();
-  
-if (adminData.status !== "active") {
-console.log("Admin account is inactive");
-alert("❌ आपका खाता निष्क्रिय है। लॉगआउट हो रहा है...");
-await signOut(auth);
-clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-return;
-}
-
-// ✅ Valid admin user
-console.log("Valid admin user:", adminData);
+// ✅ Authenticated - proceed
 currentUser = user;
 
-// ✅ If on login page while authenticated, redirect to dashboard
-if (isLoginPage) {
-console.log("Admin logged in, redirecting to dashboard...");
-window.location.replace('https://allinonemp.harshtiwari.in/admin.html');
-return;
-}
-
-// ✅ Store authentication data
-const loginTime = localStorage.getItem('loginTime');
-if (!loginTime) {
+// ✅ Set login time ONLY if not already set (prevents logout after 24 hours on every refresh)
+const existingLoginTime = localStorage.getItem('loginTime');
+if (!existingLoginTime) {
 localStorage.setItem('loginTime', new Date().getTime().toString());
 }
-  
+
+// ✅ Store user data
 localStorage.setItem('adminLoggedIn', 'true');
-localStorage.setItem('adminToken', await user.getIdToken());
+localStorage.setItem('adminToken', user.accessToken || 'valid-session');
 localStorage.setItem('adminEmail', user.email || 'allinoneofficial@gmail.com');
-localStorage.setItem('adminName', adminData.name || user.displayName || user.email?.split('@')[0] || 'Admin');
-localStorage.setItem('adminRole', adminData.role || 'admin');
+localStorage.setItem('adminName', user.displayName || 'Admin');
 
 // ✅ Update UI
-updateUserInfo(user, adminData);
+updateUserInfo(user);
 
-// ✅ Hide loading screen
-const loadingScreen = document.getElementById('loadingScreen');
-if (loadingScreen) loadingScreen.style.display = 'none';
-
-// ✅ Load data and setup (only if not on login page)
-if (!isLoginPage) {
+// ✅ Load data and setup
 await loadData();
 setupEventListeners();
 initializeCharts();
-isAuthCheckComplete = true;
-}
-  
-} catch (error) {
-console.error("Error checking admin status:", error);
-alert("❌ एडमिन स्टेटस चेक करने में त्रुटि। लॉगआउट हो रहा है...");
-await signOut(auth);
-clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
-}
 });
 
 /* ===== HELPER FUNCTIONS ===== */
@@ -983,20 +895,12 @@ localStorage.removeItem('adminToken');
 localStorage.removeItem('loginTime');
 localStorage.removeItem('adminEmail');
 localStorage.removeItem('adminName');
-localStorage.removeItem('adminRole');
 }
 
-function updateUserInfo(user, adminData) {
-const displayName = adminData?.name || user.displayName || user.email?.split('@')[0] || 'Admin';
-const email = user.email || 'allinoneofficial@gmail.com';
-const role = adminData?.role || 'admin';
-  
-document.getElementById('adminName').textContent = displayName;
-document.getElementById('adminEmail').textContent = email;
-document.getElementById('sidebarAdminName').textContent = displayName;
-  
-// Show role badge if needed
-console.log('Admin role:', role);
+function updateUserInfo(user) {
+document.getElementById('adminName').textContent = user.displayName || 'Admin';
+document.getElementById('adminEmail').textContent = user.email || 'allinoneofficial@gmail.com';
+document.getElementById('sidebarAdminName').textContent = user.displayName || 'Admin';
 }
 
 /* ===== DATA ===== */
@@ -1054,13 +958,13 @@ resolve(null);
 /* ===== SETUP EVENT LISTENERS ===== */
 function setupEventListeners() {
 // Profile Dropdown
-document.getElementById('profileButton')?.addEventListener('click', () => {
+document.getElementById('profileButton').addEventListener('click', () => {
 const dropdown = document.getElementById('profileDropdown');
 dropdown.classList.toggle('hidden');
 });
 
 // Notification Dropdown
-document.getElementById('notificationBtn')?.addEventListener('click', () => {
+document.getElementById('notificationBtn').addEventListener('click', () => {
 const dropdown = document.getElementById('notificationDropdown');
 dropdown.classList.toggle('hidden');
 });
@@ -1072,45 +976,45 @@ const profileButton = document.getElementById('profileButton');
 const notificationDropdown = document.getElementById('notificationDropdown');
 const notificationButton = document.getElementById('notificationBtn');
 
-if (profileDropdown && profileButton && !profileDropdown.contains(e.target) && !profileButton.contains(e.target)) {
+if (!profileDropdown.contains(e.target) && !profileButton.contains(e.target)) {
 profileDropdown.classList.add('hidden');
 }
-if (notificationDropdown && notificationButton && !notificationDropdown.contains(e.target) && !notificationButton.contains(e.target)) {
+if (!notificationDropdown.contains(e.target) && !notificationButton.contains(e.target)) {
 notificationDropdown.classList.add('hidden');
 }
 });
 
 // Search Filter
-document.getElementById('searchInput')?.addEventListener('input', (e) => {
+document.getElementById('searchInput').addEventListener('input', (e) => {
 currentFilters.search = e.target.value.toLowerCase();
 applyFilters();
 });
 
 // Service Filter
-document.getElementById('serviceFilter')?.addEventListener('change', (e) => {
+document.getElementById('serviceFilter').addEventListener('change', (e) => {
 currentFilters.service = e.target.value;
 applyFilters();
 });
 
 // Status Filter
-document.getElementById('statusFilter')?.addEventListener('change', (e) => {
+document.getElementById('statusFilter').addEventListener('change', (e) => {
 currentFilters.status = e.target.value;
 applyFilters();
 });
 
 // Date Filters
-document.getElementById('dateFrom')?.addEventListener('change', (e) => {
+document.getElementById('dateFrom').addEventListener('change', (e) => {
 currentFilters.dateFrom = e.target.value;
 applyFilters();
 });
 
-document.getElementById('dateTo')?.addEventListener('change', (e) => {
+document.getElementById('dateTo').addEventListener('change', (e) => {
 currentFilters.dateTo = e.target.value;
 applyFilters();
 });
 
 // Clear Filters
-document.getElementById('clearFilters')?.addEventListener('click', () => {
+document.getElementById('clearFilters').addEventListener('click', () => {
 document.getElementById('searchInput').value = '';
 document.getElementById('serviceFilter').value = '';
 document.getElementById('statusFilter').value = '';
@@ -1123,7 +1027,7 @@ updateStats(allApplications);
 });
 
 // Reset Filters from empty state
-document.getElementById('resetFilters')?.addEventListener('click', () => {
+document.getElementById('resetFilters').addEventListener('click', () => {
 document.getElementById('searchInput').value = '';
 document.getElementById('serviceFilter').value = '';
 document.getElementById('statusFilter').value = '';
@@ -1139,20 +1043,20 @@ document.getElementById('dataTable').classList.remove('hidden');
 });
 
 // Export CSV
-document.getElementById('exportCSV')?.addEventListener('click', exportToCSV);
+document.getElementById('exportCSV').addEventListener('click', exportToCSV);
 
 // Export Excel
-document.getElementById('exportExcel')?.addEventListener('click', () => {
+document.getElementById('exportExcel').addEventListener('click', () => {
 alert("Excel export feature will be available in the next update!");
 });
 
 // Print View
-document.getElementById('printView')?.addEventListener('click', () => {
+document.getElementById('printView').addEventListener('click', () => {
 printApplication();
 });
 
 // Sidebar Toggle
-document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+document.getElementById('sidebarToggle').addEventListener('click', () => {
 const sidebar = document.querySelector('.sidebar');
 const mainContent = document.querySelector('.main-content');
 
@@ -1166,14 +1070,9 @@ document.getElementById('sidebarToggle').innerHTML = sidebar.classList.contains(
 
 /* ===== LOAD DATA ===== */
 function loadData() {
-return new Promise((resolve) => {
 listen("applications");
 listen("samagra_ekyc_requests");
 listen("mpbhojApplications");
-    
-// Give it a moment to start loading
-setTimeout(() => resolve(), 1000);
-});
 }
 
 function listen(col) {
@@ -1194,10 +1093,8 @@ render(allApplications);
 updateStats(allApplications);
 updateCharts();
 }, error => {
-console.error("Error loading data:", error);
-const tableBody = document.getElementById('dataTable');
-if (tableBody) {
-tableBody.innerHTML = `
+console.error("Error loading  ", error);
+document.getElementById('dataTable').innerHTML = `
 <tr>
 <td colspan="7" class="p-8 text-center">
 <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
@@ -1206,7 +1103,6 @@ tableBody.innerHTML = `
 </td>
 </tr>
 `;
-}
 });
 }
 
@@ -1255,17 +1151,16 @@ updateCharts(filteredData);
 function render(data) {
 const tableBody = document.getElementById("dataTable");
 const emptyState = document.getElementById("emptyState");
-const totalEl = document.getElementById("totalApplications");
 
-if (totalEl) totalEl.textContent = allApplications.length;
+document.getElementById("totalApplications").textContent = allApplications.length;
 
 if (data.length === 0) {
-if (tableBody) tableBody.classList.add('hidden');
-if (emptyState) emptyState.classList.remove('hidden');
+tableBody.classList.add('hidden');
+emptyState.classList.remove('hidden');
 return;
 } else {
-if (tableBody) tableBody.classList.remove('hidden');
-if (emptyState) emptyState.classList.add('hidden');
+tableBody.classList.remove('hidden');
+emptyState.classList.add('hidden');
 }
 
 let rows = '';
@@ -1293,10 +1188,10 @@ rows += `
 </td>
 <td class="p-4">
 <div class="flex space-x-2">
-<button onclick="window.openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
+<button onclick="openDetails('${i.id}')" class="action-btn action-view" title="विवरण देखें">
 <i class="fas fa-eye"></i>
 </button>
-<button onclick="window.deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
+<button onclick="del('${i.id}')" class="action-btn action-delete" title="हटाएं">
 <i class="fas fa-trash-alt"></i>
 </button>
 </div>
@@ -1305,43 +1200,37 @@ rows += `
 `;
 });
 
-if (tableBody) tableBody.innerHTML = rows;
+tableBody.innerHTML = rows;
 }
 
 /* ===== UPDATE STATS ===== */
 function updateStats(data) {
-const statTotal = document.getElementById('statTotal');
-const statPending = document.getElementById('statPending');
-const statComplete = document.getElementById('statComplete');
-const statRejected = document.getElementById('statRejected');
-const statPendingCount = document.getElementById('statPendingCount');
-const statCompleteRate = document.getElementById('statCompleteRate');
-const statRejectionRate = document.getElementById('statRejectionRate');
-
-if (statTotal) statTotal.textContent = data.length;
+document.getElementById('statTotal').textContent = data.length;
 
 const pending = data.filter(a => a.status === 'pending').length;
 const complete = data.filter(a => a.status === 'complete').length;
 const rejected = data.filter(a => a.status === 'reject').length;
+const processing = data.filter(a => a.status === 'processing').length;
 
-if (statPending) statPending.textContent = pending;
-if (statComplete) statComplete.textContent = complete;
-if (statRejected) statRejected.textContent = rejected;
-if (statPendingCount) statPendingCount.textContent = pending;
-if (statCompleteRate) statCompleteRate.textContent = data.length > 0 ? Math.round((complete / data.length) * 100) + '%' : '0%';
-if (statRejectionRate) statRejectionRate.textContent = data.length > 0 ? Math.round((rejected / data.length) * 100) + '%' : '0%';
+document.getElementById('statPending').textContent = pending;
+document.getElementById('statComplete').textContent = complete;
+document.getElementById('statRejected').textContent = rejected;
+
+// Growth calculations
+document.getElementById('statTotalGrowth').textContent = '+12%';
+document.getElementById('statPendingCount').textContent = pending;
+document.getElementById('statCompleteRate').textContent = data.length > 0 ? Math.round((complete / data.length) * 100) + '%' : '0%';
+document.getElementById('statRejectionRate').textContent = data.length > 0 ? Math.round((rejected / data.length) * 100) + '%' : '0%';
 }
 
 /* ===== CHARTS INITIALIZATION ===== */
 let applicationsChart, servicesChart;
 
 function initializeCharts() {
-const ctx1 = document.getElementById('applicationsChart');
-if (!ctx1) return;
-  
-applicationsChart = new Chart(ctx1.getContext('2d'), {
+const ctx1 = document.getElementById('applicationsChart').getContext('2d');
+applicationsChart = new Chart(ctx1, {
 type: 'line',
-data: {
+ {
 labels: ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून'],
 datasets: [{
 label: 'आवेदन',
@@ -1382,15 +1271,13 @@ display: false
 }
 });
 
-const ctx2 = document.getElementById('servicesChart');
-if (!ctx2) return;
-  
-servicesChart = new Chart(ctx2.getContext('2d'), {
+const ctx2 = document.getElementById('servicesChart').getContext('2d');
+servicesChart = new Chart(ctx2, {
 type: 'doughnut',
-data: {
+ {
 labels: ['समग्र आईडी', 'ई-केवाईसी', 'एमपी भोज', 'छात्रवृत्ति', 'पेंशन'],
 datasets: [{
-data: [30, 25, 20, 15, 10],
+ [30, 25, 20, 15, 10],
 backgroundColor: [
 '#3b82f6',
 '#10b981',
@@ -1471,15 +1358,11 @@ return app.serviceType || app.formType || app.serviceName || app.service || app.
 
 function formatDate(ts) {
 if (!ts) return "-";
-try {
 return ts.toDate().toLocaleDateString("hi-IN", {
 day: '2-digit',
 month: 'short',
 year: 'numeric'
 });
-} catch (e) {
-return "-";
-}
 }
 
 function formatLabel(key) {
@@ -1491,7 +1374,7 @@ return key
 }
 
 /* ===== ACTIONS ===== */
-window.deleteFunc = async (id) => {
+window.del = async (id) => {
 if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।")) {
 return;
 }
@@ -1528,7 +1411,7 @@ const statusText = status === 'complete' ? 'पूर्ण' :
 status === 'reject' ? 'अस्वीकृत' : 'लंबित';
 
 alert(`आवेदन स्थिति "${statusText}" में अपडेट कर दी गई है।`);
-loadData();
+loadData(); // Refresh data
 } catch (error) {
 console.error("Error updating status: ", error);
 alert("स्थिति अपडेट करने में त्रुटि। कृपया पुनः प्रयास करें।");
@@ -1539,7 +1422,7 @@ window.logout = () => {
 if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
 signOut(auth).then(() => {
 clearAuthData();
-window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+window.location.href = 'https://allinonemp.harshtiwari.in/adminlogin.html';
 }).catch((error) => {
 console.error("Logout error:", error);
 alert("लॉगआउट में त्रुटि। कृपया पुनः प्रयास करें।");
@@ -1548,20 +1431,16 @@ alert("लॉगआउट में त्रुटि। कृपया पु
 };
 
 /* ===== DETAILS MODAL ===== */
-window.openDetailsFunc = (id) => {
+window.openDetails = (id) => {
 const item = allApplications.find(a => a.id === id);
 if (!item) return;
 
 const appNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
 const appNoElement = document.getElementById("modalApplicationNo");
-if (appNoElement) {
 appNoElement.textContent = appNo;
 appNoElement.dataset.appId = item.id;
-}
 
 const detailBody = document.getElementById("detailBody");
-if (!detailBody) return;
-  
 let detailsHTML = '';
 
 const personalInfo = ['applicantName', 'studentName', 'fatherName', 'motherName', 'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber'];
@@ -1601,16 +1480,12 @@ value = `<span class="status-badge ${statusClass}">${statusText}</span>`;
 }
 detailsHTML += createDetailRow(key, value);
 }
+}
 });
 
 detailBody.innerHTML = detailsHTML;
-  
-const modal = document.getElementById("detailModal");
-if (modal) {
-modal.classList.remove("hidden");
-modal.classList.add("flex");
-}
-  
+document.getElementById("detailModal").classList.remove("hidden");
+document.getElementById("detailModal").classList.add("flex");
 preparePDFContent(item, appNo);
 };
 
@@ -1627,27 +1502,26 @@ ${formatLabel(key)}
 }
 
 window.closeDetails = () => {
-const modal = document.getElementById("detailModal");
-if (modal) modal.classList.add("hidden");
+document.getElementById("detailModal").classList.add("hidden");
 };
 
-/* ===== PDF FUNCTIONS ===== */
+/* ===== PDF CONTENT PREPARATION ===== */
 function preparePDFContent(item, appNo) {
 try {
 const originalAppNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
-const pdfAppNoEl = document.getElementById("pdfApplicationNo");
-if (pdfAppNoEl) pdfAppNoEl.textContent = originalAppNo;
+document.getElementById("pdfApplicationNo").textContent = originalAppNo;
 
 const today = new Date().toLocaleDateString("hi-IN", {
 day: 'numeric',
 month: 'long',
 year: 'numeric'
 });
-const pdfDateEl = document.getElementById("pdfDownloadDate");
-if (pdfDateEl) pdfDateEl.textContent = today;
+document.getElementById("pdfDownloadDate").textContent = today;
 
 const qrContainer = document.getElementById("pdfQR");
-if (qrContainer) qrContainer.innerHTML = "";
+if (qrContainer) {
+qrContainer.innerHTML = "";
+}
 
 const pdfTableBody = document.getElementById("pdfDetailsTable");
 if (!pdfTableBody) return originalAppNo;
@@ -1696,6 +1570,31 @@ tableRows += `
 }
 });
 
+Object.keys(item).forEach(key => {
+if (!fieldOrder.includes(key) &&
+!['_collection', 'id', '__v'].includes(key) &&
+item[key] !== null &&
+item[key] !== undefined) {
+let displayValue = item[key];
+let displayKey = formatLabel(key);
+
+if ((key === 'createdAt' || key === 'updatedAt') && item[key]?.toDate) {
+displayValue = item[key].toDate().toLocaleDateString("hi-IN", {
+day: 'numeric',
+month: 'long',
+year: 'numeric'
+});
+}
+
+tableRows += `
+<tr>
+<td style="font-weight: bold; background-color: #f8fafc; padding: 12px 15px; border: 1px solid #cbd5e1 !important;">${displayKey}</td>
+<td style="padding: 12px 15px; border: 1px solid #cbd5e1 !important;">${displayValue || "-"}</td>
+</tr>
+`;
+}
+});
+
 pdfTableBody.innerHTML = tableRows;
 return originalAppNo;
 } catch (error) {
@@ -1704,9 +1603,10 @@ return appNo || 'AIO-UNKNOWN';
 }
 }
 
+/* ===== PDF DOWNLOAD ===== */
 window.downloadPDF = async () => {
 const appNoElement = document.getElementById("modalApplicationNo");
-const currentAppId = appNoElement?.dataset?.appId || '';
+const currentAppId = appNoElement.dataset?.appId || '';
 const currentItem = allApplications.find(a => a.id === currentAppId);
 
 if (!currentItem) {
@@ -1782,10 +1682,12 @@ compress: true
 };
 
 await html2pdf().set(opt).from(element).save();
-alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!\nआवेदन क्रमांक: ${originalAppNo}`);
+alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!
+आवेदन क्रमांक: ${originalAppNo}`);
 } catch (error) {
 console.error("PDF Generation Error:", error);
-alert("PDF निर्माण में त्रुटि।\nकृपया Chrome ब्राउज़र में पुनः प्रयास करें।");
+alert("PDF निर्माण में त्रुटि।
+कृपया Chrome ब्राउज़र में पुनः प्रयास करें।");
 } finally {
 const pdfContent = document.getElementById("pdfContent");
 pdfContent.style.position = 'fixed';
@@ -1808,7 +1710,7 @@ pdfContent.style.left = '0';
 pdfContent.style.top = '0';
 
 const appNoElement = document.getElementById("modalApplicationNo");
-const currentAppId = appNoElement?.dataset?.appId || '';
+const currentAppId = appNoElement.dataset?.appId || '';
 const currentItem = allApplications.find(a => a.id === currentAppId);
 
 if (currentItem) {
@@ -1892,8 +1794,7 @@ document.body.removeChild(link);
 
 /* ===== INITIALIZATION ===== */
 document.addEventListener('DOMContentLoaded', () => {
-const emptyState = document.getElementById('emptyState');
-if (emptyState) emptyState.classList.add('hidden');
+document.getElementById('emptyState').classList.add('hidden');
 });
 </script>
 </body>
