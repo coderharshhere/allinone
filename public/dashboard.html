@@ -117,11 +117,12 @@ border: 1px solid #e2e8f0;
 border-radius: 8px;
 box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 position: relative;
-font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif !important;
+font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', 'Mangal', 'Nirmala UI', sans-serif !important;
 width: 210mm;
 min-height: 297mm;
--webkit-font-smoothing: antialiased;
+-webkit-font-smoothing: subpixel-antialiased !important;
 -moz-osx-font-smoothing: grayscale;
+text-rendering: optimizeLegibility !important;
 }
 .pdf-header {
 text-align: center;
@@ -165,6 +166,8 @@ padding: 12px 15px;
 .pdf-details-table td {
 padding: 10px 15px;
 border-bottom: 1px solid #e2e8f0;
+border: 1px solid #e2e8f0 !important;
+word-break: break-word !important;
 }
 .pdf-details-table tr:nth-child(even) {
 background-color: #f8fafc;
@@ -186,6 +189,15 @@ padding: 8px;
 background: white;
 border-radius: 8px;
 }
+#pdfContent {
+position: absolute !important;
+left: -9999px !important;
+top: 0 !important;
+visibility: hidden !important;
+opacity: 0 !important;
+pointer-events: none !important;
+z-index: -9999 !important;
+}
 @page {
 size: A4;
 margin: 20mm;
@@ -199,6 +211,13 @@ padding: 0;
 box-shadow: none;
 border: none;
 padding: 0;
+width: 210mm !important;
+min-height: 297mm !important;
+height: auto !important;
+margin: 0 !important;
+padding: 20mm !important;
+box-shadow: none !important;
+border: none !important;
 }
 .no-print {
 display: none;
@@ -572,30 +591,45 @@ status: '',
 dateFrom: '',
 dateTo: ''
 };
-/* ===== QR CODE PROMISE-BASED GENERATION ===== */
-function generateQRImage(text, size = 120) {
+/* ===== RELIABLE QR CODE GENERATOR (Promise-based) ===== */
+async function generateQRCanvas(text, size = 120) {
 return new Promise((resolve) => {
+try {
+// Use qrcode.js properly with callback
 const qrContainer = document.createElement('div');
+qrContainer.style.width = `${size}px`;
+qrContainer.style.height = `${size}px`;
 document.body.appendChild(qrContainer);
-qrContainer.style.position = 'absolute';
-qrContainer.style.left = '-9999px';
+
 const qr = new QRCode(qrContainer, {
 text: text,
 width: size,
 height: size,
 correctLevel: QRCode.CorrectLevel.H
 });
+
+// Wait for QR to render
 setTimeout(() => {
 const canvas = qrContainer.querySelector('canvas');
 if (canvas) {
-const imgData = canvas.toDataURL('image/png');
+// Clone canvas to preserve it after container removal
+const clonedCanvas = document.createElement('canvas');
+clonedCanvas.width = size;
+clonedCanvas.height = size;
+const ctx = clonedCanvas.getContext('2d');
+ctx.drawImage(canvas, 0, 0, size, size);
+
 document.body.removeChild(qrContainer);
-resolve(imgData);
+resolve(clonedCanvas);
 } else {
 document.body.removeChild(qrContainer);
 resolve(null);
 }
-}, 400);
+}, 200);
+} catch (error) {
+console.error("QR Generation Error:", error);
+resolve(null);
+}
 });
 }
 /* ===== SETUP EVENT LISTENERS ===== */
@@ -1017,62 +1051,97 @@ tableRows += `
 pdfTableBody.innerHTML = tableRows;
 return originalAppNo;
 }
-/* ===== PDF DOWNLOAD - FIXED WITH PROMISE ===== */
+/* ===== PDF DOWNLOAD - FIXED WITH ALL BUG FIXES ===== */
 window.downloadPDF = async () => {
-const pdfContent = document.getElementById("pdfContent");
 const appNoElement = document.getElementById("modalApplicationNo");
 const currentAppId = appNoElement.dataset?.appId || '';
 const currentItem = allApplications.find(a => a.id === currentAppId);
+
 if (!currentItem) {
 alert("आवेदन डेटा उपलब्ध नहीं है।");
 return;
 }
+
+// Show loading state
+const originalBtnText = appNoElement.textContent;
+appNoElement.textContent = "PDF तैयार हो रहा है...";
+
 try {
-// Show PDF content temporarily
+// 1. Prepare PDF content IN VIEWPORT (critical fix for html2canvas)
+const pdfContent = document.getElementById("pdfContent");
 pdfContent.style.visibility = 'visible';
-pdfContent.style.position = 'absolute';
-pdfContent.style.left = '0';
+pdfContent.style.position = 'fixed';
 pdfContent.style.top = '0';
-// Prepare content
-const originalAppNo = preparePDFContent(currentItem);
-// Generate QR code with Promise
+pdfContent.style.left = '0';
+pdfContent.style.width = '210mm';
+pdfContent.style.height = '297mm';
+pdfContent.style.zIndex = '-1000';
+pdfContent.style.opacity = '0';
+
+// 2. Set content
+const originalAppNo = preparePDFContent(currentItem, `AIO-${currentItem.id.substring(0,8).toUpperCase()}`);
+
+// 3. Generate QR code using PROMISE-based generator
 const qrData = `Application: ${originalAppNo}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
-const qrImage = await generateQRImage(qrData);
-// Set QR image in PDF
-if (qrImage) {
-document.getElementById('pdfQR').innerHTML = `<img src="${qrImage}" width="120" height="120" style="display:block;">`;
+const qrCanvas = await generateQRCanvas(qrData, 120);
+
+// 4. Insert QR into PDF template
+const qrContainer = document.getElementById('pdfQR');
+qrContainer.innerHTML = '';
+if (qrCanvas) {
+qrContainer.appendChild(qrCanvas);
+} else {
+// Fallback text if QR fails
+qrContainer.innerHTML = `<div style="width:120px;height:120px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px;color:#64748b;">QR उपलब्ध नहीं</div>`;
 }
-// Small delay to ensure rendering
-await new Promise(resolve => setTimeout(resolve, 200));
-// Generate PDF
+
+// 5. WAIT for fonts to load (critical for Hindi text)
+await document.fonts.ready;
+
+// 6. Small delay for final rendering
+await new Promise(resolve => setTimeout(resolve, 300));
+
+// 7. Generate PDF
 const element = document.querySelector('.pdf-page');
 const opt = {
-margin: 10,
-filename: `AllInOneMP_${originalAppNo}.pdf`,
-image: { type: 'jpeg', quality: 0.98 },
+margin: [15, 10, 15, 10], // top, left, bottom, right (mm)
+filename: `AllInOneMP_${originalAppNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
+image: { type: 'jpeg', quality: 0.95 },
 html2canvas: {
-scale: 2,
+scale: 3, // Higher quality
 useCORS: true,
 letterRendering: true,
+logging: false,
+backgroundColor: '#ffffff',
 windowWidth: 800,
 windowHeight: 1130,
 scrollY: -window.scrollY,
-logging: false
+ignoreElements: (element) => element.classList?.contains('no-print')
 },
-jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+jsPDF: {
+unit: 'mm',
+format: 'a4',
+orientation: 'portrait',
+putOnlyUsedFonts: true
+}
 };
+
 await html2pdf().set(opt).from(element).save();
-// Hide PDF content after generation
-pdfContent.style.visibility = 'hidden';
-pdfContent.style.position = 'absolute';
-pdfContent.style.left = '-9999px';
-alert(`✅ PDF सफलतापूर्वक डाउनलोड हो गया!\nआवेदन क्रमांक: ${originalAppNo}`);
+
+// Success message
+alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!\nआवेदन क्रमांक: ${originalAppNo}`);
+
 } catch (error) {
-console.error("PDF Error:", error);
+console.error("PDF Generation Error:", error);
+alert("PDF निर्माण में त्रुटि। कृपया Chrome ब्राउज़र में पुनः प्रयास करें।\nत्रुटि: " + error.message);
+} finally {
+// Always clean up
+const pdfContent = document.getElementById("pdfContent");
 pdfContent.style.visibility = 'hidden';
 pdfContent.style.position = 'absolute';
 pdfContent.style.left = '-9999px';
-alert("PDF बनाने में त्रुटि - कृपया Chrome ब्राउज़र का उपयोग करें");
+pdfContent.style.opacity = '1';
+appNoElement.textContent = originalBtnText;
 }
 };
 window.printApplication = () => {
@@ -1088,10 +1157,11 @@ const currentItem = allApplications.find(a => a.id === currentAppId);
 if (currentItem) {
 preparePDFContent(currentItem);
 // Generate QR
-const qrData = `Application: AIO-${currentItem.id.substring(0,8).toUpperCase()}\nName: ${currentItem.applicantName || currentItem.studentName || ""}`;
-generateQRImage(qrData).then(qrImage => {
-if (qrImage) {
-document.getElementById('pdfQR').innerHTML = `<img src="${qrImage}" width="120" height="120">`;
+const qrData = `Application: AIO-${currentItem.id.substring(0,8).toUpperCase()}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
+generateQRCanvas(qrData, 120).then(qrCanvas => {
+if (qrCanvas) {
+document.getElementById('pdfQR').innerHTML = '';
+document.getElementById('pdfQR').appendChild(qrCanvas);
 }
 setTimeout(() => {
 window.print();
