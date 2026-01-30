@@ -54,6 +54,13 @@
         display: grid;
     }
 }
+        .service-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Saare cards ek barabar lambai ke rahenge */
+    min-width: 250px; /* Card ko ek limit se zyada pichakne nahi dega */
+    flex: 1 1 300px; /* Ye magic property hai: (grow, shrink, base-width) */
+}
         
     </style>
 </head>
@@ -220,9 +227,12 @@
 
 
     
-            <!-- Grid -->
+            <!-- Grid --
           <div class="w-full max-w-[1200px] mx-auto">
-    <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">
+    <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">-->
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 max-w-7xl mx-auto">
+
                     
                     <!-- Samagra Card -->
                     <div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="most">
@@ -599,6 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
