@@ -71,7 +71,7 @@
                             id="email" 
                             name="email" 
                             required
-                            autocomplete="username"  <!-- MUST HAVE FOR BROWSER PASSWORD MANAGERS -->
+                            autocomplete="username"
                             placeholder="आपका ईमेल दर्ज करें"
                             class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                             aria-required="true"
@@ -94,7 +94,7 @@
                             id="password" 
                             name="password" 
                             required
-                            autocomplete="current-password"  <!-- MUST HAVE FOR BROWSER PASSWORD MANAGERS -->
+                            autocomplete="current-password"
                             minlength="6"
                             placeholder="••••••••"
                             class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
@@ -157,7 +157,7 @@
     <!-- ================= STANDARD FOOTER END ================= -->
 
     <script type="module">
-        // Firebase Imports - FIXED URLS (no trailing spaces)
+        // Firebase Imports - FIXED URLs (no trailing spaces)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -221,7 +221,7 @@
             if (state) {
                 btnText.textContent = "लॉगिन हो रहा है...";
                 btnSpinner.classList.remove("hidden");
- loginBtn.disabled = true;
+                loginBtn.disabled = true;
             } else {
                 btnText.textContent = "लॉगिन करें";
                 btnSpinner.classList.add("hidden");
