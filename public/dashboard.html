@@ -61,9 +61,6 @@ width: 80px;
 .sidebar.collapsed .sidebar-text {
 display: none;
 }
-.sidebar-text {
-transition: opacity 0.3s ease;
-}
 .main-content {
 transition: margin-left 0.3s ease;
 }
@@ -345,14 +342,16 @@ background-color: #dbeafe;
 </header>
 
 <!-- Search and Filters -->
-<div class="bg-white rounded-2xl shadow-lg p-5 mb-6 fade-in">
-<div class="flex flex-col md:flex-row justify-between items-center gap-4">
-<div class="relative flex-1 max-w-md">
+<div class="filter-container fade-in">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+<div class="md:col-span-1">
+<div class="relative">
+<input id="searchInput" placeholder="नाम या आईडी खोजें..." class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-<input type="text" id="searchInput" placeholder="नाम या आईडी खोजें..." class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
 </div>
-<div class="flex flex-wrap gap-3">
-<select id="serviceFilter" class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+</div>
+<div class="md:col-span-1">
+<select id="serviceFilter" class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition w-full">
 <option value="">सभी सेवाएं</option>
 <option value="samagra">समग्र आईडी</option>
 <option value="ekyc">ई-केवाईसी</option>
@@ -360,21 +359,29 @@ background-color: #dbeafe;
 <option value="scholarship">छात्रवृत्ति</option>
 <option value="pension">पेंशन</option>
 </select>
-<select id="statusFilter" class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+</div>
+<div class="md:col-span-1">
+<select id="statusFilter" class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition w-full">
 <option value="">सभी स्थितियां</option>
 <option value="pending">लंबित</option>
 <option value="processing">प्रोसेसिंग</option>
 <option value="complete">पूर्ण</option>
 <option value="reject">अस्वीकृत</option>
 </select>
-<div class="flex items-center gap-2">
-<input type="date" id="dateFrom" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+</div>
+<div class="md:col-span-1 flex items-center gap-2">
+<div class="relative flex-1">
+<input type="date" id="dateFrom" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition w-full">
+<span class="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500">से</span>
+</div>
 <span class="text-gray-500">से</span>
-<input type="date" id="dateTo" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+<div class="relative flex-1">
+<input type="date" id="dateTo" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition w-full">
+<span class="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500">तक</span>
 </div>
 </div>
 </div>
-<div class="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
+<div class="flex flex-wrap gap-3 mt-4 justify-center md:">
 <button id="applyFilters" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center">
 <i class="fas fa-filter mr-2"></i> फ़िल्टर लागू करें
 </button>
@@ -394,7 +401,7 @@ background-color: #dbeafe;
 <div>
 <p class="text-gray-500 text-sm">कुल आवेदन</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-1" id="statTotal">0</h3>
-</div>
+</>
 <div class="bg-blue-100 text-blue-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
 <i class="fas fa-file-alt"></i>
 </div>
@@ -431,7 +438,7 @@ background-color: #dbeafe;
 <h3 class="text-3xl font-bold text-gray-800 mt-1" id="statRejected">0</h3>
 <p class="text-sm text-red-600 mt-1"><span id="statRejectionRate">0%</span> अस्वीकृति दर</p>
 </div>
-<div class="bg-red-100 text-red-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<div class="bg-red-100600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
 <i class="fas fa-times-circle"></i>
 </div>
 </div>
@@ -439,7 +446,7 @@ background-color: #dbeafe;
 </div>
 
 <!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 fade-in-delay">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in-delay">
 <div class="bg-white rounded-2xl shadow-lg p-6">
 <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
 <i class="fas fa-chart-line text-blue-600 mr-2"></i>
@@ -459,7 +466,7 @@ background-color: #dbeafe;
 <!-- Applications Table -->
 <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in-delay">
 <div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-<h2 class="text-xl font-bold text-gray-800">आवेदन सूची</h2>
+<h2 class="text-xl font-bold text-gray-800">आवेदनची</h2>
 <div class="flex flex-wrap gap-3">
 <button id="exportCSV" class="bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-green-700 transition flex items-center">
 <i class="fas fa-file-csv mr-2"></i> CSV निर्यात करें
@@ -565,8 +572,8 @@ background-color: #dbeafe;
 
 <!-- PDF TEMPLATE -->
 <div id="pdfContent" style="visibility:hidden;position:fixed;top:0;left:0;width:0;height:0;">
-<div class="pdf-page" style="font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif; font-size: 14px; width: 794px; min-height: 1123px; padding: 95px; background: white;">
-<div class="pdf-header" style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #1e3a8a; padding-bottom: 15px;">
+<div class="pdf-page" style="font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif; font-size: 14px; width: 794px; min-height: 1123px; padding: ; background: white;">
+<div class="pdf-header" style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #1ea8a; padding-bottom: 15px;">
 <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
 <div style="background: #1e3a8a; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">
 MP
@@ -843,7 +850,7 @@ function generateQRImage(text, size = 120) {
 // View profile function
 function viewProfile() {
     const modal = document.getElementById('profileModal');
-    const content = document.getElementById('profileModalContent');
+    const content document.getElementById('profileModalContent');
 
     if (!currentAdminData || !currentUser) {
         alert("प्रोफ़ाइल डेटा उपलब्ध नहीं है।");
@@ -1066,7 +1073,7 @@ function listen(col) {
         updateStats(allApplications);
         updateCharts();
     }, error => {
-        console.error("Error loading data: ", error);
+        console.error("Error loading data:", error);
         const tableBody = document.getElementById('dataTable');
         if (tableBody) {
             tableBody.innerHTML = `
@@ -1153,7 +1160,7 @@ function render(data) {
         rows += `
         <tr class="table-row border-b border-gray-100 hover:bg-blue-50 transition">
             <td class="p-4 font-mono font-medium text-blue-700">${appNo}</td>
-            <td class="p-4 font-bold text-gray-800">${i.studentName || i.applicantName || "-"}</td>
+            <td class="p-4 font-bold text-gray-80">${i.studentName || i.applicantName || "-"}</td>
             <td class="p-4">
                 <span class="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">${serviceName}</span>
             </td>
@@ -1164,10 +1171,10 @@ function render(data) {
             </td>
             <td class="p-4">
                 <div class="flex space-x-2">
-                    <button onclick="openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
+                    <button onclick="window.openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button onclick="deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
+                    <button onclick="window.deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
@@ -1279,7 +1286,7 @@ function updateCharts(filteredData = null) {
     data.forEach(app => {
         if (app.createdAt) {
             const month = app.createdAt.toDate().getMonth();
-            if (month >= 0 && month <= 5) {
+            if (month >= 0 && <= 5) {
                 monthlyData[month]++;
             }
         }
@@ -1500,7 +1507,7 @@ function preparePDFContent(item, appNo) {
             'applicantName', 'studentName', 'fatherName', 'motherName',
             'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber',
             'address', 'village', 'tehsil', 'district', 'pincode', 'state',
-            'memberId', 'applicationType', 'serviceType', 'formType',
+           memberId', 'applicationType', 'serviceType', 'formType',
             'serviceName', 'status', 'createdAt', 'updatedAt'
         ];
 
@@ -1729,3 +1736,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
