@@ -62,17 +62,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       /* 🔹 MAIN DATA OBJECT */
       const data = {
-        formType: serviceType,           // "Admission", "Supplement", "Result", "Exam", "Other"
-        serviceCategory: "MPBHOJ",       // पहचान के लिए
+        formType: serviceType,           // "Admission", "Supplement", "Result", etc.
+        serviceCategory: "MPBHOJ",       // MP Bhoj की पहचान
         serviceName: "MP Bhoj University",
-        formData: formData,              // सारा फॉर्म डेटा यहाँ
-        status: "Pending",               // शुरुआती स्टेटस
-        paymentStatus: "Unpaid",         // पेमेंट स्टेटस
+        formData: formData,
+        status: "Pending",
+        paymentStatus: "Unpaid",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
 
-      /* 🔐 Aadhaar Safety (Last 4 digits only) */
+      /* 🔐 Aadhaar Safety */
       if (formData.aadharNo || formData.aadhaar) {
         const aadhar = formData.aadharNo || formData.aadhaar;
         data.aadharLast4 = aadhar.slice(-4);
@@ -80,18 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
         delete formData.aadhaar;
       }
 
-      /* 🔥 SAVE TO DATABASE (applications collection) */
+      /* 🔥 SAVE TO DATABASE */
       const docRef = await addDoc(collection(db, "applications"), data);
 
-      /* 🔢 GENERATE APPLICATION NUMBER - इसी तरह जैसे Income Certificate में है */
-      const applicationNumber = "MPBHOJ-" + docRef.id.substring(0, 8).toUpperCase();
+      /* 🔢 GENERATE APPLICATION NUMBER - AIO-XXXXXX फॉर्मेट में */
+      const applicationNumber =
+        "AIO-" + docRef.id.substring(0, 8).toUpperCase();
 
       /* 📝 UPDATE DOCUMENT WITH APPLICATION NUMBER */
       await updateDoc(doc(db, "applications", docRef.id), {
-        applicationNumber: applicationNumber
+        applicationNumber
       });
 
-      /* 📧 EMAIL SEND (optional) */
+      /* 📧 EMAIL SEND */
       try {
         const userEmail = formData.email || formData.txtEmailId || "";
         const userName = formData.studentName || formData.firstName || formData.txtFname || "Student";
@@ -113,50 +114,30 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("📧 Email failed but data saved", emailErr);
       }
 
-      /* ✅ SUCCESS POPUP (SweetAlert) - Income Certificate जैसा */
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: "✅ आवेदन सफल!",
-          html: `
-            <div style="text-align: center;">
-              <p style="font-size: 16px; margin-bottom: 10px;">आपका आवेदन सफलतापूर्वक जमा हो गया है</p>
-              <p style="font-size: 14px; color: #666; margin-bottom: 15px;">कृपया इस आवेदन क्रमांक को सुरक्षित रखें</p>
-              <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; border: 2px dashed #667eea;">
-                <b style="font-size: 14px; color: #333;">आवेदन क्रमांक:</b><br>
-                <span style="font-size: 24px; font-weight: bold; color: #667eea; letter-spacing: 2px;">${applicationNumber}</span>
-              </div>
-              <p style="font-size: 12px; color: #999; margin-top: 10px;">Service: ${serviceType}</p>
-            </div>
-          `,
-          icon: "success",
-          confirmButtonText: "ठीक है",
-          confirmButtonColor: "#667eea",
-          allowOutsideClick: false
-        }).then(() => {
-          form.reset();
-          // Optional: Redirect to thank you page
-          // window.location.href = "thank-you.html?app=" + applicationNumber;
-        });
-      } else {
-        // अगर SweetAlert न हो तो simple alert
-        alert(`✅ आवेदन सफल!\n\nआवेदन क्रमांक: ${applicationNumber}\n\nकृपया इसे नोट कर लें।`);
+      /* ✅ SUCCESS POPUP - Income Certificate जैसा */
+      Swal.fire({
+        title: "✅ आवेदन सफल!",
+        html: `
+          <p style="font-size:14px">आपका आवेदन सफलतापूर्वक जमा हो गया है</p>
+          <b>आवेदन क्रमांक:</b><br>
+          <span style="font-size:20px">${applicationNumber}</span>
+        `,
+        icon: "success",
+        confirmButtonText: "ठीक है"
+      }).then(() => {
         form.reset();
-      }
+      });
 
     } catch (err) {
       console.error("🔥 Firebase Error:", err);
       
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: "❌ आवेदन विफल",
-          text: "डेटा सेव नहीं हो पाया। कृपया पुनः प्रयास करें।",
-          icon: "error",
-          confirmButtonText: "ठीक है"
-        });
-      } else {
-        alert("❌ डेटा सेव नहीं हो पाया। कृपया फिर से प्रयास करें।");
-      }
-      
+      Swal.fire({
+        title: "❌ आवेदन विफल",
+        text: "डेटा सेव नहीं हो पाया। कृपया पुनः प्रयास करें।",
+        icon: "error",
+        confirmButtonText: "ठीक है"
+      });
+
       if (submitBtn) submitBtn.disabled = false;
     }
   });
@@ -165,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ================= HELPER FUNCTIONS =================
 
-// कौन सा टैब एक्टिव है (नाम)
 function getActiveService() {
   const tabs = document.querySelectorAll(".tab");
   const services = ["Admission", "Supplement", "Result", "Exam", "Other"];
@@ -176,7 +156,6 @@ function getActiveService() {
   return "Unknown";
 }
 
-// कौन सा टैब एक्टिव है (इंडेक्स)
 function getActiveTabIndex() {
   const tabs = document.querySelectorAll(".tab");
   for (let i = 0; i < tabs.length; i++) {
@@ -185,7 +164,6 @@ function getActiveTabIndex() {
   return 0;
 }
 
-// Tab switching logic
 window.openTab = function (i) {
   const tabs = document.querySelectorAll(".tab");
   const contents = document.querySelectorAll(".tab-content");
@@ -206,7 +184,6 @@ window.openTab = function (i) {
   );
 };
 
-// Address copy function
 window.copyAddress = function() {
   const fields = ['House', 'Colony', 'City', 'State', 'District', 'Pin'];
   fields.forEach(field => {
@@ -216,13 +193,11 @@ window.copyAddress = function() {
   });
 };
 
-// Numeric validation
 window.CreateNumericTextBox = function(element, event) {
   const charCode = (event.which) ? event.which : event.keyCode;
   return !(charCode > 31 && (charCode < 48 || charCode > 57));
 };
 
-// Employment toggle
 window.toggleEmployment = function(value) {
   const empGroup = document.getElementById('employmentGroup');
   if (empGroup) {
