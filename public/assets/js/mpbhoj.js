@@ -3,7 +3,9 @@ import {
   getFirestore,
   collection,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // ================= FIREBASE INIT =================
@@ -35,54 +37,66 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const submitBtn = form.querySelector("button[type='submit']");
+    if (submitBtn) submitBtn.disabled = true;
+
     try {
-      // कौन सा टैब एक्टिव है यह पता करें
+      // कौन सा टैब/सर्विस एक्टिव है
       const serviceType = getActiveService();
       const activeTabIndex = getActiveTabIndex();
 
       // सिर्फ एक्टिव टैब के फील्ड्स लें
       const activeContent = document.querySelectorAll(".tab-content")[activeTabIndex];
-      const data = {};
+      const formData = {};
 
       // एक्टिव टैब के सभी input, select, textarea से डेटा लें
       activeContent.querySelectorAll("[name]").forEach(el => {
         if (el.type === "checkbox") {
-          data[el.name] = el.checked;
+          formData[el.name] = el.checked;
         } else if (el.type === "radio") {
-          if (el.checked) data[el.name] = el.value;
+          if (el.checked) formData[el.name] = el.value;
         } else {
-          data[el.name] = el.value.trim();
+          formData[el.name] = el.value.trim();
         }
       });
 
-      // 🔹 FIREBASE SAVE - सब कुछ applications कलेक्शन में
-      const docRef = await addDoc(collection(db, "applications"), {
-        // सर्विस टाइप पहचान के लिए
-        serviceType: serviceType,           // "Admission", "Supplement", "Result", "Exam", "Other"
-        serviceCategory: "MPBHOJ",          // MP Bhoj के लिए पहचान
-        
-        // फॉर्म डेटा
-        formData: data,
-        
-        // मेटाडेटा
-        status: "pending",
-        paymentStatus: "unpaid",
+      /* 🔹 MAIN DATA OBJECT */
+      const data = {
+        formType: serviceType,           // "Admission", "Supplement", "Result", "Exam", "Other"
+        serviceCategory: "MPBHOJ",       // पहचान के लिए
+        serviceName: "MP Bhoj University",
+        formData: formData,              // सारा फॉर्म डेटा यहाँ
+        status: "Pending",               // शुरुआती स्टेटस
+        paymentStatus: "Unpaid",         // पेमेंट स्टेटस
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        
-        // यूजर इंफो (अगर लॉगिन सिस्टम हो तो)
-        userAgent: navigator.userAgent,
-        source: window.location.href
-      });
+        updatedAt: serverTimestamp()
+      };
 
+      /* 🔐 Aadhaar Safety (Last 4 digits only) */
+      if (formData.aadharNo || formData.aadhaar) {
+        const aadhar = formData.aadharNo || formData.aadhaar;
+        data.aadharLast4 = aadhar.slice(-4);
+        delete formData.aadharNo;
+        delete formData.aadhaar;
+      }
+
+      /* 🔥 SAVE TO DATABASE (applications collection) */
+      const docRef = await addDoc(collection(db, "applications"), data);
+
+      /* 🔢 GENERATE APPLICATION NUMBER - इसी तरह जैसे Income Certificate में है */
       const applicationNumber = "MPBHOJ-" + docRef.id.substring(0, 8).toUpperCase();
 
-      // 🔹 EMAIL (optional)
+      /* 📝 UPDATE DOCUMENT WITH APPLICATION NUMBER */
+      await updateDoc(doc(db, "applications", docRef.id), {
+        applicationNumber: applicationNumber
+      });
+
+      /* 📧 EMAIL SEND (optional) */
       try {
-        const userEmail = data.email || data.txtEmailId || "";
-        const userName = data.studentName || data.firstName || data.txtFname || "Student";
+        const userEmail = formData.email || formData.txtEmailId || "";
+        const userName = formData.studentName || formData.firstName || formData.txtFname || "Student";
         
-        if (userEmail) {
+        if (window.emailjs && userEmail) {
           await emailjs.send(
             "service_allinone",
             "template_7x246oi",
@@ -90,7 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
               to_email: userEmail,
               to_name: userName,
               application_no: applicationNumber,
-              service_type: serviceType
+              service_type: serviceType,
+              service_category: "MP Bhoj Open University"
             }
           );
         }
@@ -98,38 +113,57 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("📧 Email failed but data saved", emailErr);
       }
 
-      // सफलता मैसेज दिखाएं
-      showSuccessMessage(applicationNumber, serviceType);
-      form.reset();
+      /* ✅ SUCCESS POPUP (SweetAlert) - Income Certificate जैसा */
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: "✅ आवेदन सफल!",
+          html: `
+            <div style="text-align: center;">
+              <p style="font-size: 16px; margin-bottom: 10px;">आपका आवेदन सफलतापूर्वक जमा हो गया है</p>
+              <p style="font-size: 14px; color: #666; margin-bottom: 15px;">कृपया इस आवेदन क्रमांक को सुरक्षित रखें</p>
+              <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; border: 2px dashed #667eea;">
+                <b style="font-size: 14px; color: #333;">आवेदन क्रमांक:</b><br>
+                <span style="font-size: 24px; font-weight: bold; color: #667eea; letter-spacing: 2px;">${applicationNumber}</span>
+              </div>
+              <p style="font-size: 12px; color: #999; margin-top: 10px;">Service: ${serviceType}</p>
+            </div>
+          `,
+          icon: "success",
+          confirmButtonText: "ठीक है",
+          confirmButtonColor: "#667eea",
+          allowOutsideClick: false
+        }).then(() => {
+          form.reset();
+          // Optional: Redirect to thank you page
+          // window.location.href = "thank-you.html?app=" + applicationNumber;
+        });
+      } else {
+        // अगर SweetAlert न हो तो simple alert
+        alert(`✅ आवेदन सफल!\n\nआवेदन क्रमांक: ${applicationNumber}\n\nकृपया इसे नोट कर लें।`);
+        form.reset();
+      }
 
     } catch (err) {
-      console.error("🔥 Firebase Error", err);
-      alert("डेटा सेव नहीं हो पाया। कृपया फिर से प्रयास करें।\nError: " + err.message);
+      console.error("🔥 Firebase Error:", err);
+      
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: "❌ आवेदन विफल",
+          text: "डेटा सेव नहीं हो पाया। कृपया पुनः प्रयास करें।",
+          icon: "error",
+          confirmButtonText: "ठीक है"
+        });
+      } else {
+        alert("❌ डेटा सेव नहीं हो पाया। कृपया फिर से प्रयास करें।");
+      }
+      
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 
-}); // ✅ DOMContentLoaded END
+}); // DOMContentLoaded END
 
-// ================= TAB LOGIC =================
-window.openTab = function (i) {
-  const tabs = document.querySelectorAll(".tab");
-  const contents = document.querySelectorAll(".tab-content");
-
-  tabs.forEach(t => t.classList.remove("active"));
-  contents.forEach(c => {
-    c.classList.remove("active");
-    c.querySelectorAll("[data-required]").forEach(el =>
-      el.removeAttribute("required")
-    );
-  });
-
-  tabs[i].classList.add("active");
-  contents[i].classList.add("active");
-
-  contents[i].querySelectorAll("[data-required]").forEach(el =>
-    el.setAttribute("required", "")
-  );
-};
+// ================= HELPER FUNCTIONS =================
 
 // कौन सा टैब एक्टिव है (नाम)
 function getActiveService() {
@@ -151,95 +185,53 @@ function getActiveTabIndex() {
   return 0;
 }
 
-// सफलता मैसेज दिखाएं
-function showSuccessMessage(appNumber, service) {
-  const alertBox = document.getElementById("alertBox");
-  if (alertBox) {
-    alertBox.innerHTML = `
-      <i class="fas fa-check-circle"></i> 
-      <strong>आवेदन सफलतापूर्वक जमा हो गया!</strong><br>
-      <span style="font-size: 14px; color: #666;">
-        Service: ${service} | Application No: ${appNumber}
-      </span>
-    `;
-    alertBox.style.display = "block";
-    
-    setTimeout(() => {
-      alertBox.style.display = "none";
-    }, 5000);
-  }
-}
+// Tab switching logic
+window.openTab = function (i) {
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".tab-content");
 
-// ================= HELPER FUNCTIONS =================
+  tabs.forEach(t => t.classList.remove("active"));
+  contents.forEach(c => {
+    c.classList.remove("active");
+    c.querySelectorAll("[data-required]").forEach(el =>
+      el.removeAttribute("required")
+    );
+  });
 
-// एड्रेस कॉपी करें (अगर HTML में बटन हो)
-window.copyAddress = function() {
-  const corrHouse = document.querySelector('[name="corrHouse"]')?.value || "";
-  const corrColony = document.querySelector('[name="corrColony"]')?.value || "";
-  const corrCity = document.querySelector('[name="corrCity"]')?.value || "";
-  const corrState = document.querySelector('[name="corrState"]')?.value || "";
-  const corrDistrict = document.querySelector('[name="corrDistrict"]')?.value || "";
-  const corrPin = document.querySelector('[name="corrPin"]')?.value || "";
+  tabs[i].classList.add("active");
+  contents[i].classList.add("active");
 
-  const permHouse = document.querySelector('[name="permHouse"]');
-  const permColony = document.querySelector('[name="permColony"]');
-  const permCity = document.querySelector('[name="permCity"]');
-  const permState = document.querySelector('[name="permState"]');
-  const permDistrict = document.querySelector('[name="permDistrict"]');
-  const permPin = document.querySelector('[name="permPin"]');
-
-  if (permHouse) permHouse.value = corrHouse;
-  if (permColony) permColony.value = corrColony;
-  if (permCity) permCity.value = corrCity;
-  if (permState) permState.value = corrState;
-  if (permDistrict) permDistrict.value = corrDistrict;
-  if (permPin) permPin.value = corrPin;
+  contents[i].querySelectorAll("[data-required]").forEach(el =>
+    el.setAttribute("required", "")
+  );
 };
 
-// नंबरिक इनपुट वैलिडेशन
+// Address copy function
+window.copyAddress = function() {
+  const fields = ['House', 'Colony', 'City', 'State', 'District', 'Pin'];
+  fields.forEach(field => {
+    const corr = document.querySelector(`[name="corr${field}"]`);
+    const perm = document.querySelector(`[name="perm${field}"]`);
+    if (corr && perm) perm.value = corr.value;
+  });
+};
+
+// Numeric validation
 window.CreateNumericTextBox = function(element, event) {
   const charCode = (event.which) ? event.which : event.keyCode;
-  if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-    return false;
-  }
-  return true;
+  return !(charCode > 31 && (charCode < 48 || charCode > 57));
 };
 
-// परसेंटेज कैलकुलेट
-window.calculatePercentage = function() {
-  const maxMarks = document.querySelector('[name="maxMarks"]');
-  const obtMarks = document.querySelector('[name="obtMarks"]');
-  const percentage = document.querySelector('[name="percentage"]');
-
-  if (maxMarks && obtMarks && percentage) {
-    const max = parseFloat(maxMarks.value) || 0;
-    const obt = parseFloat(obtMarks.value) || 0;
-
-    if (max > 0 && obt > 0) {
-      if (obt > max) {
-        alert('प्राप्त अंक अधिकतम अंक से अधिक नहीं हो सकते!');
-        obtMarks.value = '';
-        percentage.value = '';
-      } else {
-        const per = ((obt / max) * 100).toFixed(2);
-        percentage.value = per + '%';
-      }
-    }
-  }
-};
-
-// इम्प्लॉयमेंट टाइप टॉगल
+// Employment toggle
 window.toggleEmployment = function(value) {
   const empGroup = document.getElementById('employmentGroup');
   if (empGroup) {
     if (value === 'Y') {
-      empGroup.classList.remove('conditional-field');
-      empGroup.classList.add('active');
+      empGroup.style.display = 'flex';
     } else {
-      empGroup.classList.add('conditional-field');
-      empGroup.classList.remove('active');
-      const empInput = document.querySelector('[name="employmentType"]');
-      if (empInput) empInput.value = '';
+      empGroup.style.display = 'none';
+      const input = empGroup.querySelector('input');
+      if (input) input.value = '';
     }
   }
 };
