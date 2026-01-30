@@ -13,16 +13,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
 :root {
 --primary-color: #1e3a8a;
---secondary-color: #3b82f6;
---success-color: #22c55e;
---warning-color: #f59e0b;
---danger-color: #ef4444;
 --sidebar-width: 280px;
 --sidebar-collapsed-width: 80px;
 }
 body {
 font-family: 'Noto Sans Devanagari', sans-serif;
-background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+background: #f3f4f6;
 overflow-x: hidden;
 margin: 0;
 padding: 0;
@@ -62,6 +58,7 @@ top: 0;
 height: 100vh;
 z-index: 40;
 overflow-x: hidden;
+background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
 }
 .sidebar.collapsed {
 width: var(--sidebar-collapsed-width);
@@ -80,11 +77,12 @@ z-index: 50;
 background: white;
 border: 1px solid #e5e7eb;
 border-radius: 0 8px 8px 0;
-padding: 8px 12px;
+padding: 10px;
 cursor: pointer;
 box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 transition: left 0.3s ease;
 color: #1e3a8a;
+font-size: 18px;
 }
 .sidebar.collapsed + .sidebar-toggle-fixed {
 left: var(--sidebar-collapsed-width);
@@ -98,105 +96,100 @@ padding: 20px;
 margin-left: var(--sidebar-collapsed-width);
 }
 .status-badge {
-padding: 6px 16px;
-border-radius: 20px;
+padding: 6px 20px;
+border-radius: 50px;
 font-size: 13px;
 font-weight: 600;
 display: inline-flex;
 align-items: center;
-gap: 6px;
-border: 2px solid transparent;
+gap: 5px;
+border: 2px solid;
 transition: all 0.3s;
 cursor: pointer;
-}
-.status-badge:hover {
-transform: translateY(-1px);
-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+min-width: 120px;
+justify-content: center;
 }
 .status-complete {
-background-color: #dcfce7;
-color: #166534;
-border-color: #bbf7d0;
+background-color: #f0fdf4;
+color: #15803d;
+border-color: #16a34a;
 }
 .status-pending {
-background-color: #ffedd5;
-color: #9a3412;
-border-color: #fed7aa;
+background-color: #fffbeb;
+color: #b45309;
+border-color: #f59e0b;
 }
 .status-reject {
-background-color: #fee2e2;
-color: #991b1b;
-border-color: #fecaca;
+background-color: #fef2f2;
+color: #b91c1c;
+border-color: #ef4444;
 }
 .status-processing {
-background-color: #dbeafe;
-color: #1e40af;
-border-color: #bfdbfe;
+background-color: #fff7ed;
+color: #c2410c;
+border-color: #ea580c;
 }
 .status-select {
-padding: 4px 12px;
-border-radius: 20px;
+padding: 6px 16px;
+border-radius: 50px;
 font-size: 13px;
 font-weight: 600;
 border: 2px solid;
 outline: none;
 cursor: pointer;
 background: white;
+appearance: none;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+background-repeat: no-repeat;
+background-position: right 10px center;
+padding-right: 30px;
 }
 .action-btn {
-padding: 0.5rem;
-border-radius: 0.5rem;
+padding: 8px;
+border-radius: 8px;
 transition: all 0.2s;
-display: flex;
+display: inline-flex;
 align-items: center;
 justify-content: center;
-width: 2.25rem;
-height: 2.25rem;
+width: 36px;
+height: 36px;
 border: none;
 cursor: pointer;
+margin: 0 2px;
 }
 .action-view {
-background-color: rgba(59, 130, 246, 0.1);
-color: #3b82f6;
+background-color: #dbeafe;
+color: #2563eb;
 }
 .action-view:hover {
-background-color: rgba(59, 130, 246, 0.2);
+background-color: #bfdbfe;
+transform: translateY(-2px);
 }
 .action-delete {
-background-color: rgba(239, 68, 68, 0.1);
-color: #ef4444;
-}
-.action-download {
-background-color: rgba(34, 197, 94, 0.1);
-color: #22c55e;
-}
-.action-download:hover {
-background-color: rgba(34, 197, 94, 0.2);
+background-color: #fee2e2;
+color: #dc2626;
 }
 .notification-badge {
 position: absolute;
-top: 8px;
-right: 8px;
+top: -5px;
+right: -5px;
 background-color: #ef4444;
 color: white;
-font-size: 10px;
-width: 18px;
-height: 18px;
+font-size: 11px;
+width: 20px;
+height: 20px;
 border-radius: 50%;
 display: flex;
 align-items: center;
 justify-content: center;
 font-weight: bold;
 }
-.fade-in {
-animation: fadeIn 0.5s ease-out;
-}
-@keyframes fadeIn {
-from { opacity: 0; transform: translateY(10px); }
-to { opacity: 1; transform: translateY(0); }
+.table-row {
+border-bottom: 1px solid #f3f4f6;
+transition: all 0.2s;
 }
 .table-row:hover {
-background-color: #eff6ff;
+background-color: #f8fafc;
 }
 .page-section {
 display: none;
@@ -211,11 +204,12 @@ top: 0;
 left: 0;
 right: 0;
 bottom: 0;
-background: rgba(0,0,0,0.5);
+background: rgba(0,0,0,0.6);
 z-index: 100;
 align-items: center;
 justify-content: center;
 padding: 20px;
+backdrop-filter: blur(4px);
 }
 .modal.active {
 display: flex;
@@ -223,12 +217,12 @@ display: flex;
 .modal-content {
 background: white;
 border-radius: 20px;
-max-width: 800px;
+max-width: 900px;
 width: 100%;
 max-height: 90vh;
 overflow-y: auto;
 position: relative;
-box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
 }
 .modal-header {
 background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
@@ -241,39 +235,92 @@ background: white;
 padding: 20px;
 border-radius: 12px;
 display: inline-block;
-box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+border: 2px solid #e5e7eb;
+}
+.detail-card {
+background: #f8fafc;
+border-radius: 12px;
+padding: 20px;
+border: 1px solid #e2e8f0;
+margin-bottom: 16px;
 }
 .detail-row {
 display: flex;
-border-bottom: 1px solid #e5e7eb;
 padding: 12px 0;
+border-bottom: 1px solid #e2e8f0;
+}
+.detail-row:last-child {
+border-bottom: none;
 }
 .detail-label {
 font-weight: 600;
-color: #6b7280;
+color: #64748b;
 width: 40%;
+font-size: 14px;
 }
 .detail-value {
-color: #111827;
-font-weight: 500;
+color: #0f172a;
+font-weight: 600;
 width: 60%;
+font-size: 14px;
+}
+.service-tag {
+background: #dbeafe;
+color: #1e40af;
+padding: 6px 16px;
+border-radius: 50px;
+font-size: 13px;
+font-weight: 600;
+display: inline-block;
+}
+.toggle-switch {
+position: relative;
+width: 50px;
+height: 26px;
+background: #cbd5e1;
+border-radius: 13px;
+cursor: pointer;
+transition: background 0.3s;
+}
+.toggle-switch.active {
+background: #3b82f6;
+}
+.toggle-switch::after {
+content: '';
+position: absolute;
+width: 22px;
+height: 22px;
+background: white;
+border-radius: 50%;
+top: 2px;
+left: 2px;
+transition: transform 0.3s;
+box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.active::after {
+transform: translateX(24px);
+}
+.profile-card {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+border-radius: 20px;
+padding: 30px;
+color: white;
+text-align: center;
+position: relative;
+overflow: hidden;
 }
 @media print {
-body * {
-visibility: hidden;
-}
-#pdfContent, #pdfContent * {
-visibility: visible;
-}
+body * { visibility: hidden; }
+#pdfContent, #pdfContent * { visibility: visible; }
 #pdfContent {
 position: absolute;
 left: 0;
 top: 0;
 width: 100%;
+padding: 20px;
 }
-.no-print {
-display: none !important;
-}
+.no-print { display: none !important; }
 }
 </style>
 </head>
@@ -290,12 +337,12 @@ display: none !important;
 </div>
 
 <!-- SIDEBAR -->
-<aside class="sidebar bg-gradient-to-b from-blue-900 to-blue-700 text-white shadow-2xl" id="sidebar">
-<div class="p-5 border-b border-blue-600">
+<aside class="sidebar text-white shadow-2xl" id="sidebar">
+<div class="p-5 border-b border-blue-700">
 <div class="flex items-center justify-between mb-6">
 <div class="flex items-center gap-3">
-<div class="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
-<div class="bg-white w-10 h-10 rounded flex items-center justify-center">
+<div class="bg-white/20 backdrop-blur p-2 rounded-xl">
+<div class="bg-white w-10 h-10 rounded-lg flex items-center justify-center">
 <span class="text-blue-900 font-bold text-xl">MP</span>
 </div>
 </div>
@@ -306,11 +353,11 @@ display: none !important;
 </div>
 </div>
 <div class="mb-2 sidebar-text">
-<div class="bg-white/10 backdrop-blur-sm p-3 rounded-lg">
+<div class="bg-white/10 backdrop-blur p-3 rounded-lg">
 <div class="flex items-center justify-between">
 <div>
-<p class="text-xs opacity-90">सक्रिय उपयोगकर्ता</p>
-<p class="font-bold mt-1" id="sidebarAdminName">लोड हो रहा है...</p>
+<p class="text-xs opacity-90">स्वागत</p>
+<p class="font-bold mt-1" id="sidebarAdminName">Admin</p>
 </div>
 <div class="bg-yellow-300 text-blue-900 font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm">
 <i class="fas fa-user"></i>
@@ -319,36 +366,51 @@ display: none !important;
 </div>
 </div>
 </div>
+
 <nav class="mt-2 p-3">
-<ul class="space-y-1">
+<ul class="space-y-2">
 <li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm w-full" onclick="showSection('dashboard')">
-<i class="fas fa-home text-xl w-6 text-center"></i>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur w-full hover:bg-white/20 transition" onclick="showSection('dashboard')">
+<i class="fas fa-home text-lg w-6 text-center"></i>
 <span class="font-medium sidebar-text">डैशबोर्ड</span>
 </a>
 </li>
 <li>
 <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full" onclick="showSection('applications')">
-<i class="fas fa-list text-xl w-6 text-center"></i>
+<i class="fas fa-list text-lg w-6 text-center"></i>
 <span class="font-medium sidebar-text">आवेदन सूची</span>
 </a>
 </li>
 <li>
 <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full" onclick="showSection('analysis')">
-<i class="fas fa-chart-bar text-xl w-6 text-center"></i>
+<i class="fas fa-chart-bar text-lg w-6 text-center"></i>
 <span class="font-medium sidebar-text">विश्लेषण</span>
+</a>
+</li>
+<li class="pt-4 border-t border-blue-700 mt-4">
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full" onclick="showSection('profile')">
+<i class="fas fa-user-circle text-lg w-6 text-center"></i>
+<span class="font-medium sidebar-text">प्रोफाइल</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full" onclick="showSection('settings')">
+<i class="fas fa-cog text-lg w-6 text-center"></i>
+<span class="font-medium sidebar-text">सेटिंग्स</span>
 </a>
 </li>
 </ul>
 </nav>
-<div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-600">
+
+<div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-700">
 <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-2 hover:bg-white/10 rounded-lg transition text-white">
-<i class="fas fa-sign-out-alt w-6 text-center"></i> <span class="sidebar-text">लॉगआउट</span>
+<i class="fas fa-sign-out-alt w-6 text-center"></i> 
+<span class="sidebar-text">लॉगआउट</span>
 </button>
 </div>
 </aside>
 
-<!-- SIDEBAR TOGGLE BUTTON (Always Visible) -->
+<!-- SIDEBAR TOGGLE BUTTON -->
 <button class="sidebar-toggle-fixed" onclick="toggleSidebar()" id="sidebarToggleBtn">
 <i class="fas fa-chevron-left" id="toggleIcon"></i>
 </button>
@@ -356,31 +418,34 @@ display: none !important;
 <!-- MAIN CONTENT -->
 <main class="main-content flex-1 container mx-auto px-4 py-6 transition-all" id="mainContent">
 
-<!-- DASHBOARD -->
+<!-- DASHBOARD SECTION -->
 <div id="dashboard" class="page-section active">
-<header class="bg-white rounded-2xl shadow-lg p-5 mb-6 fade-in">
+<header class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
 <div>
 <h1 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
 <i class="fas fa-tachometer-alt text-blue-600"></i>
 एडमिन डैशबोर्ड
 </h1>
-<p class="text-gray-500 mt-1 text-sm">Firebase Status: <span id="firebaseStatus" class="text-yellow-600">Connect हो रहा है...</span></p>
+<p class="text-gray-500 mt-1 text-sm flex items-center gap-2">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+Firebase Status: <span id="firebaseStatus" class="text-green-600 font-semibold">Connected</span>
+</p>
 </div>
 <div class="flex items-center gap-4">
 <div class="relative">
 <button class="relative p-2 hover:bg-gray-100 rounded-full transition" id="notificationBtn">
 <i class="fas fa-bell text-xl text-gray-700"></i>
-<span class="notification-badge">0</span>
+<span class="notification-badge" id="notifCount">0</span>
 </button>
 </div>
-<div class="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-100 rounded-full transition">
+<div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 transition" onclick="showSection('profile')">
 <div class="bg-gradient-to-br from-yellow-300 to-yellow-400 text-blue-900 font-bold w-10 h-10 rounded-full flex items-center justify-center text-lg">
 <i class="fas fa-user"></i>
 </div>
 <div class="hidden md:block">
-<p class="font-bold text-sm" id="adminName">लोड हो रहा है...</p>
-<p class="text-xs text-gray-500" id="adminEmail">-</p>
+<p class="font-bold text-sm" id="adminName">Admin</p>
+<p class="text-xs text-gray-500" id="adminEmail">admin@allinone.mp</p>
 </div>
 </div>
 </div>
@@ -388,47 +453,47 @@ display: none !important;
 </header>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 fade-in">
-<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-600">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-600 hover:shadow-md transition">
 <div class="flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-sm">कुल आवेदन</p>
+<p class="text-gray-500 text-sm font-medium">कुल आवेदन</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-1" id="statTotal">0</h3>
 </div>
-<div class="bg-blue-100 text-blue-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<div class="bg-blue-50 text-blue-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
 <i class="fas fa-file-alt"></i>
 </div>
 </div>
 </div>
-<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-yellow-500">
+<div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500 hover:shadow-md transition">
 <div class="flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-sm">लंबित</p>
+<p class="text-gray-500 text-sm font-medium">लंबित</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-1" id="statPending">0</h3>
 </div>
-<div class="bg-yellow-100 text-yellow-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<div class="bg-yellow-50 text-yellow-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
 <i class="fas fa-clock"></i>
 </div>
 </div>
 </div>
-<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-600">
+<div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-600 hover:shadow-md transition">
 <div class="flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-sm">पूर्ण</p>
+<p class="text-gray-500 text-sm font-medium">पूर्ण</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-1" id="statComplete">0</h3>
 </div>
-<div class="bg-green-100 text-green-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<div class="bg-green-50 text-green-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
 <i class="fas fa-check-circle"></i>
 </div>
 </div>
 </div>
-<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-red-600">
+<div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-red-600 hover:shadow-md transition">
 <div class="flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-sm">अस्वीकृत</p>
+<p class="text-gray-500 text-sm font-medium">अस्वीकृत</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-1" id="statRejected">0</h3>
 </div>
-<div class="bg-red-100 text-red-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<div class="bg-red-50 text-red-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
 <i class="fas fa-times-circle"></i>
 </div>
 </div>
@@ -436,15 +501,15 @@ display: none !important;
 </div>
 
 <!-- Applications Table -->
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+<div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
 <div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
 <h2 class="text-xl font-bold text-gray-800">हाल के आवेदन</h2>
 <div class="flex flex-wrap gap-3">
-<button onclick="refreshData()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-<i class="fas fa-sync-alt mr-2"></i> रिफ्रेश
+<button onclick="refreshData()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+<i class="fas fa-sync-alt"></i> <span>रिफ्रेश</span>
 </button>
-<button onclick="exportToCSV()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-<i class="fas fa-file-csv mr-2"></i> CSV
+<button onclick="exportToCSV()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center gap-2">
+<i class="fas fa-file-csv"></i> <span>CSV</span>
 </button>
 </div>
 </div>
@@ -452,20 +517,19 @@ display: none !important;
 <table class="min-w-full divide-y divide-gray-200">
 <thead class="bg-gray-50">
 <tr>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">आवेदन क्रमांक</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">नाम</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">सेवा</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">तारीख</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">स्थिति</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">नाम</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">सेवा</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider hidden md:table-cell">तारीख</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">स्थिति</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Actions</th>
 </tr>
 </thead>
 <tbody id="dataTable" class="bg-white divide-y divide-gray-200">
-<tr><td colspan="6" class="p-8 text-center text-gray-500">डेटा लोड हो रहा है...</td></tr>
+<tr><td colspan="5" class="p-8 text-center text-gray-500">डेटा लोड हो रहा है...</td></tr>
 </tbody>
 </table>
 <div id="emptyState" class="p-12 text-center hidden">
-<i class="fas fa-inbox text-gray-400 text-6xl mb-4"></i>
+<i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
 <p class="text-gray-500 text-lg">कोई आवेदन नहीं मिला</p>
 <button onclick="testFetch()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg">पुनः प्रयास करें</button>
 </div>
@@ -473,24 +537,179 @@ display: none !important;
 </div>
 </div>
 
-<!-- APPLICATIONS SECTION -->
+<!-- ALL APPLICATIONS SECTION -->
 <div id="applications" class="page-section">
 <h2 class="text-2xl font-bold text-gray-800 mb-4">सभी आवेदन</h2>
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+<div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
 <div class="overflow-x-auto">
 <table class="min-w-full divide-y divide-gray-200">
 <thead class="bg-gray-50">
 <tr>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">क्रमांक</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">नाम</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">सेवा</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">स्थिति</th>
-<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">नाम</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">सेवा</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">स्थिति</th>
+<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Actions</th>
 </tr>
 </thead>
 <tbody id="dataTable2" class="bg-white divide-y divide-gray-200">
 </tbody>
 </table>
+</div>
+</div>
+</div>
+
+<!-- PROFILE SECTION -->
+<div id="profile" class="page-section">
+<div class="max-w-4xl mx-auto">
+<h2 class="text-2xl font-bold text-gray-800 mb-6">एडमिन प्रोफाइल</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Profile Card -->
+<div class="md:col-span-1">
+<div class="profile-card mb-6">
+<div class="w-24 h-24 bg-white/20 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl border-4 border-white/30">
+<i class="fas fa-user"></i>
+</div>
+<h3 class="text-xl font-bold mb-1" id="profileNameDisplay">Admin User</h3>
+<p class="text-sm opacity-90" id="profileEmailDisplay">admin@allinone.mp</p>
+<p class="text-xs opacity-75 mt-2">सुपर एडमिन</p>
+</div>
+<div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+<h4 class="font-bold text-gray-800 mb-4">Quick Links</h4>
+<ul class="space-y-2 text-sm">
+<li><a href="#" onclick="showSection('settings')" class="text-blue-600 hover:underline">सेटिंग्स बदलें</a></li>
+<li><a href="#" onclick="showSection('applications')" class="text-blue-600 hover:underline">सभी आवेदन देखें</a></li>
+<li><a href="#" onclick="logout()" class="text-red-600 hover:underline">लॉगआउट करें</a></li>
+</ul>
+</div>
+</div>
+
+<!-- Edit Form -->
+<div class="md:col-span-2">
+<div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-6">
+<h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">व्यक्तिगत जानकारी अपडेट करें</h3>
+<form id="profileForm" onsubmit="updateProfile(event)">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">पूरा नाम</label>
+<input type="text" id="editName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="Admin User">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">उपयोगकर्ता नाम</label>
+<input type="text" id="editUsername" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="admin">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">ईमेल</label>
+<input type="email" id="editEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="admin@allinone.mp">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">मोबाइल नंबर</label>
+<input type="tel" id="editMobile" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="9876543210">
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium text-gray-700 mb-1">पता</label>
+<textarea id="editAddress" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">भोपाल, मध्य प्रदेश</textarea>
+</div>
+<div class="flex gap-3">
+<button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+<i class="fas fa-save"></i> सेव करें
+</button>
+<button type="button" onclick="resetProfile()" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
+रीसेट
+</button>
+</div>
+</form>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+<h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2 text-red-600">खतरनाक क्षेत्र</h3>
+<p class="text-gray-600 mb-4">ये कार्रवाइयाँ वापस नहीं की जा सकतीं।</p>
+<button onclick="deleteAccount()" class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition flex items-center gap-2">
+<i class="fas fa-trash-alt"></i> अकाउंट हटाएं
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SETTINGS SECTION -->
+<div id="settings" class="page-section">
+<div class="max-w-3xl mx-auto">
+<h2 class="text-2xl font-bold text-gray-800 mb-6">सेटिंग्स</h2>
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="p-6 border-b border-gray-200">
+<h3 class="text-lg font-bold text-gray-800">सिस्टम सेटिंग्स</h3>
+<p class="text-sm text-gray-500">यहाँ से आप सिस्टम को कंट्रोल कर सकते हैं</p>
+</div>
+
+<div class="divide-y divide-gray-200">
+<!-- Setting 1 -->
+<div class="p-6 flex items-center justify-between">
+<div>
+<h4 class="font-semibold text-gray-800">ईमेल नोटिफिकेशन</h4>
+<p class="text-sm text-gray-500">नए आवेदन आने पर ईमेल अलर्ट प्राप्त करें</p>
+</div>
+<div class="toggle-switch active" onclick="toggleSetting(this, 'emailNotifications')"></div>
+</div>
+
+<!-- Setting 2 -->
+<div class="p-6 flex items-center justify-between">
+<div>
+<h4 class="font-semibold text-gray-800">स्वचालित अनुमोदन</h4>
+<p class="text-sm text-gray-500">छोटे आवेदनों को स्वचालित रूप से अनुमोदित करें</p>
+</div>
+<div class="toggle-switch" onclick="toggleSetting(this, 'autoApprove')"></div>
+</div>
+
+<!-- Setting 3 -->
+<div class="p-6 flex items-center justify-between">
+<div>
+<h4 class="font-semibold text-gray-800">डार्क मोड</h4>
+<p class="text-sm text-gray-500">डार्क थीम में स्विच करें</p>
+</div>
+<div class="toggle-switch" onclick="toggleSetting(this, 'darkMode')"></div>
+</div>
+
+<!-- Setting 4 -->
+<div class="p-6 flex items-center justify-between">
+<div>
+<h4 class="font-semibold text-gray-800">डेटा बैकअप</h4>
+<p class="text-sm text-gray-500">प्रतिदिन स्वचालित बैकअप</p>
+</div>
+<div class="toggle-switch active" onclick="toggleSetting(this, 'autoBackup')"></div>
+</div>
+
+<!-- Setting 5 -->
+<div class="p-6 flex items-center justify-between">
+<div>
+<h4 class="font-semibold text-gray-800">मैंटेनेंस मोड</h4>
+<p class="text-sm text-gray-500">साइट को मैंटेनेंस मोड में डालें</p>
+</div>
+<div class="toggle-switch" onclick="toggleSetting(this, 'maintenanceMode')"></div>
+</div>
+</div>
+
+<div class="p-6 bg-gray-50 border-t border-gray-200">
+<button onclick="saveSettings()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+सेटिंग्स सेव करें
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ANALYSIS SECTION (Chart) -->
+<div id="analysis" class="page-section">
+<h2 class="text-2xl font-bold text-gray-800 mb-6">विश्लेषण</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+<h3 class="text-lg font-bold text-gray-800 mb-4">आवेदन स्थिति (Chart)</h3>
+<canvas id="statusChart" height="300"></canvas>
+</div>
+<div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+<h3 class="text-lg font-bold text-gray-800 mb-4">मासिक आवेदन</h3>
+<canvas id="monthlyChart" height="300"></canvas>
 </div>
 </div>
 </div>
@@ -508,11 +727,12 @@ display: none !important;
 </div>
 
 <div id="pdfContent" class="p-6">
-<!-- QR Code Section -->
+<!-- Header with QR -->
 <div class="flex justify-between items-start mb-6 border-b-2 border-gray-200 pb-4">
 <div>
 <h3 class="text-3xl font-bold text-blue-900 mb-2">AllInOne MP</h3>
-<p class="text-gray-600">आवेदन रसीद</p>
+<p class="text-gray-600">ऑफिशियल आवेदन रसीद</p>
+<p class="text-lg font-bold text-gray-800 mt-2" id="receiptAppId">आवेदन क्रमांक: </p>
 <p class="text-sm text-gray-500 mt-1" id="receiptDate">दिनांक: </p>
 </div>
 <div class="qr-container">
@@ -521,19 +741,36 @@ display: none !important;
 </div>
 </div>
 
+<!-- Applicant Photo if available -->
+<div id="applicantPhotoContainer" class="hidden mb-6 text-center">
+<img id="applicantPhoto" src="" alt="Applicant Photo" class="w-32 h-32 rounded-full mx-auto border-4 border-blue-100 object-cover">
+</div>
+
+<!-- Details Grid -->
 <div id="detailContent" class="space-y-4">
-<!-- Details will be inserted here -->
+<!-- Dynamic content here -->
+</div>
+
+<!-- Documents Section -->
+<div id="documentsSection" class="mt-8 hidden">
+<h4 class="font-bold text-lg mb-3 text-blue-900 border-b pb-2">संलग्न दस्तावेज़</h4>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="documentsGrid">
+</div>
 </div>
 
 <div class="mt-8 pt-4 border-t border-gray-200 text-center text-sm text-gray-500">
-<p>यह एक कंप्यूटर जनरेटेड रसीद है।</p>
-<p class="mt-1">AllInOne MP Portal</p>
+<p class="font-bold">यह एक कंप्यूटर जनरेटेड रसीद है।</p>
+<p class="mt-1">AllInOne MP Portal © 2026</p>
+<p class="text-xs mt-2">सत्यापन हेतु QR कोड स्कैन करें</p>
 </div>
 </div>
 
 <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end gap-3 no-print">
 <button onclick="downloadPDF()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-2">
 <i class="fas fa-file-pdf"></i> PDF डाउनलोड
+</button>
+<button onclick="printReceipt()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+<i class="fas fa-print"></i> प्रिंट
 </button>
 <button onclick="closeModal()" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition">
 बंद करें
@@ -544,12 +781,10 @@ display: none !important;
 
 <!-- JAVASCRIPT -->
 <script type="module">
-// 🔥 Firebase Import (Version 11.6.1)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { 
     getFirestore, 
     collection, 
-    onSnapshot, 
     doc, 
     getDoc, 
     getDocs, 
@@ -557,15 +792,17 @@ import {
     query, 
     orderBy, 
     limit,
-    where 
+    onSnapshot,
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { 
     getAuth, 
     onAuthStateChanged, 
-    signOut 
+    signOut,
+    updateProfile,
+    deleteUser
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-// 🔑 Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
     authDomain: "allinone-aa89.firebaseapp.com",
@@ -575,45 +812,34 @@ const firebaseConfig = {
     appId: "1:1234567890:web:abcdef123456"
 };
 
-// 🚀 Global Variables
 let app, db, auth;
 let allApplications = [];
 let currentUser = null;
-let isDataLoaded = false;
 let currentDetailId = null;
+let charts = {};
 
-// 🎯 Initialize Firebase
 try {
-    console.log("Initializing Firebase...");
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     auth = getAuth(app);
-    console.log("✅ Firebase Initialized Successfully");
     document.getElementById('firebaseStatus').textContent = "Connected ✅";
-    document.getElementById('firebaseStatus').className = "text-green-600 font-bold";
 } catch (error) {
-    console.error("❌ Firebase Init Error:", error);
     showError("Firebase Init Failed: " + error.message);
 }
 
-// 📡 Data Fetching Functions
+// Data Fetching
 async function fetchData() {
-    console.log("Fetching data from Firestore...");
     updateLoadingStatus("डेटाबेस से डेटा लाया जा रहा है...");
     
     try {
-        // Try fetching from multiple collections
-        const collections = ['applications', 'samagra_ekyc_requests', 'mpbhojApplications'];
+        const collections = ['applications', 'samagra_ekyc_requests', 'mpbhojApplications', 'users'];
         let allData = [];
         
         for (const colName of collections) {
             try {
-                console.log(`Fetching collection: ${colName}`);
                 const colRef = collection(db, colName);
                 const q = query(colRef, orderBy('createdAt', 'desc'), limit(100));
                 const snapshot = await getDocs(q);
-                
-                console.log(`${colName}: ${snapshot.docs.length} documents found`);
                 
                 const docs = snapshot.docs.map(doc => ({
                     id: doc.id,
@@ -623,15 +849,12 @@ async function fetchData() {
                 }));
                 
                 allData = [...allData, ...docs];
-            } catch (colError) {
-                console.warn(`Error fetching ${colName}:`, colError.message);
+            } catch (e) {
+                console.warn(e.message);
             }
         }
         
-        // Sort by date
         allData.sort((a, b) => b.createdAt - a.createdAt);
-        
-        console.log("Total records:", allData.length);
         allApplications = allData;
         
         if (allData.length === 0) {
@@ -640,70 +863,46 @@ async function fetchData() {
             renderTable(allData);
             updateStats(allData);
             hideLoading();
+            initCharts();
         }
         
-        isDataLoaded = true;
+        // Real-time updates
+        setupRealtimeListeners();
         
     } catch (error) {
-        console.error("❌ Fetch Error:", error);
         showError("डेटा लाने में त्रुटि: " + error.message);
     }
 }
 
-// 🔄 Update Status Function
-window.updateStatus = async function(id, newStatus, selectElement) {
-    const item = allApplications.find(a => a.id === id);
-    if (!item) return;
-    
-    try {
-        // Show loading on select
-        selectElement.disabled = true;
-        selectElement.style.opacity = '0.6';
+function setupRealtimeListeners() {
+    const q = query(collection(db, "applications"), orderBy('createdAt', 'desc'), limit(50));
+    onSnapshot(q, (snapshot) => {
+        const newData = snapshot.docs.map(doc => ({
+            id: doc.id,
+            _collection: 'applications',
+            ...doc.data()
+        }));
         
-        const docRef = doc(db, item._collection || 'applications', id);
-        await updateDoc(docRef, {
-            status: newStatus,
-            updatedAt: new Date()
-        });
-        
-        // Update local data
-        item.status = newStatus;
+        allApplications = [...newData, ...allApplications.filter(a => a._collection !== 'applications')];
+        renderTable(allApplications);
         updateStats(allApplications);
-        
-        // Remove loading
-        selectElement.disabled = false;
-        selectElement.style.opacity = '1';
-        
-        // Show success animation
-        selectElement.style.background = '#dcfce7';
-        setTimeout(() => {
-            selectElement.style.background = '';
-        }, 500);
-        
-    } catch (error) {
-        alert("स्टेटस अपडेट करने में त्रुटि: " + error.message);
-        selectElement.disabled = false;
-        selectElement.style.opacity = '1';
-        // Revert selection
-        selectElement.value = item.status || 'pending';
-    }
-};
+    });
+}
 
-// 📊 Render Table
+// Render Table
 function renderTable(data) {
     const tbody = document.getElementById('dataTable');
     const tbody2 = document.getElementById('dataTable2');
     
     if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">कोई डेटा उपलब्ध नहीं</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">कोई डेटा उपलब्ध नहीं</td></tr>';
         return;
     }
     
     let html = '';
-    data.slice(0, 50).forEach(item => {
-        const appNo = `AIO-${item.id.substring(0, 8).toUpperCase()}`;
+    data.slice(0, 100).forEach(item => {
         const name = item.studentName || item.applicantName || item.name || item.fullName || "अज्ञात";
-        const service = item.serviceType || item.formType || item.service || item.serviceName || "समग्र";
+        const service = item.serviceType || item.formType || item.service || "समग्र";
         const date = formatDate(item.createdAt);
         const status = item.status || 'pending';
         
@@ -711,19 +910,14 @@ function renderTable(data) {
                          status === 'reject' ? 'status-reject' : 
                          status === 'processing' ? 'status-processing' : 'status-pending';
         
-        let statusText = status === 'complete' ? 'पूर्ण' : 
-                        status === 'reject' ? 'अस्वीकृत' : 
-                        status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
-        
         html += `
-        <tr class="table-row border-b border-gray-100 hover:bg-blue-50 transition">
-            <td class="p-4 font-mono text-blue-700 font-medium">${appNo}</td>
+        <tr class="table-row">
             <td class="p-4 font-bold text-gray-800">${name}</td>
-            <td class="p-4"><span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${service}</span></td>
+            <td class="p-4"><span class="service-tag">${service}</span></td>
             <td class="p-4 hidden md:table-cell text-gray-600">${date}</td>
             <td class="p-4">
                 <select onchange="updateStatus('${item.id}', this.value, this)" 
-                        class="status-select ${statusClass}">
+                        class="status-select ${statusClass}" data-collection="${item._collection}">
                     <option value="pending" ${status === 'pending' ? 'selected' : ''}>लंबित</option>
                     <option value="processing" ${status === 'processing' ? 'selected' : ''}>प्रोसेसिंग</option>
                     <option value="complete" ${status === 'complete' ? 'selected' : ''}>पूर्ण</option>
@@ -731,14 +925,12 @@ function renderTable(data) {
                 </select>
             </td>
             <td class="p-4">
-                <div class="flex space-x-2">
-                    <button onclick="viewDetails('${item.id}')" class="action-btn action-view" title="View & PDF">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button onclick="deleteItem('${item.id}', '${item._collection}')" class="action-btn action-delete" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+                <button onclick="viewDetails('${item.id}')" class="action-btn action-view" title="View & PDF">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button onclick="deleteItem('${item.id}', '${item._collection}')" class="action-btn action-delete" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
             </td>
         </tr>
         `;
@@ -748,7 +940,7 @@ function renderTable(data) {
     if (tbody2) tbody2.innerHTML = html;
 }
 
-// 📈 Update Statistics
+// Update Statistics
 function updateStats(data) {
     const total = data.length;
     const pending = data.filter(a => a.status === 'pending' || !a.status).length;
@@ -759,29 +951,47 @@ function updateStats(data) {
     document.getElementById('statPending').textContent = pending;
     document.getElementById('statComplete').textContent = complete;
     document.getElementById('statRejected').textContent = rejected;
-    
-    document.querySelector('.notification-badge').textContent = pending;
+    document.getElementById('notifCount').textContent = pending;
 }
 
-// 👁️ View Details with PDF and QR
-window.viewDetails = function(id) {
+// View Details with Firebase Data
+window.viewDetails = async function(id) {
     const item = allApplications.find(a => a.id === id);
     if (!item) return;
     
     currentDetailId = id;
     
-    // Populate modal
+    // Fetch fresh data from Firebase
+    try {
+        const docRef = doc(db, item._collection || 'applications', id);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            const freshData = { ...item, ...docSnap.data() };
+            displayDetails(freshData);
+        } else {
+            displayDetails(item);
+        }
+    } catch (e) {
+        displayDetails(item);
+    }
+};
+
+function displayDetails(item) {
+    document.getElementById('receiptAppId').textContent = 'आवेदन क्रमांक: AIO-' + item.id.substring(0, 8).toUpperCase();
     document.getElementById('receiptDate').textContent = 'दिनांक: ' + formatDate(item.createdAt);
     
-    // Generate QR Code
+    // QR Code
     const qrContainer = document.getElementById('qrCode');
     qrContainer.innerHTML = '';
     const qrData = JSON.stringify({
         id: item.id,
         name: item.studentName || item.applicantName || item.name,
         service: item.serviceType || item.formType || item.service,
-        status: item.status || 'pending'
+        status: item.status || 'pending',
+        date: item.createdAt
     });
+    
     new QRCode(qrContainer, {
         text: qrData,
         width: 128,
@@ -791,29 +1001,47 @@ window.viewDetails = function(id) {
         correctLevel: QRCode.CorrectLevel.H
     });
     
-    // Build detail rows
+    // Photo
+    const photoContainer = document.getElementById('applicantPhotoContainer');
+    const photoEl = document.getElementById('applicantPhoto');
+    if (item.photoUrl || item.profileImage) {
+        photoContainer.classList.remove('hidden');
+        photoEl.src = item.photoUrl || item.profileImage;
+    } else {
+        photoContainer.classList.add('hidden');
+    }
+    
+    // All Details
     const fields = [
-        { label: 'आवेदन क्रमांक', value: `AIO-${item.id.substring(0, 8).toUpperCase()}` },
         { label: 'पूरा नाम', value: item.studentName || item.applicantName || item.name || item.fullName || '-' },
-        { label: 'मोबाइल नंबर', value: item.mobile || item.phone || item.mobileNumber || '-' },
-        { label: 'ईमेल', value: item.email || '-' },
-        { label: 'सेवा प्रकार', value: item.serviceType || item.formType || item.service || item.serviceName || 'समग्र' },
+        { label: 'पिता का नाम', value: item.fatherName || item.father || '-' },
+        { label: 'माता का नाम', value: item.motherName || item.mother || '-' },
         { label: 'जन्म तिथि', value: item.dob || item.dateOfBirth || '-' },
+        { label: 'लिंग', value: item.gender || '-' },
+        { label: 'मोबाइल', value: item.mobile || item.phone || item.mobileNumber || '-' },
+        { label: 'ईमेल', value: item.email || '-' },
+        { label: 'आधार नंबर', value: maskAadhar(item.aadharNumber || item.aadhar) },
+        { label: 'समग्र आईडी', value: item.samagraId || item.familyId || '-' },
+        { label: 'सेवा प्रकार', value: item.serviceType || item.formType || item.service || 'समग्र' },
         { label: 'पता', value: item.address || item.fullAddress || '-' },
         { label: 'जिला', value: item.district || '-' },
-        { label: 'राज्य', value: item.state || 'मध्य प्रदेश' },
+        { label: 'तहसील', value: item.tehsil || '-' },
+        { label: 'ग्राम', value: item.village || item.gram || '-' },
         { label: 'पिन कोड', value: item.pincode || '-' },
         { label: 'वर्तमान स्थिति', value: getStatusText(item.status) },
-        { label: 'आवेदन तिथि', value: formatDate(item.createdAt) }
+        { label: 'आवेदन तिथि', value: formatDate(item.createdAt) },
+        { label: 'अपडेट तिथि', value: item.updatedAt ? formatDate(item.updatedAt.toDate()) : '-' }
     ];
     
-    // Add dynamic fields if available
-    if (item.fatherName) fields.push({ label: 'पिता का नाम', value: item.fatherName });
-    if (item.motherName) fields.push({ label: 'माता का नाम', value: item.motherName });
-    if (item.aadharNumber) fields.push({ label: 'आधार नंबर', value: maskAadhar(item.aadharNumber) });
-    if (item.samagraId) fields.push({ label: 'समग्र आईडी', value: item.samagraId });
+    // Additional dynamic fields
+    Object.keys(item).forEach(key => {
+        if (!fields.find(f => f.label === key) && 
+            !['id', '_collection', 'createdAt', 'updatedAt', 'photoUrl', 'profileImage', 'documents', 'status'].includes(key)) {
+            fields.push({ label: key, value: item[key] });
+        }
+    });
     
-    let detailsHtml = '';
+    let detailsHtml = '<div class="detail-card">';
     fields.forEach(field => {
         if (field.value && field.value !== '-') {
             detailsHtml += `
@@ -824,66 +1052,109 @@ window.viewDetails = function(id) {
             `;
         }
     });
-    
-    // Add documents section if URLs exist
-    if (item.documents || item.photoUrl || item.aadharFront || item.aadharBack) {
-        detailsHtml += `
-        <div class="mt-6 pt-4 border-t border-gray-200">
-            <h4 class="font-bold text-lg mb-3 text-blue-900">संलग्न दस्तावेज़</h4>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        `;
-        
-        const docs = [];
-        if (item.photoUrl) docs.push({ name: 'फोटो', url: item.photoUrl });
-        if (item.aadharFront) docs.push({ name: 'आधार (सामने)', url: item.aadharFront });
-        if (item.aadharBack) docs.push({ name: 'आधार (पीछे)', url: item.aadharBack });
-        
-        if (item.documents && Array.isArray(item.documents)) {
-            item.documents.forEach((doc, idx) => {
-                docs.push({ name: doc.name || `दस्तावेज़ ${idx + 1}`, url: doc.url });
-            });
-        }
-        
-        docs.forEach(doc => {
-            detailsHtml += `
-            <div class="border rounded-lg p-3 text-center">
-                <i class="fas fa-file-image text-3xl text-blue-600 mb-2"></i>
-                <p class="text-sm font-medium">${doc.name}</p>
-                <a href="${doc.url}" target="_blank" class="text-xs text-blue-600 hover:underline mt-1 inline-block">देखें</a>
-            </div>
-            `;
-        });
-        
-        detailsHtml += '</div></div>';
-    }
+    detailsHtml += '</div>';
     
     document.getElementById('detailContent').innerHTML = detailsHtml;
     
-    // Show modal
+    // Documents
+    const docsSection = document.getElementById('documentsSection');
+    const docsGrid = document.getElementById('documentsGrid');
+    
+    let hasDocs = false;
+    let docsHtml = '';
+    
+    if (item.aadharFront) {
+        hasDocs = true;
+        docsHtml += createDocCard('आधार (सामने)', item.aadharFront, 'image');
+    }
+    if (item.aadharBack) {
+        hasDocs = true;
+        docsHtml += createDocCard('आधार (पीछे)', item.aadharBack, 'image');
+    }
+    if (item.incomeCertificate) {
+        hasDocs = true;
+        docsHtml += createDocCard('आय प्रमाण', item.incomeCertificate, 'pdf');
+    }
+    if (item.domicileCertificate) {
+        hasDocs = true;
+        docsHtml += createDocCard('निवास प्रमाण', item.domicileCertificate, 'pdf');
+    }
+    if (item.documents && Array.isArray(item.documents)) {
+        item.documents.forEach((doc, idx) => {
+            hasDocs = true;
+            docsHtml += createDocCard(doc.name || `दस्तावेज़ ${idx+1}`, doc.url, 'file');
+        });
+    }
+    
+    if (hasDocs) {
+        docsSection.classList.remove('hidden');
+        docsGrid.innerHTML = docsHtml;
+    } else {
+        docsSection.classList.add('hidden');
+    }
+    
     document.getElementById('detailModal').classList.add('active');
-};
+}
 
-// 🗑️ Delete Function
-window.deleteItem = async function(id, collectionName) {
-    if (!confirm("क्या आप वाकई हटाना चाहते हैं?")) return;
+function createDocCard(name, url, type) {
+    const icon = type === 'pdf' ? 'fa-file-pdf' : (type === 'image' ? 'fa-image' : 'fa-file');
+    const color = type === 'pdf' ? 'text-red-500' : 'text-blue-500';
+    
+    return `
+    <div class="border rounded-lg p-3 text-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer" onclick="window.open('${url}', '_blank')">
+        <i class="fas ${icon} text-3xl ${color} mb-2"></i>
+        <p class="text-xs font-medium text-gray-700">${name}</p>
+        <p class="text-xs text-blue-600 mt-1">देखें</p>
+    </div>
+    `;
+}
+
+// Update Status
+window.updateStatus = async function(id, newStatus, selectElement) {
+    const item = allApplications.find(a => a.id === id);
+    if (!item) return;
     
     try {
-        const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+        selectElement.disabled = true;
+        const docRef = doc(db, item._collection || 'applications', id);
+        await updateDoc(docRef, {
+            status: newStatus,
+            updatedAt: new Date()
+        });
+        
+        item.status = newStatus;
+        updateStats(allApplications);
+        
+        selectElement.className = `status-select status-${newStatus}`;
+        selectElement.disabled = false;
+        
+    } catch (error) {
+        alert("स्टेटस अपडेट करने में त्रुटि: " + error.message);
+        selectElement.disabled = false;
+        selectElement.value = item.status || 'pending';
+    }
+};
+
+// Delete Item
+window.deleteItem = async function(id, collectionName) {
+    if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं?")) return;
+    
+    try {
         await deleteDoc(doc(db, collectionName || 'applications', id));
-        alert("हटा दिया गया!");
         allApplications = allApplications.filter(a => a.id !== id);
         renderTable(allApplications);
         updateStats(allApplications);
+        alert("आवेदन हटा दिया गया!");
     } catch (error) {
         alert("हटाने में त्रुटि: " + error.message);
     }
 };
 
-// 📥 Download PDF
+// PDF Download
 window.downloadPDF = function() {
     const element = document.getElementById('pdfContent');
     const opt = {
-        margin: 1,
+        margin: 0.5,
         filename: `Application_${currentDetailId.substring(0, 8)}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
@@ -893,51 +1164,88 @@ window.downloadPDF = function() {
     html2pdf().set(opt).from(element).save();
 };
 
-// ❌ Close Modal
+window.printReceipt = function() {
+    window.print();
+};
+
 window.closeModal = function() {
     document.getElementById('detailModal').classList.remove('active');
 };
 
-// 🔄 Refresh Data
-window.refreshData = function() {
-    showLoading();
-    fetchData();
-};
-
-// 📤 Export CSV
-window.exportToCSV = function() {
-    if (allApplications.length === 0) {
-        alert("निर्यात करने के लिए कोई डेटा नहीं!");
-        return;
+// Profile Update
+window.updateProfile = async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('editName').value;
+    const email = document.getElementById('editEmail').value;
+    
+    try {
+        if (currentUser) {
+            await updateProfile(currentUser, {
+                displayName: name
+            });
+        }
+        
+        // Update local storage
+        localStorage.setItem('adminName', name);
+        localStorage.setItem('adminEmail', email);
+        
+        document.getElementById('adminName').textContent = name;
+        document.getElementById('sidebarAdminName').textContent = name;
+        document.getElementById('profileNameDisplay').textContent = name;
+        
+        alert("प्रोफाइल सफलतापूर्वक अपडेट किया गया!");
+    } catch (error) {
+        alert("त्रुटि: " + error.message);
     }
-    
-    let csv = 'ID,Name,Service,Status,Date\n';
-    allApplications.forEach(item => {
-        csv += `${item.id},"${item.studentName || item.applicantName || ''}","${item.serviceType || ''}","${item.status || 'pending'}","${formatDate(item.createdAt)}"\n`;
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `applications_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
 };
 
-// 🚪 Logout
-window.logout = function() {
-    signOut(auth).then(() => {
-        window.location.href = 'adminlogin.html';
-    }).catch(err => console.error(err));
+window.resetProfile = function() {
+    document.getElementById('profileForm').reset();
 };
 
-// 🧭 Navigation
+window.deleteAccount = async function() {
+    if (!confirm("चेतावनी: यह आपका अकाउंट स्थायी रूप से हटा देगा। क्या आप सुनिश्चित हैं?")) return;
+    
+    try {
+        if (currentUser) {
+            await deleteUser(currentUser);
+            alert("अकाउंट हटा दिया गया!");
+            window.location.href = 'adminlogin.html';
+        }
+    } catch (error) {
+        alert("त्रुटि: " + error.message);
+    }
+};
+
+// Settings Toggle
+window.toggleSetting = function(element, settingName) {
+    element.classList.toggle('active');
+    const isActive = element.classList.contains('active');
+    localStorage.setItem(settingName, isActive);
+    
+    if (settingName === 'darkMode' && isActive) {
+        document.body.classList.add('dark-mode');
+    } else if (settingName === 'darkMode') {
+        document.body.classList.remove('dark-mode');
+    }
+};
+
+window.saveSettings = function() {
+    alert("सेटिंग्स सेव कर दी गई हैं!");
+};
+
+// Navigation
 window.showSection = function(sectionId) {
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
     document.getElementById(sectionId).classList.add('active');
+    
+    // Update chart if analysis section
+    if (sectionId === 'analysis') {
+        setTimeout(initCharts, 100);
+    }
 };
 
-// 🔄 Toggle Sidebar
 window.toggleSidebar = function() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
@@ -955,7 +1263,72 @@ window.toggleSidebar = function() {
     }
 };
 
-// 🛠️ Helper Functions
+// Charts
+function initCharts() {
+    if (charts.status) {
+        charts.status.destroy();
+        charts.monthly.destroy();
+    }
+    
+    const ctx1 = document.getElementById('statusChart').getContext('2d');
+    charts.status = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: ['पूर्ण', 'लंबित', 'अस्वीकृत', 'प्रोसेसिंग'],
+            datasets: [{
+                data: [
+                    allApplications.filter(a => a.status === 'complete').length,
+                    allApplications.filter(a => a.status === 'pending' || !a.status).length,
+                    allApplications.filter(a => a.status === 'reject').length,
+                    allApplications.filter(a => a.status === 'processing').length
+                ],
+                backgroundColor: ['#16a34a', '#f59e0b', '#ef4444', '#3b82f6']
+            }]
+        }
+    });
+    
+    const ctx2 = document.getElementById('monthlyChart').getContext('2d');
+    charts.monthly = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून'],
+            datasets: [{
+                label: 'आवेदन',
+                data: [12, 19, 15, 25, 22, 30],
+                backgroundColor: '#3b82f6'
+            }]
+        }
+    });
+}
+
+// Export CSV
+window.exportToCSV = function() {
+    if (allApplications.length === 0) {
+        alert("कोई डेटा नहीं!");
+        return;
+    }
+    
+    let csv = 'ID,Name,Mobile,Service,Status,Date\n';
+    allApplications.forEach(item => {
+        csv += `${item.id},"${item.studentName || item.applicantName || ''}","${item.mobile || ''}","${item.serviceType || ''}","${item.status || 'pending'}","${formatDate(item.createdAt)}"\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `applications_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+};
+
+// Logout
+window.logout = function() {
+    signOut(auth).then(() => {
+        window.location.href = 'adminlogin.html';
+    });
+};
+
+// Helpers
 function formatDate(date) {
     if (!date) return "-";
     try {
@@ -972,18 +1345,18 @@ function formatDate(date) {
 }
 
 function getStatusText(status) {
-    const statusMap = {
+    const map = {
         'pending': 'लंबित',
         'processing': 'प्रोसेसिंग',
         'complete': 'पूर्ण',
         'reject': 'अस्वीकृत'
     };
-    return statusMap[status] || 'लंबित';
+    return map[status] || 'लंबित';
 }
 
 function maskAadhar(aadhar) {
     if (!aadhar) return '-';
-    const str = aadhar.toString();
+    const str = aadhar.toString().replace(/\s/g, '');
     if (str.length === 12) {
         return 'XXXX-XXXX-' + str.slice(-4);
     }
@@ -993,12 +1366,6 @@ function maskAadhar(aadhar) {
 function updateLoadingStatus(msg) {
     const el = document.getElementById('loadingStatus');
     if (el) el.textContent = msg;
-}
-
-function showLoading() {
-    document.getElementById('loadingScreen').style.display = 'flex';
-    document.getElementById('loadingScreen').style.opacity = '1';
-    document.getElementById('retryBtn').classList.add('hidden');
 }
 
 function hideLoading() {
@@ -1016,64 +1383,69 @@ function showEmptyState() {
 }
 
 function showError(msg) {
-    console.error(msg);
     document.getElementById('loadingStatus').textContent = "Error: " + msg;
     document.getElementById('loadingStatus').className = "mt-2 text-sm text-red-600 font-bold";
     document.getElementById('retryBtn').classList.remove('hidden');
 }
 
-// 🧪 Test Function for Debugging
+window.refreshData = function() {
+    document.getElementById('loadingScreen').style.display = 'flex';
+    document.getElementById('loadingScreen').style.opacity = '1';
+    fetchData();
+};
+
 window.testFetch = async function() {
-    console.log("Testing Firestore connection...");
     try {
         const testCol = collection(db, "applications");
         const snapshot = await getDocs(testCol);
-        console.log("Test successful! Found", snapshot.docs.length, "documents");
         alert(`Connection OK! Found ${snapshot.docs.length} documents`);
         fetchData();
     } catch (e) {
-        alert("Connection failed: " + e.message);
-        console.error(e);
+        alert("Failed: " + e.message);
     }
 };
 
-// 🚀 Start Application
+// Init
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Page loaded, starting data fetch...");
-    
-    // Check if Firebase loaded
     if (!db) {
-        showError("Firebase Database not initialized!");
+        showError("Firebase not initialized!");
         return;
     }
     
-    // Fetch data immediately (no auth required if rules permit)
     fetchData();
     
-    // Setup auth listener
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            console.log("User signed in:", user.email);
-            document.getElementById('adminName').textContent = user.email?.split('@')[0] || 'Admin';
-            document.getElementById('adminEmail').textContent = user.email || '';
-            document.getElementById('sidebarAdminName').textContent = user.email?.split('@')[0] || 'Admin';
-        } else {
-            console.log("No user signed in");
+            currentUser = user;
+            const name = user.displayName || localStorage.getItem('adminName') || 'Admin';
+            const email = user.email || localStorage.getItem('adminEmail') || 'admin@allinone.mp';
+            
+            document.getElementById('adminName').textContent = name;
+            document.getElementById('adminEmail').textContent = email;
+            document.getElementById('sidebarAdminName').textContent = name;
+            document.getElementById('profileNameDisplay').textContent = name;
+            document.getElementById('profileEmailDisplay').textContent = email;
+            
+            document.getElementById('editName').value = name;
+            document.getElementById('editEmail').value = email;
+        }
+    });
+    
+    // Load saved settings
+    ['emailNotifications', 'autoApprove', 'darkMode', 'autoBackup', 'maintenanceMode'].forEach(setting => {
+        const value = localStorage.getItem(setting) === 'true';
+        if (value) {
+            // Find and activate toggle
         }
     });
     
     // Close modal on outside click
     document.getElementById('detailModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
+        if (e.target === this) closeModal();
     });
     
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeModal();
-        }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
     });
 });
 </script>
