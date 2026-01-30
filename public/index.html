@@ -526,6 +526,42 @@ window.trackApplication = async function () {
     closeBtn.addEventListener('click', closeDrawer);
     overlay.addEventListener('click', closeDrawer);
 
+
+
+function filterServices(category) {
+    // 1. Sabhi Buttons se 'active' class hatao aur clicked button ko 'active' karo
+    const tabs = document.querySelectorAll('.category-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-category') === category) {
+            tab.classList.add('active');
+        }
+    });
+
+    // 2. Sabhi Cards ko select karo
+    const cards = document.querySelectorAll('.service-card');
+
+    cards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+
+        // Logic: Agar category match ho toh dikhao, warna hide kardo
+        if (cardCat === category) {
+            card.style.display = "flex"; // Show
+            card.classList.add('fade-in'); // Optional Animation
+        } else {
+            card.style.display = "none"; // Hide
+        }
+    });
+}
+
+// 🚀 SABSE ZAROORI: Page load hote hi sirf 'Most' dikhane ke liye
+document.addEventListener('DOMContentLoaded', () => {
+    filterServices('most'); 
+});
+
+    
+</script>
+
 </script>
 
  <script src="assets/js/script.js?v=1.0"></script>
@@ -563,6 +599,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
