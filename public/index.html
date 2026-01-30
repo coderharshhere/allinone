@@ -235,7 +235,7 @@
   </div>
 </section>
 
-    <!-- Main Content -->
+    <!-- Main Content --
   
 
 
@@ -290,7 +290,111 @@
         color: #1e3a8a !important;
     }
 
+</style>-->
+
+
+<style>
+  /* Clean & Sharp Filter Container */
+  .filter-container {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 15px 5px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    justify-content: start;
+  }
+  .filter-container::-webkit-scrollbar { display: none; }
+
+  /* Sharp Professional Chip */
+  .filter-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px; /* Kam curve, zyada professional */
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Hover & Active States */
+  .filter-tab:hover {
+    border-color: #000080;
+    background: #f8fafc;
+  }
+
+  .filter-tab.active {
+    background: #000080;
+    color: #ffffff !important;
+    border-color: #000080;
+  }
+
+  .filter-tab.active i {
+    color: #ffffff !important;
+  }
+
+  /* Icon Colors (Clear & Distinct) */
+  .filter-tab i { font-size: 14px; }
 </style>
+
+<div class="filter-container">
+  <div class="filter-tab active" onclick="filterServices('most', this)">
+    <i class="fas fa-star" style="color: #f59e0b;"></i> लोकप्रिय सेवाएँ
+  </div>
+
+  <div class="filter-tab" onclick="filterServices('certificate', this)">
+    <i class="fas fa-file-alt" style="color: #3b82f6;"></i> प्रमाण पत्र
+  </div>
+
+  <div class="filter-tab" onclick="filterServices('university', this)">
+    <i class="fas fa-university" style="color: #8b5cf6;"></i> यूनिवर्सिटी फॉर्म
+  </div>
+
+  <div class="filter-tab" onclick="filterServices('yojna', this)">
+    <i class="fas fa-indian-rupee-sign" style="color: #10b981;"></i> सरकारी योजनाएं
+  </div>
+
+  <div class="filter-tab" onclick="filterServices('agri', this)">
+    <i class="fas fa-tractor" style="color: #059669;"></i> कृषि सेवा (MP)
+  </div>
+
+  <div class="filter-tab" onclick="filterServices('job', this)">
+    <i class="fas fa-briefcase" style="color: #6366f1;"></i> रोजगार पंजीयन
+  </div>
+
+  <div class="filter-tab" onclick="filterServices('bill', this)">
+    <i class="fas fa-lightbulb" style="color: #eab308;"></i> बिल भुगतान
+  </div>
+</div>
+
+<script>
+  function filterServices(category, element) {
+    // 1. UI Update
+    document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+    element.classList.add('active');
+
+    // 2. Filter Logic
+    // Ye tabhi kaam karega jab aapne cards me data-category dala ho
+    let cards = document.querySelectorAll('.group, .state-card, .compact-card');
+    cards.forEach(card => {
+      let cardCat = card.getAttribute('data-category');
+      if (category === 'all' || cardCat === category) {
+        card.style.display = "flex";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+</script>
+    
             <!-- Grid -->
           <div class="w-full max-w-[1200px] mx-auto">
     <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">
@@ -634,6 +738,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
