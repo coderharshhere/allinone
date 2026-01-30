@@ -210,169 +210,75 @@
         color: #1e3a8a !important;
     }
 
-</style>--
-
-    <div class="flex items-center md:justify-center overflow-x-auto no-scrollbar pb-4 flex-nowrap gap-3 px-2">
-    
-    <button data-category="most" onclick="filterServices('most')" 
-        class="category-tab active flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-fire"></i> लोकप्रिय
-    </button>
-
-    <button data-category="social" onclick="filterServices('social')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-users"></i> समग्र एवं सामाजिक
-    </button>
-
-    <button data-category="land" onclick="filterServices('land')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-map-marked-alt"></i> भू-अभिलेख
-    </button>
-
-    <button data-category="certificates" onclick="filterServices('certificates')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-file-invoice"></i> प्रमाण पत्र
-    </button>
-
-    <button data-category="form" onclick="filterServices('form')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-university"></i> यूनिवर्सिटी/फॉर्म
-    </button>
-
-    <button data-category="yojna" onclick="filterServices('yojna')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-indian-rupee-sign"></i> सरकारी योजनाएं
-    </button>
-
-    <button data-category="job" onclick="filterServices('job')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-briefcase"></i> रोजगार पंजीयन
-    </button>
-
-    <button data-category="bill" onclick="filterServices('bill')" 
-        class="category-tab flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border border-gray-200 bg-white text-gray-600 shadow-sm">
-        <i class="fas fa-lightbulb"></i> बिल भुगतान
-    </button>
-</div>
-
-<style>
-    /* 1. Normal State (Classic White) */
-    .category-tab {
-        background-color: white !important;
-        color: #4b5563 !important; /* gray-600 */
-        border: 1px solid #e5e7eb !important; /* gray-200 */
-        cursor: pointer;
-    }
-
-    /* 2. Active State (Deep Ashoka Blue) */
-    /* Aapki script jab is class ko add karegi tab ye color dikhega */
-    .category-tab.active {
-        background-color: #1e3a8a !important; /* blue-900 */
-        color: white !important;
-        border-color: #1e3a8a !important;
-        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
-    }
-
-    /* 3. Hover State */
-    .category-tab:hover:not(.active) {
-        border-color: #1e3a8a !important;
-        color: #1e3a8a !important;
-        background-color: #f8fafc !important;
-    }
-
-    /* 4. Smooth Scrolling for Mobile */
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-    .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
 </style>-->
 
+  <style>
+/* ===== BASIC RESET ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family: Arial, sans-serif;
+  background:#f3f4f6;
+  padding:20px;
+}
 
-    <div class="w-full flex justify-center py-6 bg-gray-50/50">
-    
-    <div class="flex items-center md:justify-center overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-3 px-4 max-w-7xl w-full">
-        
-        <button data-category="most" onclick="filterServices('most')" 
-            class="category-tab active snap-center flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 border border-gray-200 bg-white text-gray-600 hover:border-blue-900 hover:text-blue-900 shadow-sm active:scale-95">
-            <i class="fas fa-fire text-orange-500"></i> लोकप्रिय सेवाएँ
-        </button>
+/* ===== PAGE WIDTH CONTROL ===== */
+.container{
+  max-width:1100px;
+  margin:0 auto;
+}
 
-        <button data-category="certificates" onclick="filterServices('certificates')" 
-            class="category-tab snap-center flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 border border-gray-200 bg-white text-gray-600 hover:border-blue-900 hover:text-blue-900 shadow-sm active:scale-95">
-            <i class="fas fa-file-invoice text-blue-600"></i> प्रमाण पत्र
-        </button>
+/* ===== TABS BAR ===== */
+.tabs-wrapper{
+  overflow-x:auto;
+  white-space:nowrap;
+  scrollbar-width:none;
+}
+.tabs-wrapper::-webkit-scrollbar{display:none}
 
-        <button data-category="form" onclick="filterServices('form')" 
-            class="category-tab snap-center flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 border border-gray-200 bg-white text-gray-600 hover:border-blue-900 hover:text-blue-900 shadow-sm active:scale-95">
-            <i class="fas fa-university text-purple-600"></i> यूनिवर्सिटी/फॉर्म
-        </button>
+.tabs{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
 
-        <button data-category="yojna" onclick="filterServices('yojna')" 
-            class="category-tab snap-center flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 border border-gray-200 bg-white text-gray-600 hover:border-blue-900 hover:text-blue-900 shadow-sm active:scale-95">
-            <i class="fas fa-indian-rupee-sign text-green-600"></i> सरकारी योजनाएं
-        </button>
-        
-        <button data-category="social" onclick="filterServices('land')" 
-            class="category-tab snap-center flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 border border-gray-200 bg-white text-gray-600 hover:border-blue-900 hover:text-blue-900 shadow-sm active:scale-95">
-            <i class="fas fa-users text-blue-500"></i> कृषि सेवा (MP)
-        </button>
+/* Mobile */
+@media(max-width:768px){
+  .tabs{
+    justify-content:flex-start;
+  }
+}
 
-        <button data-category="land" onclick="filterServices('job')" 
-            class="category-tab snap-center flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 border border-gray-200 bg-white text-gray-600 hover:border-blue-900 hover:text-blue-900 shadow-sm active:scale-95">
-            <i class="fas fa-briefcase text-emerald-500"></i> रोजगार पंजीयन
-        </button>
+.tab{
+  flex:0 0 auto;
+  padding:10px 20px;
+  background:#e5e7eb;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:700;   /* BOLD TEXT */
+  transition:.2s;
+  color:#111827;
+}
 
+.tab.active{
+  background:#2563eb;
+  color:#fff;
+}
 
-    </div>
+</style>
+
+<!-- ===== FILTER TABS ===== -->
+<div class="tabs-wrapper">
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-filter="most">लोकप्रिय सेवाएँ</div>
+    <div class="tab" data-filter="certificate">प्रमाण पत्र</div>
+    <div class="tab" data-filter="form">यूनिवर्सिटी/फॉर्म </div>
+    <div class="tab" data-filter="yojna">सरकारी योजनाएं </div>
+    <div class="tab" data-filter="land">कृषि सेवा (MP)</div>
+    <div class="tab" data-filter="job">रोजगार पंजीयन</div>
+  </div>
 </div>
 
-<style>
-    /* CLEAN & CALM STYLING */
-    .category-tab {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        white-space: nowrap;
-        background: transparent;
-        color: #64748b; /* Soft Slate Color */
-        border: 1px solid transparent;
-        transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth Elastic Move */
-        cursor: pointer;
-        snap-align: center;
-    }
-
-    /* Subtle Hover */
-    .category-tab:hover {
-        color: #1e3a8a;
-        background: #f8fafc;
-    }
-
-    /* ACTIVE STATE: High-End Minimalist */
-    .category-tab.active {
-        background-color: #1e3a8a !important; /* Deep Navy */
-        color: #ffffff !important;
-        box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.2);
-        transform: translateY(-1px);
-    }
-
-    /* Icon Styling: Same as text for clean look */
-    .category-tab i {
-        font-size: 14px;
-        color: inherit; /* Text ka color hi icon ka hoga */
-    }
-
-    /* Scrollbar hide logic */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
 
 
 
@@ -720,6 +626,7 @@ window.trackApplication = async function () {
 
 </body>
 </html>
+
 
 
 
