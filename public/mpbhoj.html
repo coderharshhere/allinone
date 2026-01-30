@@ -9,12 +9,150 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <!-- Header + Page CSS -->
   <link rel="stylesheet" href="assets/css/header.css">
   <link rel="stylesheet" href="assets/css/mpbhoj.css">
+  
+  <style>
+    .notice-box {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+      border: 2px solid #ff6b6b;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .notice-title {
+      color: #d63031;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .notice-content {
+      color: #2d3436;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .direct-link {
+      display: inline-block;
+      background: #00b894;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 10px 5px;
+      transition: all 0.3s;
+    }
+    .direct-link:hover {
+      background: #00a383;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .form-notice {
+      background: #74b9ff;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: 600;
+    }
+    .form-section-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px;
+      margin: 20px 0 15px 0;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    @media (min-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    .required::after {
+      content: " *";
+      color: #ff0000;
+    }
+    .conditional-field {
+      display: none;
+    }
+    .conditional-field.active {
+      display: flex;
+    }
+    select.form-input, input.form-input, textarea.form-input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 100%;
+      transition: border-color 0.3s;
+    }
+    select.form-input:focus, input.form-input:focus, textarea.form-input:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .checkbox-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .address-box {
+      border: 1px solid #e0e0e0;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      background: #fafafa;
+    }
+    .copy-btn {
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .copy-btn:hover {
+      background: #e0e0e0;
+    }
+    small.helper-text {
+      color: #666;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+  </style>
+<base target="_blank">
 </head>
 
 <body>
@@ -26,153 +164,727 @@
 <div class="mpbhoj-wrap">
   <div class="mpbhoj-container">
 
-  <!-- Tabs -->
-<div class="tabs">
-  <div class="tab active" onclick="openTab(0)">Admission</div>
-  <div class="tab" onclick="openTab(1)">Supplement</div>
-  <div class="tab" onclick="openTab(2)">Result</div>
-  <div class="tab" onclick="openTab(3)">Exam Form</div>
-  <div class="tab" onclick="openTab(4)">Other</div>
-</div>
+    <!-- ================= IMPORTANT NOTICE ================= -->
+    <div class="notice-box">
+      <div class="notice-title">
+        <i class="fas fa-exclamation-circle"></i>
+        महत्वपूर्ण सूचना / Important Notice
+      </div>
+      <div class="notice-content">
+        <p style="margin-bottom: 15px;">
+          <strong>अगर आप खुद अपने से आवेदन करना चाहते हैं / If you want to apply yourself:</strong>
+        </p>
+        <a href="https://mpbou.mponline.gov.in/" target="_blank" class="direct-link">
+          <i class="fas fa-external-link-alt"></i> 
+          सीधे वेबसाइट पर जाएं / Go to Official Website
+        </a>
+        
+        <hr style="border: 1px dashed #ff6b6b; margin: 15px 0;">
+        
+        <p style="margin-bottom: 10px;">
+          <strong>अगर आप हमसे मदद या फॉर्म भरवाना चाहते हैं / If you want our help to fill the form:</strong>
+        </p>
+        <p style="font-size: 0.95rem; color: #2d3436;">
+          नीचे दिया गया फॉर्म भरें। हम आपकी मदद करेंगे। / Fill the form below. We will help you.
+        </p>
+      </div>
+    </div>
 
-<form id="mpbhojForm"
-      data-service="MPBHOJ Application"
-      data-collection="applications">
-  
-  <!-- Admission -->
-  <div class="tab-content active">
-    <label>रोल नंबर *</label>
-    <input name="rollNumber" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="openTab(0)">Admission (New)</div>
+      <div class="tab" onclick="openTab(1)">Supplement</div>
+      <div class="tab" onclick="openTab(2)">Result</div>
+      <div class="tab" onclick="openTab(3)">Exam Form</div>
+      <div class="tab" onclick="openTab(4)">Other</div>
+    </div>
 
-    <label>DOB (जन्म तिथि) *</label>
-    <input type="date" name="dob" class="form-input" data-required />
+    <form id="mpbhojForm" data-service="MPBHOJ Application" data-collection="applications">
+      
+      <!-- ==================== ADMISSION TAB ==================== -->
+      <div class="tab-content active">
+        
+        <!-- Course & College Details -->
+        <div class="form-section-title">
+          <i class="fas fa-university"></i> College & Course Details / कॉलेज और पाठ्यक्रम विवरण
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">Program / प्रोग्राम</label>
+            <input type="text" name="program" class="form-input" data-required placeholder="जैसे: BA, BSc, MA, डिप्लोमा">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Branch / ब्रांच</label>
+            <input type="text" name="branch" class="form-input" data-required placeholder="जैसे: Arts, Science, Commerce">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Program Eligibility / पात्रता</label>
+            <input type="text" name="eligibility" class="form-input" data-required placeholder="जैसे: 12th Pass, Graduate">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Regional Center / क्षेत्रीय केंद्र</label>
+            <input type="text" name="regionalCenter" class="form-input" data-required placeholder="जैसे: Bhopal, Indore, Gwalior">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Study Center Name / अध्ययन केंद्र</label>
+            <input type="text" name="studyCenter" class="form-input" data-required placeholder="स्टडी सेंटर का नाम टाइप करें">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Is Student of Bhoj University? / भोज विश्वविद्यालय के छात्र?</label>
+            <select name="isBhojStudent" class="form-input" data-required>
+              <option value="">-- Select --</option>
+              <option value="Y">Yes / हाँ</option>
+              <option value="N">No / नहीं</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Subject 1 / विषय 1</label>
+            <input type="text" name="subject1" class="form-input" placeholder="विषय का नाम टाइप करें">
+          </div>
+          
+          <div class="form-group">
+            <label>Subject 2 / विषय 2</label>
+            <input type="text" name="subject2" class="form-input" placeholder="विषय का नाम टाइप करें">
+          </div>
+          
+          <div class="form-group">
+            <label>Subject 3 / विषय 3</label>
+            <input type="text" name="subject3" class="form-input" placeholder="विषय का नाम टाइप करें">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Is SLM Required? / SLM चाहिए?</label>
+            <select name="slmRequired" class="form-input" data-required>
+              <option value="">-- Select --</option>
+              <option value="Y">Yes / हाँ</option>
+              <option value="N">No / नहीं</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Medium / माध्यम</label>
+            <select name="medium" class="form-input" data-required>
+              <option value="">-- Select --</option>
+              <option value="H">Hindi / हिंदी</option>
+              <option value="E">English / अंग्रेजी</option>
+            </select>
+          </div>
+        </div>
 
-    <label>छात्र का नाम *</label>
-    <input name="studentName" class="form-input" data-required placeholder="पूरा नाम दर्ज करें" />
+        <!-- Previous Qualification -->
+        <div class="form-section-title">
+          <i class="fas fa-graduation-cap"></i> Previous Qualification / पिछली योग्यता
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">Exam Passed / उत्तीर्ण परीक्षा</label>
+            <input type="text" name="examPassed" class="form-input" data-required placeholder="जैसे: 12th, BA, BSc">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">University/Board / विश्वविद्यालय/बोर्ड</label>
+            <input type="text" name="board" class="form-input" data-required placeholder="जैसे: MP Board, CBSE, BU">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Roll/Enrollment No / रोल नंबर</label>
+            <input type="text" name="prevRollNo" class="form-input" data-required placeholder="Previous Roll Number" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Passing Year / उत्तीर्ण वर्ष</label>
+            <input type="text" name="passingYear" class="form-input" data-required placeholder="例如 2023, 2024" maxlength="4" onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Stream / स्ट्रीम</label>
+            <input type="text" name="stream" class="form-input" data-required placeholder="जैसे: Arts, Science, Commerce">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Maximum Marks / अधिकतम अंक</label>
+            <input type="text" name="maxMarks" class="form-input" data-required placeholder="0000" maxlength="4" onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Obtained Marks / प्राप्त अंक</label>
+            <input type="text" name="obtMarks" class="form-input" data-required placeholder="0000" maxlength="4" onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+          
+          <div class="form-group">
+            <label>Percentage / प्रतिशत</label>
+            <input type="text" name="percentage" class="form-input" readonly placeholder="Auto Calculated">
+          </div>
+        </div>
 
-    <label>पिता का नाम *</label>
-    <input name="fatherName" class="form-input" data-required placeholder="पिता का नाम दर्ज करें" />
+        <!-- Personal Details -->
+        <div class="form-section-title">
+          <i class="fas fa-user"></i> Personal Details / व्यक्तिगत विवरण
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">First + Middle Name / पहला + मध्य नाम</label>
+            <input type="text" name="firstName" class="form-input" data-required placeholder="In English" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label>Last Name / अंतिम नाम</label>
+            <input type="text" name="lastName" class="form-input" placeholder="In English" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Name in Hindi / हिंदी में नाम</label>
+            <input type="text" name="nameHindi" class="form-input" data-required placeholder="देवनागरी लिपि में">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Date of Birth / जन्म तिथि (DD/MM/YYYY)</label>
+            <input type="text" name="dob" class="form-input" data-required placeholder="15/08/2000" maxlength="10">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Gender / लिंग</label>
+            <input type="text" name="gender" class="form-input" data-required placeholder="Male/Female/Transgender" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Marital Status / वैवाहिक स्थिति</label>
+            <input type="text" name="maritalStatus" class="form-input" data-required placeholder="Married/Unmarried" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Father/Guardian Name / पिता/अभिभावक का नाम</label>
+            <input type="text" name="fatherName" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label>Husband Name / पति का नाम (if Married Female)</label>
+            <input type="text" name="husbandName" class="form-input" placeholder="विवाहित महिलाओं के लिए" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Mother's Name / माता का नाम</label>
+            <input type="text" name="motherName" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Category / श्रेणी</label>
+            <input type="text" name="category" class="form-input" data-required placeholder="SC/ST/OBC/EWS/UR" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Nationality / राष्ट्रीयता</label>
+            <input type="text" name="nationality" class="form-input" data-required placeholder="Indian/Other" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Sub Category / उप श्रेणी</label>
+            <input type="text" name="subCategory" class="form-input" data-required placeholder="Army/Police/Disabled/None">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Religion / धर्म</label>
+            <input type="text" name="religion" class="form-input" data-required placeholder="Hindu/Muslim/Sikh/Christian etc.">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Area / क्षेत्र</label>
+            <input type="text" name="area" class="form-input" data-required placeholder="Rural/Urban">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Is Student Working? / क्या छात्र कार्यरत है?</label>
+            <select name="isWorking" class="form-input" data-required onchange="toggleEmployment(this.value)">
+              <option value="">-- Select --</option>
+              <option value="Y">Yes / हाँ</option>
+              <option value="N">No / नहीं</option>
+            </select>
+          </div>
+          
+          <div class="form-group conditional-field" id="employmentGroup">
+            <label class="required">Employment Type / रोजगार प्रकार</label>
+            <input type="text" name="employmentType" class="form-input" placeholder="Govt/Private/Self Employed">
+          </div>
+          
+          <div class="form-group">
+            <label>Organization Name / संगठन का नाम</label>
+            <input type="text" name="orgName" class="form-input" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label>Post/Designation / पद</label>
+            <input type="text" name="designation" class="form-input" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label>Current Salary (Approx) / वर्तमान वेतन</label>
+            <input type="text" name="salary" class="form-input" placeholder="In INR" onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Belongs to BPL? / BPL श्रेणी?</label>
+            <select name="isBPL" class="form-input" data-required>
+              <option value="">-- Select --</option>
+              <option value="Y">Yes / हाँ</option>
+              <option value="N">No / नहीं</option>
+            </select>
+          </div>
+        </div>
 
-    <label>माता का नाम *</label>
-    <input name="motherName" class="form-input" data-required placeholder="माता का नाम दर्ज करें" />
+        <!-- Address Details -->
+        <div class="form-section-title">
+          <i class="fas fa-home"></i> Address Details / पता विवरण
+        </div>
+        
+        <!-- Correspondence Address -->
+        <div class="address-box">
+          <h4 style="margin-bottom: 15px; color: #333; font-weight: 600;">Correspondence Address / पत्राचार पता</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">House No/Street / मकान नंबर/गली</label>
+              <input type="text" name="corrHouse" class="form-input" data-required placeholder="House/Street/Village" onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">Colony/Area / कॉलोनी/क्षेत्र</label>
+              <input type="text" name="corrColony" class="form-input" data-required placeholder="Colony/Post" onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">City/Tehsil / शहर/तहसील</label>
+              <input type="text" name="corrCity" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">State / राज्य</label>
+              <input type="text" name="corrState" class="form-input" data-required placeholder="जैसे: Madhya Pradesh" onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">District / जिला</label>
+              <input type="text" name="corrDistrict" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">Pin Code / पिन कोड</label>
+              <input type="text" name="corrPin" class="form-input" data-required maxlength="6" placeholder="6 digits" onkeypress="return CreateNumericTextBox(this,event)">
+            </div>
+          </div>
+        </div>
+        
+        <button type="button" class="copy-btn" onclick="copyAddress()">
+          <i class="fas fa-copy"></i> Copy to Permanent Address / स्थायी पते में कॉपी करें
+        </button>
+        
+        <!-- Permanent Address -->
+        <div class="address-box">
+          <h4 style="margin-bottom: 15px; color: #333; font-weight: 600;">Permanent Address / स्थायी पता</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">House No/Street / मकान नंबर/गली</label>
+              <input type="text" name="permHouse" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">Colony/Area / कॉलोनी/क्षेत्र</label>
+              <input type="text" name="permColony" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">City/Tehsil / शहर/तहसील</label>
+              <input type="text" name="permCity" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">State / राज्य</label>
+              <input type="text" name="permState" class="form-input" data-required placeholder="जैसे: Madhya Pradesh" onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">District / जिला</label>
+              <input type="text" name="permDistrict" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+            </div>
+            
+            <div class="form-group">
+              <label class="required">Pin Code / पिन कोड</label>
+              <input type="text" name="permPin" class="form-input" data-required maxlength="6" onkeypress="return CreateNumericTextBox(this,event)">
+            </div>
+          </div>
+        </div>
 
-    <label>आधार नंबर *</label>
-    <input name="aadharNumber" class="form-input" data-required placeholder="12 अंकों का आधार नंबर" maxlength="12" pattern="[0-9]{12}" />
+        <!-- Contact & IDs -->
+        <div class="form-section-title">
+          <i class="fas fa-id-card"></i> Contact & Identity / संपर्क और पहचान
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">Mobile No / मोबाइल नंबर</label>
+            <input type="text" name="mobile" class="form-input" data-required maxlength="10" placeholder="10 digits" onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Alternative Mobile / वैकल्पिक मोबाइल</label>
+            <input type="text" name="altMobile" class="form-input" data-required maxlength="10" onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+          
+          <div class="form-group">
+            <label>Email / ईमेल</label>
+            <input type="email" name="email" class="form-input" placeholder="example@email.com">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">ABC ID (Academic Bank Credit)</label>
+            <input type="text" name="abcId" class="form-input" data-required maxlength="12" placeholder="12 digits" onkeypress="return CreateNumericTextBox(this,event)">
+            <small class="helper-text"><a href="https://www.abc.gov.in/" target="_blank" style="color: #667eea;">Create ABC ID</a></small>
+          </div>
+          
+          <div class="form-group">
+            <label class="required">DEB Unique ID</label>
+            <input type="text" name="debId" class="form-input" data-required maxlength="12">
+            <small class="helper-text"><a href="https://deb.ugc.ac.in/" target="_blank" style="color: #667eea;">Create DEB ID</a></small>
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Anti-Ragging Ref. ID</label>
+            <input type="text" name="antiRaggingId" class="form-input" data-required maxlength="16" onkeypress="return CreateNumericTextBox(this,event)">
+            <small class="helper-text"><a href="https://antiragging.in/" target="_blank" style="color: #667eea;">Fill Anti-Ragging Form</a></small>
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Identity Proof Type / पहचान प्रमाण प्रकार</label>
+            <input type="text" name="idProofType" class="form-input" data-required placeholder="Aadhar/Voter ID/PAN/DL">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">ID Proof Number / पहचान प्रमाण संख्या</label>
+            <input type="text" name="idProofNo" class="form-input" data-required placeholder="ID Number">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Voter ID Available? / वोटर आईडी है?</label>
+            <select name="hasVoterId" class="form-input" data-required>
+              <option value="">-- Select --</option>
+              <option value="Y">Yes / हाँ</option>
+              <option value="N">No / नहीं</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Want to be Alumni? / पूर्व छात्र बनना चाहते हैं?</label>
+            <select name="isAlumni" class="form-input" data-required>
+              <option value="">-- Select --</option>
+              <option value="Y">Yes / हाँ</option>
+              <option value="N">No / नहीं</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Aadhar Number / आधार नंबर</label>
+            <input type="text" name="aadharNo" class="form-input" data-required maxlength="12" placeholder="12 digits" onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+        </div>
 
-    <label>ABC ID *</label>
-    <input name="abcId" class="form-input" data-required placeholder="ABC ID दर्ज करें" />
+        <!-- Bank Details -->
+        <div class="form-section-title">
+          <i class="fas fa-university"></i> Bank Details / बैंक विवरण 
+          <small style="font-size: 0.8rem; color: #fff; opacity: 0.9;">(As per Passbook)</small>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">Bank Name / बैंक का नाम</label>
+            <input type="text" name="bankName" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Account Holder Name / खाता धारक का नाम</label>
+            <input type="text" name="accHolderName" class="form-input" data-required onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">Account Number / खाता संख्या</label>
+            <input type="text" name="accountNo" class="form-input" data-required onkeypress="return CreateNumericTextBox(this,event)">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">IFSC Code / आईएफएससी कोड</label>
+            <input type="text" name="ifscCode" class="form-input" data-required placeholder="SBIN0001234" onfocusout="this.value=this.value.toUpperCase()">
+          </div>
+        </div>
 
-    <label>मोबाइल नंबर *</label>
-    <input type="tel" name="mobile" class="form-input" data-required placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" pattern="[0-9]{10}" />
+        <!-- Document Checklist -->
+        <div class="form-section-title">
+          <i class="fas fa-check-square"></i> दस्तावेज़ चेकलिस्ट (SC/ST के लिए अनिवार्य)
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <div class="checkbox-group">
+              <label class="checkbox-item">
+                <input type="checkbox" name="chkCastCert">
+                <span>Caste Certificate (SC/ST) / जाति प्रमाण पत्र</span>
+              </label>
+              
+              <label class="checkbox-item">
+                <input type="checkbox" name="chkTC">
+                <span>TC (Transfer Certificate) / स्थानांतरण प्रमाण पत्र</span>
+              </label>
+              
+              <label class="checkbox-item">
+                <input type="checkbox" name="chkMigration">
+                <span>Migration Certificate / प्रवासन प्रमाण पत्र</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group full-width">
+            <label class="checkbox-item">
+              <input type="checkbox" name="chkMarksheet" data-required>
+              <span class="required">Marksheet of previous exam / पिछली परीक्षा की मार्कशीट</span>
+            </label>
+          </div>
+          
+          <div class="form-group full-width">
+            <label class="checkbox-item">
+              <input type="checkbox" name="chkDobProof" data-required>
+              <span class="required">DOB Proof (10th Certificate) / जन्मतिथि प्रमाण</span>
+            </label>
+          </div>
+          
+          <div class="form-group full-width">
+            <label class="checkbox-item">
+              <input type="checkbox" name="chkDeclaration" data-required>
+              <span class="required">सभी जानकारी सत्य है / All information is true</span>
+            </label>
+          </div>
+        </div>
 
-    <label>E-mail *</label>
-    <input type="email" name="email" class="form-input" data-required placeholder="ईमेल पता दर्ज करें" />
+      </div>
 
-    <label>पूरा पता *</label>
-    <textarea name="address" class="form-input" data-required rows="3" placeholder="गांव, शहर, जिला, राज्य"></textarea>
+      <!-- ==================== SUPPLEMENT TAB ==================== -->
+      <div class="tab-content">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">रोल नंबर / Roll Number</label>
+            <input type="text" name="rollNumber" class="form-input" data-required placeholder="Enter Roll Number">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">जन्म तिथि / DOB</label>
+            <input type="text" name="dob" class="form-input" data-required placeholder="DD/MM/YYYY">
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-top: 20px;">
+          <label>विषय / Subject</label>
+          <input type="text" name="subject" class="form-input" placeholder="Subject Name">
+        </div>
+      </div>
 
-    <label>पिन कोड *</label>
-    <input name="pincode" class="form-input" data-required placeholder="6 अंकों का पिन कोड" maxlength="6" pattern="[0-9]{6}" />
+      <!-- ==================== RESULT TAB ==================== -->
+      <div class="tab-content">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">रोल नंबर / Roll Number</label>
+            <input type="text" name="resultRoll" class="form-input" data-required placeholder="Enter Roll Number">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">जन्म तिथि / DOB</label>
+            <input type="text" name="resultDob" class="form-input" data-required placeholder="DD/MM/YYYY">
+          </div>
+        </div>
+      </div>
 
-    <label>बैंक खाता नंबर *</label>
-    <input name="accountNumber" class="form-input" data-required placeholder="खाता नंबर दर्ज करें" />
+      <!-- ==================== EXAM FORM TAB ==================== -->
+      <div class="tab-content">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">रोल नंबर / Roll Number</label>
+            <input type="text" name="examRoll" class="form-input" data-required placeholder="Enter Roll Number">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">जन्म तिथि / DOB</label>
+            <input type="text" name="examDob" class="form-input" data-required placeholder="DD/MM/YYYY">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">विषय / Subject</label>
+            <input type="text" name="examSubject" class="form-input" data-required placeholder="Subject Name">
+          </div>
+          
+          <div class="form-group">
+            <label>सेमेस्टर / Semester</label>
+            <input type="text" name="semester" class="form-input" placeholder="जैसे: First, Second">
+          </div>
+        </div>
+      </div>
 
-    <label>बैंक IFSC कोड *</label>
-    <input name="ifscCode" class="form-input" data-required placeholder="जैसे: SBIN0001234" />
+      <!-- ==================== OTHER TAB ==================== -->
+      <div class="tab-content">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">रोल नंबर / Roll Number</label>
+            <input type="text" name="otherRoll" class="form-input" data-required placeholder="Enter Roll Number">
+          </div>
+          
+          <div class="form-group">
+            <label class="required">जन्म तिथि / DOB</label>
+            <input type="text" name="otherDob" class="form-input" data-required placeholder="DD/MM/YYYY">
+          </div>
+          
+          <div class="form-group full-width">
+            <label class="required">सेवा / Service</label>
+            <input type="text" name="service" class="form-input" data-required placeholder="जैसे: ABC, SIS, TC, Migration">
+          </div>
+          
+          <div class="form-group full-width">
+            <label>विवरण / Details</label>
+            <textarea name="serviceDetails" class="form-input" rows="4" placeholder="Please describe your requirement..."></textarea>
+          </div>
+        </div>
+      </div>
 
-    <label>बैंक का नाम *</label>
-    <input name="bankName" class="form-input" data-required placeholder="बैंक का नाम दर्ज करें" />
-  </div>
+      <div class="submit-box">
+        <button type="submit" class="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <i class="fas fa-paper-plane"></i> आवेदन जमा करें / Submit
+        </button>
+        <button type="reset" class="reset" style="background: #dc3545;">
+          <i class="fas fa-redo"></i> रीसेट / Reset
+        </button>
+      </div>
 
-  <!-- Supplement -->
-  <div class="tab-content">
-    <label>रोल नंबर *</label>
-    <input name="rollNumber" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
-
-    <label>DOB (जन्म तिथि) *</label>
-    <input type="date" name="dob" class="form-input" data-required />
-  </div>
-
-  <!-- Result -->
-  <div class="tab-content">
-    <label>रोल नंबर *</label>
-    <input name="resultRoll" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
-
-    <label>DOB (जन्म तिथि) *</label>
-    <input type="date" name="dob" class="form-input" data-required />
-  </div>
-
-  <!-- Exam -->
-  <div class="tab-content">
-    <label>रोल नंबर *</label>
-    <input name="examRoll" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
-
-    <label>DOB (जन्म तिथि) *</label>
-    <input type="date" name="dob" class="form-input" data-required />
-
-    <label>विषय *</label>
-    <input name="subject" class="form-input" data-required placeholder="विषय का नाम दर्ज करें" />
-  </div>
-
-  <!-- Other -->
-  <div class="tab-content">
-    <label>रोल नंबर *</label>
-    <input name="rollNumber" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
-
-    <label>DOB (जन्म तिथि) *</label>
-    <input type="date" name="dob" class="form-input" data-required />
-
-    <label>सेवा *</label>
-    <select name="service" class="form-input" data-required>
-      <option value="">Select</option>
-      <option value="ABC">ABC / APAAR</option>
-      <option value="SIS">SIS Registration</option>
-      <option value="OTHER">Other</option>
-    </select>
-  </div>
-
-  <div class="submit-box">
-    <button type="submit" class="submit">आवेदन जमा करें</button>
-    <button type="reset" class="reset">रीसेट</button>
-  </div>
-
-  <div id="alertBox" style="display:none; margin-top:12px; color:green; font-weight:600;">
-    ✅ आवेदन सफलतापूर्वक जमा हो गया
-  </div>
-</form>
+      <div id="alertBox" style="display:none; margin-top:12px; color:green; font-weight:600; text-align: center; padding: 15px; background: #d4edda; border-radius: 8px;">
+        <i class="fas fa-check-circle"></i> ✅ आवेदन सफलतापूर्वक जमा हो गया
+      </div>
+    </form>
   </div>
 </div>
 
 <!-- ================= FOOTER ================= -->
 <div id="footer"></div>
 
-<!-- ================= TAB LOGIC ================= -->
+<!-- ================= SCRIPTS ================= -->
 <script>
+// Tab switching logic
 function openTab(i){
   const tabs = document.querySelectorAll('.tab');
   const contents = document.querySelectorAll('.tab-content');
-
+  
   tabs.forEach(t => t.classList.remove('active'));
   contents.forEach(c => {
     c.classList.remove('active');
-    c.querySelectorAll('[required]').forEach(el=>{
-      el.dataset.req="1";
+    c.querySelectorAll('[required]').forEach(el => {
+      el.dataset.req = "1";
       el.removeAttribute('required');
     });
   });
-
+  
   tabs[i].classList.add('active');
   contents[i].classList.add('active');
-
-  contents[i].querySelectorAll('[data-req], [data-required]').forEach(el=>{
-    el.setAttribute('required','');
+  
+  contents[i].querySelectorAll('[data-req="1"], [data-required]').forEach(el => {
+    el.setAttribute('required', '');
   });
 }
 
-document.addEventListener("DOMContentLoaded", ()=>openTab(0));
+document.addEventListener("DOMContentLoaded", () => openTab(0));
+
+// Copy address function
+function copyAddress() {
+  document.querySelector('[name="permHouse"]').value = document.querySelector('[name="corrHouse"]').value;
+  document.querySelector('[name="permColony"]').value = document.querySelector('[name="corrColony"]').value;
+  document.querySelector('[name="permCity"]').value = document.querySelector('[name="corrCity"]').value;
+  document.querySelector('[name="permState"]').value = document.querySelector('[name="corrState"]').value;
+  document.querySelector('[name="permDistrict"]').value = document.querySelector('[name="corrDistrict"]').value;
+  document.querySelector('[name="permPin"]').value = document.querySelector('[name="corrPin"]').value;
+  alert('Address copied! / पता कॉपी हो गया!');
+}
+
+// Toggle employment fields
+function toggleEmployment(value) {
+  const empGroup = document.getElementById('employmentGroup');
+  if (value === 'Y') {
+    empGroup.classList.remove('conditional-field');
+    empGroup.classList.add('active');
+  } else {
+    empGroup.classList.add('conditional-field');
+    empGroup.classList.remove('active');
+    document.querySelector('[name="employmentType"]').value = '';
+  }
+}
+
+// Calculate percentage
+document.querySelector('[name="obtMarks"]').addEventListener('blur', calculatePercentage);
+document.querySelector('[name="maxMarks"]').addEventListener('blur', calculatePercentage);
+
+function calculatePercentage() {
+  const max = parseFloat(document.querySelector('[name="maxMarks"]').value) || 0;
+  const obt = parseFloat(document.querySelector('[name="obtMarks"]').value) || 0;
+  
+  if (max > 0 && obt > 0) {
+    if (obt > max) {
+      alert('Obtained marks cannot be greater than maximum marks!');
+      document.querySelector('[name="obtMarks"]').value = '';
+      document.querySelector('[name="percentage"]').value = '';
+    } else {
+      const per = ((obt / max) * 100).toFixed(2);
+      document.querySelector('[name="percentage"]').value = per + '%';
+    }
+  }
+}
+
+// Numeric input helper
+function CreateNumericTextBox(element, event) {
+  const charCode = (event.which) ? event.which : event.keyCode;
+  if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+    return false;
+  }
+  return true;
+}
+
+// Form submission
+document.getElementById('mpbhojForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const activeTab = document.querySelector('.tab-content.active');
+  const requiredFields = activeTab.querySelectorAll('[data-required], [required]');
+  let isValid = true;
+  
+  requiredFields.forEach(field => {
+    if (!field.value.trim()) {
+      field.style.borderColor = 'red';
+      isValid = false;
+    } else {
+      field.style.borderColor = '#ddd';
+    }
+  });
+  
+  if (!isValid) {
+    alert('कृपया सभी अनिवार्य फील्ड भरें / Please fill all required fields');
+    return false;
+  }
+  
+  document.getElementById('alertBox').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('alertBox').style.display = 'none';
+  }, 5000);
+  
+  return false;
+});
 </script>
 
-<!-- ================= JS ================= -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script src="assets/js/common.js?v=1.0" defer></script>
 <script type="module" src="assets/js/mpbhoj.js?v=1.0"></script>
