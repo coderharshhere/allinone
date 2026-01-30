@@ -863,7 +863,7 @@ MP
 <script type="module">
 /* ===== IMPORTS ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy }
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc }
 from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut }
 from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -882,9 +882,9 @@ const auth = getAuth(app);
 let currentUser = null;
 let isAuthCheckComplete = false;
 
-/* ===== ✅ FIXED AUTH GUARD - NO INFINITE LOOP ===== */
+/* ===== ✅ FIXED AUTH GUARD WITH ADMIN CHECK ===== */
 onAuthStateChanged(auth, async (user) => {
-// ✅ FIX: Check if we're on the login page - if yes, don't redirect
+// ✅ Check current page
 const currentPath = window.location.pathname;
 const isLoginPage = currentPath.includes('adminlogin.html') || currentPath.includes('adminlogin');
   
@@ -901,13 +901,41 @@ window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
 return;
 }
 
-// ✅ User is authenticated
+// ✅ User is authenticated - now check if they're an admin
 console.log("User authenticated:", user.email);
+
+try {
+// ✅ Check admin status in Firestore
+const adminDocRef = doc(db, "admins", user.uid);
+const adminDoc = await getDoc(adminDocRef);
+  
+if (!adminDoc.exists()) {
+console.log("User is not an admin");
+alert("❌ आप एडमिन नहीं हैं। लॉगआउट हो रहा है...");
+await signOut(auth);
+clearAuthData();
+window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+return;
+}
+
+const adminData = adminDoc.data();
+  
+if (adminData.status !== "active") {
+console.log("Admin account is inactive");
+alert("❌ आपका खाता निष्क्रिय है। लॉगआउट हो रहा है...");
+await signOut(auth);
+clearAuthData();
+window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
+return;
+}
+
+// ✅ Valid admin user
+console.log("Valid admin user:", adminData);
 currentUser = user;
 
 // ✅ If on login page while authenticated, redirect to dashboard
 if (isLoginPage) {
-console.log("User logged in, redirecting to dashboard...");
+console.log("Admin logged in, redirecting to dashboard...");
 window.location.replace('https://allinonemp.harshtiwari.in/admin.html');
 return;
 }
@@ -921,13 +949,15 @@ localStorage.setItem('loginTime', new Date().getTime().toString());
 localStorage.setItem('adminLoggedIn', 'true');
 localStorage.setItem('adminToken', await user.getIdToken());
 localStorage.setItem('adminEmail', user.email || 'allinoneofficial@gmail.com');
-localStorage.setItem('adminName', user.displayName || user.email?.split('@')[0] || 'Admin');
+localStorage.setItem('adminName', adminData.name || user.displayName || user.email?.split('@')[0] || 'Admin');
+localStorage.setItem('adminRole', adminData.role || 'admin');
 
 // ✅ Update UI
-updateUserInfo(user);
+updateUserInfo(user, adminData);
 
 // ✅ Hide loading screen
-document.getElementById('loadingScreen').style.display = 'none';
+const loadingScreen = document.getElementById('loadingScreen');
+if (loadingScreen) loadingScreen.style.display = 'none';
 
 // ✅ Load data and setup (only if not on login page)
 if (!isLoginPage) {
@@ -935,6 +965,14 @@ await loadData();
 setupEventListeners();
 initializeCharts();
 isAuthCheckComplete = true;
+}
+  
+} catch (error) {
+console.error("Error checking admin status:", error);
+alert("❌ एडमिन स्टेटस चेक करने में त्रुटि। लॉगआउट हो रहा है...");
+await signOut(auth);
+clearAuthData();
+window.location.replace('https://allinonemp.harshtiwari.in/adminlogin.html');
 }
 });
 
@@ -945,15 +983,20 @@ localStorage.removeItem('adminToken');
 localStorage.removeItem('loginTime');
 localStorage.removeItem('adminEmail');
 localStorage.removeItem('adminName');
+localStorage.removeItem('adminRole');
 }
 
-function updateUserInfo(user) {
-const displayName = user.displayName || user.email?.split('@')[0] || 'Admin';
+function updateUserInfo(user, adminData) {
+const displayName = adminData?.name || user.displayName || user.email?.split('@')[0] || 'Admin';
 const email = user.email || 'allinoneofficial@gmail.com';
+const role = adminData?.role || 'admin';
   
 document.getElementById('adminName').textContent = displayName;
 document.getElementById('adminEmail').textContent = email;
 document.getElementById('sidebarAdminName').textContent = displayName;
+  
+// Show role badge if needed
+console.log('Admin role:', role);
 }
 
 /* ===== DATA ===== */
