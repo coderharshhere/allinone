@@ -94,7 +94,14 @@ background-color: rgba(59, 130, 246, 0.15);
 color: #1e40af;
 }
 .action-btn {
-p-2 rounded-lg transition-all duration-200 flex items-center justify-center w-9 h-9;
+padding: 0.5rem;
+border-radius: 0.5rem;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 2.25rem;
+height: 2.25rem;
 }
 .action-view {
 background-color: rgba(59, 130, 246, 0.1);
@@ -149,7 +156,6 @@ background-color: #f8fafc;
 .table-row:hover {
 background-color: #dbeafe;
 }
-/* Page sections */
 .page-section {
 display: none;
 }
@@ -530,13 +536,13 @@ display: block;
 <div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
 <h2 class="text-xl font-bold text-gray-800">आवेदन सूची</h2>
 <div class="flex flex-wrap gap-3">
-<button id="exportCSV" class="bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-green-700 transition flex items-center">
+<button id="exportCSV2" class="bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-green-700 transition flex items-center">
 <i class="fas fa-file-csv mr-2"></i> CSV निर्यात करें
 </button>
-<button id="exportExcel" class="bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-emerald-700 transition flex items-center">
+<button id="exportExcel2" class="bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-emerald-700 transition flex items-center">
 <i class="fas fa-file-excel mr-2"></i> Excel निर्यात करें
 </button>
-<button id="printView" class="bg-purple-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-purple-700 transition flex items-center">
+<button id="printView2" class="bg-purple-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-purple-700 transition flex items-center">
 <i class="fas fa-print mr-2"></i> प्रिंट व्यू
 </button>
 </div>
@@ -554,18 +560,18 @@ display: block;
 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">क्रियाएँ</th>
 </tr>
 </thead>
-<tbody id="dataTable" class="bg-white divide-y divide-gray-200">
+<tbody id="dataTable2" class="bg-white divide-y divide-gray-200">
 <!-- Table data will be inserted here by JavaScript -->
 </tbody>
 </table>
-<div id="emptyState" class="p-12 text-center hidden">
+<div id="emptyState2" class="p-12 text-center hidden">
 <i class="fas fa-inbox text-gray-400 text-6xl mb-4"></i>
 <p class="text-gray-500 text-lg">कोई आवेदन नहीं मिला</p>
 <p class="text-gray-400 mt-2">फ़िल्टर सेटिंग्स बदलकर पुनः प्रयास करें</p>
 </div>
 </div>
 <div class="p-4 border-t border-gray-200 flex justify-between items-center">
-<p class="text-sm text-gray-500">कुल आवेदन: <span id="totalApplications" class="font-medium">0</span></p>
+<p class="text-sm text-gray-500">कुल आवेदन: <span id="totalApplications2" class="font-medium">0</span></p>
 <div class="flex items-center gap-2">
 <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">पिछला</button>
 <button class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">1</button>
@@ -585,14 +591,14 @@ display: block;
 <i class="fas fa-chart-line text-blue-600 mr-2"></i>
 मासिक आवेदन प्रवृत्ति
 </h2>
-<canvas id="applicationsChart" height="250"></canvas>
+<canvas id="applicationsChart2" height="250"></canvas>
 </div>
 <div class="bg-white rounded-2xl shadow-lg p-6">
 <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
 <i class="fas fa-chart-pie text-blue-600 mr-2"></i>
 सेवा प्रकार के अनुसार वितरण
 </h2>
-<canvas id="servicesChart" height="250"></canvas>
+<canvas id="servicesChart2" height="250"></canvas>
 </div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1068,7 +1074,7 @@ function updateUserInfo(user, adminData) {
     const loginTime = localStorage.getItem('loginTime');
 
     document.getElementById('adminName').textContent = displayName;
-    document.getElementById('adminEmail').textContent =;
+    document.getElementById('adminEmail').textContent = email;  // Fixed: was missing value
     document.getElementById('sidebarAdminName').textContent = displayName;
 
     document.getElementById('profileDropdownName').textContent = displayName;
@@ -1328,12 +1334,19 @@ function setupEventListeners() {
     });
 
     document.getElementById('exportCSV')?.addEventListener('click', exportToCSV);
+    document.getElementById('exportCSV2')?.addEventListener('click', exportToCSV);
 
     document.getElementById('exportExcel')?.addEventListener('click', () => {
         alert("Excel export feature will be available in the next update!");
     });
+    document.getElementById('exportExcel2')?.addEventListener('click', () => {
+        alert("Excel export feature will be available in the next update!");
+    });
 
     document.getElementById('printView')?.addEventListener('click', () => {
+        printApplication();
+    });
+    document.getElementById('printView2')?.addEventListener('click', () => {
         printApplication();
     });
 
@@ -1370,6 +1383,7 @@ function listen(col) {
         (b.createdAt?.toDate?.() || new Date()) - (a.createdAt?.toDate?.() || new Date())
         );
         render(allApplications);
+        render2(allApplications);
         updateStats(allApplications);
         updateCharts();
     }, error => {
@@ -1425,6 +1439,7 @@ function applyFilters() {
     }
 
     render(filteredData);
+    render2(filteredData);
     updateStats(filteredData);
     updateCharts(filteredData);
 }
@@ -1434,6 +1449,63 @@ function render(data) {
     const tableBody = document.getElementById("dataTable");
     const emptyState = document.getElementById("emptyState");
     const totalEl = document.getElementById("totalApplications");
+
+    if (totalEl) totalEl.textContent = allApplications.length;
+
+    if (data.length === 0) {
+        if (tableBody) tableBody.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    } else {
+        if (tableBody) tableBody.classList.remove('hidden');
+        if (emptyState) emptyState.classList.add('hidden');
+    }
+
+    let rows = '';
+    data.slice(0, 50).forEach((i, index) => {
+        const appNo = `AIO-${i.id.substring(0, 8).toUpperCase()}`;
+        const serviceName = getServiceName(i);
+        const statusClass = i.status === 'complete' ? 'status-complete' :
+        i.status === 'reject' ? 'status-reject' :
+        i.status === 'processing' ? 'status-processing' : 'status-pending';
+        const statusText = i.status === 'complete' ? 'पूर्ण' :
+        i.status === 'reject' ? 'अस्वीकृत' :
+        i.status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
+
+        rows += `
+        <tr class="table-row border-b border-gray-100 hover:bg-blue-50 transition">
+            <td class="p-4 font-mono font-medium text-blue-700">${appNo}</td>
+            <td class="p-4 font-bold text-gray-800">${i.studentName || i.applicantName || "-"}</td>
+            <td class="p-4">
+                <span class="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">${serviceName}</span>
+            </td>
+            <td class="p-4 hidden md:table-cell font-mono">${i.memberId || "-"}</td>
+            <td class="p-4 hidden sm:table-cell">${formatDate(i.createdAt)}</td>
+            <td class="p-4">
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </td>
+            <td class="p-4">
+                <div class="flex space-x-2">
+                    <button onclick="window.openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button onclick="window.deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        `;
+    });
+
+    if (tableBody) tableBody.innerHTML = rows;
+}
+
+// Render table for Applications section
+function render2(data) {
+    const tableBody = document.getElementById("dataTable2");
+    const emptyState = document.getElementById("emptyState2");
+    const totalEl = document.getElementById("totalApplications2");
 
     if (totalEl) totalEl.textContent = allApplications.length;
 
