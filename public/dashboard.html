@@ -553,50 +553,6 @@
             font-size: 0.95rem;
             line-height: 1.6;
         }
-        .document-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .document-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            transition: var(--transition);
-            background: #f8fafc;
-        }
-        .document-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            border-color: var(--secondary-color);
-        }
-        .document-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--secondary-color);
-        }
-        .document-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #1e293b;
-            display: block;
-            margin-top: 5px;
-        }
-        .document-link {
-            color: var(--secondary-color);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            display: block;
-            margin-top: 5px;
-            transition: var(--transition);
-        }
-        .document-link:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
         .service-badge {
             padding: 4px 14px;
             border-radius: 50px;
@@ -663,75 +619,6 @@
         .user-email {
             font-size: 0.8rem;
             color: #475569;
-        }
-        .notification-card {
-            position: relative;
-            background: white;
-            border-radius: 16px;
-            padding: 15px;
-            box-shadow: var(--card-shadow);
-            cursor: pointer;
-            transition: var(--transition);
-            min-width: 280px;
-            margin-left: 15px;
-        }
-        .notification-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-        }
-        .notification-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f1f5f9;
-            margin-bottom: 10px;
-        }
-        .notification-list {
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-        .notification-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            gap: 12px;
-        }
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-        .notification-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 1.1rem;
-        }
-        .notification-icon.pending {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-        }
-        .notification-icon.complete {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
-        .notification-content h4 {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #0f172a;
-        }
-        .notification-content p {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
-        .notification-time {
-            font-size: 0.75rem;
-            color: #94a3b8;
         }
         .nav-item {
             display: flex;
@@ -842,26 +729,6 @@
         .data-table tr:last-child td {
             border-bottom: none;
         }
-        .status-complete {
-            background-color: #dcfce7;
-            color: #166534;
-            border-color: #bbf7d0;
-        }
-        .status-pending {
-            background-color: #ffedd5;
-            color: #9a3412;
-            border-color: #fed7aa;
-        }
-        .status-reject {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #fecaca;
-        }
-        .status-processing {
-            background-color: #dbeafe;
-            color: #1e40af;
-            border-color: #bfdbfe;
-        }
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -930,6 +797,13 @@
             .qr-container img {
                 width: 150px !important;
                 height: 150px !important;
+            }
+            .detail-row {
+                break-inside: avoid;
+            }
+            .detail-label, .detail-value {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
         }
     </style>
@@ -1003,15 +877,7 @@
                     <div class="nav-icon">
                         <i class="fas fa-file-signature"></i>
                     </div>
-                    <span class="sidebar-text">आवेदन प्रबंधन</span>
-                </a>
-            </li>
-            <li>
-                <a class="nav-item" onclick="showSection('newApplication')">
-                    <div class="nav-icon">
-                        <i class="fas fa-plus-circle"></i>
-                    </div>
-                    <span class="sidebar-text">नया आवेदन</span>
+                    <span class="sidebar-text">आवेदन सूची</span>
                 </a>
             </li>
             <li>
@@ -1019,51 +885,7 @@
                     <div class="nav-icon">
                         <i class="fas fa-chart-pie"></i>
                     </div>
-                    <span class="sidebar-text">विश्लेषण रिपोर्ट</span>
-                </a>
-            </li>
-            <li>
-                <a class="nav-item" onclick="showSection('users')">
-                    <div class="nav-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <span class="sidebar-text">उपयोगकर्ता प्रबंधन</span>
-                </a>
-            </li>
-            <li>
-                <a class="nav-item" onclick="showSection('settings')">
-                    <div class="nav-icon">
-                        <i class="fas fa-cog"></i>
-                    </div>
-                    <span class="sidebar-text">सेटिंग्स</span>
-                </a>
-            </li>
-        </ul>
-        
-        <div class="px-3 py-2 text-xs font-bold text-blue-200 uppercase tracking-wider mt-8 mb-3 sidebar-text">रिपोर्ट्स</div>
-        <ul class="space-y-1.5">
-            <li>
-                <a class="nav-item" onclick="showSection('dailyReports')">
-                    <div class="nav-icon">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <span class="sidebar-text">दैनिक रिपोर्ट</span>
-                </a>
-            </li>
-            <li>
-                <a class="nav-item" onclick="showSection('monthlyReports')">
-                    <div class="nav-icon">
-                        <i class="fas fa-calendar-week"></i>
-                    </div>
-                    <span class="sidebar-text">मासिक रिपोर्ट</span>
-                </a>
-            </li>
-            <li>
-                <a class="nav-item" onclick="showSection('exportData')">
-                    <div class="nav-icon">
-                        <i class="fas fa-file-export"></i>
-                    </div>
-                    <span class="sidebar-text">डेटा निर्यात</span>
+                    <span class="sidebar-text">विश्लेषण</span>
                 </a>
             </li>
         </ul>
@@ -1071,10 +893,10 @@
     <div class="sidebar-footer">
         <button onclick="logout()" class="logout-btn">
             <i class="fas fa-sign-out-alt text-lg"></i> 
-            <span class="sidebar-text">प्रणाली से बाहर निकलें</span>
+            <span class="sidebar-text">लॉगआउट</span>
         </button>
         <div class="mt-4 text-center text-xs text-blue-100/80 sidebar-text">
-            <div>संस्करण 2.5.1</div>
+            <div>संस्करण 2.0</div>
             <div class="mt-1 flex items-center justify-center gap-1.5">
                 <i class="fas fa-shield-alt"></i>
                 <span>सुरक्षित कनेक्शन</span>
@@ -1091,69 +913,7 @@
 <!-- TOP BAR -->
 <div class="top-bar" id="topBar">
     <div class="flex items-center gap-4">
-        <div class="relative">
-            <button class="relative p-2.5 hover:bg-gray-100 rounded-xl transition shadow-md" id="notificationBtn">
-                <i class="fas fa-bell text-xl text-gray-700"></i>
-                <span class="notification-badge">8</span>
-            </button>
-            <div class="notification-card absolute top-full mt-2 right-0 hidden" id="notificationDropdown">
-                <div class="notification-title">
-                    <h3 class="font-bold text-lg">सूचनाएं</h3>
-                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">8 नई</span>
-                </div>
-                <div class="notification-list">
-                    <div class="notification-item">
-                        <div class="notification-icon pending">
-                            <i class="fas fa-hourglass-half"></i>
-                        </div>
-                        <div class="notification-content">
-                            <h4>नया आवेदन प्राप्त हुआ</h4>
-                            <p>राजेश कुमार ने समग्र आईडी आवेदन जमा किया</p>
-                            <span class="notification-time">2 मिनट पहले</span>
-                        </div>
-                    </div>
-                    <div class="notification-item">
-                        <div class="notification-icon complete">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="notification-content">
-                            <h4>आवेदन स्वीकृत</h4>
-                            <p>सोनू शर्मा का आवेदन सफलतापूर्वक पूर्ण हुआ</p>
-                            <span class="notification-time">15 मिनट पहले</span>
-                        </div>
-                    </div>
-                    <div class="notification-item">
-                        <div class="notification-icon pending">
-                            <i class="fas fa-hourglass-half"></i>
-                        </div>
-                        <div class="notification-content">
-                            <h4>अनुमोदन हेतु अनुरोध</h4>
-                            <p>5 आवेदन आपके अनुमोदन की प्रतीक्षा कर रहे हैं</p>
-                            <span class="notification-time">30 मिनट पहले</span>
-                        </div>
-                    </div>
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-user-plus" style="background: rgba(79, 70, 229, 0.15); color: #4f46e5;"></i>
-                        </div>
-                        <div class="notification-content">
-                            <h4>नया उपयोगकर्ता पंजीकृत</h4>
-                            <p>प्रशासन पोर्टल में 3 नए उपयोगकर्ता जुड़े</p>
-                            <span class="notification-time">1 घंटा पहले</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-3 pt-3 border-t border-gray-100 text-center">
-                    <button class="text-blue-600 font-medium hover:text-blue-800 text-sm">सभी सूचनाएं देखें</button>
-                </div>
-            </div>
-        </div>
-        <div class="hidden md:block">
-            <div class="bg-gray-100 text-gray-600 rounded-xl px-4 py-2.5 flex items-center gap-2">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="आवेदन खोजें..." class="bg-transparent border-none outline-none w-48">
-            </div>
-        </div>
+        <h1 class="text-xl font-bold text-gray-800">AllInOne MP Admin Panel</h1>
     </div>
     <div class="user-card">
         <div class="user-avatar">A</div>
@@ -1161,7 +921,6 @@
             <div class="user-name" id="adminName">प्रशासक</div>
             <div class="user-email" id="adminEmail">admin@allinonemp.gov.in</div>
         </div>
-        <i class="fas fa-chevron-down text-gray-500 text-sm ml-1"></i>
     </div>
 </div>
 
@@ -1177,7 +936,7 @@
                     <div>
                         <h1 class="text-2.5xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
                             <i class="fas fa-tachometer-alt text-blue-600"></i>
-                            डैशबोर्ड में आपका स्वागत है, <span id="welcomeAdminName" class="text-blue-600">प्रशासक</span>
+                            डैशबोर्ड
                         </h1>
                         <p class="text-gray-500 mt-2 text-lg">आज की तारीख: <span id="currentDate" class="font-medium text-gray-700"></span></p>
                     </div>
@@ -1200,10 +959,6 @@
                         <div>
                             <p class="text-gray-500 text-sm font-medium mb-1.5">कुल आवेदन</p>
                             <h3 class="text-3xl font-bold text-gray-800" id="statTotal">0</h3>
-                            <p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-arrow-up"></i>
-                                <span id="statTotalGrowth">12.5%</span> पिछले माह से
-                            </p>
                         </div>
                         <div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
                             <i class="fas fa-file-alt"></i>
@@ -1213,12 +968,8 @@
                 <div class="stat-card bg-white p-6 pending">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-500 text-sm font-medium mb-1.5">लंबित आवेदन</p>
+                            <p class="text-gray-500 text-sm font-medium mb-1.5">लंबित</p>
                             <h3 class="text-3xl font-bold text-gray-800" id="statPending">0</h3>
-                            <p class="text-yellow-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span id="statPendingCount">15</span> तत्काल कार्रवाई हेतु
-                            </p>
                         </div>
                         <div class="bg-yellow-100 text-yellow-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
                             <i class="fas fa-clock"></i>
@@ -1228,12 +979,8 @@
                 <div class="stat-card bg-white p-6 complete">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-500 text-sm font-medium mb-1.5">सफल आवेदन</p>
+                            <p class="text-gray-500 text-sm font-medium mb-1.5">पूर्ण</p>
                             <h3 class="text-3xl font-bold text-gray-800" id="statComplete">0</h3>
-                            <p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-check-circle"></i>
-                                <span id="statCompleteRate">98.2%</span> सफलता दर
-                            </p>
                         </div>
                         <div class="bg-green-100 text-green-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
                             <i class="fas fa-check-circle"></i>
@@ -1243,57 +990,13 @@
                 <div class="stat-card bg-white p-6 rejected">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-500 text-sm font-medium mb-1.5">अस्वीकृत आवेदन</p>
+                            <p class="text-gray-500 text-sm font-medium mb-1.5">अस्वीकृत</p>
                             <h3 class="text-3xl font-bold text-gray-800" id="statRejected">0</h3>
-                            <p class="text-red-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-times-circle"></i>
-                                <span id="statRejectedRate">1.8%</span> अस्वीकृति दर
-                            </p>
                         </div>
                         <div class="bg-red-100 text-red-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
                             <i class="fas fa-times-circle"></i>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Search and Filters -->
-            <div class="search-container fade-in">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2.5">
-                            <i class="fas fa-list text-blue-600"></i>
-                            आवेदन सूची
-                        </h2>
-                        <p class="text-gray-500 mt-1">नवीनतम आवेदन और कार्रवाई की स्थिति</p>
-                    </div>
-                    <div class="flex flex-wrap gap-3">
-                        <div class="relative">
-                            <select id="statusFilter" class="form-control pl-4 pr-10 py-2.5 text-sm w-full md:w-48">
-                                <option value="">सभी स्थितियाँ</option>
-                                <option value="pending">लंबित</option>
-                                <option value="processing">प्रोसेसिंग</option>
-                                <option value="complete">पूर्ण</option>
-                                <option value="reject">अस्वीकृत</option>
-                            </select>
-                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                <i class="fas fa-filter text-gray-400"></i>
-                            </div>
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="searchApplications" placeholder="नाम या आवेदन आईडी खोजें" class="form-control pl-10 pr-4 py-2.5 text-sm w-full md:w-64">
-                            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                        </div>
-                        <button onclick="applyFilters()" class="btn-primary px-5 py-2.5">
-                            <i class="fas fa-search"></i> खोजें
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="flex flex-wrap gap-2 mb-4" id="activeFilters">
-                    <!-- Active filters will appear here -->
                 </div>
             </div>
 
@@ -1313,7 +1016,6 @@
                             </tr>
                         </thead>
                         <tbody id="dataTable">
-                            <!-- Table data will be populated by JavaScript -->
                             <tr>
                                 <td colspan="7" class="text-center py-12 text-gray-500">
                                     <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
@@ -1323,263 +1025,36 @@
                         </tbody>
                     </table>
                 </div>
-                
-                <div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="text-gray-600">
-                        कुल <span id="totalRecords">0</span> आवेदन प्रदर्शित किए जा रहे हैं
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <button onclick="exportToCSV()" class="btn-secondary">
-                            <i class="fas fa-file-csv"></i> CSV निर्यात करें
-                        </button>
-                        <button onclick="exportToPDF()" class="btn-secondary">
-                            <i class="fas fa-file-pdf"></i> PDF रिपोर्ट
-                        </button>
-                        <div class="flex items-center gap-2">
-                            <span class="text-gray-600 font-medium">प्रति पृष्ठ:</span>
-                            <select id="entriesPerPage" class="form-control py-1.5 px-3 text-sm w-20">
-                                <option value="10">10</option>
-                                <option value="25" selected>25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <span class="font-medium px-3">1 of 10</span>
-                            <button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="chart-container fade-in">
-                <h2 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2.5">
-                    <i class="fas fa-chart-bar text-blue-600"></i>
-                    आवेदन विश्लेषण
-                </h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                        <canvas id="applicationsChart" height="250"></canvas>
-                    </div>
-                    <div>
-                        <canvas id="statusChart" height="250"></canvas>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- APPLICATIONS MANAGEMENT SECTION -->
+    <!-- APPLICATIONS SECTION -->
     <div id="applications" class="page-section">
         <div class="max-w-7xl mx-auto">
             <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-                            <i class="fas fa-file-signature text-blue-600"></i>
-                            आवेदन प्रबंधन प्रणाली
-                        </h1>
-                        <p class="text-gray-500 mt-1">सभी आवेदनों का प्रबंधन और निगरानी करें</p>
-                    </div>
-                    <div class="flex flex-wrap gap-3">
-                        <button onclick="showSection('newApplication')" class="btn-primary">
-                            <i class="fas fa-plus"></i> नया आवेदन जोड़ें
-                        </button>
-                        <button onclick="bulkExport()" class="btn-secondary">
-                            <i class="fas fa-download"></i> बल्क निर्यात
-                        </button>
-                    </div>
-                </div>
+                <h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
+                    <i class="fas fa-file-signature text-blue-600"></i>
+                    सभी आवेदन
+                </h1>
             </div>
             
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-                <div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="relative w-full md:w-96">
-                        <input type="text" placeholder="नाम, आवेदन आईडी, मोबाइल नंबर खोजें..." class="form-control pl-12 pr-4 py-3 w-full" id="applicationsSearch">
-                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                            <i class="fas fa-search text-lg"></i>
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap gap-3">
-                        <select class="form-control py-2.5 px-4 w-48" id="serviceTypeFilter">
-                            <option value="">सभी सेवाएं</option>
-                            <option value="samagra">समग्र आईडी</option>
-                            <option value="mpbhoj">एमपी भोज योजना</option>
-                            <option value="scholarship">छात्रवृत्ति</option>
-                            <option value="pension">पेंशन</option>
-                        </select>
-                        <select class="form-control py-2.5 px-4 w-48" id="dateRangeFilter">
-                            <option value="">तारीख सीमा</option>
-                            <option value="today">आज</option>
-                            <option value="week">पिछले 7 दिन</option>
-                            <option value="month">पिछले 30 दिन</option>
-                            <option value="year">पिछले 1 वर्ष</option>
-                        </select>
-                    </div>
-                </div>
-                
                 <div class="overflow-x-auto">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600"></th>
-                                <th>आवेदन क्रमांक</th>
-                                <th>आवेदक का नाम</th>
-                                <th>पिता/पति का नाम</th>
-                                <th>सेवा प्रकार</th>
-                                <th class="hidden md:table-cell">जिला</th>
+                                <th>क्रमांक</th>
+                                <th>नाम</th>
+                                <th>सेवा</th>
                                 <th>स्थिति</th>
-                                <th class="hidden md:table-cell">आवेदन तिथि</th>
+                                <th class="hidden md:table-cell">तारीख</th>
                                 <th>कार्रवाई</th>
                             </tr>
                         </thead>
                         <tbody id="applicationsTableBody">
-                            <!-- Table data will be populated by JavaScript -->
                         </tbody>
                     </table>
-                </div>
-                
-                <div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="text-gray-600">
-                        <span id="applicationsTotal">0</span> आवेदन में से <span id="applicationsShowing">0</span> प्रदर्शित
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <button class="btn-secondary" id="bulkApproveBtn">
-                            <i class="fas fa-check-circle"></i> चयनित अनुमोदित करें
-                        </button>
-                        <button class="btn-danger" id="bulkRejectBtn">
-                            <i class="fas fa-times-circle"></i> चयनित अस्वीकृत करें
-                        </button>
-                        <div class="flex items-center gap-2">
-                            <span class="text-gray-600 font-medium">पृष्ठ:</span>
-                            <div class="flex items-center gap-1">
-                                <button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <span class="font-medium px-3">1 of 15</span>
-                                <button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NEW APPLICATION FORM SECTION -->
-    <div id="newApplication" class="page-section">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-                            <i class="fas fa-plus-circle text-green-600"></i>
-                            नया आवेदन फॉर्म
-                        </h1>
-                        <p class="text-gray-500 mt-1">नए आवेदक का विवरण दर्ज करें</p>
-                    </div>
-                    <button onclick="showSection('applications')" class="btn-secondary px-5 py-2.5">
-                        <i class="fas fa-arrow-left"></i> वापस जाएं
-                    </button>
-                </div>
-            </div>
-            
-            <div class="form-section active">
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                    <div class="border-b border-gray-200 pb-6 mb-8">
-                        <h2 class="text-xl font-bold text-gray-800">आवेदक का व्यक्तिगत विवरण</h2>
-                        <p class="text-gray-500 mt-1">कृपया आवेदक का सही और पूर्ण विवरण भरें</p>
-                    </div>
-                    
-                    <form id="applicationForm">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="applicantName">आवेदक का पूरा नाम <span class="text-red-500">*</span></label>
-                                <input type="text" id="applicantName" class="form-control" placeholder="रामशरण यादव" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="fatherName">पिता/पति का नाम <span class="text-red-500">*</span></label>
-                                <input type="text" id="fatherName" class="form-control" placeholder="श्यामशरण यादव" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="mobileNumber">मोबाइल नंबर <span class="text-red-500">*</span></label>
-                                <input type="tel" id="mobileNumber" class="form-control" placeholder="9876543210" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="aadharNumber">आधार नंबर <span class="text-red-500">*</span></label>
-                                <input type="text" id="aadharNumber" class="form-control" placeholder="1234 5678 9012" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="dob">जन्म तिथि <span class="text-red-500">*</span></label>
-                                <input type="date" id="dob" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender">लिंग <span class="text-red-500">*</span></label>
-                                <select id="gender" class="form-control" required>
-                                    <option value="">चुनें</option>
-                                    <option value="male">पुरुष</option>
-                                    <option value="female">महिला</option>
-                                    <option value="other">अन्य</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="serviceType">सेवा प्रकार <span class="text-red-500">*</span></label>
-                                <select id="serviceType" class="form-control" required>
-                                    <option value="">सेवा चुनें</option>
-                                    <option value="samagra">समग्र आईडी</option>
-                                    <option value="mpbhoj">एमपी भोज योजना</option>
-                                    <option value="scholarship">छात्रवृत्ति</option>
-                                    <option value="pension">पेंशन योजना</option>
-                                    <option value="housing">आवास योजना</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="district">जिला <span class="text-red-500">*</span></label>
-                                <select id="district" class="form-control" required>
-                                    <option value="">जिला चुनें</option>
-                                    <option value="bhopal">भोपाल</option>
-                                    <option value="indore">इंदौर</option>
-                                    <option value="jabalpur">जबलपुर</option>
-                                    <option value="gwalior">ग्वालियर</option>
-                                    <option value="ujjain">उज्जैन</option>
-                                    <option value="sagar">सागर</option>
-                                    <option value="ratlam">रतलाम</option>
-                                    <option value="satna">सतना</option>
-                                </select>
-                            </div>
-                            <div class="form-group md:col-span-2">
-                                <label for="address">पता <span class="text-red-500">*</span></label>
-                                <textarea id="address" class="form-control" rows="3" placeholder="गली नंबर 5, शास्त्री नगर, भोपाल, मध्य प्रदेश - 462001" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="pincode">पिन कोड <span class="text-red-500">*</span></label>
-                                <input type="text" id="pincode" class="form-control" placeholder="462001" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">ईमेल आईडी</label>
-                                <input type="email" id="email" class="form-control" placeholder="applicant@example.com">
-                            </div>
-                        </div>
-                        
-                        <div class="border-t border-gray-200 pt-8 mt-8">
-                            <div class="flex justify-end gap-4">
-                                <button type="button" onclick="resetForm()" class="btn-secondary px-6 py-3">
-                                    <i class="fas fa-redo"></i> फॉर्म रीसेट करें
-                                </button>
-                                <button type="submit" class="btn-primary px-8 py-3 text-lg">
-                                    <i class="fas fa-paper-plane"></i> आवेदन जमा करें
-                                </button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -1591,25 +1066,19 @@
             <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
                 <h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
                     <i class="fas fa-chart-pie text-purple-600"></i>
-                    विश्लेषण और रिपोर्टिंग
+                    विश्लेषण रिपोर्ट
                 </h1>
-                <p class="text-gray-500 mt-1">आवेदनों का विस्तृत विश्लेषण और रुझान</p>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div class="bg-white rounded-2xl shadow-lg p-6 fade-in">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">जिलेवार आवेदन वितरण</h2>
-                    <canvas id="districtChart" height="280"></canvas>
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">स्थिति वितरण</h2>
+                    <canvas id="statusChart" height="280"></canvas>
                 </div>
                 <div class="bg-white rounded-2xl shadow-lg p-6 fade-in">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">सेवा प्रकार के अनुसार आवेदन</h2>
-                    <canvas id="serviceChart" height="280"></canvas>
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">मासिक रुझान</h2>
+                    <canvas id="trendChart" height="280"></canvas>
                 </div>
-            </div>
-            
-            <div class="bg-white rounded-2xl shadow-lg p-6 fade-in">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">मासिक आवेदन रुझान</h2>
-                <canvas id="trendChart" height="100"></canvas>
             </div>
         </div>
     </div>
@@ -1621,7 +1090,7 @@
         <div class="modal-header">
             <h2 class="text-2xl font-bold flex items-center gap-3">
                 <i class="fas fa-file-invoice"></i>
-                आवेदन विवरण एवं रसीद
+                आवेदन विवरण
             </h2>
             <button onclick="closeModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
                 <i class="fas fa-times"></i>
@@ -1637,7 +1106,7 @@
                 <div class="mt-3 flex justify-center gap-6 text-sm">
                     <div class="flex flex-col items-center">
                         <span class="font-bold text-blue-800">आवेदन क्रमांक:</span>
-                        <span id="receiptAppNumber" class="mt-1 bg-blue-50 text-blue-800 px-3 py-1 rounded-full font-mono">AIO-MP-2024-789456</span>
+                        <span id="receiptAppNumber" class="mt-1 bg-blue-50 text-blue-800 px-3 py-1 rounded-full font-mono">AIO-XXXXXXXX</span>
                     </div>
                     <div class="flex flex-col items-center">
                         <span class="font-bold text-blue-800">रसीद तिथि:</span>
@@ -1654,9 +1123,6 @@
                         <span id="receiptStatusBadge" class="status-badge status-pending text-base px-5 py-2.5 font-bold">
                             <i class="fas fa-clock mr-2"></i> लंबित
                         </span>
-                        <div class="text-sm text-gray-600">
-                            <div>अंतिम अपडेट: <span id="lastUpdated">25 जनवरी, 2024</span></div>
-                        </div>
                     </div>
                 </div>
                 <div class="qr-container">
@@ -1685,49 +1151,10 @@
                 </div>
             </div>
             
-            <!-- Documents Section -->
-            <div class="mb-8">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-blue-100 flex items-center gap-2">
-                    <i class="fas fa-paperclip text-blue-600"></i> संलग्न दस्तावेज़
-                </h3>
-                <div class="document-grid" id="documentsSection">
-                    <!-- Documents will be inserted here by JavaScript -->
-                    <div class="document-item">
-                        <div class="document-icon">
-                            <i class="fas fa-id-card"></i>
-                        </div>
-                        <span class="document-name">आधार कार्ड</span>
-                        <a href="#" class="document-link">देखें</a>
-                    </div>
-                    <div class="document-item">
-                        <div class="document-icon">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <span class="document-name">पासपोर्ट फोटो</span>
-                        <a href="#" class="document-link">देखें</a>
-                    </div>
-                    <div class="document-item">
-                        <div class="document-icon">
-                            <i class="fas fa-file-certificate"></i>
-                        </div>
-                        <span class="document-name">जन्म प्रमाण पत्र</span>
-                        <a href="#" class="document-link">देखें</a>
-                    </div>
-                    <div class="document-item">
-                        <div class="document-icon">
-                            <i class="fas fa-home"></i>
-                        </div>
-                        <span class="document-name">पता प्रमाण</span>
-                        <a href="#" class="document-link">देखें</a>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Receipt Footer -->
             <div class="receipt-footer">
                 <p>यह एक कंप्यूटर जनरेटेड रसीद है और हस्ताक्षर की आवश्यकता नहीं है।</p>
-                <p class="mt-1">AllInOne MP पोर्टल, मध्य प्रदेश सरकार | सहायता हेतु: 1800-123-4567</p>
-                <p class="mt-1 font-medium">आवेदन स्थिति जांचने हेतु: <span class="text-blue-600">https://allinonemp.gov.in/verify</span></p>
+                <p class="mt-1">AllInOne MP पोर्टल, मध्य प्रदेश सरकार</p>
             </div>
         </div>
 
@@ -1746,9 +1173,6 @@
             <div class="flex flex-wrap gap-3">
                 <button onclick="downloadPDF()" class="btn-primary px-6 py-3">
                     <i class="fas fa-file-pdf"></i> PDF डाउनलोड करें
-                </button>
-                <button onclick="printReceipt()" class="btn-secondary px-6 py-3">
-                    <i class="fas fa-print"></i> प्रिंट रसीद
                 </button>
                 <button onclick="closeModal()" class="btn-secondary bg-gray-500 hover:bg-gray-600 px-6 py-3">
                     <i class="fas fa-times"></i> बंद करें
@@ -1780,8 +1204,7 @@ import {
 import { 
     getAuth, 
     onAuthStateChanged, 
-    signOut,
-    signInWithEmailAndPassword
+    signOut
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // 🔑 Firebase Config
@@ -1800,7 +1223,7 @@ let allApplications = [];
 let currentUser = null;
 let isDataLoaded = false;
 let currentDetailId = null;
-let applicationsChart, statusChart, districtChart, serviceChart, trendChart;
+let statusChart, trendChart;
 
 // 🎯 Initialize Firebase
 try {
@@ -1810,7 +1233,6 @@ try {
     auth = getAuth(app);
     console.log("✅ Firebase Initialized Successfully");
     document.getElementById('firebaseStatus').textContent = "कनेक्टेड";
-    document.getElementById('firebaseStatus').className = "font-bold text-green-600";
     
     // Simulate loading progress
     let progress = 15;
@@ -1835,12 +1257,10 @@ try {
     showError("Firebase Init Failed: " + error.message);
 }
 
-// 📡 Data Fetching Functions with Real-time Updates
+// 📡 Setup Real-time Listeners
 function setupRealtimeListeners() {
     console.log("Setting up real-time listeners...");
-    updateLoadingStatus("रीयल-टाइम डेटा सिंक हो रहा है...");
     
-    // Main applications collection
     const applicationsCol = collection(db, 'applications');
     const q = query(applicationsCol, orderBy('createdAt', 'desc'), limit(100));
     
@@ -1852,7 +1272,6 @@ function setupRealtimeListeners() {
             createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date()
         }));
         
-        // Update UI
         renderDashboardTable(allApplications);
         renderApplicationsTable(allApplications);
         updateStats(allApplications);
@@ -1874,15 +1293,9 @@ function renderDashboardTable(data) {
     if (!data || data.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="py-12">
-                    <div class="empty-state">
-                        <i class="fas fa-inbox empty-icon"></i>
-                        <h3 class="empty-title">कोई आवेदन नहीं मिला</h3>
-                        <p class="empty-message">अभी तक कोई आवेदन जमा नहीं किया गया है। नया आवेदन जोड़ने के लिए "नया आवेदन" बटन पर क्लिक करें।</p>
-                        <button onclick="showSection('newApplication')" class="btn-primary mt-4 px-6 py-3">
-                            <i class="fas fa-plus"></i> नया आवेदन जोड़ें
-                        </button>
-                    </div>
+                <td colspan="7" class="py-12 text-center text-gray-500">
+                    <i class="fas fa-inbox text-4xl mb-3"></i>
+                    <p class="text-lg font-medium">कोई आवेदन नहीं मिला</p>
                 </td>
             </tr>
         `;
@@ -1890,12 +1303,11 @@ function renderDashboardTable(data) {
     }
     
     let html = '';
-    // Show only first 10 applications in dashboard
     data.slice(0, 10).forEach((item, index) => {
-        const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
-        const name = item.applicantName || item.name || "अज्ञात";
-        const service = item.serviceType || "समग्र";
-        const mobile = item.mobileNumber || item.mobile || "N/A";
+        const appNo = `AIO-${item.id.substring(0, 8).toUpperCase()}`;
+        const name = item.studentName || item.applicantName || item.name || item.fullName || "अज्ञात";
+        const service = item.serviceType || item.formType || item.service || item.serviceName || "समग्र";
+        const mobile = item.mobile || item.phone || item.mobileNumber || "N/A";
         const date = formatDate(item.createdAt);
         const status = item.status || 'pending';
         
@@ -1911,7 +1323,7 @@ function renderDashboardTable(data) {
         <tr class="table-row hover:bg-blue-50/50 transition-all">
             <td class="font-mono font-bold text-blue-800">${appNo}</td>
             <td class="font-bold text-gray-800">${name}</td>
-            <td><span class="service-badge">${getServiceName(service)}</span></td>
+            <td><span class="service-badge">${service}</span></td>
             <td class="hidden md:table-cell font-medium">${mobile}</td>
             <td class="hidden md:table-cell text-gray-600">${date}</td>
             <td>
@@ -1925,12 +1337,6 @@ function renderDashboardTable(data) {
                     <button onclick="viewDetails('${item.id}')" class="action-btn action-view" title="विवरण देखें">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button onclick="editApplication('${item.id}')" class="action-btn action-edit" title="संपादित करें">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button onclick="deleteApplication('${item.id}')" class="action-btn action-delete" title="हटाएं">
-                        <i class="fas fa-trash"></i>
-                    </button>
                 </div>
             </td>
         </tr>
@@ -1938,19 +1344,17 @@ function renderDashboardTable(data) {
     });
     
     tbody.innerHTML = html;
-    document.getElementById('totalRecords').textContent = data.length;
 }
 
-// 📊 Render Applications Management Table
+// 📊 Render Applications Table
 function renderApplicationsTable(data) {
     const tbody = document.getElementById('applicationsTableBody');
     if (!data || data.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="9" class="py-12 text-center text-gray-500">
+                <td colspan="6" class="py-12 text-center text-gray-500">
                     <i class="fas fa-inbox text-4xl mb-3"></i>
                     <p class="text-lg font-medium">कोई आवेदन नहीं मिला</p>
-                    <p class="mt-2">फ़िल्टर मानदंडों को समायोजित करने का प्रयास करें</p>
                 </td>
             </tr>
         `;
@@ -1959,11 +1363,9 @@ function renderApplicationsTable(data) {
     
     let html = '';
     data.forEach((item, index) => {
-        const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
-        const name = item.applicantName || item.name || "अज्ञात";
-        const fatherName = item.fatherName || item.guardianName || "-";
-        const service = item.serviceType || "समग्र";
-        const district = item.district || "अज्ञात";
+        const appNo = `AIO-${item.id.substring(0, 8).toUpperCase()}`;
+        const name = item.studentName || item.applicantName || item.name || item.fullName || "अज्ञात";
+        const service = item.serviceType || item.formType || item.service || item.serviceName || "समग्र";
         const date = formatDate(item.createdAt);
         const status = item.status || 'pending';
         
@@ -1977,12 +1379,9 @@ function renderApplicationsTable(data) {
         
         html += `
         <tr class="table-row hover:bg-blue-50/50 transition-all">
-            <td><input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded"></td>
             <td class="font-mono font-bold text-blue-800">${appNo}</td>
             <td class="font-bold text-gray-800">${name}</td>
-            <td class="text-gray-700">${fatherName}</td>
-            <td><span class="service-badge">${getServiceName(service)}</span></td>
-            <td class="hidden md:table-cell text-gray-700 font-medium">${getDistrictName(district)}</td>
+            <td><span class="service-badge">${service}</span></td>
             <td>
                 <span class="status-badge ${statusClass} px-3 py-1.5">
                     ${statusText}
@@ -1994,9 +1393,6 @@ function renderApplicationsTable(data) {
                     <button onclick="viewDetails('${item.id}')" class="action-btn action-view" title="विवरण देखें">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button onclick="editApplication('${item.id}')" class="action-btn action-edit" title="संपादित करें">
-                        <i class="fas fa-edit"></i>
-                    </button>
                 </div>
             </td>
         </tr>
@@ -2004,8 +1400,6 @@ function renderApplicationsTable(data) {
     });
     
     tbody.innerHTML = html;
-    document.getElementById('applicationsTotal').textContent = data.length;
-    document.getElementById('applicationsShowing').textContent = Math.min(data.length, 25);
 }
 
 // 📈 Update Statistics
@@ -2014,94 +1408,17 @@ function updateStats(data) {
     const pending = data.filter(a => a.status === 'pending' || !a.status).length;
     const complete = data.filter(a => a.status === 'complete').length;
     const rejected = data.filter(a => a.status === 'reject').length;
-    const processing = data.filter(a => a.status === 'processing').length;
     
-    // Update stats cards
     document.getElementById('statTotal').textContent = total.toLocaleString();
     document.getElementById('statPending').textContent = pending.toLocaleString();
     document.getElementById('statComplete').textContent = complete.toLocaleString();
     document.getElementById('statRejected').textContent = rejected.toLocaleString();
-    
-    // Update growth metrics (simulated)
-    document.getElementById('statTotalGrowth').textContent = "12.5%";
-    document.getElementById('statPendingCount').textContent = pending;
-    document.getElementById('statCompleteRate').textContent = "98.2%";
-    document.getElementById('statRejectedRate').textContent = "1.8%";
-    
-    // Update notification badge
-    document.querySelector('.notification-badge').textContent = pending;
-    
-    // Update welcome message
-    const adminName = currentUser?.email?.split('@')[0] || 'प्रशासक';
-    document.getElementById('welcomeAdminName').textContent = adminName;
 }
 
 // 📊 Initialize Charts
 function initCharts() {
-    const ctx1 = document.getElementById('applicationsChart').getContext('2d');
     const ctx2 = document.getElementById('statusChart').getContext('2d');
-    const ctx3 = document.getElementById('districtChart').getContext('2d');
-    const ctx4 = document.getElementById('serviceChart').getContext('2d');
     const ctx5 = document.getElementById('trendChart').getContext('2d');
-    
-    // Applications Chart
-    applicationsChart = new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नवं', 'दिसं'],
-            datasets: [{
-                label: 'आवेदन',
-                data: [65, 59, 80, 81, 56, 55, 40, 78, 86, 92, 75, 88],
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 3,
-                pointBackgroundColor: '#ffffff',
-                pointBorderColor: '#3b82f6',
-                pointBorderWidth: 3,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'मासिक आवेदन रुझान (2024)',
-                    font: {
-                        size: 16,
-                        weight: 'bold'
-                    },
-                    color: '#1e293b'
-                },
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        color: '#64748b'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        color: '#64748b'
-                    }
-                }
-            }
-        }
-    });
     
     // Status Chart
     statusChart = new Chart(ctx2, {
@@ -2148,103 +1465,6 @@ function initCharts() {
         }
     });
     
-    // District Chart
-    districtChart = new Chart(ctx3, {
-        type: 'bar',
-        data: {
-            labels: ['भोपाल', 'इंदौर', 'जबलपुर', 'ग्वालियर', 'उज्जैन', 'सागर', 'रतलाम', 'सतना'],
-            datasets: [{
-                label: 'आवेदन संख्या',
-                data: [45, 62, 38, 29, 35, 22, 18, 15],
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                borderRadius: 6,
-                borderSkipped: false
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'जिलेवार आवेदन वितरण',
-                    font: {
-                        size: 16,
-                        weight: 'bold'
-                    },
-                    color: '#1e293b'
-                },
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        color: '#64748b'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        color: '#64748b'
-                    }
-                }
-            }
-        }
-    });
-    
-    // Service Chart
-    serviceChart = new Chart(ctx4, {
-        type: 'pie',
-        data: {
-            labels: ['समग्र आईडी', 'एमपी भोज', 'छात्रवृत्ति', 'पेंशन', 'आवास'],
-            datasets: [{
-                data: [45, 25, 15, 10, 5],
-                backgroundColor: [
-                    '#3b82f6',
-                    '#10b981',
-                    '#f59e0b',
-                    '#ef4444',
-                    '#8b5cf6'
-                ],
-                borderWidth: 0,
-                hoverOffset: 15
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'सेवा प्रकार के अनुसार आवेदन',
-                    font: {
-                        size: 16,
-                        weight: 'bold'
-                    },
-                    color: '#1e293b'
-                },
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        color: '#475569',
-                        font: {
-                            size: 13
-                        }
-                    }
-                }
-            }
-        }
-    });
-    
     // Trend Chart
     trendChart = new Chart(ctx5, {
         type: 'line',
@@ -2256,15 +1476,6 @@ function initCharts() {
                     data: Array.from({length: 30}, () => Math.floor(Math.random() * 15) + 5),
                     borderColor: '#3b82f6',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.3
-                },
-                {
-                    label: 'पूर्ण आवेदन',
-                    data: Array.from({length: 30}, () => Math.floor(Math.random() * 10) + 2),
-                    borderColor: '#22c55e',
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.3
@@ -2322,9 +1533,8 @@ function initCharts() {
 
 // 📊 Update Charts with Real Data
 function updateCharts(data) {
-    if (!applicationsChart || !statusChart) return;
+    if (!statusChart) return;
     
-    // Update status chart
     const pending = data.filter(a => a.status === 'pending' || !a.status).length;
     const complete = data.filter(a => a.status === 'complete').length;
     const rejected = data.filter(a => a.status === 'reject').length;
@@ -2345,10 +1555,9 @@ window.viewDetails = function(id) {
     currentDetailId = id;
     
     // Set receipt application number and date
-    const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
+    const appNo = `AIO-${item.id.substring(0, 8).toUpperCase()}`;
     document.getElementById('receiptAppNumber').textContent = appNo;
     document.getElementById('receiptDate').textContent = formatDate(new Date());
-    document.getElementById('lastUpdated').textContent = formatDate(item.updatedAt || item.createdAt);
     
     // Update status badge
     const status = item.status || 'pending';
@@ -2365,16 +1574,24 @@ window.viewDetails = function(id) {
                                            status === 'reject' ? 'fa-times-circle' : 
                                            status === 'processing' ? 'fa-cog' : 'fa-clock'} mr-2"></i>${statusText}`;
     
-    // Generate QR Code
+    // Generate QR Code with all database information
     const qrContainer = document.getElementById('qrCode');
     qrContainer.innerHTML = '';
     const qrData = JSON.stringify({
         id: item.id,
         appNo: appNo,
-        name: item.applicantName || item.name,
-        service: item.serviceType,
+        name: item.studentName || item.applicantName || item.name || item.fullName || '',
+        fatherName: item.fatherName || item.guardianName || '',
+        mobile: item.mobile || item.phone || item.mobileNumber || '',
+        email: item.email || '',
+        service: item.serviceType || item.formType || item.service || item.serviceName || 'समग्र',
+        dob: item.dob || item.dateOfBirth || '',
+        address: item.address || item.fullAddress || '',
+        district: item.district || '',
+        state: item.state || 'मध्य प्रदेश',
+        pincode: item.pincode || '',
         status: item.status || 'pending',
-        verifyUrl: `https://allinonemp.gov.in/verify?id=${item.id}`
+        createdAt: item.createdAt ? item.createdAt.toString() : ''
     });
     
     // Create QR Code
@@ -2387,15 +1604,17 @@ window.viewDetails = function(id) {
         correctLevel: QRCode.CorrectLevel.H
     });
     
-    // Build applicant details
+    // Build applicant details - ALL FIELDS from database
     const applicantFields = [
-        { label: 'पूरा नाम', value: item.applicantName || item.name || '-' },
-        { label: 'पिता/पति का नाम', value: item.fatherName || item.guardianName || '-' },
-        { label: 'मोबाइल नंबर', value: item.mobileNumber || item.mobile || '-' },
+        { label: 'पूरा नाम', value: item.studentName || item.applicantName || item.name || item.fullName || '-' },
+        { label: 'पिता/अभिभावक का नाम', value: item.fatherName || item.guardianName || '-' },
+        { label: 'मोबाइल नंबर', value: item.mobile || item.phone || item.mobileNumber || '-' },
         { label: 'ईमेल आईडी', value: item.email || '-' },
-        { label: 'आधार नंबर', value: maskAadhar(item.aadharNumber) || '-' },
+        { label: 'आधार नंबर', value: maskAadhar(item.aadharNumber || item.aadhar || '') || '-' },
+        { label: 'समग्र आईडी', value: item.samagraId || '-' },
         { label: 'लिंग', value: getGenderText(item.gender) || '-' },
-        { label: 'जन्म तिथि', value: formatDate(item.dob) || '-' }
+        { label: 'जन्म तिथि', value: formatDate(item.dob || item.dateOfBirth) || '-' },
+        { label: 'आयु', value: calculateAge(item.dob || item.dateOfBirth) || '-' }
     ];
     
     let applicantHtml = '';
@@ -2411,14 +1630,30 @@ window.viewDetails = function(id) {
     });
     document.getElementById('applicantDetails').innerHTML = applicantHtml;
     
-    // Build application details
+    // Build application details - ALL FIELDS from database
     const applicationFields = [
-        { label: 'सेवा प्रकार', value: getServiceName(item.serviceType) || 'समग्र आईडी' },
+        { label: 'आवेदन क्रमांक', value: appNo },
+        { label: 'सेवा प्रकार', value: item.serviceType || item.formType || item.service || item.serviceName || 'समग्र आईडी' },
         { label: 'आवेदन तिथि', value: formatDate(item.createdAt) || '-' },
-        { label: 'जिला', value: getDistrictName(item.district) || '-' },
+        { label: 'अंतिम अपडेट', value: formatDate(item.updatedAt) || formatDate(item.createdAt) || '-' },
+        { label: 'वर्तमान स्थिति', value: statusText },
+        { label: 'पता', value: item.address || item.fullAddress || '-' },
+        { label: 'गांव/शहर', value: item.village || item.city || '-' },
+        { label: 'तहसील', value: item.tehsil || item.taluka || '-' },
+        { label: 'जिला', value: item.district || '-' },
+        { label: 'राज्य', value: item.state || 'मध्य प्रदेश' },
         { label: 'पिन कोड', value: item.pincode || '-' },
-        { label: 'पता', value: item.address || '-' },
-        { label: 'अंतिम अपडेट', value: formatDate(item.updatedAt || item.createdAt) || '-' }
+        { label: 'राशन कार्ड संख्या', value: item.rationCardNumber || '-' },
+        { label: 'बैंक खाता संख्या', value: item.bankAccountNumber || '-' },
+        { label: 'IFSC कोड', value: item.ifscCode || '-' },
+        { label: 'बैंक का नाम', value: item.bankName || '-' },
+        { label: 'शैक्षणिक योग्यता', value: item.educationQualification || '-' },
+        { label: 'पेशा', value: item.occupation || '-' },
+        { label: 'वार्षिक आय', value: item.annualIncome ? `₹${parseInt(item.annualIncome).toLocaleString()}` : '-' },
+        { label: 'जाति', value: item.caste || '-' },
+        { label: 'धर्म', value: item.religion || '-' },
+        { label: 'विवाहित स्थिति', value: item.maritalStatus || '-' },
+        { label: 'परिवार के सदस्यों की संख्या', value: item.familyMembersCount || '-' }
     ];
     
     let applicationHtml = '';
@@ -2453,7 +1688,6 @@ window.updateApplicationStatus = async function(newStatus) {
             updatedAt: serverTimestamp()
         });
         
-        // Show success message
         const statusText = newStatus === 'complete' ? 'पूर्ण' : 
                           newStatus === 'reject' ? 'अस्वीकृत' : 'प्रोसेसिंग';
         alert(`आवेदन सफलतापूर्वक ${statusText} में बदल दिया गया!`);
@@ -2470,7 +1704,7 @@ window.updateApplicationStatus = async function(newStatus) {
 window.downloadPDF = function() {
     const element = document.getElementById('pdfContent');
     const opt = {
-        margin: 0.5,
+        margin: 0.3,
         filename: `AllInOneMP_Receipt_${currentDetailId.substring(0, 8)}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
@@ -2481,8 +1715,7 @@ window.downloadPDF = function() {
         jsPDF: { 
             unit: 'in', 
             format: 'a4', 
-            orientation: 'portrait',
-            compressPDF: true
+            orientation: 'portrait'
         },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
@@ -2493,38 +1726,10 @@ window.downloadPDF = function() {
     document.querySelector('.btn-primary i').className = "fas fa-spinner fa-spin";
     
     html2pdf().set(opt).from(element).save().then(() => {
-        // Restore button text
         document.querySelector('.btn-primary i').nextSibling.textContent = originalText;
         document.querySelector('.btn-primary i').className = "fas fa-file-pdf";
-        
-        // Show success message
         alert("PDF सफलतापूर्वक डाउनलोड हो गया!");
     });
-};
-
-// 🖨️ Print Receipt
-window.printReceipt = function() {
-    const printContent = document.getElementById('pdfContent').innerHTML;
-    const originalContent = document.body.innerHTML;
-    
-    document.body.innerHTML = `
-        <html>
-        <head>
-            <title>AllInOne MP रसीद</title>
-            <style>
-                body { font-family: 'Noto Sans Devanagari', sans-serif; padding: 20px; }
-                @media print {
-                    body { padding: 0; }
-                }
-            </style>
-        </head>
-        <body onload="window.print(); window.close()">
-            ${printContent}
-        </body>
-        </html>
-    `;
-    
-    document.close();
 };
 
 // ❌ Close Modal
@@ -2542,92 +1747,38 @@ window.refreshData = function() {
     }, 800);
 };
 
-// 📤 Export to CSV
-window.exportToCSV = function() {
-    if (allApplications.length === 0) {
-        alert("निर्यात करने के लिए कोई डेटा नहीं!");
-        return;
-    }
-    
-    let csv = '\uFEFF'; // UTF-8 BOM for Hindi characters
-    csv += 'आवेदन क्रमांक,आवेदक का नाम,सेवा प्रकार,मोबाइल नंबर,जिला,स्थिति,आवेदन तिथि\n';
-    
-    allApplications.forEach(item => {
-        const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
-        const name = item.applicantName || item.name || '';
-        const service = getServiceName(item.serviceType) || 'समग्र आईडी';
-        const mobile = item.mobileNumber || item.mobile || '';
-        const district = getDistrictName(item.district) || '';
-        const status = item.status === 'complete' ? 'पूर्ण' : 
-                      item.status === 'reject' ? 'अस्वीकृत' : 
-                      item.status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
-        const date = formatDate(item.createdAt);
-        
-        csv += `"${appNo}","${name}","${service}","${mobile}","${district}","${status}","${date}"\n`;
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `AllInOneMP_Applications_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    
-    alert("CSV फ़ाइल सफलतापूर्वक निर्यात हो गई!");
-};
-
-// 📤 Export to PDF (Report)
-window.exportToPDF = function() {
-    alert("PDF रिपोर्ट निर्यात फ़ंक्शन लागू किया जा रहा है। कृपया कुछ समय प्रतीक्षा करें...");
-};
-
-// 🗑️ Delete Application
-window.deleteApplication = async function(id) {
-    if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।")) return;
-    
-    try {
-        // In a real app, we would delete the document from Firestore
-        // For demo purposes, we'll just filter it from our local array
-        allApplications = allApplications.filter(a => a.id !== id);
-        renderDashboardTable(allApplications);
-        renderApplicationsTable(allApplications);
-        updateStats(allApplications);
-        
-        alert("आवेदन सफलतापूर्वक हटा दिया गया!");
-    } catch (error) {
-        alert("हटाने में त्रुटि: " + error.message);
-    }
-};
-
-// ✏️ Edit Application
-window.editApplication = function(id) {
-    alert(`आवेदन ${id} को संपादित करने की सुविधा जल्द ही उपलब्ध होगी।`);
-};
-
 // 🚪 Logout
 window.logout = function() {
     if (confirm("क्या आप प्रणाली से बाहर निकलना चाहते हैं?")) {
-        // In a real app, we would sign out the user
-        // signOut(auth).then(() => {
-        //     window.location.href = 'adminlogin.html';
-        // }).catch(err => console.error(err));
         alert("आप सफलतापूर्वक लॉगआउट हो गए हैं!");
         window.location.href = 'adminlogin.html';
     }
 };
 
-// 🧭 Navigation
+// 🧭 Navigation - FIXED VERSION
 window.showSection = function(sectionId) {
-    // Hide all sections
-    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    // Hide all sections first
+    const sections = ['dashboard', 'applications', 'analysis'];
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) {
+            section.classList.remove('active');
+        }
+    });
     
     // Show selected section
-    document.getElementById(sectionId).classList.add('active');
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
     
     // Update active nav item
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
+    
+    // Find and activate the clicked nav item
+    event.currentTarget.classList.add('active');
     
     // Close mobile sidebar if open
     const sidebar = document.getElementById('sidebar');
@@ -2644,195 +1795,15 @@ window.toggleSidebar = function() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
     const topBar = document.getElementById('topBar');
-    const toggleIcon = document.getElementById('toggleIcon');
-    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
     
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('sidebar-collapsed');
     topBar.classList.toggle('sidebar-collapsed');
     
-    // Change toggle icon
-    if (sidebar.classList.contains('collapsed')) {
-        toggleIcon.classList.remove('fa-bars');
-        toggleIcon.classList.add('fa-bars');
-        sidebarToggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-    } else {
-        toggleIcon.classList.remove('fa-bars');
-        toggleIcon.classList.add('fa-bars');
-        sidebarToggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-    }
-    
     // For mobile view
     if (window.innerWidth < 768) {
         sidebar.classList.toggle('active');
     }
-};
-
-// 📝 Reset Form
-window.resetForm = function() {
-    if (confirm("क्या आप फॉर्म रीसेट करना चाहते हैं? सभी दर्ज किए गए डेटा हट जाएंगे।")) {
-        document.getElementById('applicationForm').reset();
-        alert("फॉर्म सफलतापूर्वक रीसेट हो गया!");
-    }
-};
-
-// 📝 Submit Application Form
-document.getElementById('applicationForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Get form values
-    const applicantName = document.getElementById('applicantName').value;
-    const fatherName = document.getElementById('fatherName').value;
-    const mobileNumber = document.getElementById('mobileNumber').value;
-    const aadharNumber = document.getElementById('aadharNumber').value;
-    const dob = document.getElementById('dob').value;
-    const gender = document.getElementById('gender').value;
-    const serviceType = document.getElementById('serviceType').value;
-    const district = document.getElementById('district').value;
-    const address = document.getElementById('address').value;
-    const pincode = document.getElementById('pincode').value;
-    const email = document.getElementById('email').value;
-    
-    // Basic validation
-    if (!applicantName || !fatherName || !mobileNumber || !aadharNumber || !dob || !gender || !serviceType || !district || !address || !pincode) {
-        alert("कृपया सभी अनिवार्य फ़ील्ड भरें!");
-        return;
-    }
-    
-    if (mobileNumber.length !== 10 || isNaN(mobileNumber)) {
-        alert("कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें!");
-        return;
-    }
-    
-    if (aadharNumber.replace(/\s/g, '').length !== 12) {
-        alert("कृपया वैध 12 अंकों का आधार नंबर दर्ज करें!");
-        return;
-    }
-    
-    // Show processing state
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> प्रोसेसिंग...';
-    
-    try {
-        // In a real app, we would add the document to Firestore
-        // For demo purposes, we'll simulate a successful submission
-        const newApplication = {
-            applicantName,
-            fatherName,
-            mobileNumber,
-            aadharNumber,
-            dob,
-            gender,
-            serviceType,
-            district,
-            address,
-            pincode,
-            email,
-            status: 'pending',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-        
-        // Simulate Firestore add
-        const newId = 'demo_' + Math.random().toString(36).substr(2, 9);
-        newApplication.id = newId;
-        
-        // Add to local array
-        allApplications.unshift(newApplication);
-        
-        // Update UI
-        renderDashboardTable(allApplications);
-        renderApplicationsTable(allApplications);
-        updateStats(allApplications);
-        
-        // Show success message
-        alert("आवेदन सफलतापूर्वक जमा हो गया! आवेदन क्रमांक: AIO-MP-" + newId.substring(0, 8).toUpperCase());
-        
-        // Reset form
-        this.reset();
-        
-        // Navigate to applications section
-        showSection('applications');
-    } catch (error) {
-        console.error("Error submitting application:", error);
-        alert("आवेदन जमा करने में त्रुटि: " + error.message);
-    } finally {
-        // Restore button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    }
-});
-
-// 🔍 Apply Filters
-window.applyFilters = function() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const searchQuery = document.getElementById('searchApplications').value.toLowerCase();
-    
-    // Filter applications
-    let filteredApplications = [...allApplications];
-    
-    if (statusFilter) {
-        filteredApplications = filteredApplications.filter(app => 
-            (app.status || 'pending') === statusFilter
-        );
-    }
-    
-    if (searchQuery) {
-        filteredApplications = filteredApplications.filter(app => 
-            (app.applicantName || '').toLowerCase().includes(searchQuery) ||
-            (app.id || '').toLowerCase().includes(searchQuery) ||
-            (app.mobileNumber || '').includes(searchQuery)
-        );
-    }
-    
-    // Render filtered table
-    renderDashboardTable(filteredApplications);
-    
-    // Update active filters display
-    const activeFiltersContainer = document.getElementById('activeFilters');
-    activeFiltersContainer.innerHTML = '';
-    
-    if (statusFilter) {
-        const statusText = statusFilter === 'complete' ? 'पूर्ण' : 
-                          statusFilter === 'reject' ? 'अस्वीकृत' : 
-                          statusFilter === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
-        activeFiltersContainer.innerHTML += `
-            <div class="filter-badge">
-                <i class="fas fa-filter"></i> स्थिति: ${statusText}
-            </div>
-        `;
-    }
-    
-    if (searchQuery) {
-        activeFiltersContainer.innerHTML += `
-            <div class="filter-badge">
-                <i class="fas fa-search"></i> खोज: "${searchQuery}"
-            </div>
-        `;
-    }
-    
-    if (!statusFilter && !searchQuery) {
-        activeFiltersContainer.innerHTML = `
-            <div class="text-gray-500 text-sm">
-                <i class="fas fa-info-circle mr-1.5"></i> कोई फ़िल्टर लागू नहीं है
-            </div>
-        `;
-    }
-};
-
-// 🔄 Reset Filters
-window.resetFilters = function() {
-    document.getElementById('statusFilter').value = '';
-    document.getElementById('searchApplications').value = '';
-    document.getElementById('activeFilters').innerHTML = '';
-    renderDashboardTable(allApplications);
-};
-
-// 🧪 Bulk Export
-window.bulkExport = function() {
-    alert("बल्क निर्यात फ़ंक्शन लागू किया जा रहा है। कृपया कुछ समय प्रतीक्षा करें...");
 };
 
 // 🛠️ Helper Functions
@@ -2862,31 +1833,20 @@ function getGenderText(gender) {
     return genderMap[gender] || gender;
 }
 
-function getServiceName(serviceType) {
-    if (!serviceType) return 'समग्र आईडी';
-    const serviceMap = {
-        'samagra': 'समग्र आईडी',
-        'mpbhoj': 'एमपी भोज योजना',
-        'scholarship': 'छात्रवृत्ति योजना',
-        'pension': 'पेंशन योजना',
-        'housing': 'आवास योजना'
-    };
-    return serviceMap[serviceType] || serviceType;
-}
-
-function getDistrictName(district) {
-    if (!district) return 'अज्ञात';
-    const districtMap = {
-        'bhopal': 'भोपाल',
-        'indore': 'इंदौर',
-        'jabalpur': 'जबलपुर',
-        'gwalior': 'ग्वालियर',
-        'ujjain': 'उज्जैन',
-        'sagar': 'सागर',
-        'ratlam': 'रतलाम',
-        'satna': 'सतना'
-    };
-    return districtMap[district] || district;
+function calculateAge(dob) {
+    if (!dob) return '-';
+    try {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return `${age} वर्ष`;
+    } catch (e) {
+        return '-';
+    }
 }
 
 function maskAadhar(aadhar) {
@@ -2921,7 +1881,6 @@ function hideLoading() {
 function showError(msg) {
     console.error(msg);
     document.getElementById('loadingStatus').innerHTML = `<i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Error: ${msg}`;
-    document.getElementById('loadingStatus').className = "mt-2 text-sm text-red-600 font-bold flex items-center";
 }
 
 // Initialize the application
@@ -2937,22 +1896,6 @@ document.addEventListener('DOMContentLoaded', () => {
         day: 'numeric'
     });
     
-    // Setup notification dropdown toggle
-    const notificationBtn = document.getElementById('notificationBtn');
-    const notificationDropdown = document.getElementById('notificationDropdown');
-    
-    notificationBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        notificationDropdown.classList.toggle('hidden');
-    });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
-            notificationDropdown.classList.add('hidden');
-        }
-    });
-    
     // Initialize charts
     initCharts();
     
@@ -2961,7 +1904,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupRealtimeListeners();
     } else {
         showError("Firebase Database not initialized!");
-        // Simulate data for demo
         setTimeout(() => {
             simulateDemoData();
             hideLoading();
@@ -2977,11 +1919,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('adminName').textContent = displayName;
             document.getElementById('adminEmail').textContent = user.email || '';
             document.getElementById('sidebarAdminName').textContent = displayName;
-            document.getElementById('welcomeAdminName').textContent = displayName;
         } else {
             console.log("No user signed in");
-            // Redirect to login page in production
-            // window.location.href = 'adminlogin.html';
         }
     });
     
@@ -2998,29 +1937,6 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }
     });
-    
-    // Setup search functionality for applications management
-    document.getElementById('applicationsSearch')?.addEventListener('input', function(e) {
-        const query = e.target.value.toLowerCase();
-        const filtered = allApplications.filter(app => 
-            (app.applicantName || '').toLowerCase().includes(query) ||
-            (app.id || '').toLowerCase().includes(query) ||
-            (app.mobileNumber || '').includes(query) ||
-            (app.fatherName || '').toLowerCase().includes(query)
-        );
-        renderApplicationsTable(filtered);
-    });
-    
-    // Setup bulk action buttons
-    document.getElementById('bulkApproveBtn')?.addEventListener('click', function() {
-        alert("चयनित आवेदन सफलतापूर्वक अनुमोदित कर दिए गए!");
-    });
-    
-    document.getElementById('bulkRejectBtn')?.addEventListener('click', function() {
-        if (confirm("क्या आप वाकई चयनित आवेदनों को अस्वीकृत करना चाहते हैं?")) {
-            alert("चयनित आवेदन सफलतापूर्वक अस्वीकृत कर दिए गए!");
-        }
-    });
 });
 
 // Simulate demo data for offline/demo mode
@@ -3028,17 +1944,32 @@ function simulateDemoData() {
     const demoApplications = [
         {
             id: 'app1',
-            applicantName: 'राजेश कुमार शर्मा',
+            studentName: 'राजेश कुमार शर्मा',
             fatherName: 'महेश शर्मा',
-            mobileNumber: '9876543210',
-            aadharNumber: '1234 5678 9012',
-            dob: '1985-05-15',
-            gender: 'male',
-            serviceType: 'samagra',
-            district: 'bhopal',
-            address: '24, शास्त्री नगर, भोपाल, मध्य प्रदेश',
-            pincode: '462001',
+            mobile: '9876543210',
             email: 'rajesh.sharma@example.com',
+            aadharNumber: '123456789012',
+            samagraId: 'MP1234567890',
+            gender: 'male',
+            dob: '1985-05-15',
+            serviceType: 'समग्र आईडी',
+            address: '24, शास्त्री नगर, भोपाल',
+            village: 'भोपाल',
+            tehsil: 'भोपाल',
+            district: 'भोपाल',
+            state: 'मध्य प्रदेश',
+            pincode: '462001',
+            rationCardNumber: 'MPR/2023/123456',
+            bankAccountNumber: '1234567890123456',
+            ifscCode: 'SBIN0001234',
+            bankName: 'भारतीय स्टेट बैंक',
+            educationQualification: 'स्नातक',
+            occupation: 'कर्मचारी',
+            annualIncome: '300000',
+            caste: 'अन्य पिछड़ा वर्ग',
+            religion: 'हिंदू',
+            maritalStatus: 'विवाहित',
+            familyMembersCount: '4',
             status: 'complete',
             createdAt: new Date(Date.now() - 86400000 * 2),
             updatedAt: new Date(Date.now() - 86400000)
@@ -3046,121 +1977,41 @@ function simulateDemoData() {
         {
             id: 'app2',
             applicantName: 'सोनू शर्मा',
-            fatherName: 'रामशरण शर्मा',
-            mobileNumber: '9876543211',
-            aadharNumber: '2345 6789 0123',
-            dob: '1992-08-22',
-            gender: 'female',
-            serviceType: 'mpbhoj',
-            district: 'indore',
-            address: '45, विजय नगर, इंदौर, मध्य प्रदेश',
-            pincode: '452010',
+            guardianName: 'रामशरण शर्मा',
+            phone: '9876543211',
             email: 'sonu.sharma@example.com',
+            aadhar: '234567890123',
+            samagraId: 'MP2345678901',
+            gender: 'female',
+            dateOfBirth: '1992-08-22',
+            formType: 'एमपी भोज योजना',
+            fullAddress: '45, विजय नगर, इंदौर, मध्य प्रदेश',
+            city: 'इंदौर',
+            taluka: 'इंदौर',
+            district: 'इंदौर',
+            pincode: '452010',
             status: 'complete',
             createdAt: new Date(Date.now() - 86400000 * 5),
             updatedAt: new Date(Date.now() - 86400000 * 2)
         },
         {
             id: 'app3',
-            applicantName: 'अनिल यादव',
+            name: 'अनिल यादव',
             fatherName: 'सुरेश यादव',
             mobileNumber: '9876543212',
-            aadharNumber: '3456 7890 1234',
-            dob: '1978-12-10',
-            gender: 'male',
-            serviceType: 'scholarship',
-            district: 'jabalpur',
-            address: '12, रामपुर, जबलपुर, मध्य प्रदेश',
-            pincode: '482001',
             email: 'anil.yadav@example.com',
+            aadharNumber: '345678901234',
+            gender: 'male',
+            dob: '1978-12-10',
+            service: 'छात्रवृत्ति',
+            address: '12, रामपुर, जबलपुर, मध्य प्रदेश',
+            village: 'रामपुर',
+            tehsil: 'जबलपुर',
+            district: 'जबलपुर',
+            pincode: '482001',
             status: 'pending',
             createdAt: new Date(Date.now() - 86400000 * 1),
             updatedAt: new Date(Date.now() - 86400000 * 1)
-        },
-        {
-            id: 'app4',
-            applicantName: 'मीना देवी',
-            fatherName: 'रामलाल',
-            mobileNumber: '9876543213',
-            aadharNumber: '4567 8901 2345',
-            dob: '1965-03-25',
-            gender: 'female',
-            serviceType: 'pension',
-            district: 'gwalior',
-            address: '78, लक्ष्मीपुरम, ग्वालियर, मध्य प्रदेश',
-            pincode: '474001',
-            email: 'meena.devi@example.com',
-            status: 'processing',
-            createdAt: new Date(Date.now() - 86400000 * 3),
-            updatedAt: new Date(Date.now() - 86400000 * 1)
-        },
-        {
-            id: 'app5',
-            applicantName: 'विकास चौहान',
-            fatherName: 'मनोज चौहान',
-            mobileNumber: '9876543214',
-            aadharNumber: '5678 9012 3456',
-            dob: '2000-11-05',
-            gender: 'male',
-            serviceType: 'housing',
-            district: 'ujjain',
-            address: '34, नवलखा, उज्जैन, मध्य प्रदेश',
-            pincode: '456010',
-            email: 'vikas.chouhan@example.com',
-            status: 'reject',
-            createdAt: new Date(Date.now() - 86400000 * 10),
-            updatedAt: new Date(Date.now() - 86400000 * 5)
-        },
-        {
-            id: 'app6',
-            applicantName: 'प्रियंका सिंह',
-            fatherName: 'रवि सिंह',
-            mobileNumber: '9876543215',
-            aadharNumber: '6789 0123 4567',
-            dob: '1995-07-18',
-            gender: 'female',
-            serviceType: 'samagra',
-            district: 'sagar',
-            address: '56, रामपुरी, सागर, मध्य प्रदेश',
-            pincode: '470001',
-            email: 'priyanka.singh@example.com',
-            status: 'pending',
-            createdAt: new Date(Date.now() - 86400000 * 0.5),
-            updatedAt: new Date(Date.now() - 86400000 * 0.5)
-        },
-        {
-            id: 'app7',
-            applicantName: 'अमित जैन',
-            fatherName: 'संजय जैन',
-            mobileNumber: '9876543216',
-            aadharNumber: '7890 1234 5678',
-            dob: '1988-09-30',
-            gender: 'male',
-            serviceType: 'mpbhoj',
-            district: 'ratlam',
-            address: '23, शास्त्री नगर, रतलाम, मध्य प्रदेश',
-            pincode: '457001',
-            email: 'amit.jain@example.com',
-            status: 'processing',
-            createdAt: new Date(Date.now() - 86400000 * 4),
-            updatedAt: new Date(Date.now() - 86400000 * 2)
-        },
-        {
-            id: 'app8',
-            applicantName: 'सरोज वर्मा',
-            fatherName: 'दिनेश वर्मा',
-            mobileNumber: '9876543217',
-            aadharNumber: '8901 2345 6789',
-            dob: '1972-02-14',
-            gender: 'female',
-            serviceType: 'pension',
-            district: 'satna',
-            address: '67, गांधी नगर, सतना, मध्य प्रदेश',
-            pincode: '485001',
-            email: 'saroj.varma@example.com',
-            status: 'pending',
-            createdAt: new Date(Date.now() - 86400000 * 1.5),
-            updatedAt: new Date(Date.now() - 86400000 * 1.5)
         }
     ];
     
