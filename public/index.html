@@ -724,7 +724,7 @@ window.trackApplication = async function () {
 
 
 
-function filterServices(category) {
+/*function filterServices(category) {
     // 1. Sabhi Buttons se 'active' class hatao aur clicked button ko 'active' karo
     const tabs = document.querySelectorAll('.category-tab');
     tabs.forEach(tab => {
@@ -753,9 +753,28 @@ function filterServices(category) {
 // 🚀 SABSE ZAROORI: Page load hote hi sirf 'Most' dikhane ke liye
 document.addEventListener('DOMContentLoaded', () => {
     filterServices('most'); 
-});
+});*/
 
+function filterServices(category) {
+    const cards = document.querySelectorAll('.service-card');
     
+    cards.forEach(card => {
+        // Card ki categories ko uthao (Jaise: "most yojna")
+        const cardCategories = card.getAttribute('data-category');
+        
+        // Agar 'all' select hai, ya card ki categories mein wo word shamil hai
+        // .split(' ') se hum space check kar rahe hain
+        if (category === 'all' || cardCategories.split(' ').includes(category)) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+    // Site khulte hi sirf 'most' wale dikhane ke liye
+document.addEventListener('DOMContentLoaded', () => {
+    filterServices('most'); 
+});
 </script>
 
 </script>
@@ -795,6 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
