@@ -37,51 +37,91 @@
 
 <form id="mpbhojForm"
       data-service="MPBHOJ Application"
-      data-collection="applications"
+      data-collection="applications">
+  
   <!-- Admission -->
   <div class="tab-content active">
+    <label>रोल नंबर *</label>
+    <input name="rollNumber" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
+
+    <label>DOB (जन्म तिथि) *</label>
+    <input type="date" name="dob" class="form-input" data-required />
+
     <label>छात्र का नाम *</label>
-    <input name="studentName" class="form-input" data-required />
+    <input name="studentName" class="form-input" data-required placeholder="पूरा नाम दर्ज करें" />
 
     <label>पिता का नाम *</label>
-    <input name="fatherName" class="form-input" data-required />
+    <input name="fatherName" class="form-input" data-required placeholder="पिता का नाम दर्ज करें" />
+
+    <label>माता का नाम *</label>
+    <input name="motherName" class="form-input" data-required placeholder="माता का नाम दर्ज करें" />
+
+    <label>आधार नंबर *</label>
+    <input name="aadharNumber" class="form-input" data-required placeholder="12 अंकों का आधार नंबर" maxlength="12" pattern="[0-9]{12}" />
 
     <label>ABC ID *</label>
-    <input name="abcId" class="form-input" data-required />
+    <input name="abcId" class="form-input" data-required placeholder="ABC ID दर्ज करें" />
 
     <label>मोबाइल नंबर *</label>
-    <input type="tel" name="mobile" class="form-input" data-required />
+    <input type="tel" name="mobile" class="form-input" data-required placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" pattern="[0-9]{10}" />
 
     <label>E-mail *</label>
-    <input type="email" name="email" class="form-input" data-required />
+    <input type="email" name="email" class="form-input" data-required placeholder="ईमेल पता दर्ज करें" />
+
+    <label>पूरा पता *</label>
+    <textarea name="address" class="form-input" data-required rows="3" placeholder="गांव, शहर, जिला, राज्य"></textarea>
+
+    <label>पिन कोड *</label>
+    <input name="pincode" class="form-input" data-required placeholder="6 अंकों का पिन कोड" maxlength="6" pattern="[0-9]{6}" />
+
+    <label>बैंक खाता नंबर *</label>
+    <input name="accountNumber" class="form-input" data-required placeholder="खाता नंबर दर्ज करें" />
+
+    <label>बैंक IFSC कोड *</label>
+    <input name="ifscCode" class="form-input" data-required placeholder="जैसे: SBIN0001234" />
+
+    <label>बैंक का नाम *</label>
+    <input name="bankName" class="form-input" data-required placeholder="बैंक का नाम दर्ज करें" />
   </div>
 
   <!-- Supplement -->
   <div class="tab-content">
     <label>रोल नंबर *</label>
-    <input name="rollNumber" class="form-input" data-required />
+    <input name="rollNumber" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
 
-    <label>DOB *</label>
+    <label>DOB (जन्म तिथि) *</label>
     <input type="date" name="dob" class="form-input" data-required />
   </div>
 
   <!-- Result -->
   <div class="tab-content">
     <label>रोल नंबर *</label>
-    <input name="resultRoll" class="form-input" data-required />
+    <input name="resultRoll" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
+
+    <label>DOB (जन्म तिथि) *</label>
+    <input type="date" name="dob" class="form-input" data-required />
   </div>
 
   <!-- Exam -->
   <div class="tab-content">
     <label>रोल नंबर *</label>
-    <input name="examRoll" class="form-input" data-required />
+    <input name="examRoll" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
+
+    <label>DOB (जन्म तिथि) *</label>
+    <input type="date" name="dob" class="form-input" data-required />
 
     <label>विषय *</label>
-    <input name="subject" class="form-input" data-required />
+    <input name="subject" class="form-input" data-required placeholder="विषय का नाम दर्ज करें" />
   </div>
 
   <!-- Other -->
   <div class="tab-content">
+    <label>रोल नंबर *</label>
+    <input name="rollNumber" class="form-input" data-required placeholder="रोल नंबर दर्ज करें" />
+
+    <label>DOB (जन्म तिथि) *</label>
+    <input type="date" name="dob" class="form-input" data-required />
+
     <label>सेवा *</label>
     <select name="service" class="form-input" data-required>
       <option value="">Select</option>
@@ -124,7 +164,7 @@ function openTab(i){
   tabs[i].classList.add('active');
   contents[i].classList.add('active');
 
-  contents[i].querySelectorAll('[data-req]').forEach(el=>{
+  contents[i].querySelectorAll('[data-req], [data-required]').forEach(el=>{
     el.setAttribute('required','');
   });
 }
