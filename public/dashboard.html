@@ -1061,9 +1061,7 @@ pdfPage.style.padding = '95px'; // 25mm = 95px
 // 3. Prepare content
 const originalAppNo = preparePDFContent(currentItem, `AIO-${currentItem.id.substring(0,8).toUpperCase()}`);
 // 4. Generate QR code with proper error handling
-const qrData = `Application: ${originalAppNo}
-Name: ${currentItem.applicantName || currentItem.studentName || ""}
-Service: ${getServiceName(currentItem)}`;
+const qrData = `Application: ${originalAppNo}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
 const qrImage = await generateQRImage(qrData, 120);
 // 5. Insert QR with fallback
 const qrContainer = document.getElementById('pdfQR');
@@ -1111,13 +1109,10 @@ compress: true
 // 9. Generate and save PDF
 await html2pdf().set(opt).from(element).save();
 // 10. Success message
-alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!
-आवेदन क्रमांक: ${originalAppNo}`);
+alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!\nआवेदन क्रमांक: ${originalAppNo}`);
 } catch (error) {
 console.error("PDF Generation Error:", error);
-alert("PDF निर्माण में त्रुटि।
-कृपया Chrome ब्राउज़र में पुनः प्रयास करें।
-त्रुटि: " + (error.message || error));
+alert("PDF निर्माण में त्रुटि।\nकृपया Chrome ब्राउज़र में पुनः प्रयास करें।\nत्रुटि: " + (error.message || error));
 } finally {
 // Always clean up - restore original positioning
 const pdfContent = document.getElementById("pdfContent");
@@ -1142,9 +1137,7 @@ const currentAppId = appNoElement.dataset?.appId || '';
 const currentItem = allApplications.find(a => a.id === currentAppId);
 if (currentItem) {
 preparePDFContent(currentItem);
-const qrData = `Application: AIO-${currentItem.id.substring(0,8).toUpperCase()}
-Name: ${currentItem.applicantName || currentItem.studentName || ""}
-Service: ${getServiceName(currentItem)}`;
+const qrData = `Application: AIO-${currentItem.id.substring(0,8).toUpperCase()}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
 generateQRImage(qrData, 120).then(qrImage => {
 if (qrImage) {
 document.getElementById('pdfQR').innerHTML = `<img src="${qrImage}" width="120" height="120" style="display:block;">`;
