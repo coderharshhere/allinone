@@ -759,15 +759,19 @@ function filterServices(category) {
     const cards = document.querySelectorAll('.service-card');
     
     cards.forEach(card => {
-        // Card ki categories ko uthao (Jaise: "most yojna")
+        // Card ki categories ko uthao (e.g., "most university")
         const cardCategories = card.getAttribute('data-category');
-        
-        // Agar 'all' select hai, ya card ki categories mein wo word shamil hai
-        // .split(' ') se hum space check kar rahe hain
-        if (category === 'all' || cardCategories.split(' ').includes(category)) {
+
+        // Logic: 
+        // 1. Agar 'all' select hai
+        // 2. YA card ki categories ke string mein wo category maujood hai
+        if (category === 'all' || cardCategories.includes(category)) {
             card.style.display = "block";
+            // Animation ke liye (optional)
+            setTimeout(() => card.style.opacity = "1", 10);
         } else {
             card.style.display = "none";
+            card.style.opacity = "0";
         }
     });
 }
@@ -814,6 +818,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
