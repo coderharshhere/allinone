@@ -163,7 +163,7 @@
   </div>
 </section>
 
-    <!-- Main Content -->
+    <!-- Main Content --
   
 
 
@@ -224,7 +224,107 @@
         color: #1e3a8a !important;
     }
 
+</style>-->
+
+
+
+      <style>
+/* Navy Blue Color Palette */
+:root {
+    --navy-dark: #1e3a8a; /* Navy Blue */
+    --blue-soft: #eff6ff; /* Very Light Blue */
+    --blue-border: #dbeafe;
+}
+
+/* Arrow Animation: Left to Right */
+@keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+}
+.animate-bounce-right {
+    animation: bounceRight 1s infinite;
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* Soft Tab Styling */
+.soft-tab {
+    padding: 0.5rem 1.2rem;
+    background-color: transparent;
+    color: #64748b; /* Slate-500 */
+    font-weight: 500;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.soft-tab:hover {
+    background-color: var(--blue-soft);
+    color: var(--navy-dark);
+}
+
+/* Active State: Soft Blue Background with Navy Text */
+.active-soft {
+    background-color: var(--blue-soft) !important;
+    color: var(--navy-dark) !important;
+    font-weight: 700;
+    border: 1px solid var(--blue-border) !important;
+}
+
+.text-navy-700 { color: var(--navy-dark); }
+
 </style>
+
+<div class="max-w-7xl mx-auto px-4 mb-10">
+    <div id="filterWrapper" class="relative flex items-center bg-slate-50 rounded-2xl p-1 transition-all duration-500 ease-in-out border border-slate-200 overflow-hidden h-14">
+        
+        <div id="filterLabel" class="flex items-center gap-2 px-4 cursor-pointer min-w-max text-navy-700 hover:text-blue-600 transition-colors">
+            <span class="text-xs md:text-sm font-semibold tracking-tight uppercase opacity-70"> click for Fast Search</span>
+            <i class="fas fa-arrow-right text-xs animate-bounce-right"></i>
+        </div>
+
+        <div id="scrollTabs" class="flex gap-2 overflow-x-auto items-center px-2 opacity-0 invisible transition-all duration-500 translate-x-5 scrollbar-hide">
+            <button onclick="filterServices('all', this)" class="soft-tab active-soft">All</button>
+            <button onclick="filterServices('certificates', this)" class="soft-tab">प्रमाण पत्र</button>
+            <button onclick="filterServices('yojna', this)" class="soft-tab">सरकारी योजनाएं</button>
+            <button onclick="filterServices('form', this)" class="soft-tab">यूनिवर्सिटी/फार्म</button>
+            <button onclick="filterServices('yojna', this)" class="soft-tab">कृषि सेवा (MP)</button>
+            <button onclick="filterServices('job', this)" class="soft-tab">रोजगार पंजीयन </button>
+        </div>
+    </div>
+</div>
+
+<script>
+const filterLabel = document.getElementById('filterLabel');
+const scrollTabs = document.getElementById('scrollTabs');
+
+filterLabel.addEventListener('click', () => {
+    // Label ko slide karke gayab karein
+    filterLabel.classList.add('opacity-0', '-translate-x-full');
+    setTimeout(() => { filterLabel.style.display = 'none'; }, 300);
+    
+    // Tabs ko soft tarike se show karein
+    scrollTabs.classList.remove('opacity-0', 'invisible', 'translate-x-5');
+    scrollTabs.classList.add('opacity-100', 'visible', 'translate-x-0');
+});
+
+function filterServices(category, btn) {
+    // Remove active style from all
+    document.querySelectorAll('.soft-tab').forEach(t => t.classList.remove('active-soft'));
+    // Add to clicked
+    if(btn) btn.classList.add('active-soft');
+
+    // Your existing card filter logic
+    const cards = document.querySelectorAll('.service-card');
+    cards.forEach(card => {
+        const cats = card.getAttribute('data-category') || "";
+        card.style.display = (category === 'all' || cats.includes(category)) ? "block" : "none";
+    });
+}
+</script>
+
 
  
 
@@ -240,7 +340,7 @@
 
                     
                     <!-- Samagra Card -->
-                    <div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="most">
+                    <div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="all">
                         <div class="text-blue-600 text-3xl mb-4"><i class="fas fa-id-card"></i></div>
                         <h4 class="font-bold text-lg mb-2">समग्र ई-केवाईसी</h4>
                         <p class="text-sm text-gray-600 mb-6">समग्र आईडी में आधार लिंक करने की प्रक्रिया।</p>
@@ -257,7 +357,7 @@
 
                     <!-- Income Certificate -->
                     <!-- आय प्रमाण पत्र -->
- <div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates most">
+ <div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates">
                         <div class="text-orange-600 text-3xl mb-4"><i class="fas fa-file-alt"></i></div>
                         <h4 class="font-bold text-lg mb-2">आय प्रमाण पत्र</h4>
                         <p class="text-sm text-gray-600 mb-6">वार्षिक आय का डिजिटल प्रमाण पत्र।</p>
@@ -265,7 +365,7 @@
                     </div>
 
 <!-- जाति प्रमाण पत्र -->
-<div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates most">
+<div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates">
                         <div class="text-indigo-600 text-3xl mb-4"><i class="fas fa-users-rectangle"></i></div>
                         <h4 class="font-bold text-lg mb-2">जाति प्रमाण पत्र</h4>
                         <p class="text-sm text-gray-600 mb-6">SC / ST / OBC डिजिटल जाति प्रमाण पत्र।</p>
@@ -273,7 +373,7 @@
                     </div>
 
 <!-- निवास प्रमाण पत्र -->
-<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates most">
+<div class="service-card bg-white p-5 rounded-xl shadow-sm border border-gray-100" data-category="certificates">
     <div class="text-blue-600 text-3xl mb-4"><i class="fas fa-home"></i></div>
     <h4 class="font-bold text-lg mb-2">निवास प्रमाण पत्र</h4>
     <p class="text-sm text-gray-600 mb-4">मध्यप्रदेश निवास का प्रमाण।</p>
@@ -281,7 +381,7 @@
 </div>
 
 <!-- जन्म प्रमाण पत्र -->
-<div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates most">
+<div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates">
                         <div class="text-pink-600 text-3xl mb-4"><i class="fas fa-baby"></i></div>
                         <h4 class="font-bold text-lg mb-2">जन्म प्रमाण पत्र</h4>
                         <p class="text-sm text-gray-600 mb-6">नया जन्म पंजीकरण एवं प्रमाण पत्र।</p>
@@ -289,7 +389,7 @@
                     </div>
 
 <!-- मृत्यु प्रमाण पत्र -->
-<div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates most">
+<div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="certificates">
                         <div class="text-gray-700 text-3xl mb-4"><i class="fas fa-book-dead"></i></div>
                         <h4 class="font-bold text-lg mb-2">मृत्यु प्रमाण पत्र</h4>
                         <p class="text-sm text-gray-600 mb-6">मृत्यु पंजीकरण के लिए आवेदन।</p>
@@ -338,7 +438,7 @@
                     </div>
 
 <!-- mp bhoj work -->
-    <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="form most">
+    <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="form">
     <div class="text-teal-600 text-3xl mb-4"><i class="fa-solid fa-building-columns"></i></div>
     <h4 class="font-bold text-lg mb-2">Mp BHOJ UNIVERSITY BHOPAL</h4>
     <p class="text-sm text-gray-600 mb-4">MPBOU</p>
@@ -364,7 +464,7 @@
     </a>
 </div>-->
 
-        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="most">
+        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna">
     <div class="text-teal-600 text-3xl mb-4">
         <i class="fa-solid fa-wheat-awn"></i>
     </div>
@@ -375,7 +475,7 @@
     </a>
 </div>
 
-     <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="most">
+     <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna">
     <div class="text-teal-600 text-3xl mb-4">
         <i class="fa-solid fa-heart-pulse"></i>
     </div>
@@ -397,7 +497,7 @@
     </a>
 </div>
 
-        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna most">
+        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna">
     <div class="text-green-600 text-3xl mb-4">
         <i class="fa-solid fa-tractor"></i>
     </div>
@@ -419,7 +519,7 @@
     </a>
 </div>
 
-        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna most">
+        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna">
     <div class="text-indigo-600 text-3xl mb-4">
         <i class="fa-solid fa-house-chimney-window"></i>
     </div>
@@ -430,7 +530,7 @@
     </a>
 </div>
 
-        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="social">
+        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna">
     <div class="text-violet-600 text-3xl mb-4">
         <i class="fa-solid fa-person-cane"></i>
     </div>
@@ -473,7 +573,7 @@
     </a>
 </div>
 
-        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="job most">
+        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="job">
     <div class="text-blue-600 text-3xl mb-4">
         <i class="fa-solid fa-user-tie"></i>
     </div>
@@ -515,7 +615,7 @@
         Apply Now <i class="fas fa-arrow-right"></i>
     </a>
 </div>
-        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna most">
+        <div class="service-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100" data-category="yojna">
     <div class="text-purple-600 text-3xl mb-4">
         <i class="fa-solid fa-graduation-cap"></i>
     </div>
@@ -755,32 +855,6 @@ document.addEventListener('DOMContentLoaded', () => {
     filterServices('most'); 
 });*/
 
-function filterServices(category) {
-    const cards = document.querySelectorAll('.service-card');
-    
-    cards.forEach(card => {
-        // Card ki categories ko uthao (e.g., "most university")
-        const cardCategories = card.getAttribute('data-category');
-
-        // Logic: 
-        // 1. Agar 'all' select hai
-        // 2. YA card ki categories ke string mein wo category maujood hai
-        if (category === 'all' || cardCategories.includes(category)) {
-            card.style.display = "block";
-            // Animation ke liye (optional)
-            setTimeout(() => card.style.opacity = "1", 10);
-        } else {
-            card.style.display = "none";
-            card.style.opacity = "0";
-        }
-    });
-}
-    // Site khulte hi sirf 'most' wale dikhane ke liye
-document.addEventListener('DOMContentLoaded', () => {
-    filterServices('most'); 
-});
-</script>
-
 </script>
 
  <script src="assets/js/script.js?v=1.0"></script>
@@ -818,6 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
