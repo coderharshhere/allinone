@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | AllInOne MP</title>
+    <title>Login | AllInOne MP Govt Portal</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -13,7 +16,7 @@
             font-family: 'Noto Sans Devanagari', sans-serif;
         }
         .login-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
         }
         .input-error {
             border-color: #ef4444 !important;
@@ -27,74 +30,84 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+    <!-- ================= STANDARD HEADER START ================= -->
+    <div id="header"></div>
+    <!-- ================= STANDARD HEADER END ================= -->
 
     <!-- ================= LOGIN MAIN CONTENT START ================= -->
-    <div class="min-h-screen flex items-center justify-center px-4 py-12 login-gradient">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden">
+    <main class="flex-grow flex items-center justify-center px-4 py-12 login-gradient">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden">
             
             <!-- Decorative Element -->
-            <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+            <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
 
-            <!-- Logo/Icon Section -->
+            <!-- Title Section -->
             <div class="text-center mb-8">
-                <div class="bg-gradient-to-br from-blue-500 to-purple-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform hover:scale-105 transition">
-                    <i class="fas fa-user-shield text-white text-3xl"></i>
+                <div class="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-lock text-blue-600 text-2xl"></i>
                 </div>
-                <h2 class="text-3xl font-bold text-gray-800">Admin Login</h2>
+                <h2 class="text-2xl font-bold text-gray-800">पोर्टल लॉगिन</h2>
                 <p class="text-sm text-gray-500 mt-2">
-                    AllInOne MP - Admin Panel
+                    सुरक्षित सेवाओं का लाभ लेने के लिए साइन-इन करें
                 </p>
             </div>
 
             <!-- Login Form -->
-            <form id="loginForm" class="space-y-5">
-                <!-- Email Field -->
+            <form id="loginForm" class="space-y-6">
+
+                <!-- Email Field - WITH AUTOCOMPLETE -->
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">
-                        <i class="fas fa-envelope text-blue-600 mr-1"></i>
                         ईमेल आईडी
                     </label>
                     <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                            <i class="fas fa-envelope"></i>
+                        </span>
                         <input 
                             type="email" 
                             id="email" 
                             name="email" 
                             required
-                            placeholder="admin@example.com"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            aria-required="true">
+                            autocomplete="username"
+                            placeholder="आपका ईमेल दर्ज करें"
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            aria-required="true"
+                            aria-describedby="email-error">
                     </div>
                     <p id="email-error" class="error-message" role="alert"></p>
                 </div>
 
-                <!-- Password Field -->
+                <!-- Password Field - WITH AUTOCOMPLETE (CRITICAL FIX) -->
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">
-                        <i class="fas fa-lock text-blue-600 mr-1"></i>
                         पासवर्ड
                     </label>
                     <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                            <i class="fas fa-key"></i>
+                        </span>
                         <input 
                             type="password" 
                             id="password" 
                             name="password" 
                             required
+                            autocomplete="current-password"
                             minlength="6"
                             placeholder="••••••••"
-                            class="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            aria-required="true">
-                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-eye" id="eyeIcon"></i>
-                        </button>
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            aria-required="true"
+                            aria-describedby="password-error">
                     </div>
                     <p id="password-error" class="error-message" role="alert"></p>
                 </div>
 
-                <!-- Remember Me -->
+                <!-- Remember & Forgot Password -->
                 <div class="flex items-center justify-between text-sm">
                     <label class="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" id="rememberMe" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
                         <span class="text-gray-600 group-hover:text-blue-700">मुझे याद रखें</span>
                     </label>
                     <a href="#" class="text-blue-600 font-semibold hover:underline">
@@ -105,58 +118,46 @@
                 <!-- Login Button -->
                 <button type="submit"
                     id="loginBtn"
-                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transform active:scale-95 transition shadow-lg disabled:opacity-75 disabled:cursor-not-allowed">
-                    <span id="btnText">
-                        <i class="fas fa-sign-in-alt mr-2"></i>
-                        लॉगिन करें
-                    </span>
-                    <span id="btnSpinner" class="hidden">
-                        <i class="fas fa-spinner animate-spin mr-2"></i>
-                        लॉगिन हो रहा है...
+                    class="w-full bg-blue-700 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-800 transform active:scale-95 transition shadow-lg shadow-blue-200 disabled:opacity-75 disabled:cursor-not-allowed">
+                    <span id="btnText">लॉगिन करें</span>
+                    <span id="btnSpinner" class="hidden inline-block ml-2 animate-spin">
+                        <i class="fas fa-spinner"></i>
                     </span>
                 </button>
             </form>
 
             <!-- Divider -->
-            <div class="relative my-6">
+            <div class="relative my-8">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-gray-200"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-400">•••</span>
+                    <span class="px-2 bg-white text-gray-400">या</span>
                 </div>
             </div>
 
-            <!-- Back to Home -->
+            <!-- Registration Link -->
             <div class="text-center">
-                <a href="index.html" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition font-medium">
-                    <i class="fas fa-home mr-2"></i>
-                    मुख्य पृष्ठ पर वापस जाएं
+                <p class="text-sm text-gray-600">
+                    अभी तक अकाउंट नहीं है? 
+                    <a href="#" class="text-blue-700 font-bold hover:underline ml-1">
+                        नया पंजीकरण करें
+                    </a>
+                </p>
+                <a href="index.html" class="inline-block mt-6 text-xs text-gray-400 hover:text-blue-600 transition">
+                    <i class="fas fa-arrow-left mr-1"></i> मुख्य पृष्ठ पर वापस जाएं
                 </a>
             </div>
-
-            <!-- Version Info -->
-            <div class="mt-6 text-center">
-                <p class="text-xs text-gray-400">
-                    AllInOne MP v2.0 | Secure Admin Portal
-                </p>
-            </div>
         </div>
-    </div>
+    </main>
     <!-- ================= LOGIN MAIN CONTENT END ================= -->
 
-    <!-- Success/Error Toast -->
-    <div id="toast" class="fixed top-4 right-4 bg-white rounded-lg shadow-2xl p-4 transform translate-x-full transition-transform duration-300 z-50 border-l-4 hidden">
-        <div class="flex items-center gap-3">
-            <i id="toastIcon" class="text-2xl"></i>
-            <div>
-                <p id="toastTitle" class="font-bold text-gray-800"></p>
-                <p id="toastMessage" class="text-sm text-gray-600"></p>
-            </div>
-        </div>
-    </div>
+    <!-- ================= STANDARD FOOTER START ================= -->
+    <div id="footer"></div>
+    <!-- ================= STANDARD FOOTER END ================= -->
 
     <script type="module">
+        // Firebase Imports - FIXED URLS (no trailing spaces)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -168,6 +169,7 @@
             projectId: "allinone-aa89"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -181,56 +183,18 @@
         const btnSpinner = document.getElementById("btnSpinner");
         const emailError = document.getElementById("email-error");
         const passwordError = document.getElementById("password-error");
-        const togglePassword = document.getElementById("togglePassword");
-        const eyeIcon = document.getElementById("eyeIcon");
-
-        // Toast notification
-        function showToast(type, title, message) {
-            const toast = document.getElementById('toast');
-            const toastIcon = document.getElementById('toastIcon');
-            const toastTitle = document.getElementById('toastTitle');
-            const toastMessage = document.getElementById('toastMessage');
-
-            toast.classList.remove('hidden');
-            
-            if (type === 'success') {
-                toast.style.borderColor = '#22c55e';
-                toastIcon.className = 'fas fa-check-circle text-green-500 text-2xl';
-            } else {
-                toast.style.borderColor = '#ef4444';
-                toastIcon.className = 'fas fa-exclamation-circle text-red-500 text-2xl';
-            }
-            
-            toastTitle.textContent = title;
-            toastMessage.textContent = message;
-            
-            setTimeout(() => {
-                toast.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                toast.style.transform = 'translateX(150%)';
-                setTimeout(() => toast.classList.add('hidden'), 300);
-            }, 4000);
-        }
-
-        // Toggle Password Visibility
-        togglePassword.addEventListener("click", () => {
-            const type = passwordInput.type === "password" ? "text" : "password";
-            passwordInput.type = type;
-            eyeIcon.classList.toggle("fa-eye");
-            eyeIcon.classList.toggle("fa-eye-slash");
-        });
 
         // Form Validation
         function validateForm() {
             let isValid = true;
             
+            // Reset errors
             emailError.style.display = "none";
             passwordError.style.display = "none";
             emailInput.classList.remove("input-error");
             passwordInput.classList.remove("input-error");
 
+            // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(emailInput.value.trim())) {
                 showError(emailError, "कृपया मान्य ईमेल पता दर्ज करें");
@@ -238,6 +202,7 @@
                 isValid = false;
             }
 
+            // Password validation
             if (passwordInput.value.length < 6) {
                 showError(passwordError, "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए");
                 passwordInput.classList.add("input-error");
@@ -254,17 +219,17 @@
 
         function setLoading(state) {
             if (state) {
-                btnText.classList.add("hidden");
+                btnText.textContent = "लॉगिन हो रहा है...";
                 btnSpinner.classList.remove("hidden");
                 loginBtn.disabled = true;
             } else {
-                btnText.classList.remove("hidden");
+                btnText.textContent = "लॉगिन करें";
                 btnSpinner.classList.add("hidden");
                 loginBtn.disabled = false;
             }
         }
 
-        // Form Submission
+        // Form Submission Handler
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             
@@ -273,99 +238,68 @@
             setLoading(true);
             
             try {
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
-
                 // Step 1: Firebase Authentication
-                console.log("🔐 Attempting login for:", email);
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await signInWithEmailAndPassword(
+                    auth, 
+                    emailInput.value.trim(), 
+                    passwordInput.value
+                );
                 const user = userCredential.user;
-                console.log("✅ Firebase auth successful for user:", user.uid);
 
-                // Step 2: Check admin status in Firestore
-                console.log("📋 Checking admin status...");
-                const adminDocRef = doc(db, "admins", user.uid);
-                const adminDoc = await getDoc(adminDocRef);
+                // Step 2: Check if user is admin in Firestore
+                const adminDoc = await getDoc(doc(db, "admins", user.uid));
                 
                 if (!adminDoc.exists()) {
-                    console.log("❌ User is not an admin");
-                    await auth.signOut();
-                    throw new Error("ADMIN_NOT_FOUND");
+                    throw new Error("आपका खाता प्रशासक अनुमति के साथ पंजीकृत नहीं है");
                 }
 
                 const adminData = adminDoc.data();
-                console.log("✅ Admin data retrieved:", adminData);
                 
+                // Step 3: Check admin status
                 if (adminData.status !== "active") {
-                    console.log("❌ Admin account is inactive");
-                    await auth.signOut();
-                    throw new Error("ADMIN_INACTIVE");
+                    throw new Error("आपका खाता निष्क्रिय है। कृपया प्रशासन से संपर्क करें");
                 }
 
-                // Step 3: Store admin info in localStorage
-                console.log("💾 Storing admin info...");
-                localStorage.setItem('adminLoggedIn', 'true');
-                localStorage.setItem('adminToken', await user.getIdToken());
-                localStorage.setItem('adminEmail', user.email);
-                localStorage.setItem('adminName', adminData.name || user.email.split('@')[0]);
-                localStorage.setItem('adminRole', adminData.role || 'admin');
-                localStorage.setItem('loginTime', new Date().getTime().toString());
-
-                // Step 4: Success - show message and redirect
-                console.log("🎉 Login successful!");
-                showToast('success', 'लॉगिन सफल!', 'डैशबोर्ड पर रीडायरेक्ट हो रहा है...');
-
-                setTimeout(() => {
-                    window.location.replace("admin.html");
-                }, 1500);
+                // Step 4: Role-based redirection
+                switch(adminData.role) {
+                    case "super_admin":
+                        window.location.href = "admindashboard.html";
+                        break;
+                    case "admin":
+                        window.location.href = "dashboard.html";
+                        break;
+                    default:
+                        throw new Error("अमान्य उपयोगकर्ता भूमिका");
+                }
                 
             } catch (error) {
-                console.error("❌ Login Error:", error);
+                console.error("Login Error:", error);
                 setLoading(false);
                 
-                let title = "लॉगिन विफल";
-                let message = "कृपया पुनः प्रयास करें";
+                // User-friendly error messages in Hindi
+                let errorMessage = "लॉगिन विफल। कृपया अपने क्रेडेंशियल की जांच करें";
                 
-                if (error.message === "ADMIN_NOT_FOUND") {
-                    title = "एडमिन नहीं मिला";
-                    message = "यह खाता एडमिन के रूप में पंजीकृत नहीं है";
-                } else if (error.message === "ADMIN_INACTIVE") {
-                    title = "खाता निष्क्रिय";
-                    message = "आपका खाता निष्क्रिय है। प्रशासन से संपर्क करें";
-                } else if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" || error.code === "auth/user-not-found") {
-                    title = "गलत क्रेडेंशियल";
-                    message = "ईमेल या पासवर्ड गलत है";
+                if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" || error.code === "auth/user-not-found") {
+                    errorMessage = "अमान्य ईमेल या पासवर्ड। कृपया पुनः प्रयास करें";
                     emailInput.classList.add("input-error");
                     passwordInput.classList.add("input-error");
                 } else if (error.code === "auth/too-many-requests") {
-                    title = "बहुत सारे प्रयास";
-                    message = "कुछ देर बाद प्रयास करें";
-                } else if (error.code === "auth/network-request-failed") {
-                    title = "नेटवर्क त्रुटि";
-                    message = "इंटरनेट कनेक्शन जांचें";
+                    errorMessage = "बहुत सारे असफल प्रयास। कृपया कुछ देर बाद प्रयास करें";
+                } else if (error.message.includes("खाता पंजीकृत नहीं")) {
+                    errorMessage = error.message;
+                } else if (error.message.includes("निष्क्रिय")) {
+                    errorMessage = error.message;
                 }
                 
-                showToast('error', title, message);
+                alert(`❌ त्रुटि: ${errorMessage}`);
             }
         });
 
-        // Real-time validation
-        emailInput.addEventListener("input", () => {
-            emailInput.classList.remove("input-error");
-            emailError.style.display = "none";
-        });
-        
-        passwordInput.addEventListener("input", () => {
-            passwordInput.classList.remove("input-error");
-            passwordError.style.display = "none";
-        });
-
-        // Enter key support
-        emailInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") passwordInput.focus();
-        });
-
-        console.log("🚀 Admin login page loaded successfully");
+        // Real-time validation on blur
+        emailInput.addEventListener("blur", validateForm);
+        passwordInput.addEventListener("blur", validateForm);
     </script>
+    
+    <script src="assets/js/headerfooter.js?v=1.0" defer></script>
 </body>
 </html>
