@@ -1,20 +1,672 @@
-<!-- ✅ सही किया हुआ JAVASCRIPT CODE -->
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllInOne MP – Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+:root {
+--primary-color: #1e3a8a;
+--secondary-color: #3b82f6;
+--success-color: #22c55e;
+--warning-color: #f59e0b;
+--danger-color: #ef4444;
+--sidebar-width: 280px;
+}
+body {
+font-family: 'Noto Sans Devanagari', sans-serif;
+background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+overflow-x: hidden;
+margin: 0;
+padding: 0;
+min-height: 100vh;
+}
+.loading-screen {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: white;
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 9999;
+transition: opacity 0.3s;
+}
+.loading-spinner {
+width: 50px;
+height: 50px;
+border: 5px solid rgba(59, 130, 246, 0.2);
+border-top-color: #3b82f6;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+}
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+.sidebar {
+width: var(--sidebar-width);
+transition: all 0.3s ease;
+}
+.sidebar.collapsed {
+width: 80px;
+}
+.sidebar.collapsed .sidebar-text {
+display: none;
+}
+.sidebar-text {
+transition: opacity 0.3s ease;
+}
+.main-content {
+transition: margin-left 0.3s ease;
+}
+.main-content.sidebar-collapsed {
+margin-left: 80px;
+}
+.sidebar-collapsed .notification-badge {
+right: 12px;
+}
+.status-badge {
+padding: 4px 10px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 500;
+display: inline-block;
+}
+.status-complete {
+background-color: rgba(34, 197, 94, 0.15);
+color: #166534;
+}
+.status-pending {
+background-color: rgba(245, 158, 11, 0.15);
+color: #92400e;
+}
+.status-reject {
+background-color: rgba(239, 68, 68, 0.15);
+color: #991b1b;
+}
+.status-processing {
+background-color: rgba(59, 130, 246, 0.15);
+color: #1e40af;
+}
+.action-btn {
+p-2 rounded-lg transition-all duration-200 flex items-center justify-center w-9 h-9;
+}
+.action-view {
+background-color: rgba(59, 130, 246, 0.1);
+color: #3b82f6;
+}
+.action-view:hover {
+background-color: rgba(59, 130, 246, 0.2);
+transform: translateY(-1px);
+box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+.action-delete {
+background-color: rgba(239, 68, 68, 0.1);
+color: #ef4444;
+}
+.action-delete:hover {
+background-color: rgba(239, 68, 68, 0.2);
+transform: translateY(-1px);
+box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+.notification-badge {
+position: absolute;
+top: 8px;
+right: 8px;
+background-color: #ef4444;
+color: white;
+font-size: 10px;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+}
+.notification-item.unread {
+background-color: rgba(59, 130, 246, 0.05);
+border-left: 3px solid #3b82f6;
+}
+.fade-in {
+animation: fadeIn 0.5s ease-out;
+}
+.fade-in-delay {
+animation: fadeIn 0.7s ease-out 0.1s both;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.table-row:nth-child(even) {
+background-color: #f8fafc;
+}
+.table-row:hover {
+background-color: #dbeafe;
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+<!-- LOADING SCREEN -->
+<div id="loadingScreen" class="loading-screen">
+<div class="text-center">
+<div class="loading-spinner"></div>
+<p class="mt-4 text-gray-600 font-medium">लोड हो रहा है...</p>
+</div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar bg-gradient-to-b from-blue-900 to-blue-700 text-white h-screen fixed left-0 top-0 z-40 shadow-2xl">
+<div class="p-5 border-b border-blue-600">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
+<div class="bg-white w-10 h-10 rounded flex items-center justify-center">
+<span class="text-blue-900 font-bold text-xl">MP</span>
+</div>
+</div>
+<div class="sidebar-text">
+<h1 class="text-xl font-bold">AllInOne-MP</h1>
+<p class="text-xs opacity-90 mt-1">Admin Panel</p>
+</div>
+</div>
+<button id="sidebarToggle" class="sidebar-text p-2 hover:bg-white/10 rounded-lg transition">
+<i class="fas fa-chevron-left"></i>
+</button>
+</div>
+<div class="mb-2 sidebar-text">
+<div class="bg-white/10 backdrop-blur-sm p-3 rounded-lg">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs opacity-90">सक्रिय उपयोगकर्ता</p>
+<p class="font-bold mt-1" id="sidebarAdminName">लोड हो रहा है...</p>
+</div>
+<div class="bg-yellow-300 text-blue-900 font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm">
+<i class="fas fa-user"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="mt-2 p-3">
+<ul class="space-y-1">
+<li>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm w-full sidebar-text">
+<i class="fas fa-home text-xl"></i>
+<span class="font-medium">डैशबोर्ड</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
+<i class="fas fa-list text-xl"></i>
+<span class="font-medium">आवेदन सूची</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
+<i class="fas fa-chart-bar text-xl"></i>
+<span class="font-medium">विश्लेषण</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
+<i class="fas fa-users text-xl"></i>
+<span class="font-medium">उपयोगकर्ता</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text">
+<i class="fas fa-cog text-xl"></i>
+<span class="font-medium">सेटिंग्स</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-600">
+<div class="flex items-center justify-between sidebar-text">
+<div>
+<p class="text-xs opacity-90">© 2026 AllInOne MP</p>
+<p class="text-xs mt-1 opacity-75">संस्करण 2.0</p>
+</div>
+<button onclick="logout()" class="p-2 hover:bg-white/10 rounded-lg transition" title="लॉगआउट">
+<i class="fas fa-sign-out-alt text-lg"></i>
+</button>
+</div>
+</div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content flex-1 ml-72 container mx-auto px-4 py-6 transition-all">
+<!-- HEADER -->
+<header class="bg-white rounded-2xl shadow-lg p-5 mb-6 fade-in">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<div>
+<h1 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
+<i class="fas fa-tachometer-alt text-blue-600"></i>
+एडमिन डैशबोर्ड
+</h1>
+<p class="text-gray-500 mt-1 text-sm">मध्य प्रदेश सरकार - एक विंडो समाधान</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<button class="relative p-2 hover:bg-gray-100 rounded-full transition" id="notificationBtn">
+<i class="fas fa-bell text-xl text-gray-700"></i>
+<span class="notification-badge">5</span>
+</button>
+<div class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl py-2 hidden z-50" id="notificationDropdown">
+<div class="p-3 border-b border-gray-100">
+<h3 class="font-bold text-gray-800">सूचनाएं</h3>
+<p class="text-xs text-gray-500 mt-1">5 नई सूचनाएं</p>
+</div>
+<div class="max-h-96 overflow-y-auto">
+<div class="notification-item unread p-3 hover:bg-blue-50 transition cursor-pointer">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-medium text-gray-800">नया आवेदन प्राप्त हुआ</p>
+<p class="text-xs text-gray-500 mt-1">समग्र आईडी के लिए नया आवेदन</p>
+</div>
+<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">अभी</span>
+</div>
+</div>
+<div class="notification-item unread p-3 hover:bg-blue-50 transition cursor-pointer">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-medium text-gray-800">आवेदन स्वीकृत</p>
+<p class="text-xs text-gray-500 mt-1">MP भोज योजना आवेदन #AIO-123456</p>
+</div>
+<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">5 मिनट पहले</span>
+</div>
+</div>
+</div>
+<div class="p-3 border-t border-gray-100 text-center">
+<button class="text-blue-600 hover:text-blue-800 font-medium text-sm">सभी सूचनाएं देखें</button>
+</div>
+</div>
+</div>
+<div class="relative group">
+<div class="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-100 rounded-full transition" id="profileButton">
+<div class="bg-gradient-to-br from-yellow-300 to-yellow-400 text-blue-900 font-bold w-10 h-10 rounded-full flex items-center justify-center text-lg">
+<i class="fas fa-user"></i>
+</div>
+<div class="hidden md:block">
+<p class="font-bold text-sm" id="adminName">लोड हो रहा है...</p>
+<p class="text-xs text-gray-500" id="adminEmail">-</p>
+</div>
+<i class="fas fa-chevron-down text-xs hidden md:block"></i>
+</div>
+<div class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl py-2 hidden z-50" id="profileDropdown">
+<div class="p-4 border-b border-gray-100">
+<div class="flex items-center gap-3 mb-2">
+<div class="bg-gradient-to-br from-yellow-300 to-yellow-400 text-blue-900 font-bold w-12 h-12 rounded-full flex items-center justify-center text-xl">
+<i class="fas fa-user"></i>
+</div>
+<div>
+<p class="font-bold text-gray-800" id="profileDropdownName">लोड हो रहा है...</p>
+<p class="text-xs text-gray-500" id="profileDropdownEmail">-</p>
+<p class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded mt-1 inline-block" id="profileDropdownRole">-</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-3 text-xs">
+<div class="bg-gray-100 p-2 rounded">
+<p class="text-gray-500">स्थिति</p>
+<p class="font-bold text-green-600" id="profileDropdownStatus">-</p>
+</div>
+<div class="bg-gray-100 p-2 rounded">
+<p class="text-gray-500">लॉगिन समय</p>
+<p class="font-bold text-blue-600" id="profileDropdownLoginTime">-</p>
+</div>
+</div>
+</div>
+<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition" onclick="viewProfile()">
+<i class="fas fa-user-circle mr-3 text-blue-600"></i> प्रोफ़ाइल देखें
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
+<i class="fas fa-cog mr-3 text-blue-600"></i> सेटिंग्स
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
+<i class="fas fa-history mr-3 text-blue-600"></i> एक्टिविटी लॉग
+</a>
+<div class="border-t my-1"></div>
+<a href="#" onclick="logout()" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition">
+<i class="fas fa-sign-out-alt mr-3"></i> लॉगआउट
+</a>
+</div>
+</div>
+</div>
+</div>
+</header>
+
+<!-- Search and Filters -->
+<div class="bg-white rounded-2xl shadow-lg p-5 mb-6 fade-in">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="relative flex-1 max-w-md">
+<i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+<input type="text" id="searchInput" placeholder="नाम या आईडी खोजें..." class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+</div>
+<div class="flex flex-wrap gap-3">
+<select id="serviceFilter" class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+<option value="">सभी सेवाएं</option>
+<option value="samagra">समग्र आईडी</option>
+<option value="ekyc">ई-केवाईसी</option>
+<option value="mpbhoj">एमपी भोज</option>
+<option value="scholarship">छात्रवृत्ति</option>
+<option value="pension">पेंशन</option>
+</select>
+<select id="statusFilter" class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+<option value="">सभी स्थितियां</option>
+<option value="pending">लंबित</option>
+<option value="processing">प्रोसेसिंग</option>
+<option value="complete">पूर्ण</option>
+<option value="reject">अस्वीकृत</option>
+</select>
+<div class="flex items-center gap-2">
+<input type="date" id="dateFrom" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+<span class="text-gray-500">से</span>
+<input type="date" id="dateTo" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
+<button id="applyFilters" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center">
+<i class="fas fa-filter mr-2"></i> फ़िल्टर लागू करें
+</button>
+<button id="resetFilters" class="bg-gray-200 text-gray-800 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-300 transition flex items-center">
+<i class="fas fa-undo mr-2"></i> रीसेट
+</button>
+<button id="clearFilters" class="bg-red-100 text-red-700 px-6 py-2.5 rounded-lg font-medium hover:bg-red-200 transition flex items-center">
+<i class="fas fa-times mr-2"></i> सभी साफ़ करें
+</button>
+</div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 fade-in">
+<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-600">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm">कुल आवेदन</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-1" id="statTotal">0</h3>
+</div>
+<div class="bg-blue-100 text-blue-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<i class="fas fa-file-alt"></i>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-yellow-500">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm">लंबित</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-1" id="statPending">0</h3>
+<p class="text-sm text-yellow-600 mt-1"><span id="statPendingCount">0</span> नए</p>
+</div>
+<div class="bg-yellow-100 text-yellow-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<i class="fas fa-clock"></i>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-600">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm">पूर्ण</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-1" id="statComplete">0</h3>
+<p class="text-sm text-green-600 mt-1"><span id="statCompleteRate">0%</span> सफलता दर</p>
+</div>
+<div class="bg-green-100 text-green-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<i class="fas fa-check-circle"></i>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-red-600">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm">अस्वीकृत</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-1" id="statRejected">0</h3>
+<p class="text-sm text-red-600 mt-1"><span id="statRejectionRate">0%</span> अस्वीकृति दर</p>
+</div>
+<div class="bg-red-100 text-red-600 w-14 h-14 rounded-full flex items-center justify-center text-2xl">
+<i class="fas fa-times-circle"></i>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 fade-in-delay">
+<div class="bg-white rounded-2xl shadow-lg p-6">
+<h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-chart-line text-blue-600 mr-2"></i>
+मासिक आवेदन प्रवृत्ति
+</h2>
+<canvas id="applicationsChart" height="250"></canvas>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-6">
+<h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+<i class="fas fa-chart-pie text-blue-600 mr-2"></i>
+सेवा प्रकार के अनुसार वितरण
+</h2>
+<canvas id="servicesChart" height="250"></canvas>
+</div>
+</div>
+
+<!-- Applications Table -->
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in-delay">
+<div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+<h2 class="text-xl font-bold text-gray-800">आवेदन सूची</h2>
+<div class="flex flex-wrap gap-3">
+<button id="exportCSV" class="bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-green-700 transition flex items-center">
+<i class="fas fa-file-csv mr-2"></i> CSV निर्यात करें
+</button>
+<button id="exportExcel" class="bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-emerald-700 transition flex items-center">
+<i class="fas fa-file-excel mr-2"></i> Excel निर्यात करें
+</button>
+<button id="printView" class="bg-purple-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-purple-700 transition flex items-center">
+<i class="fas fa-print mr-2"></i> प्रिंट व्यू
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">आवेदन क्रमांक</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">आवेदक का नाम</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">सेवा प्रकार</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">समग्र ID</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">तारीख</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">स्थिति</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">क्रियाएँ</th>
+</tr>
+</thead>
+<tbody id="dataTable" class="bg-white divide-y divide-gray-200">
+<!-- Table data will be inserted here by JavaScript -->
+</tbody>
+</table>
+<div id="emptyState" class="p-12 text-center hidden">
+<i class="fas fa-inbox text-gray-400 text-6xl mb-4"></i>
+<p class="text-gray-500 text-lg">कोई आवेदन नहीं मिला</p>
+<p class="text-gray-400 mt-2">फ़िल्टर सेटिंग्स बदलकर पुनः प्रयास करें</p>
+</div>
+</div>
+<div class="p-4 border-t border-gray-200 flex justify-between items-center">
+<p class="text-sm text-gray-500">कुल आवेदन: <span id="totalApplications" class="font-medium">0</span></p>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">पिछला</button>
+<button class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">1</button>
+<button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">अगला</button>
+</div>
+</div>
+</div>
+</main>
+
+<!-- DETAILS MODAL -->
+<div id="detailModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+<div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+<div class="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-6 rounded-t-2xl sticky top-0 z-10">
+<div class="flex justify-between items-center">
+<h2 class="font-bold text-xl flex items-center">
+<i class="fas fa-file-alt mr-3"></i>
+आवेदन विवरण
+</h2>
+<button onclick="closeDetails()" class="text-white hover:text-gray-200 transition p-2 -mt-2 -mr-2">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<div class="mt-3 flex items-center justify-between flex-wrap gap-3">
+<div>
+<span class="text-lg font-bold">आवेदन क्रमांक:</span>
+<span class="ml-2 bg-blue-900/30 px-3 py-1 rounded font-mono text-lg" id="modalApplicationNo">AIO-XXXXXXXX</span>
+</div>
+<div class="flex gap-3 flex-wrap">
+<button onclick="window.updateStatus('complete')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
+<i class="fas fa-check mr-2"></i> पूर्ण के रूप में चिह्नित करें
+</button>
+<button onclick="window.updateStatus('reject')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
+<i class="fas fa-times mr-2"></i> अस्वीकृत करें
+</button>
+<button onclick="window.downloadPDF()" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-4 py-2 rounded-lg font-medium transition flex items-center">
+<i class="fas fa-download mr-2"></i> PDF डाउनलोड करें
+</button>
+</div>
+</div>
+</div>
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="detailBody">
+<!-- Details will be inserted here by JavaScript -->
+</div>
+</div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profileModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+<div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl">
+<div class="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-6 rounded-t-2xl">
+<h2 class="font-bold text-xl flex items-center">
+<i class="fas fa-user-circle mr-3"></i>
+प्रोफ़ाइल विवरण
+</h2>
+</div>
+<div id="profileModalContent" class="p-6">
+<!-- Content will be dynamically inserted -->
+</div>
+<div class="p-5 bg-gray-50 border-t border-gray-100 rounded-b-2xl flex justify-end">
+<button onclick="closeProfileModal()" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition">
+<i class="fas fa-times mr-2"></i> बंद करें
+</button>
+</div>
+</div>
+</div>
+
+<!-- PDF TEMPLATE -->
+<div id="pdfContent" style="visibility:hidden;position:fixed;top:0;left:0;width:0;height:0;">
+<div class="pdf-page" style="font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif; font-size: 14px; width: 794px; min-height: 1123px; padding: 95px; background: white;">
+<div class="pdf-header" style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #1e3a8a; padding-bottom: 15px;">
+<div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+<div style="background: #1e3a8a; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">
+MP
+</div>
+<div style="text-align: left;">
+<div style="font-size: 20px; font-weight: bold; color: #1e3a8a;">मध्य प्रदेश सरकार</div>
+<div style="font-size: 14px; color: #4b5563;">Government of Madhya Pradesh</div>
+</div>
+</div>
+<h1 style="font-size: 24px; font-weight: 700; color: #1e3a8a; margin: 5px 0;">AllInOne MP पोर्टल - आवेदन विवरण</h1>
+<p style="font-size: 14px; color: #4b5563; margin: 5px 0;">सभी सरकारी सेवाओं के लिए एकल खिड़की प्रणाली</p>
+<div style="font-size: 16px; font-weight: bold; color: #1e3a8a; margin-top: 10px;">
+आवेदन क्रमांक: <span id="pdfApplicationNo">AIO-XXXXXXXX</span>
+</div>
+</div>
+<div id="pdfQR" style="position: absolute; top: 95px; right: 95px; width: 120px; height: 120px; border: 1px solid #cbd5e1; padding: 8px; background: white; border-radius: 8px; box-sizing: border-box;">
+</div>
+<table style="width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 13px;">
+<thead>
+<tr>
+<th style="width: 35%; background-color: #f8fafc; font-weight: bold; padding: 12px 15px; border: 1px solid #cbd5e1; text-align: left;">विवरण</th>
+<th style="width: 65%; background-color: #f8fafc; font-weight: bold; padding: 12px 15px; border: 1px solid #cbd5e1; text-align: left;">मान</th>
+</tr>
+</thead>
+<tbody id="pdfDetailsTable">
+<!-- Content will be dynamically inserted here -->
+</tbody>
+</table>
+<div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e2e8f0; text-align: center; color: #64748b; font-size: 11px;">
+<p style="margin: 5px 0;">यह दस्तावेज़ डिजिटल रूप से जनरेट किया गया है और इस पर अधिकारी के हस्ताक्षर की आवश्यकता नहीं है।</p>
+<p style="margin: 5px 0;">पोर्टल: allinone.mp.gov.in | सहायता: 8435273042</p>
+<p style="margin: 5px 0; margin-top: 10px;">डाउनलोड तिथि: <span id="pdfDownloadDate"></span></p>
+</div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-gray-900 text-gray-300 py-8 px-4 mt-auto">
+<div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+<div>
+<h3 class="text-white font-bold text-lg mb-4 flex items-center">
+<i class="fas fa-landmark mr-2 text-blue-400"></i>
+मध्य प्रदेश सरकार
+</h3>
+<p class="text-sm">AllInOne MP पोर्टल सभी सरकारी सेवाओं के लिए एकीकृत प्लेटफॉर्म प्रदान करता है।</p>
+<div class="flex gap-3 mt-4">
+<a href="#" class="text-blue-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+<a href="#" class="text-blue-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+<a href="#" class="text-blue-400 hover:text-white transition"><i class="fab fa-youtube"></i></a>
+<a href="#" class="text-blue-400 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+</div>
+</div>
+<div>
+<h3 class="text-white font-bold text-lg mb-4 flex items-center">
+<i class="fas fa-headset mr-2 text-blue-400"></i>
+सहायता एवं संपर्क
+</h3>
+<ul class="space-y-2 text-sm">
+<li class="flex items-start"><i class="fas fa-phone-alt mt-1 mr-2 text-blue-400"></i> <span>हेल्पलाइन: 8435273042</span></li>
+<li class="flex items-start"><i class="fas fa-envelope mt-1 mr-2 text-blue-400"></i> <span>ईमेल: support@allinone.mp.gov.in</span></li>
+<li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-2 text-blue-400"></i> <span>पता: ई-गवर्नेंस सेंटर, भोपाल, मध्य प्रदेश</span></li>
+</ul>
+</div>
+<div>
+<h3 class="text-white font-bold text-lg mb-4 flex items-center">
+<i class="fas fa-link mr-2 text-blue-400"></i>
+उपयोगी लिंक
+</h3>
+<ul class="space-y-2 text-sm">
+<li><a href="#" class="hover:text-white transition">समग्र आईडी</a></li>
+<li><a href="#" class="hover:text-white transition">ई-केवाईसी</a></li>
+<li><a href="#" class="hover:text-white transition">एमपी भोज योजना</a></li>
+<li><a href="#" class="hover:text-white transition">छात्रवृत्ति योजनाएं</a></li>
+<li><a href="#" class="hover:text-white transition">पेंशन सेवाएं</a></li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-800 mt-8 pt-6 text-center text-sm">
+<p>© 2026 AllInOne MP. सर्वाधिकार सुरक्षित। मध्य प्रदेश सरकार द्वारा संचालित।</p>
+<p class="mt-2 text-gray-500">यह पोर्टल ई-गवर्नेंस के माध्यम से नागरिकों को बेहतर सेवाएं प्रदान करने के लिए विकसित किया गया है।</p>
+</div>
+</footer>
+
+<!-- JAVASCRIPT -->
 <script type="module">
-/* ===== IMPORTS ===== */
+// Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc }
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDoc } 
 from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut }
+import { getAuth, onAuthStateChanged, signOut } 
 from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-/* ===== CONFIG ===== */
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
     authDomain: "allinone-aa89.firebaseapp.com",
     projectId: "allinone-aa89"
 };
 
-/* ===== INIT ===== */
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -22,7 +674,7 @@ let currentUser = null;
 let currentAdminData = null;
 let isAuthCheckComplete = false;
 
-/* ===== ✅ फिक्स्ड AUTH GUARD WITH ADMIN CHECK ===== */
+// Authentication state observer
 onAuthStateChanged(auth, async (user) => {
     const currentPath = window.location.pathname;
     const isLoginPage = currentPath.includes('adminlogin.html') || currentPath.includes('adminlogin');
@@ -102,7 +754,7 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-/* ===== HELPER FUNCTIONS ===== */
+// Helper functions
 function clearAuthData() {
     localStorage.removeItem('adminLoggedIn');
     localStorage.removeItem('adminToken');
@@ -141,7 +793,7 @@ function updateUserInfo(user, adminData) {
     }
 }
 
-/* ===== DATA ===== */
+// Data variables
 let allApplications = [];
 let currentFilters = {
     search: '',
@@ -151,7 +803,7 @@ let currentFilters = {
     dateTo: ''
 };
 
-/* ===== ✅ फिक्स्ड QR CODE GENERATION ===== */
+// QR Code generation
 function generateQRImage(text, size = 120) {
     return new Promise((resolve) => {
         try {
@@ -188,7 +840,7 @@ function generateQRImage(text, size = 120) {
     });
 }
 
-/* ===== ✅ VIEW PROFILE FUNCTION ===== */
+// View profile function
 function viewProfile() {
     const modal = document.getElementById('profileModal');
     const content = document.getElementById('profileModalContent');
@@ -290,7 +942,7 @@ function closeProfileModal() {
     if (modal) modal.classList.add('hidden');
 }
 
-/* ===== SETUP EVENT LISTENERS ===== */
+// Setup event listeners
 function setupEventListeners() {
     document.getElementById('profileButton')?.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -388,7 +1040,7 @@ function setupEventListeners() {
     });
 }
 
-/* ===== LOAD DATA ===== */
+// Load data from Firestore
 function loadData() {
     return new Promise((resolve) => {
         listen("applications");
@@ -414,7 +1066,7 @@ function listen(col) {
         updateStats(allApplications);
         updateCharts();
     }, error => {
-        console.error("Error loading ", error);
+        console.error("Error loading data: ", error);
         const tableBody = document.getElementById('dataTable');
         if (tableBody) {
             tableBody.innerHTML = `
@@ -430,7 +1082,7 @@ function listen(col) {
     });
 }
 
-/* ===== APPLY FILTERS ===== */
+// Apply filters
 function applyFilters() {
     let filteredData = [...allApplications];
 
@@ -470,7 +1122,7 @@ function applyFilters() {
     updateCharts(filteredData);
 }
 
-/* ===== RENDER TABLE ===== */
+// Render table
 function render(data) {
     const tableBody = document.getElementById("dataTable");
     const emptyState = document.getElementById("emptyState");
@@ -512,10 +1164,10 @@ function render(data) {
             </td>
             <td class="p-4">
                 <div class="flex space-x-2">
-                    <button onclick="window.openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
+                    <button onclick="openDetailsFunc('${i.id}')" class="action-btn action-view" title="विवरण देखें">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button onclick="window.deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
+                    <button onclick="deleteFunc('${i.id}')" class="action-btn action-delete" title="हटाएं">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
@@ -527,7 +1179,7 @@ function render(data) {
     if (tableBody) tableBody.innerHTML = rows;
 }
 
-/* ===== UPDATE STATS ===== */
+// Update statistics
 function updateStats(data) {
     const statTotal = document.getElementById('statTotal');
     const statPending = document.getElementById('statPending');
@@ -551,7 +1203,7 @@ function updateStats(data) {
     if (statRejectionRate) statRejectionRate.textContent = data.length > 0 ? Math.round((rejected / data.length) * 100) + '%' : '0%';
 }
 
-/* ===== CHARTS INITIALIZATION ===== */
+// Initialize charts
 let applicationsChart, servicesChart;
 
 function initializeCharts() {
@@ -583,8 +1235,13 @@ function initializeCharts() {
                     legend: { display: false }
                 },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-                    x: { grid: { display: false } }
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' } 
+                    },
+                    x: { 
+                        grid: { display: false } 
+                    }
                 }
             }
         });
@@ -606,7 +1263,9 @@ function initializeCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } },
+                plugins: { 
+                    legend: { position: 'bottom' } 
+                },
                 cutout: '65%'
             }
         });
@@ -656,7 +1315,7 @@ function updateCharts(filteredData = null) {
     }
 }
 
-/* ===== HELPERS ===== */
+// Helper functions
 function getServiceName(app) {
     return app.serviceType || app.formType || app.serviceName || app.service || app.applicationType || 'अन्य';
 }
@@ -682,8 +1341,8 @@ function formatLabel(key) {
     .replace('Id', 'ID');
 }
 
-/* ===== ACTIONS ===== */
-window.deleteFunc = async (id) => {
+// Action functions
+async function deleteFunc(id) {
     if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।")) {
         return;
     }
@@ -696,9 +1355,9 @@ window.deleteFunc = async (id) => {
         console.error("Error deleting document: ", error);
         alert("आवेदन हटाने में त्रुटि। कृपया पुनः प्रयास करें।");
     }
-};
+}
 
-window.updateStatus = async (status) => {
+async function updateStatus(status) {
     const appNoElement = document.getElementById('modalApplicationNo');
     if (!appNoElement) return;
     const appNo = appNoElement.textContent;
@@ -718,9 +1377,9 @@ window.updateStatus = async (status) => {
         console.error("Error updating status: ", error);
         alert("स्थिति अपडेट करने में त्रुटि। कृपया पुनः प्रयास करें।");
     }
-};
+}
 
-window.logout = () => {
+function logout() {
     if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
         signOut(auth).then(() => {
             clearAuthData();
@@ -730,10 +1389,10 @@ window.logout = () => {
             alert("लॉगआउट में त्रुटि। कृपया पुनः प्रयास करें।");
         });
     }
-};
+}
 
-/* ===== DETAILS MODAL ===== */
-window.openDetailsFunc = (id) => {
+// Details modal functions
+function openDetailsFunc(id) {
     const item = allApplications.find(a => a.id === id);
     if (!item) return;
 
@@ -785,7 +1444,6 @@ window.openDetailsFunc = (id) => {
             }
             detailsHTML += createDetailRow(key, value);
         }
-    }
     });
 
     detailBody.innerHTML = detailsHTML;
@@ -797,7 +1455,7 @@ window.openDetailsFunc = (id) => {
     }
 
     preparePDFContent(item, appNo);
-};
+}
 
 function createDetailRow(key, value) {
     return `
@@ -811,12 +1469,12 @@ function createDetailRow(key, value) {
     `;
 }
 
-window.closeDetails = () => {
+function closeDetails() {
     const modal = document.getElementById("detailModal");
     if (modal) modal.classList.add("hidden");
-};
+}
 
-/* ===== ✅ फिक्स्ड PDF FUNCTIONS ===== */
+// PDF functions
 function preparePDFContent(item, appNo) {
     try {
         const originalAppNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
@@ -889,7 +1547,7 @@ function preparePDFContent(item, appNo) {
     }
 }
 
-window.downloadPDF = async () => {
+async function downloadPDF() {
     const appNoElement = document.getElementById("modalApplicationNo");
     const currentAppId = appNoElement?.dataset?.appId || '';
     const currentItem = allApplications.find(a => a.id === currentAppId);
@@ -965,9 +1623,9 @@ window.downloadPDF = async () => {
         pdfContent.style.position = 'fixed';
         appNoElement.textContent = originalBtnText;
     }
-};
+}
 
-window.printApplication = () => {
+function printApplication() {
     const pdfContent = document.getElementById("pdfContent");
     pdfContent.style.visibility = 'visible';
     pdfContent.style.position = 'fixed';
@@ -994,9 +1652,9 @@ window.printApplication = () => {
         window.print();
         pdfContent.style.visibility = 'hidden';
     }
-};
+}
 
-/* ===== EXPORT FUNCTIONS ===== */
+// Export functions
 function exportToCSV() {
     let data = [...allApplications];
 
@@ -1053,9 +1711,21 @@ function exportToCSV() {
     document.body.removeChild(link);
 }
 
-/* ===== INITIALIZATION ===== */
+// Initialization
 document.addEventListener('DOMContentLoaded', () => {
     const emptyState = document.getElementById('emptyState');
     if (emptyState) emptyState.classList.add('hidden');
+    
+    // Set up global functions
+    window.openDetailsFunc = openDetailsFunc;
+    window.deleteFunc = deleteFunc;
+    window.updateStatus = updateStatus;
+    window.logout = logout;
+    window.downloadPDF = downloadPDF;
+    window.closeDetails = closeDetails;
+    window.viewProfile = viewProfile;
+    window.closeProfileModal = closeProfileModal;
 });
 </script>
+</body>
+</html>
