@@ -1,3 +1,1157 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllInOne MP – Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+body {
+font-family: 'Noto Sans Devanagari', sans-serif;
+background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+}
+.status-badge {
+padding: 4px 10px;
+border-radius: 20px;
+font-weight: 600;
+font-size: 0.85rem;
+display: inline-block;
+}
+.status-pending { background: #fff8e6; color: #e69500; border: 1px solid #ffd54f; }
+.status-complete { background: #e8f5e9; color: #2e76d2; border: 1px solid #81c784; }
+.status-reject { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+.action-btn {
+transition: all 0.2s ease;
+width: 32px;
+height: 32px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+border-radius: 8px;
+}
+.action-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.action-view { background: #e3f2fd; color: #1976d2; }
+.action-delete { background: #ffebee; color: #c62828; }
+.action-edit { background: #e8f5e9; color: #2e7d32; }
+.table-row:hover {
+background-color: #f8fafc;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.filter-container {
+background: white;
+border-radius: 16px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+padding: 1.25rem;
+margin-bottom: 1.5rem;
+}
+.stats-card {
+border-radius: 16px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+position: relative;
+overflow: hidden;
+}
+.stats-card:hover {
+transform: translateY(-3px);
+box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+.stats-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 5px;
+height: 100%;
+}
+.stats-total::before { background: linear-gradient(to bottom, #1e3a8a, #3b82f6); }
+.stats-pending::before { background: linear-gradient(to bottom, #b45309, #f59e0b); }
+.stats-complete::before { background: linear-gradient(to bottom, #166534, #22c55e); }
+.stats-rejected::before { background: linear-gradient(to bottom, #b91c1c, #ef4444); }
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+animation: fadeIn 0.5s ease forwards;
+}
+.loading-spinner {
+width: 40px;
+height: 40px;
+border: 4px solid rgba(59, 130, 246, 0.2);
+border-top: 4px solid #3b82f6;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin: 2rem auto;
+}
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+.empty-state {
+text-align: center;
+padding: 3rem;
+color: #64748b;
+}
+.empty-state i {
+font-size: 3.5rem;
+margin-bottom: 1rem;
+opacity: 0.7;
+}
+.empty-state h3 {
+font-size: 1.5rem;
+margin-bottom: 0.5rem;
+font-weight: 600;
+}
+/* ===== CRITICAL FIX: PDF TEMPLATE WITH PROPER A4 DIMENSIONS ===== */
+/* ===== PDF ROOT CONTAINER (SAFE FOR PDF + PRINT) ===== */
+#pdfContent {
+position: fixed;
+top: 0;
+left: 0;
+width: 794px;     /* A4 width */
+min-height: 1123px; /* A4 height */
+background: #ffffff;
+/* IMPORTANT */
+visibility: hidden;   /* default hidden */
+opacity: 1;           /* NEVER 0 */
+z-index: 9999;        /* NEVER negative */
+}
+.pdf-page {
+background: white;
+padding: 95px; /* 25mm padding on all sides = 95px */
+position: relative;
+width: 794px !important;
+min-height: 1123px !important;
+height: auto !important;
+font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', 'Mangal', 'Nirmala UI', sans-serif !important;
+font-size: 14px !important;
+line-height: 1.6 !important;
+color: #334155 !important;
+-webkit-font-smoothing: antialiased !important;
+-moz-osx-font-smoothing: grayscale !important;
+text-rendering: optimizeLegibility !important;
+box-sizing: border-box !important;
+margin: 0 !important;
+}
+.pdf-header {
+text-align: center;
+margin-bottom: 30px;
+border-bottom: 3px solid #1e3a8a;
+padding-bottom: 15px;
+}
+.pdf-title {
+font-size: 24px !important;
+font-weight: 700 !important;
+color: #1e3a8a !important;
+margin: 5px 0 !important;
+line-height: 1.3 !important;
+}
+.pdf-subtitle {
+color: #4b5563 !important;
+font-size: 16px !important;
+}
+.pdf-app-no {
+background: #dbeafe;
+display: inline-block;
+padding: 5px 15px;
+border-radius: 20px;
+font-weight: 600;
+margin: 10px 0;
+}
+.pdf-details-table {
+width: 100% !important;
+border-collapse: collapse !important;
+margin: 25px 0 !important;
+table-layout: fixed !important;
+}
+.pdf-details-table th {
+background-color: #1e3a8a !important;
+color: white !important;
+text-align: left !important;
+padding: 12px 15px !important;
+font-weight: 600 !important;
+border: 1px solid #cbd5e1 !important;
+word-break: break-word !important;
+}
+.pdf-details-table td {
+padding: 10px 15px !important;
+border: 1px solid #cbd5e1 !important;
+word-break: break-word !important;
+vertical-align: top !important;
+line-height: 1.5 !important;
+}
+.pdf-details-table tr:nth-child(even) {
+background-color: #f8fafc !important;
+}
+.pdf-footer {
+margin-top: 30px;
+text-align: center;
+font-size: 14px !important;
+color: #64748b !important;
+border-top: 1px solid #e2e8f0;
+padding-top: 15px;
+}
+/* ===== CRITICAL FIX: QR CODE SAFE POSITIONING ===== */
+.pdf-qr-container {
+position: absolute !important;
+top: 95px !important; /* Same as padding-top (25mm = 95px) */
+right: 95px !important; /* Same as padding-right */
+width: 120px !important;
+height: 120px !important;
+border: 1px solid #cbd5e1 !important;
+padding: 8px !important;
+background: white !important;
+border-radius: 8px !important;
+box-sizing: border-box !important;
+z-index: 100 !important;
+overflow: hidden !important;
+}
+.pdf-qr-container img,
+.pdf-qr-container canvas {
+width: 100% !important;
+height: 100% !important;
+display: block !important;
+object-fit: contain !important;
+image-rendering: -moz-crisp-edges !important;
+image-rendering: -webkit-crisp-edges !important;
+image-rendering: crisp-edges !important;
+}
+@page {
+size: A4;
+margin: 0;
+}
+@media print {
+body * {
+visibility: hidden;
+}
+#pdfContent,
+#pdfContent * {
+visibility: visible;
+}
+#pdfContent {
+position: absolute;
+left: 0;
+top: 0;
+}
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+<!-- HEADER -->
+<header class="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg sticky top-0 z-50">
+<div class="container mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center">
+<div class="flex items-center gap-3 mb-3 md:mb-0">
+<div class="bg-white p-1.5 rounded-lg">
+<div class="bg-blue-900 w-10 h-10 md:w-12 md:h-12 rounded flex items-center justify-center">
+<span class="text-white font-bold text-xl md:text-2xl">MP</span>
+</div>
+</div>
+<div>
+<h1 class="text-xl md:text-2xl font-bold flex items-center">
+<i class="fas fa-landmark mr-2"></i>
+AllInOne-MP
+</h1>
+<p class="text-xs md:text-sm opacity-90">मध्य प्रदेश सरकार - एक विंडो समाधान</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center gap-4">
+<div class="text-center md:text-right">
+<p class="text-xs opacity-90 uppercase flex items-center justify-center md:justify-end">
+<i class="fas fa-headset mr-1"></i> सहायता केंद्र
+</p>
+<p class="font-bold text-lg flex items-center justify-center md:justify-end">
+<i class="fas fa-phone-alt mr-2 text-yellow-300"></i> 8435273042
+</p>
+</div>
+<div class="relative group">
+<div class="flex items-center cursor-pointer p-2 hover:bg-white/10 rounded-full transition" id="profileButton">
+<div class="bg-yellow-300 text-blue-900 font-bold w-9 h-9 rounded-full flex items-center justify-center text-lg">
+<i class="fas fa-user"></i>
+</div>
+<div class="ml-2 hidden md:block">
+<p class="font-bold text-sm" id="adminName">लोड हो रहा है...</p>
+<p class="text-xs opacity-90" id="adminEmail">-</p>
+</div>
+<i class="fas fa-chevron-down ml-1 text-xs hidden md:block"></i>
+</div>
+<div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl py-2 z-50 hidden" id="profileDropdown">
+<a href="" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
+<i class="fas fa-user-circle mr-3 text-blue-600"></i> प्रोफ़ाइल
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-800 hover:bg-blue-50 transition">
+<i class="fas fa-cog mr-3 text-blue-600"></i> सेटिंग्स
+</a>
+<div class="border-t my-1"></div>
+<a href="#" onclick="logout()" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition">
+<i class="fas fa-sign-out-alt mr-3"></i> लॉगआउट
+</a>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="flex-1 container mx-auto px-4 py-6">
+<!-- Search and Filters -->
+<div class="filter-container fade-in">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+<div class="md:col-span-1">
+<div class="relative">
+<input id="searchInput" placeholder="नाम या ID से खोजें..."
+class="border border-gray-300 p-3 w-full pl-10 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+<i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+</div>
+</div>
+<div>
+<select id="serviceFilter" class="border border-gray-300 p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+<option value="">सभी सेवाएं</option>
+<option value="samagra">समग्र आईडी</option>
+<option value="ekyc">ई-केवाईसी</option>
+<option value="mpbhoj">एमपी भोज योजना</option>
+<option value="scholarship">छात्रवृत्ति</option>
+<option value="pension">पेंशन</option>
+</select>
+</div>
+<div>
+<select id="statusFilter" class="border border-gray-300 p-3 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+<option value="">सभी स्थितियां</option>
+<option value="pending">लंबित</option>
+<option value="complete">पूर्ण</option>
+<option value="reject">अस्वीकृत</option>
+</select>
+</div>
+<div class="flex items-end">
+<button id="clearFilters" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg w-full transition flex items-center justify-center">
+<i class="fas fa-redo mr-2"></i> फ़िल्टर साफ़ करें
+</button>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2 border-t border-gray-100">
+<div class="flex flex-wrap gap-2">
+<button id="exportCSV" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center">
+<i class="fas fa-file-csv mr-2"></i> CSV निर्यात
+</button>
+<button id="printView" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center">
+<i class="fas fa-print mr-2"></i> प्रिंट व्यू
+</button>
+</div>
+<div class="text-sm text-gray-600 flex items-center">
+<i class="fas fa-info-circle mr-2 text-blue-500"></i>
+<span>कुल आवेदन: <span id="totalApplications" class="font-bold text-blue-700">0</span></span>
+</div>
+</div>
+</div>
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in">
+<div class="stats-card stats-total bg-white p-6">
+<div class="flex items-center">
+<div class="bg-blue-100 p-3 rounded-xl mr-4">
+<i class="fas fa-file-alt text-blue-600 text-2xl"></i>
+</div>
+<div>
+<p class="text-gray-500 text-sm font-medium">कुल आवेदन</p>
+<p class="text-2xl font-bold text-gray-800 mt-1" id="statTotal">0</p>
+</div>
+</div>
+</div>
+<div class="stats-card stats-pending bg-white p-6">
+<div class="flex items-center">
+<div class="bg-amber-100 p-3 rounded-xl mr-4">
+<i class="fas fa-clock text-amber-500 text-2xl"></i>
+</div>
+<div>
+<p class="text-gray-500 text-sm font-medium">लंबित</p>
+<p class="text-2xl font-bold text-gray-800 mt-1" id="statPending">0</p>
+</div>
+</div>
+</div>
+<div class="stats-card stats-complete bg-white p-6">
+<div class="flex items-center">
+<div class="bg-green-100 p-3 rounded-xl mr-4">
+<i class="fas fa-check-circle text-green-600 text-2xl"></i>
+</div>
+<div>
+<p class="text-gray-500 text-sm font-medium">पूर्ण</p>
+<p class="text-2xl font-bold text-gray-800 mt-1" id="statComplete">0</p>
+</div>
+</div>
+</div>
+<div class="stats-card stats-rejected bg-white p-6">
+<div class="flex items-center">
+<div class="bg-red-100 p-3 rounded-xl mr-4">
+<i class="fas fa-times-circle text-red-600 text-2xl"></i>
+</div>
+<div>
+<p class="text-gray-500 text-sm font-medium">अस्वीकृत</p>
+<p class="text-2xl font-bold text-gray-800 mt-1" id="statRejected">0</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Applications Table -->
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+<div class="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center">
+<h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
+<i class="fas fa-list mr-3 text-blue-600"></i>
+आवेदन सूची
+</h2>
+<div class="mt-3 md:mt-0 flex flex-wrap gap-2">
+<div class="relative">
+<input type="date" id="dateFrom" class="border border-gray-300 p-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+<label class="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500">से</label>
+</div>
+<div class="relative">
+<input type="date" id="dateTo" class="border border-gray-300 p-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+<label class="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500">तक</label>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead class="bg-blue-800 text-white">
+<tr>
+<th class="p-4 text-left font-medium">आवेदन क्रमांक</th>
+<th class="p-4 text-left font-medium">नाम</th>
+<th class="p-4 text-left font-medium">सेवा प्रकार</th>
+<th class="p-4 text-left font-medium hidden md:table-cell">समग्र / सदस्य ID</th>
+<th class="p-4 text-left font-medium hidden sm:table-cell">तारीख</th>
+<th class="p-4 text-left font-medium">स्थिति</th>
+<th class="p-4 text-left font-medium">कार्रवाई</th>
+</tr>
+</thead>
+<tbody id="dataTable">
+<!-- Loading state -->
+<tr>
+<td colspan="7" class="p-8 text-center">
+<div class="loading-spinner"></div>
+<p class="mt-4 text-gray-600 font-medium">डेटा लोड हो रहा है...</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="emptyState" class="empty-state hidden">
+<i class="fas fa-file-search text-blue-300"></i>
+<h3>कोई आवेदन नहीं मिला</h3>
+<p class="mt-2">आपके फ़िल्टर मानदंडों से मेल खाने वाला कोई आवेदन नहीं मिला।</p>
+<button id="resetFilters" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center mx-auto">
+<i class="fas fa-filter mr-2"></i> फ़िल्टर रीसेट करें
+</button>
+</div>
+<div class="p-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center">
+<p class="text-gray-500 text-sm mb-2 sm:mb-0">प्रति पृष्ठ दिखाएं:
+<select class="border border-gray-300 rounded px-2 py-1 ml-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+<option>10</option>
+<option>25</option>
+<option selected>50</option>
+<option>100</option>
+</select>
+</p>
+<div class="flex items-center space-x-2">
+<button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">पिछला</button>
+<span class="font-medium">1 से 10 का 50</span>
+<button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">अगला</button>
+</div>
+</div>
+</div>
+</main>
+<!-- DETAILS MODAL -->
+<div id="detailModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+<div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+<div class="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-5 flex justify-between items-center rounded-t-2xl">
+<h2 class="font-bold text-xl flex items-center">
+<i class="fas fa-file-invoice mr-3"></i>
+आवेदन विवरण
+</h2>
+<div class="flex space-x-3">
+<button onclick="printApplication()" class="bg-white text-blue-800 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center">
+<i class="fas fa-print mr-2"></i> प्रिंट
+</button>
+<button onclick="downloadPDF()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
+<i class="fas fa-file-pdf mr-2"></i> PDF डाउनलोड
+</button>
+<button onclick="closeDetails()" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition">
+<i class="fas fa-times"></i>
+</button>
+</div>
+</div>
+<div id="detailBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto flex-1">
+<!-- Content will be dynamically inserted here -->
+</div>
+<div class="p-5 bg-gray-50 border-t border-gray-100 rounded-b-2xl">
+<div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+<div class="flex items-center text-sm text-gray-600">
+<i class="fas fa-info-circle mr-2 text-blue-500"></i>
+<span>आवेदन क्रमांक: <span id="modalApplicationNo" class="font-bold text-blue-700">AIO-XXXXXXXX</span></span>
+</div>
+<div class="flex space-x-3">
+<button onclick="updateStatus('pending')" class="bg-amber-100 text-amber-800 px-4 py-2 rounded-lg font-medium hover:bg-amber-200 transition flex items-center">
+<i class="fas fa-clock mr-2"></i> लंबित रखें
+</button>
+<button onclick="updateStatus('complete')" class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-medium hover:bg-green-200 transition flex items-center">
+<i class="fas fa-check mr-2"></i> पूर्ण करें
+</button>
+<button onclick="updateStatus('reject')" class="bg-red-100 text-red-800 px-4 py-2 rounded-lg font-medium hover:bg-red-200 transition flex items-center">
+<i class="fas fa-times mr-2"></i> अस्वीकार करें
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- PDF TEMPLATE - CRITICAL FIXES APPLIED -->
+<div id="pdfContent">
+<div class="pdf-page">
+<div class="pdf-header">
+<div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+<div style="background: #1e3a8a; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
+MP
+</div>
+<div style="text-align: left;">
+<div style="font-size: 18px; font-weight: bold; color: #1e3a8a;">मध्य प्रदेश सरकार</div>
+<div style="font-size: 14px; color: #4b5563;">Government of Madhya Pradesh</div>
+</div>
+</div>
+<h1 class="pdf-title">AllInOne MP पोर्टल - आवेदन विवरण</h1>
+<p class="pdf-subtitle">सभी सरकारी सेवाओं के लिए एकल खिड़की प्रणाली</p>
+<div class="pdf-app-no">आवेदन क्रमांक: <span id="pdfApplicationNo">AIO-XXXXXXXX</span></div>
+</div>
+<div class="pdf-qr-container" id="pdfQR"></div>
+<table class="pdf-details-table">
+<thead>
+<tr>
+<th style="width: 35%;">विवरण</th>
+<th style="width: 65%;">मान</th>
+</tr>
+</thead>
+<tbody id="pdfDetailsTable">
+<!-- Content will be dynamically inserted here -->
+</tbody>
+</table>
+<div class="pdf-footer">
+<p>यह दस्तावेज़ डिजिटल रूप से जनरेट किया गया है और इस पर अधिकारी के हस्ताक्षर की आवश्यकता नहीं है।</p>
+<p class="mt-1">पोर्टल: allinone.mp.gov.in | सहायता: 8435273042</p>
+<p class="mt-2">डाउनलोड तिथि: <span id="pdfDownloadDate"></span></p>
+</div>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="bg-gray-900 text-gray-300 py-8 px-4 mt-auto">
+<div class="container mx-auto text-center">
+<div class="flex justify-center space-x-6 mb-4">
+<a href="https://www.facebook.com/allin1mp" class="hover:text-white transition flex items-center">
+<i class="fab fa-facebook-f mr-2"></i> Facebook
+</a>
+<a href="https://www.x.com/allin1mp" class="hover:text-white transition flex items-center">
+<i class="fab fa-twitter mr-2"></i> Twitter
+</a>
+<a href="https://www.youtube.com/allin1mp" class="hover:text-white transition flex items-center">
+<i class="fab fa-youtube mr-2"></i> YouTube
+</a>
+<a href="https://www.harshtiwari.in" class="hover:text-white transition flex items-center">
+<i class="fas fa-globe mr-2"></i> आधिकारिक वेबसाइट
+</a>
+</div>
+<p class="font-medium">© 2026 AllInOne MP </p>
+<p class="text-xs mt-2 text-gray-400">ALLINONEMP</p>
+<div class="mt-4 flex justify-center space-x-4">
+<span class="bg-blue-900 text-white text-xs px-3 py-1 rounded-full">सुरक्षित</span>
+<span class="bg-green-800 text-white text-xs px-3 py-1 rounded-full">प्रमाणित</span>
+</div>
+</div>
+</footer>
+<script type="module">
+/* ===== IMPORTS ===== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc }
+from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+/* ===== CONFIG ===== */
+const firebaseConfig = {
+apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+authDomain: "allinone-aa89.firebaseapp.com",
+projectId: "allinone-aa89"
+};
+/* ===== INIT ===== */
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+let currentUser = null;
+/* ===== AUTH GUARD ===== */
+onAuthStateChanged(auth, user => {
+if (!user) {
+window.location.href = "login.html";
+} else {
+currentUser = user;
+document.getElementById('adminName').textContent = user.displayName || 'admin';
+document.getElementById('adminEmail').textContent = user.email || 'allinoneofficial@gmail.com';
+loadData();
+setupEventListeners();
+}
+});
+/* ===== DATA ===== */
+let allApplications = [];
+let currentFilters = {
+search: '',
+service: '',
+status: '',
+dateFrom: '',
+dateTo: ''
+};
+/* ===== CRITICAL FIX: RELIABLE QR GENERATION WITH CANVAS CLONING ===== */
+function generateQRImage(text, size = 120) {
+return new Promise((resolve) => {
+try {
+const qrContainer = document.createElement('div');
+qrContainer.style.position = 'fixed';
+qrContainer.style.left = '-9999px';
+qrContainer.style.top = '0';
+qrContainer.style.width = `${size}px`;
+qrContainer.style.height = `${size}px`;
+qrContainer.style.zIndex = '-1000';
+document.body.appendChild(qrContainer);
+const qr = new QRCode(qrContainer, {
+text: text,
+width: size,
+height: size,
+correctLevel: QRCode.CorrectLevel.H
+});
+setTimeout(() => {
+const canvas = qrContainer.querySelector('canvas');
+if (canvas) {
+const clonedCanvas = document.createElement('canvas');
+clonedCanvas.width = size;
+clonedCanvas.height = size;
+const ctx = clonedCanvas.getContext('2d');
+ctx.drawImage(canvas, 0, 0, size, size);
+const imgData = clonedCanvas.toDataURL('image/png');
+document.body.removeChild(qrContainer);
+resolve(imgData);
+} else {
+document.body.removeChild(qrContainer);
+resolve(null);
+}
+}, 400);
+} catch (error) {
+console.error("QR Generation Error:", error);
+resolve(null);
+}
+});
+}
+/* ===== SETUP EVENT LISTENERS ===== */
+function setupEventListeners() {
+document.getElementById('profileButton').addEventListener('click', () => {
+const dropdown = document.getElementById('profileDropdown');
+dropdown.classList.toggle('hidden');
+});
+document.addEventListener('click', (e) => {
+const dropdown = document.getElementById('profileDropdown');
+const profileButton = document.getElementById('profileButton');
+if (!dropdown.contains(e.target) && !profileButton.contains(e.target)) {
+dropdown.classList.add('hidden');
+}
+});
+document.getElementById('searchInput').addEventListener('input', (e) => {
+currentFilters.search = e.target.value.toLowerCase();
+applyFilters();
+});
+document.getElementById('serviceFilter').addEventListener('change', (e) => {
+currentFilters.service = e.target.value;
+applyFilters();
+});
+document.getElementById('statusFilter').addEventListener('change', (e) => {
+currentFilters.status = e.target.value;
+applyFilters();
+});
+document.getElementById('dateFrom').addEventListener('change', (e) => {
+currentFilters.dateFrom = e.target.value;
+applyFilters();
+});
+document.getElementById('dateTo').addEventListener('change', (e) => {
+currentFilters.dateTo = e.target.value;
+applyFilters();
+});
+document.getElementById('clearFilters').addEventListener('click', () => {
+document.getElementById('searchInput').value = '';
+document.getElementById('serviceFilter').value = '';
+document.getElementById('statusFilter').value = '';
+document.getElementById('dateFrom').value = '';
+document.getElementById('dateTo').value = '';
+currentFilters = { search: '', service: '', status: '', dateFrom: '', dateTo: '' };
+render(allApplications);
+updateStats(allApplications);
+});
+document.getElementById('resetFilters').addEventListener('click', () => {
+document.getElementById('searchInput').value = '';
+document.getElementById('serviceFilter').value = '';
+document.getElementById('statusFilter').value = '';
+currentFilters.search = '';
+currentFilters.service = '';
+currentFilters.status = '';
+render(allApplications);
+updateStats(allApplications);
+document.getElementById('emptyState').classList.add('hidden');
+document.getElementById('dataTable').classList.remove('hidden');
+});
+document.getElementById('exportCSV').addEventListener('click', exportToCSV);
+document.getElementById('printView').addEventListener('click', () => {
+printApplication();
+});
+/* ===== LOAD DATA ===== */
+function loadData() {
+listen("applications");
+listen("samagra_ekyc_requests");
+listen("mpbhojApplications");
+}
+function listen(col) {
+onSnapshot(collection(db, col), snap => {
+allApplications = allApplications.filter(i => i._collection !== col);
+const data = snap.docs.map(d => ({
+id: d.id,
+_collection: col,
+...d.data()
+}));
+allApplications = [...allApplications, ...data];
+render(allApplications);
+updateStats(allApplications);
+}, error => {
+console.error("Error loading data: ", error);
+document.getElementById('dataTable').innerHTML = `
+<tr>
+<td colspan="7" class="p-8 text-center">
+<i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-3"></i>
+<p class="mt-2 text-red-600 font-medium">डेटा लोड करने में त्रुटि</p>
+<p class="text-gray-500 mt-1">कृपया अपना नेटवर्क कनेक्शन जांचें या बाद में पुनः प्रयास करें।</p>
+</td>
+</tr>
+`;
+});
+}
+/* ===== APPLY FILTERS ===== */
+function applyFilters() {
+let filteredData = [...allApplications];
+if (currentFilters.search) {
+filteredData = filteredData.filter(app => {
+const name = (app.studentName || app.applicantName || '').toLowerCase();
+const id = (app.memberId || '').toLowerCase();
+return name.includes(currentFilters.search) || id.includes(currentFilters.search);
+});
+}
+if (currentFilters.service) {
+filteredData = filteredData.filter(app => {
+const service = getServiceName(app).toLowerCase();
+return service.includes(currentFilters.service);
+});
+}
+if (currentFilters.status) {
+filteredData = filteredData.filter(app => app.status === currentFilters.status);
+}
+if (currentFilters.dateFrom || currentFilters.dateTo) {
+filteredData = filteredData.filter(app => {
+if (!app.createdAt) return false;
+const appDate = new Date(app.createdAt.toDate());
+const fromDate = currentFilters.dateFrom ? new Date(currentFilters.dateFrom) : null;
+const toDate = currentFilters.dateTo ? new Date(currentFilters.dateTo) : null;
+if (fromDate && appDate < fromDate) return false;
+if (toDate && appDate > toDate) return false;
+return true;
+});
+}
+render(filteredData);
+updateStats(filteredData);
+}
+/* ===== RENDER TABLE ===== */
+function render(data) {
+const tableBody = document.getElementById("dataTable");
+const emptyState = document.getElementById("emptyState");
+document.getElementById("totalApplications").textContent = allApplications.length;
+if (data.length === 0) {
+tableBody.classList.add('hidden');
+emptyState.classList.remove('hidden');
+return;
+} else {
+tableBody.classList.remove('hidden');
+emptyState.classList.add('hidden');
+}
+let rows = '';
+data.forEach((i, index) => {
+const appNo = `AIO-${i.id.substring(0, 8).toUpperCase()}`;
+const serviceName = getServiceName(i);
+const statusClass = i.status === 'complete' ? 'status-complete' :
+i.status === 'reject' ? 'status-reject' : 'status-pending';
+const statusText = i.status === 'complete' ? 'पूर्ण' :
+i.status === 'reject' ? 'अस्वीकृत' : 'लंबित';
+rows += `
+<tr class="table-row border-b border-gray-100 hover:bg-blue-50/50 transition-colors">
+<td class="p-4 font-mono font-medium text-blue-700">${appNo}</td>
+<td class="p-4 font-bold text-gray-800">${i.studentName || i.applicantName || "-"}</td>
+<td class="p-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">${serviceName}</span>
+</td>
+<td class="p-4 hidden md:table-cell font-mono">${i.memberId || "-"}</td>
+<td class="p-4 hidden sm:table-cell">${formatDate(i.createdAt)}</td>
+<td class="p-4">
+<span class="status-badge ${statusClass}">${statusText}</span>
+</td>
+<td class="p-4">
+<div class="flex space-x-2">
+<button onclick="openDetails('${i.id}')" class="action-btn action-view" title="विवरण देखें">
+<i class="fas fa-eye"></i>
+</button>
+<button onclick="del('${i.id}')" class="action-btn action-delete" title="हटाएं">
+<i class="fas fa-trash-alt"></i>
+</button>
+</div>
+</td>
+</tr>
+`;
+});
+tableBody.innerHTML = rows;
+}
+/* ===== UPDATE STATS ===== */
+function updateStats(data) {
+document.getElementById('statTotal').textContent = data.length;
+const pending = data.filter(a => a.status === 'pending').length;
+const complete = data.filter(a => a.status === 'complete').length;
+const rejected = data.filter(a => a.status === 'reject').length;
+document.getElementById('statPending').textContent = pending;
+document.getElementById('statComplete').textContent = complete;
+document.getElementById('statRejected').textContent = rejected;
+}
+/* ===== HELPERS ===== */
+function getServiceName(app) {
+return app.serviceType || app.formType || app.serviceName || app.service || app.applicationType || 'अन्य';
+}
+function formatDate(ts) {
+if (!ts) return "-";
+return ts.toDate().toLocaleDateString("hi-IN", {
+day: '2-digit',
+month: 'short',
+year: 'numeric'
+});
+}
+function formatLabel(key) {
+return key
+.replace(/_/g, " ")
+.replace(/([A-Z])/g, " $1")
+.replace(/^./, s => s.toUpperCase())
+.replace('Id', 'ID');
+}
+/* ===== ACTIONS ===== */
+window.del = async (id) => {
+if (!confirm("क्या आप वाकई इस आवेदन को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।")) {
+return;
+}
+const item = allApplications.find(x => x.id === id);
+if (!item) return;
+try {
+await deleteDoc(doc(db, item._collection, id));
+} catch (error) {
+console.error("Error deleting document: ", error);
+alert("आवेदन हटाने में त्रुटि। कृपया पुनः प्रयास करें।");
+}
+};
+window.updateStatus = async (status) => {
+const appNoElement = document.getElementById('modalApplicationNo');
+if (!appNoElement) return;
+const appNo = appNoElement.textContent;
+const item = allApplications.find(x => appNo.includes(x.id.substring(0,8).toUpperCase()));
+if (!item) {
+alert("आवेदन नहीं मिला।");
+return;
+}
+try {
+await updateDoc(doc(db, item._collection, item.id), { status });
+closeDetails();
+const statusText = status === 'complete' ? 'पूर्ण' : status === 'reject' ? 'अस्वीकृत' : 'लंबित';
+alert(`आवेदन स्थिति "${statusText}" में अपडेट कर दी गई है।`);
+} catch (error) {
+console.error("Error updating status: ", error);
+alert("स्थिति अपडेट करने में त्रुटि। कृपया पुनः प्रयास करें।");
+}
+};
+window.logout = () => {
+if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
+signOut(auth).then(() => {
+window.location.href = "login.html";
+});
+}
+};
+/* ===== DETAILS MODAL ===== */
+window.openDetails = (id) => {
+const item = allApplications.find(a => a.id === id);
+if (!item) return;
+const appNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
+const appNoElement = document.getElementById("modalApplicationNo");
+appNoElement.textContent = appNo;
+appNoElement.dataset.appId = item.id;
+const detailBody = document.getElementById("detailBody");
+let detailsHTML = '';
+const personalInfo = ['applicantName', 'studentName', 'fatherName', 'motherName', 'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber'];
+const addressInfo = ['address', 'village', 'tehsil', 'district', 'pincode', 'state'];
+const applicationInfo = ['memberId', 'applicationType', 'serviceType', 'formType', 'serviceName', 'status', 'createdAt', 'updatedAt'];
+detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mb-3 pb-2 border-b border-blue-100">व्यक्तिगत जानकारी</h3></div>`;
+personalInfo.forEach(key => {
+if (item.hasOwnProperty(key) && item[key]) {
+detailsHTML += createDetailRow(key, item[key]);
+}
+});
+detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mt-4 mb-3 pb-2 border-b border-blue-100">पता जानकारी</h3></div>`;
+addressInfo.forEach(key => {
+if (item.hasOwnProperty(key) && item[key]) {
+detailsHTML += createDetailRow(key, item[key]);
+}
+});
+detailsHTML += `<div class="col-span-full"><h3 class="font-bold text-lg text-blue-800 mt-4 mb-3 pb-2 border-b border-blue-100">आवेदन विवरण</h3></div>`;
+applicationInfo.forEach(key => {
+if (item.hasOwnProperty(key) && item[key]) {
+let value = item[key];
+if (key === 'createdAt' && value) {
+value = formatDate(value);
+}
+if (key === 'updatedAt' && value) {
+value = formatDate(value);
+}
+if (key === 'status') {
+const statusClass = value === 'complete' ? 'status-complete' :
+value === 'reject' ? 'status-reject' : 'status-pending';
+const statusText = value === 'complete' ? 'पूर्ण' :
+value === 'reject' ? 'अस्वीकृत' : 'लंबित';
+value = `<span class="status-badge ${statusClass}">${statusText}</span>`;
+}
+detailsHTML += createDetailRow(key, value);
+}
+});
+detailBody.innerHTML = detailsHTML;
+document.getElementById("detailModal").classList.remove("hidden");
+document.getElementById("detailModal").classList.add("flex");
+preparePDFContent(item, appNo);
+};
+function createDetailRow(key, value) {
+return `
+<div class="bg-blue-50 p-3 rounded-lg">
+<div class="text-xs text-blue-700 font-medium">${formatLabel(key)}</div>
+<div class="font-semibold text-gray-800 mt-1">${value || "-"}</div>
+</div>
+`;
+}
+window.closeDetails = () => {
+document.getElementById("detailModal").classList.add("hidden");
+};
+/* ===== PDF CONTENT PREPARATION ===== */
+function preparePDFContent(item, appNo) {
+try {
+const originalAppNo = `AIO-${item.id.substring(0,8).toUpperCase()}`;
+document.getElementById("pdfApplicationNo").textContent = originalAppNo;
+const today = new Date().toLocaleDateString("hi-IN", {
+day: 'numeric',
+month: 'long',
+year: 'numeric'
+});
+document.getElementById("pdfDownloadDate").textContent = today;
+const qrContainer = document.getElementById("pdfQR");
+if (qrContainer) {
+qrContainer.innerHTML = "";
+}
+const pdfTableBody = document.getElementById("pdfDetailsTable");
+if (!pdfTableBody) return originalAppNo;
+let tableRows = '';
+const fieldOrder = [
+'applicantName', 'studentName', 'fatherName', 'motherName',
+'dob', 'gender', 'mobileNumber', 'email', 'aadhaarNumber',
+'address', 'village', 'tehsil', 'district', 'pincode', 'state',
+'memberId', 'applicationType', 'serviceType', 'formType',
+'serviceName', 'status', 'createdAt', 'updatedAt'
+];
+fieldOrder.forEach(key => {
+if (item.hasOwnProperty(key) && item[key] !== null && item[key] !== undefined) {
+let displayValue = item[key];
+let displayKey = formatLabel(key);
+if ((key === 'createdAt' || key === 'updatedAt') && item[key]?.toDate) {
+displayValue = item[key].toDate().toLocaleDateString("hi-IN", {
+day: 'numeric',
+month: 'long',
+year: 'numeric',
+hour: '2-digit',
+minute: '2-digit'
+});
+}
+if (key === 'status') {
+displayValue = item[key] === 'complete' ? 'पूर्ण' :
+item[key] === 'reject' ? 'अस्वीकृत' : 'लंबित';
+}
+if (key === 'gender') {
+displayValue = item[key] === 'male' ? 'पुरुष' :
+item[key] === 'female' ? 'महिला' :
+item[key] === 'other' ? 'अन्य' : item[key];
+}
+tableRows += `
+<tr>
+<td style="font-weight: bold; background-color: #f8fafc; padding: 10px 15px; border: 1px solid #cbd5e1 !important;">${displayKey}</td>
+<td style="padding: 10px 15px; border: 1px solid #cbd5e1 !important;">${displayValue || "-"}</td>
+</tr>
+`;
+}
+});
+Object.keys(item).forEach(key => {
+if (!fieldOrder.includes(key) &&
+!['_collection', 'id', '__v'].includes(key) &&
+item[key] !== null &&
+item[key] !== undefined) {
+let displayValue = item[key];
+let displayKey = formatLabel(key);
+if ((key === 'createdAt' || key === 'updatedAt') && item[key]?.toDate) {
+displayValue = item[key].toDate().toLocaleDateString("hi-IN", {
+day: 'numeric',
+month: 'long',
+year: 'numeric'
+});
+}
+tableRows += `
+<tr>
+<td style="font-weight: bold; background-color: #f8fafc; padding: 10px 15px; border: 1px solid #cbd5e1 !important;">${displayKey}</td>
+<td style="padding: 10px 15px; border: 1px solid #cbd5e1 !important;">${displayValue || "-"}</td>
+</tr>
+`;
+}
+});
+pdfTableBody.innerHTML = tableRows;
+return originalAppNo;
+} catch (error) {
+console.error("Error preparing PDF content:", error);
+return appNo || 'AIO-UNKNOWN';
+}
+}
+/* ===== CRITICAL FIX: PDF DOWNLOAD WITH FONT LOADING & PROPER DIMENSIONS ===== */
+window.downloadPDF = async () => {
+const appNoElement = document.getElementById("modalApplicationNo");
+const currentAppId = appNoElement.dataset?.appId || '';
+const currentItem = allApplications.find(a => a.id === currentAppId);
+if (!currentItem) {
+alert("आवेदन डेटा उपलब्ध नहीं है।");
+return;
+}
+const originalBtnText = appNoElement.textContent;
+appNoElement.textContent = "PDF तैयार हो रहा है...";
+try {
+// 1. Get PDF content element with FIXED dimensions
+const pdfContent = document.getElementById("pdfContent");
+const pdfPage = pdfContent.querySelector('.pdf-page');
+// 2. Set FIXED A4 dimensions (critical fix)
+pdfContent.style.width = '794px';
+pdfContent.style.height = '1123px';
+pdfContent.style.position = 'fixed';
+pdfContent.style.top = '0';
+pdfContent.style.left = '0';
+pdfContent.style.visibility = 'visible';
+pdfContent.style.opacity = '1';
+pdfContent.style.zIndex = '9999';
+pdfContent.style.pointerEvents = "none";
+pdfPage.style.width = '794px';
+pdfPage.style.minHeight = '1123px';
+pdfPage.style.padding = '95px'; // 25mm = 95px
+// 3. Prepare content
+const originalAppNo = preparePDFContent(currentItem, `AIO-${currentItem.id.substring(0,8).toUpperCase()}`);
+// 4. Generate QR code with proper error handling
+const qrData = `Application: ${originalAppNo}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
+const qrImage = await generateQRImage(qrData, 120);
+// 5. Insert QR with fallback
+const qrContainer = document.getElementById('pdfQR');
+qrContainer.innerHTML = '';
+if (qrImage) {
+qrContainer.innerHTML = `<img src="${qrImage}" width="120" height="120" style="width:100%;height:100%;display:block;">`;
+} else {
+qrContainer.innerHTML = `<div style="width:120px;height:120px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px;color:#64748b;line-height:1.4;font-family: 'Noto Sans Devanagari', sans-serif !important;">QR उपलब्ध नहीं</div>`;
+}
+// 6. CRITICAL: Wait for Hindi fonts to fully load (fixes garbled text)
+await document.fonts.ready;
+// 7. Extra delay for final rendering stability
+await new Promise(resolve => setTimeout(resolve, 600));
+// 8. Generate PDF with optimized settings for Hindi text
+const element = document.getElementById("pdfContent");
+const opt = {
+margin: 0,
+filename: `AllInOneMP_${originalAppNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
+image: {
+type: 'jpeg',
+quality: 0.98
+},
+html2canvas: {
+scale: 2,
+useCORS: true,
+letterRendering: true,
+logging: false,
+backgroundColor: '#ffffff',
+width: 794,
+height: 1123,
+windowWidth: 794,
+windowHeight: 1123,
+scrollY: -window.scrollY,
+removeContainer: true,
+foreignObjectRendering: false, // Critical for Hindi text
+ignoreElements: (element) => element.classList?.contains('no-print')
+},
+jsPDF: {
+unit: 'mm',
+format: 'a4',
+orientation: 'portrait',
+compress: true
+}
+};
+// 9. Generate and save PDF
+await html2pdf().set(opt).from(element).save();
+// 10. Success message
+alert(`✅ PDF सफलतापूर्वक डाउनलोड हुआ!\nआवेदन क्रमांक: ${originalAppNo}`);
+} catch (error) {
+console.error("PDF Generation Error:", error);
+alert("PDF निर्माण में त्रुटि।\nकृपया Chrome ब्राउज़र में पुनः प्रयास करें।\nत्रुटि: " + (error.message || error));
+} finally {
+// Always clean up - restore original positioning
+const pdfContent = document.getElementById("pdfContent");
+pdfContent.style.position = 'fixed';
+pdfContent.style.left = '0';
+pdfContent.style.top = '0';
+pdfContent.style.visibility = 'hidden';
+pdfContent.style.opacity = '1';
+pdfContent.style.width = '794px';
+pdfContent.style.height = '1123px';
+appNoElement.textContent = originalBtnText;
+}
+};
+window.printApplication = () => {
+const pdfContent = document.getElementById("pdfContent");
+pdfContent.style.visibility = 'visible';
+pdfContent.style.position = 'fixed';
+pdfContent.style.left = '0';
+pdfContent.style.top = '0';
+const appNoElement = document.getElementById("modalApplicationNo");
+const currentAppId = appNoElement.dataset?.appId || '';
+const currentItem = allApplications.find(a => a.id === currentAppId);
+if (currentItem) {
+preparePDFContent(currentItem);
+const qrData = `Application: AIO-${currentItem.id.substring(0,8).toUpperCase()}\nName: ${currentItem.applicantName || currentItem.studentName || ""}\nService: ${getServiceName(currentItem)}`;
+generateQRImage(qrData, 120).then(qrImage => {
+if (qrImage) {
+document.getElementById('pdfQR').innerHTML = `<img src="${qrImage}" width="120" height="120" style="display:block;">`;
+}
+setTimeout(() => {
+window.print();
+pdfContent.style.visibility = 'hidden';
+}, 300);
+});
+} else {
+window.print();
+pdfContent.style.visibility = 'hidden';
+}
+};
 /* ===== EXPORT TO CSV ===== */
 function exportToCSV() {
 let data = [...allApplications];
