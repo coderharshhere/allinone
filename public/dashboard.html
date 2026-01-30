@@ -18,6 +18,7 @@
 --warning-color: #f59e0b;
 --danger-color: #ef4444;
 --sidebar-width: 280px;
+--sidebar-collapsed-width: 80px;
 }
 body {
 font-family: 'Noto Sans Devanagari', sans-serif;
@@ -55,45 +56,92 @@ to { transform: rotate(360deg); }
 .sidebar {
 width: var(--sidebar-width);
 transition: all 0.3s ease;
+position: fixed;
+left: 0;
+top: 0;
+height: 100vh;
+z-index: 40;
+overflow-x: hidden;
 }
 .sidebar.collapsed {
-width: 80px;
+width: var(--sidebar-collapsed-width);
 }
 .sidebar.collapsed .sidebar-text {
 display: none;
 }
+.sidebar.collapsed .logo-text {
+display: none;
+}
+.sidebar-toggle-fixed {
+position: fixed;
+left: var(--sidebar-width);
+top: 20px;
+z-index: 50;
+background: white;
+border: 1px solid #e5e7eb;
+border-radius: 0 8px 8px 0;
+padding: 8px 12px;
+cursor: pointer;
+box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+transition: left 0.3s ease;
+color: #1e3a8a;
+}
+.sidebar.collapsed + .sidebar-toggle-fixed {
+left: var(--sidebar-collapsed-width);
+}
 .main-content {
 transition: margin-left 0.3s ease;
-margin-left: 280px;
+margin-left: var(--sidebar-width);
+padding: 20px;
 }
 .main-content.sidebar-collapsed {
-margin-left: 80px;
-}
-.sidebar-collapsed .notification-badge {
-right: 12px;
+margin-left: var(--sidebar-collapsed-width);
 }
 .status-badge {
-padding: 4px 10px;
+padding: 6px 16px;
 border-radius: 20px;
-font-size: 12px;
-font-weight: 500;
-display: inline-block;
+font-size: 13px;
+font-weight: 600;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+border: 2px solid transparent;
+transition: all 0.3s;
+cursor: pointer;
+}
+.status-badge:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .status-complete {
-background-color: rgba(34, 197, 94, 0.15);
+background-color: #dcfce7;
 color: #166534;
+border-color: #bbf7d0;
 }
 .status-pending {
-background-color: rgba(245, 158, 11, 0.15);
-color: #92400e;
+background-color: #ffedd5;
+color: #9a3412;
+border-color: #fed7aa;
 }
 .status-reject {
-background-color: rgba(239, 68, 68, 0.15);
+background-color: #fee2e2;
 color: #991b1b;
+border-color: #fecaca;
 }
 .status-processing {
-background-color: rgba(59, 130, 246, 0.15);
+background-color: #dbeafe;
 color: #1e40af;
+border-color: #bfdbfe;
+}
+.status-select {
+padding: 4px 12px;
+border-radius: 20px;
+font-size: 13px;
+font-weight: 600;
+border: 2px solid;
+outline: none;
+cursor: pointer;
+background: white;
 }
 .action-btn {
 padding: 0.5rem;
@@ -104,6 +152,8 @@ align-items: center;
 justify-content: center;
 width: 2.25rem;
 height: 2.25rem;
+border: none;
+cursor: pointer;
 }
 .action-view {
 background-color: rgba(59, 130, 246, 0.1);
@@ -115,6 +165,13 @@ background-color: rgba(59, 130, 246, 0.2);
 .action-delete {
 background-color: rgba(239, 68, 68, 0.1);
 color: #ef4444;
+}
+.action-download {
+background-color: rgba(34, 197, 94, 0.1);
+color: #22c55e;
+}
+.action-download:hover {
+background-color: rgba(34, 197, 94, 0.2);
 }
 .notification-badge {
 position: absolute;
@@ -131,10 +188,6 @@ align-items: center;
 justify-content: center;
 font-weight: bold;
 }
-.notification-item.unread {
-background-color: rgba(59, 130, 246, 0.05);
-border-left: 3px solid #3b82f6;
-}
 .fade-in {
 animation: fadeIn 0.5s ease-out;
 }
@@ -143,7 +196,7 @@ from { opacity: 0; transform: translateY(10px); }
 to { opacity: 1; transform: translateY(0); }
 }
 .table-row:hover {
-background-color: #dbeafe;
+background-color: #eff6ff;
 }
 .page-section {
 display: none;
@@ -151,25 +204,80 @@ display: none;
 .page-section.active {
 display: block;
 }
-.debug-console {
-position: fixed;
-bottom: 10px;
-right: 10px;
-background: rgba(0,0,0,0.8);
-color: #0f0;
-padding: 10px;
-border-radius: 5px;
-font-family: monospace;
-font-size: 12px;
-max-width: 300px;
-max-height: 200px;
-overflow-y: auto;
-z-index: 9999;
+.modal {
 display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0,0,0,0.5);
+z-index: 100;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+.modal.active {
+display: flex;
+}
+.modal-content {
+background: white;
+border-radius: 20px;
+max-width: 800px;
+width: 100%;
+max-height: 90vh;
+overflow-y: auto;
+position: relative;
+box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+.modal-header {
+background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+color: white;
+padding: 24px;
+border-radius: 20px 20px 0 0;
+}
+.qr-container {
+background: white;
+padding: 20px;
+border-radius: 12px;
+display: inline-block;
+box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+.detail-row {
+display: flex;
+border-bottom: 1px solid #e5e7eb;
+padding: 12px 0;
+}
+.detail-label {
+font-weight: 600;
+color: #6b7280;
+width: 40%;
+}
+.detail-value {
+color: #111827;
+font-weight: 500;
+width: 60%;
+}
+@media print {
+body * {
+visibility: hidden;
+}
+#pdfContent, #pdfContent * {
+visibility: visible;
+}
+#pdfContent {
+position: absolute;
+left: 0;
+top: 0;
+width: 100%;
+}
+.no-print {
+display: none !important;
+}
 }
 </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-gray-50 min-h-screen">
 
 <!-- LOADING SCREEN -->
 <div id="loadingScreen" class="loading-screen">
@@ -181,11 +289,8 @@ display: none;
 </button>
 </div>
 
-<!-- DEBUG PANEL (Development के लिए) -->
-<div id="debugPanel" class="debug-console"></div>
-
 <!-- SIDEBAR -->
-<aside class="sidebar bg-gradient-to-b from-blue-900 to-blue-700 text-white h-screen fixed left-0 top-0 z-40 shadow-2xl">
+<aside class="sidebar bg-gradient-to-b from-blue-900 to-blue-700 text-white shadow-2xl" id="sidebar">
 <div class="p-5 border-b border-blue-600">
 <div class="flex items-center justify-between mb-6">
 <div class="flex items-center gap-3">
@@ -194,14 +299,11 @@ display: none;
 <span class="text-blue-900 font-bold text-xl">MP</span>
 </div>
 </div>
-<div class="sidebar-text">
+<div class="logo-text">
 <h1 class="text-xl font-bold">AllInOne-MP</h1>
 <p class="text-xs opacity-90 mt-1">Admin Panel</p>
 </div>
 </div>
-<button id="sidebarToggle" class="sidebar-text p-2 hover:bg-white/10 rounded-lg transition">
-<i class="fas fa-chevron-left"></i>
-</button>
 </div>
 <div class="mb-2 sidebar-text">
 <div class="bg-white/10 backdrop-blur-sm p-3 rounded-lg">
@@ -220,34 +322,39 @@ display: none;
 <nav class="mt-2 p-3">
 <ul class="space-y-1">
 <li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm w-full sidebar-text" onclick="showSection('dashboard')">
-<i class="fas fa-home text-xl"></i>
-<span class="font-medium">डैशबोर्ड</span>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm w-full" onclick="showSection('dashboard')">
+<i class="fas fa-home text-xl w-6 text-center"></i>
+<span class="font-medium sidebar-text">डैशबोर्ड</span>
 </a>
 </li>
 <li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text" onclick="showSection('applications')">
-<i class="fas fa-list text-xl"></i>
-<span class="font-medium">आवेदन सूची</span>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full" onclick="showSection('applications')">
+<i class="fas fa-list text-xl w-6 text-center"></i>
+<span class="font-medium sidebar-text">आवेदन सूची</span>
 </a>
 </li>
 <li>
-<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full sidebar-text" onclick="showSection('analysis')">
-<i class="fas fa-chart-bar text-xl"></i>
-<span class="font-medium">विश्लेषण</span>
+<a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition w-full" onclick="showSection('analysis')">
+<i class="fas fa-chart-bar text-xl w-6 text-center"></i>
+<span class="font-medium sidebar-text">विश्लेषण</span>
 </a>
 </li>
 </ul>
 </nav>
 <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-600">
 <button onclick="logout()" class="w-full flex items-center justify-center gap-2 p-2 hover:bg-white/10 rounded-lg transition text-white">
-<i class="fas fa-sign-out-alt"></i> <span class="sidebar-text">लॉगआउट</span>
+<i class="fas fa-sign-out-alt w-6 text-center"></i> <span class="sidebar-text">लॉगआउट</span>
 </button>
 </div>
 </aside>
 
+<!-- SIDEBAR TOGGLE BUTTON (Always Visible) -->
+<button class="sidebar-toggle-fixed" onclick="toggleSidebar()" id="sidebarToggleBtn">
+<i class="fas fa-chevron-left" id="toggleIcon"></i>
+</button>
+
 <!-- MAIN CONTENT -->
-<main class="main-content flex-1 container mx-auto px-4 py-6 transition-all">
+<main class="main-content flex-1 container mx-auto px-4 py-6 transition-all" id="mainContent">
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page-section active">
@@ -390,6 +497,51 @@ display: none;
 
 </main>
 
+<!-- DETAIL VIEW MODAL -->
+<div id="detailModal" class="modal">
+<div class="modal-content">
+<div class="modal-header flex justify-between items-center no-print">
+<h2 class="text-2xl font-bold">आवेदन विवरण</h2>
+<button onclick="closeModal()" class="text-white hover:text-gray-200 text-2xl">
+<i class="fas fa-times"></i>
+</button>
+</div>
+
+<div id="pdfContent" class="p-6">
+<!-- QR Code Section -->
+<div class="flex justify-between items-start mb-6 border-b-2 border-gray-200 pb-4">
+<div>
+<h3 class="text-3xl font-bold text-blue-900 mb-2">AllInOne MP</h3>
+<p class="text-gray-600">आवेदन रसीद</p>
+<p class="text-sm text-gray-500 mt-1" id="receiptDate">दिनांक: </p>
+</div>
+<div class="qr-container">
+<div id="qrCode"></div>
+<p class="text-center text-xs text-gray-500 mt-2">स्कैन करें</p>
+</div>
+</div>
+
+<div id="detailContent" class="space-y-4">
+<!-- Details will be inserted here -->
+</div>
+
+<div class="mt-8 pt-4 border-t border-gray-200 text-center text-sm text-gray-500">
+<p>यह एक कंप्यूटर जनरेटेड रसीद है।</p>
+<p class="mt-1">AllInOne MP Portal</p>
+</div>
+</div>
+
+<div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end gap-3 no-print">
+<button onclick="downloadPDF()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-2">
+<i class="fas fa-file-pdf"></i> PDF डाउनलोड
+</button>
+<button onclick="closeModal()" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition">
+बंद करें
+</button>
+</div>
+</div>
+</div>
+
 <!-- JAVASCRIPT -->
 <script type="module">
 // 🔥 Firebase Import (Version 11.6.1)
@@ -401,6 +553,7 @@ import {
     doc, 
     getDoc, 
     getDocs, 
+    updateDoc,
     query, 
     orderBy, 
     limit,
@@ -427,6 +580,7 @@ let app, db, auth;
 let allApplications = [];
 let currentUser = null;
 let isDataLoaded = false;
+let currentDetailId = null;
 
 // 🎯 Initialize Firebase
 try {
@@ -496,33 +650,44 @@ async function fetchData() {
     }
 }
 
-// 🔄 Real-time Listener (Optional - for live updates)
-function setupRealtimeListeners() {
+// 🔄 Update Status Function
+window.updateStatus = async function(id, newStatus, selectElement) {
+    const item = allApplications.find(a => a.id === id);
+    if (!item) return;
+    
     try {
-        const q = query(collection(db, "applications"), orderBy('createdAt', 'desc'), limit(50));
+        // Show loading on select
+        selectElement.disabled = true;
+        selectElement.style.opacity = '0.6';
         
-        onSnapshot(q, (snapshot) => {
-            console.log("Real-time update received:", snapshot.docs.length, "docs");
-            if (!isDataLoaded) return; // Avoid double render on init
-            
-            const newData = snapshot.docs.map(doc => ({
-                id: doc.id,
-                _collection: 'applications',
-                ...doc.data()
-            }));
-            
-            // Merge with existing data
-            allApplications = [...newData, ...allApplications.filter(a => a._collection !== 'applications')];
-            renderTable(allApplications);
-            updateStats(allApplications);
-        }, (error) => {
-            console.error("Realtime listener error:", error);
+        const docRef = doc(db, item._collection || 'applications', id);
+        await updateDoc(docRef, {
+            status: newStatus,
+            updatedAt: new Date()
         });
         
-    } catch (e) {
-        console.log("Realtime listeners not set up:", e.message);
+        // Update local data
+        item.status = newStatus;
+        updateStats(allApplications);
+        
+        // Remove loading
+        selectElement.disabled = false;
+        selectElement.style.opacity = '1';
+        
+        // Show success animation
+        selectElement.style.background = '#dcfce7';
+        setTimeout(() => {
+            selectElement.style.background = '';
+        }, 500);
+        
+    } catch (error) {
+        alert("स्टेटस अपडेट करने में त्रुटि: " + error.message);
+        selectElement.disabled = false;
+        selectElement.style.opacity = '1';
+        // Revert selection
+        selectElement.value = item.status || 'pending';
     }
-}
+};
 
 // 📊 Render Table
 function renderTable(data) {
@@ -537,8 +702,8 @@ function renderTable(data) {
     let html = '';
     data.slice(0, 50).forEach(item => {
         const appNo = `AIO-${item.id.substring(0, 8).toUpperCase()}`;
-        const name = item.studentName || item.applicantName || item.name || "अज्ञात";
-        const service = item.serviceType || item.formType || item.service || "समग्र";
+        const name = item.studentName || item.applicantName || item.name || item.fullName || "अज्ञात";
+        const service = item.serviceType || item.formType || item.service || item.serviceName || "समग्र";
         const date = formatDate(item.createdAt);
         const status = item.status || 'pending';
         
@@ -556,10 +721,18 @@ function renderTable(data) {
             <td class="p-4 font-bold text-gray-800">${name}</td>
             <td class="p-4"><span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${service}</span></td>
             <td class="p-4 hidden md:table-cell text-gray-600">${date}</td>
-            <td class="p-4"><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td class="p-4">
+                <select onchange="updateStatus('${item.id}', this.value, this)" 
+                        class="status-select ${statusClass}">
+                    <option value="pending" ${status === 'pending' ? 'selected' : ''}>लंबित</option>
+                    <option value="processing" ${status === 'processing' ? 'selected' : ''}>प्रोसेसिंग</option>
+                    <option value="complete" ${status === 'complete' ? 'selected' : ''}>पूर्ण</option>
+                    <option value="reject" ${status === 'reject' ? 'selected' : ''}>अस्वीकृत</option>
+                </select>
+            </td>
             <td class="p-4">
                 <div class="flex space-x-2">
-                    <button onclick="viewDetails('${item.id}')" class="action-btn action-view" title="View">
+                    <button onclick="viewDetails('${item.id}')" class="action-btn action-view" title="View & PDF">
                         <i class="fas fa-eye"></i>
                     </button>
                     <button onclick="deleteItem('${item.id}', '${item._collection}')" class="action-btn action-delete" title="Delete">
@@ -590,11 +763,112 @@ function updateStats(data) {
     document.querySelector('.notification-badge').textContent = pending;
 }
 
+// 👁️ View Details with PDF and QR
+window.viewDetails = function(id) {
+    const item = allApplications.find(a => a.id === id);
+    if (!item) return;
+    
+    currentDetailId = id;
+    
+    // Populate modal
+    document.getElementById('receiptDate').textContent = 'दिनांक: ' + formatDate(item.createdAt);
+    
+    // Generate QR Code
+    const qrContainer = document.getElementById('qrCode');
+    qrContainer.innerHTML = '';
+    const qrData = JSON.stringify({
+        id: item.id,
+        name: item.studentName || item.applicantName || item.name,
+        service: item.serviceType || item.formType || item.service,
+        status: item.status || 'pending'
+    });
+    new QRCode(qrContainer, {
+        text: qrData,
+        width: 128,
+        height: 128,
+        colorDark: "#1e3a8a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    
+    // Build detail rows
+    const fields = [
+        { label: 'आवेदन क्रमांक', value: `AIO-${item.id.substring(0, 8).toUpperCase()}` },
+        { label: 'पूरा नाम', value: item.studentName || item.applicantName || item.name || item.fullName || '-' },
+        { label: 'मोबाइल नंबर', value: item.mobile || item.phone || item.mobileNumber || '-' },
+        { label: 'ईमेल', value: item.email || '-' },
+        { label: 'सेवा प्रकार', value: item.serviceType || item.formType || item.service || item.serviceName || 'समग्र' },
+        { label: 'जन्म तिथि', value: item.dob || item.dateOfBirth || '-' },
+        { label: 'पता', value: item.address || item.fullAddress || '-' },
+        { label: 'जिला', value: item.district || '-' },
+        { label: 'राज्य', value: item.state || 'मध्य प्रदेश' },
+        { label: 'पिन कोड', value: item.pincode || '-' },
+        { label: 'वर्तमान स्थिति', value: getStatusText(item.status) },
+        { label: 'आवेदन तिथि', value: formatDate(item.createdAt) }
+    ];
+    
+    // Add dynamic fields if available
+    if (item.fatherName) fields.push({ label: 'पिता का नाम', value: item.fatherName });
+    if (item.motherName) fields.push({ label: 'माता का नाम', value: item.motherName });
+    if (item.aadharNumber) fields.push({ label: 'आधार नंबर', value: maskAadhar(item.aadharNumber) });
+    if (item.samagraId) fields.push({ label: 'समग्र आईडी', value: item.samagraId });
+    
+    let detailsHtml = '';
+    fields.forEach(field => {
+        if (field.value && field.value !== '-') {
+            detailsHtml += `
+            <div class="detail-row">
+                <div class="detail-label">${field.label}</div>
+                <div class="detail-value">${field.value}</div>
+            </div>
+            `;
+        }
+    });
+    
+    // Add documents section if URLs exist
+    if (item.documents || item.photoUrl || item.aadharFront || item.aadharBack) {
+        detailsHtml += `
+        <div class="mt-6 pt-4 border-t border-gray-200">
+            <h4 class="font-bold text-lg mb-3 text-blue-900">संलग्न दस्तावेज़</h4>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        `;
+        
+        const docs = [];
+        if (item.photoUrl) docs.push({ name: 'फोटो', url: item.photoUrl });
+        if (item.aadharFront) docs.push({ name: 'आधार (सामने)', url: item.aadharFront });
+        if (item.aadharBack) docs.push({ name: 'आधार (पीछे)', url: item.aadharBack });
+        
+        if (item.documents && Array.isArray(item.documents)) {
+            item.documents.forEach((doc, idx) => {
+                docs.push({ name: doc.name || `दस्तावेज़ ${idx + 1}`, url: doc.url });
+            });
+        }
+        
+        docs.forEach(doc => {
+            detailsHtml += `
+            <div class="border rounded-lg p-3 text-center">
+                <i class="fas fa-file-image text-3xl text-blue-600 mb-2"></i>
+                <p class="text-sm font-medium">${doc.name}</p>
+                <a href="${doc.url}" target="_blank" class="text-xs text-blue-600 hover:underline mt-1 inline-block">देखें</a>
+            </div>
+            `;
+        });
+        
+        detailsHtml += '</div></div>';
+    }
+    
+    document.getElementById('detailContent').innerHTML = detailsHtml;
+    
+    // Show modal
+    document.getElementById('detailModal').classList.add('active');
+};
+
 // 🗑️ Delete Function
 window.deleteItem = async function(id, collectionName) {
     if (!confirm("क्या आप वाकई हटाना चाहते हैं?")) return;
     
     try {
+        const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
         await deleteDoc(doc(db, collectionName || 'applications', id));
         alert("हटा दिया गया!");
         allApplications = allApplications.filter(a => a.id !== id);
@@ -605,16 +879,26 @@ window.deleteItem = async function(id, collectionName) {
     }
 };
 
-// 👁️ View Details
-window.viewDetails = function(id) {
-    const item = allApplications.find(a => a.id === id);
-    if (!item) return;
+// 📥 Download PDF
+window.downloadPDF = function() {
+    const element = document.getElementById('pdfContent');
+    const opt = {
+        margin: 1,
+        filename: `Application_${currentDetailId.substring(0, 8)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
     
-    const details = JSON.stringify(item, null, 2);
-    alert("Details:\n" + details.substring(0, 500) + "...");
+    html2pdf().set(opt).from(element).save();
 };
 
-// 🔍 Refresh Data
+// ❌ Close Modal
+window.closeModal = function() {
+    document.getElementById('detailModal').classList.remove('active');
+};
+
+// 🔄 Refresh Data
 window.refreshData = function() {
     showLoading();
     fetchData();
@@ -629,10 +913,10 @@ window.exportToCSV = function() {
     
     let csv = 'ID,Name,Service,Status,Date\n';
     allApplications.forEach(item => {
-        csv += `${item.id},${item.studentName || item.applicantName || ''},${item.serviceType || ''},${item.status || 'pending'},${formatDate(item.createdAt)}\n`;
+        csv += `${item.id},"${item.studentName || item.applicantName || ''}","${item.serviceType || ''}","${item.status || 'pending'}","${formatDate(item.createdAt)}"\n`;
     });
     
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -653,19 +937,57 @@ window.showSection = function(sectionId) {
     document.getElementById(sectionId).classList.add('active');
 };
 
+// 🔄 Toggle Sidebar
+window.toggleSidebar = function() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('sidebar-collapsed');
+    
+    if (sidebar.classList.contains('collapsed')) {
+        toggleIcon.classList.remove('fa-chevron-left');
+        toggleIcon.classList.add('fa-chevron-right');
+    } else {
+        toggleIcon.classList.remove('fa-chevron-right');
+        toggleIcon.classList.add('fa-chevron-left');
+    }
+};
+
 // 🛠️ Helper Functions
 function formatDate(date) {
     if (!date) return "-";
     try {
         if (date.toDate) date = date.toDate();
-        return new Date(date).toLocaleDateString('hi-IN', {
+        const d = new Date(date);
+        return d.toLocaleDateString('hi-IN', {
             day: '2-digit',
-            month: 'short',
+            month: 'long',
             year: 'numeric'
         });
     } catch (e) {
         return "-";
     }
+}
+
+function getStatusText(status) {
+    const statusMap = {
+        'pending': 'लंबित',
+        'processing': 'प्रोसेसिंग',
+        'complete': 'पूर्ण',
+        'reject': 'अस्वीकृत'
+    };
+    return statusMap[status] || 'लंबित';
+}
+
+function maskAadhar(aadhar) {
+    if (!aadhar) return '-';
+    const str = aadhar.toString();
+    if (str.length === 12) {
+        return 'XXXX-XXXX-' + str.slice(-4);
+    }
+    return str;
 }
 
 function updateLoadingStatus(msg) {
@@ -675,13 +997,15 @@ function updateLoadingStatus(msg) {
 
 function showLoading() {
     document.getElementById('loadingScreen').style.display = 'flex';
+    document.getElementById('loadingScreen').style.opacity = '1';
     document.getElementById('retryBtn').classList.add('hidden');
 }
 
 function hideLoading() {
-    document.getElementById('loadingScreen').style.opacity = '0';
+    const loader = document.getElementById('loadingScreen');
+    loader.style.opacity = '0';
     setTimeout(() => {
-        document.getElementById('loadingScreen').style.display = 'none';
+        loader.style.display = 'none';
     }, 300);
 }
 
@@ -713,14 +1037,6 @@ window.testFetch = async function() {
     }
 };
 
-// 📱 Sidebar Toggle
-document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-    const sidebar = document.querySelector('.sidebar');
-    const main = document.querySelector('.main-content');
-    sidebar.classList.toggle('collapsed');
-    main.classList.toggle('sidebar-collapsed');
-});
-
 // 🚀 Start Application
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Page loaded, starting data fetch...");
@@ -743,13 +1059,22 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('sidebarAdminName').textContent = user.email?.split('@')[0] || 'Admin';
         } else {
             console.log("No user signed in");
-            // Uncomment below to force login
-            // window.location.href = 'adminlogin.html';
         }
     });
     
-    // Setup realtime updates after initial load
-    setTimeout(setupRealtimeListeners, 2000);
+    // Close modal on outside click
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
 });
 </script>
 </body>
