@@ -3,784 +3,2700 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllInOne MP – Admin Dashboard</title>
+    <title>UltraPro Admin - सर्वश्रेष्ठ प्रशासनिक डैशबोर्ड</title>
+    
+    <!-- Core CSS & JS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Advanced Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
+    <!-- Firebase SDK (Latest) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            onSnapshot, 
+            doc, 
+            getDoc, 
+            getDocs, 
+            updateDoc,
+            query, 
+            orderBy, 
+            limit,
+            where,
+            addDoc,
+            serverTimestamp,
+            deleteDoc,
+            writeBatch,
+            runTransaction,
+            arrayUnion,
+            arrayRemove
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut,
+            updateProfile,
+            updateEmail,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            verifyBeforeUpdateEmail
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL,
+            deleteObject
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        import { 
+            getMessaging,
+            getToken,
+            onMessage
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
+        
+        window.firebaseModules = {
+            initializeApp,
+            getFirestore, collection, onSnapshot, doc, getDoc, getDocs, updateDoc,
+            query, orderBy, limit, where, addDoc, serverTimestamp, deleteDoc, writeBatch,
+            runTransaction, arrayUnion, arrayRemove,
+            getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail,
+            createUserWithEmailAndPassword, signInWithEmailAndPassword,
+            sendPasswordResetEmail, verifyBeforeUpdateEmail,
+            getStorage, ref, uploadBytes, getDownloadURL, deleteObject,
+            getMessaging, getToken, onMessage
+        };
+    </script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans Devanagari', sans-serif; background: #f0f4f8; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
         
+        :root {
+            /* Primary Colors */
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-200: #bfdbfe;
+            --primary-300: #93c5fd;
+            --primary-400: #60a5fa;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            --primary-800: #1e40af;
+            --primary-900: #1e3a8a;
+            --primary-950: #172554;
+            
+            /* Secondary Colors */
+            --secondary-500: #8b5cf6;
+            --secondary-600: #7c3aed;
+            
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* UI Variables */
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 70px;
+            --topbar-height: 70px;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --box-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Dark Mode Colors */
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-text: #f1f5f9;
+            --dark-border: #334155;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #334155;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--dark-text);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-300);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-500);
+        }
+        
+        /* Loading Screen */
         .loading-screen {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: white; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 9999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease;
         }
+        
+        .loading-screen.dark {
+            background: var(--dark-bg);
+        }
+        
         .spinner {
-            width: 50px; height: 50px;
-            border: 5px solid #e2e8f0; border-top-color: #3b82f6;
-            border-radius: 50%; animation: spin 1s linear infinite;
+            width: 70px;
+            height: 70px;
+            border: 5px solid rgba(59, 130, 246, 0.1);
+            border-top-color: var(--primary-500);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
         
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark-mode .glass {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Sidebar */
         .sidebar {
-            width: 260px; position: fixed; left: 0; top: 0; height: 100vh;
-            background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
-            z-index: 50; overflow-y: auto; transition: 0.3s;
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: linear-gradient(180deg, var(--primary-900) 0%, var(--primary-950) 100%);
+            z-index: 1000;
+            transition: var(--transition);
+            overflow-y: auto;
         }
-        .main-content { margin-left: 260px; padding: 80px 20px 20px; transition: 0.3s; }
         
-        .top-bar {
-            position: fixed; top: 0; left: 260px; right: 0; height: 64px;
-            background: white; z-index: 40; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
         }
         
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.active { transform: translateX(0); }
-            .main-content { margin-left: 0; }
-            .top-bar { left: 0; }
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-900);
+            font-weight: 900;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .sidebar.collapsed .logo-text {
+            display: none;
         }
         
         .nav-item {
-            padding: 12px 20px; margin: 4px 12px; border-radius: 8px;
-            color: white; cursor: pointer; display: flex; align-items: center; gap: 12px;
-            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 4px 12px;
+            transition: var(--transition);
+            position: relative;
         }
-        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.2); }
         
-        .page-section { display: none; animation: fadeIn 0.4s; }
-        .page-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
         
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center;
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+        
+        .nav-text {
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+        
+        .badge {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
             padding: 20px;
+            padding-top: calc(var(--topbar-height) + 20px);
+            min-height: 100vh;
+            transition: var(--transition);
         }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 16px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; }
-        .modal-header { background: #1e40af; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
         
-        .status-badge {
-            padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
-            display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
         }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-processing { background: #dbeafe; color: #1e40af; }
-        .status-complete { background: #d1fae5; color: #065f46; }
-        .status-reject { background: #fee2e2; color: #991b1b; }
+        
+        /* Top Bar */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--topbar-height);
+            background: white;
+            z-index: 900;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .main-content.expanded + .topbar {
+            left: var(--sidebar-collapsed);
+        }
+        
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .sidebar-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary-50);
+            color: var(--primary-700);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 18px;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--primary-100);
+            transform: rotate(180deg);
+        }
+        
+        .search-bar {
+            position: relative;
+            width: 400px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px 12px 48px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
+        }
+        
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .action-btn:hover {
+            background: white;
+            color: var(--primary-600);
+            border-color: var(--primary-300);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 2px solid white;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        
+        .user-profile:hover {
+            background: #f8fafc;
+        }
+        
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1e293b;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dark-mode .stat-card {
+            background: var(--dark-card);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-500);
+        }
+        
+        .stat-card.success::before { background: var(--success); }
+        .stat-card.warning::before { background: var(--warning); }
+        .stat-card.danger::before { background: var(--danger); }
+        .stat-card.info::before { background: var(--info); }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .stat-title {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .dark-mode .stat-title {
+            color: #94a3b8;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .stat-card.success .stat-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .stat-card.warning .stat-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .stat-card.danger .stat-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .stat-card.info .stat-icon {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        
+        .dark-mode .stat-value {
+            color: white;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .stat-change.positive {
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            color: var(--danger);
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .dark-mode .chart-container {
+            background: var(--dark-card);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .dark-mode .chart-title {
+            color: white;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Data Table */
+        .data-table-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        .dark-mode .data-table-container {
+            background: var(--dark-card);
+        }
+        
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dark-mode .table-header {
+            border-color: var(--dark-border);
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f8fafc;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .dark-mode .table th {
+            background: rgba(30, 41, 59, 0.5);
+            color: #94a3b8;
+            border-color: var(--dark-border);
+        }
+        
+        .table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            font-size: 14px;
+        }
+        
+        .dark-mode .table td {
+            color: #cbd5e1;
+            border-color: var(--dark-border);
+        }
+        
+        .table tbody tr {
+            transition: var(--transition);
+        }
+        
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .dark-mode .table tbody tr:hover {
+            background: rgba(30, 41, 59, 0.5);
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .status-badge.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
         
         .btn-primary {
-            background: #2563eb; color: white; border: none; padding: 10px 20px;
-            border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            background: var(--primary-500);
+            color: white;
         }
-        .btn-primary:hover { background: #1d4ed8; }
+        
+        .btn-primary:hover {
+            background: var(--primary-600);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal {
+            background: white;
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--box-shadow-lg);
+            animation: slideUp 0.4s ease;
+        }
+        
+        .dark-mode .modal {
+            background: var(--dark-card);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dark-mode .modal-header {
+            border-color: var(--dark-border);
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .dark-mode .modal-title {
+            color: white;
+        }
+        
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            border: none;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        .dark-mode .form-label {
+            color: #cbd5e1;
+        }
         
         .form-control {
-            width: 100%; padding: 10px 14px; border: 1px solid #d1d5db;
-            border-radius: 8px; font-family: inherit; margin-top: 4px;
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: var(--transition);
         }
-        .form-control:focus { outline: none; border-color: #2563eb; ring: 2px solid #bfdbfe; }
         
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th { background: #f8fafc; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
-        .data-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
-        .data-table tr:hover { background: #f8fafc; }
-        
-        .auth-error {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center; z-index: 10000;
+        .dark-mode .form-control {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+            color: white;
         }
-        .auth-error.active { display: flex; }
         
-        @media print {
-            .no-print { display: none !important; }
-            body * { visibility: hidden; }
-            #pdfContent, #pdfContent * { visibility: visible; }
-            #pdfContent { position: absolute; left: 0; top: 0; width: 100%; }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .dark-mode .dashboard-card {
+            background: var(--dark-card);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .dark-mode .card-title {
+            color: white;
+        }
+        
+        /* Calendar Widget */
+        .calendar-widget {
+            padding: 20px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .calendar-day:hover {
+            background: #f1f5f9;
+        }
+        
+        .calendar-day.today {
+            background: var(--primary-500);
+            color: white;
+        }
+        
+        /* Activity Feed */
+        .activity-feed {
+            padding: 0;
+        }
+        
+        .activity-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--primary-500);
+        }
+        
+        .activity-content h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1e293b;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .kanban-column {
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: 20px;
+        }
+        
+        .kanban-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #475569;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .kanban-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .kanban-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            cursor: move;
+        }
+        
+        /* File Manager */
+        .file-manager {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .file-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .file-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: var(--primary-500);
+        }
+        
+        /* Analytics Cards */
+        .analytics-card {
+            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .analytics-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        /* Custom Toggle */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary-500);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+        
+        .page-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: #475569;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .page-item.active {
+            background: var(--primary-500);
+            color: white;
+        }
+        
+        .page-item:hover:not(.active) {
+            background: #e2e8f0;
+        }
+        
+        /* Dark Mode Specific */
+        .dark-mode .action-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+        
+        .dark-mode .search-bar input {
+            background: #1e293b;
+            border-color: #334155;
+            color: white;
+        }
+        
+        .dark-mode .sidebar-toggle {
+            background: #1e293b;
+            color: #94a3b8;
+        }
+        
+        .dark-mode .user-profile:hover {
+            background: #1e293b;
+        }
+        
+        .dark-mode .btn-secondary {
+            background: #1e293b;
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+        
+        /* Animations */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.5s ease;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: none;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+                box-shadow: 20px 0 60px rgba(0, 0, 0, 0.3);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .topbar {
+                left: 0;
+            }
+            
+            .search-bar {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .search-bar {
+                display: none;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .table-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: stretch;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-actions {
+                flex-wrap: wrap;
+            }
+            
+            .user-info {
+                display: none;
+            }
         }
     </style>
-<base target="_blank">
 </head>
 <body>
-
-<!-- Loading -->
-<div id="loadingScreen" class="loading-screen">
-    <div class="spinner"></div>
-    <h2 class="text-xl font-bold mt-4 text-gray-800">AllInOne MP</h2>
-    <p class="text-gray-600 mt-2">डेटाबेस से कनेक्ट हो रहा है...</p>
-    <p id="connectionStatus" class="text-sm text-blue-600 mt-2">Initializing Firebase...</p>
-</div>
-
-<!-- Auth Error -->
-<div id="authError" class="auth-error">
-    <i class="fas fa-lock text-6xl mb-4"></i>
-    <h1 class="text-3xl font-bold mb-2">पहुंच अस्वीकृत</h1>
-    <p class="text-lg mb-2">लॉगिन आवश्यक है</p>
-    <p id="errorDetails" class="text-sm opacity-80 mb-6"></p>
-    <button onclick="window.location.href='adminlogin.html'" class="bg-white text-blue-900 px-6 py-3 rounded-lg font-bold">
-        लॉगिन पर जाएं
-    </button>
-</div>
-
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-    <div class="p-4 border-b border-blue-700/50 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="bg-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-blue-900">MP</div>
-            <div>
-                <h1 class="text-white font-bold">AllInOne-MP</h1>
-                <p class="text-blue-200 text-xs">Admin Panel</p>
-            </div>
-        </div>
-        <button onclick="toggleSidebar()" class="text-white lg:hidden"><i class="fas fa-times"></i></button>
-    </div>
-    
-    <nav class="mt-4">
-        <div class="nav-item active" onclick="showSection('dashboard')">
-            <i class="fas fa-home w-6"></i> <span>डैशबोर्ड</span>
-        </div>
-        <div class="nav-item" onclick="showSection('applications')">
-            <i class="fas fa-file-alt w-6"></i> <span>आवेदन</span>
-        </div>
-        <div class="nav-item" onclick="showSection('newApplication')">
-            <i class="fas fa-plus w-6"></i> <span>नया आवेदन</span>
-        </div>
-        <div class="nav-item" onclick="showSection('settings')">
-            <i class="fas fa-cog w-6"></i> <span>सेटिंग्स</span>
-        </div>
-    </nav>
-    
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-700/50">
-        <button onclick="logout()" class="w-full bg-white/10 hover:bg-red-500/20 text-white py-2 rounded-lg flex items-center justify-center gap-2 transition">
-            <i class="fas fa-sign-out-alt"></i> <span>लॉगआउट</span>
-        </button>
-    </div>
-</aside>
-
-<!-- Top Bar -->
-<div class="top-bar">
-    <div class="flex items-center gap-4">
-        <button onclick="toggleSidebar()" class="lg:hidden p-2"><i class="fas fa-bars"></i></button>
-        <span id="pageTitle" class="text-lg font-bold text-gray-800">डैशबोर्ड</span>
-    </div>
-    <div class="flex items-center gap-4">
-        <div class="text-right hidden md:block">
-            <div id="userName" class="font-bold text-gray-800 text-sm">Loading...</div>
-            <div id="userEmail" class="text-xs text-gray-500">Loading...</div>
-        </div>
-        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold" id="userAvatar">A</div>
-    </div>
-</div>
-
-<!-- Main Content -->
-<main class="main-content" id="mainContent">
-
-<!-- Dashboard -->
-<div id="dashboard" class="page-section active">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm">कुल आवेदन</p>
-                    <h3 class="text-2xl font-bold" id="statTotal">0</h3>
-                </div>
-                <i class="fas fa-file-alt text-blue-500 text-xl"></i>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm">लंबित</p>
-                    <h3 class="text-2xl font-bold" id="statPending">0</h3>
-                </div>
-                <i class="fas fa-clock text-yellow-500 text-xl"></i>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm">पूर्ण</p>
-                    <h3 class="text-2xl font-bold" id="statComplete">0</h3>
-                </div>
-                <i class="fas fa-check-circle text-green-500 text-xl"></i>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-500">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm">अस्वीकृत</p>
-                    <h3 class="text-2xl font-bold" id="statRejected">0</h3>
-                </div>
-                <i class="fas fa-times-circle text-red-500 text-xl"></i>
-            </div>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="spinner"></div>
+        <h2 class="text-2xl font-bold mt-4 text-gray-800">UltraPro डैशबोर्ड लोड हो रहा है...</h2>
+        <p class="mt-2 text-gray-600" id="loadingMessage">सिस्टम इनिशियलाइज़ कर रहा है...</p>
+        <div class="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mt-4">
+            <div id="loadingProgress" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm">
-        <div class="p-4 border-b flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="text-lg font-bold">आवेदन सूची</h2>
-            <div class="flex gap-3 w-full md:w-auto">
-                <select id="filterStatus" onchange="applyFilter()" class="form-control w-full md:w-40">
-                    <option value="">सभी स्थिति</option>
-                    <option value="pending">लंबित</option>
-                    <option value="processing">प्रोसेसिंग</option>
-                    <option value="complete">पूर्ण</option>
-                    <option value="reject">अस्वीकृत</option>
-                </select>
-                <input type="text" id="searchBox" onkeyup="applyFilter()" placeholder="नाम खोजें..." class="form-control w-full md:w-64">
-            </div>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="logo">
+                <div class="logo-icon">UP</div>
+                <div class="logo-text">UltraPro</div>
+            </a>
         </div>
-        
-        <div class="overflow-x-auto">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>क्रमांक</th>
-                        <th>नाम</th>
-                        <th>सेवा</th>
-                        <th>मोबाइल</th>
-                        <th>तिथि</th>
-                        <th>स्थिति</th>
-                        <th>कार्रवाई</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr>
-                        <td colspan="7" class="text-center py-8 text-gray-500">
-                            <i class="fas fa-spinner fa-spin mr-2"></i> डेटा लोड हो रहा है...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
-<!-- New Application -->
-<div id="newApplication" class="page-section">
-    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-6">
-        <div class="flex justify-between items-center mb-6 border-b pb-4">
-            <h2 class="text-xl font-bold">नया आवेदन जमा करें</h2>
-            <button onclick="showSection('dashboard')" class="text-gray-600 hover:text-gray-800">
-                <i class="fas fa-arrow-left mr-1"></i> वापस
-            </button>
-        </div>
-        
-        <form id="appForm" onsubmit="submitApplication(event)">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700">आवेदक का पूरा नाम *</label>
-                    <input type="text" id="inpName" class="form-control" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">पिता/पति का नाम *</label>
-                    <input type="text" id="inpFather" class="form-control" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">मोबाइल नंबर *</label>
-                    <input type="tel" id="inpMobile" class="form-control" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">आधार नंबर</label>
-                    <input type="text" id="inpAadhar" class="form-control">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">सेवा प्रकार *</label>
-                    <select id="inpService" class="form-control" required>
-                        <option value="">चुनें</option>
-                        <option value="samagra">समग्र आईडी</option>
-                        <option value="mpbhoj">एमपी भोज</option>
-                        <option value="scholarship">छात्रवृत्ति</option>
-                        <option value="pension">पेंशन</option>
-                        <option value="housing">आवास</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">जिला *</label>
-                    <select id="inpDistrict" class="form-control" required>
-                        <option value="">चुनें</option>
-                        <option value="bhopal">भोपाल</option>
-                        <option value="indore">इंदौर</option>
-                        <option value="jabalpur">जबलपुर</option>
-                        <option value="gwalior">ग्वालियर</option>
-                        <option value="ujjain">उज्जैन</option>
-                    </select>
-                </div>
-                
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700">पूरा पता *</label>
-                    <textarea id="inpAddress" class="form-control" rows="3" required></textarea>
-                </div>
-            </div>
+        <nav class="mt-6">
+            <div class="px-4 py-2 text-xs text-white/60 font-semibold uppercase tracking-wider">मुख्य मेनू</div>
             
-            <div class="mt-6 flex justify-end gap-3">
-                <button type="reset" class="px-4 py-2 border rounded-lg hover:bg-gray-50">रीसेट</button>
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-save mr-2"></i> आवेदन सेव करें
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                <div class="nav-text">डैशबोर्ड</div>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="analytics">
+                <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="nav-text">एनालिटिक्स</div>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="users">
+                <div class="nav-icon"><i class="fas fa-users"></i></div>
+                <div class="nav-text">यूज़र्स</div>
+                <span class="badge">3</span>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="orders">
+                <div class="nav-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="nav-text">ऑर्डर्स</div>
+                <span class="badge">12</span>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="products">
+                <div class="nav-icon"><i class="fas fa-box"></i></div>
+                <div class="nav-text">प्रोडक्ट्स</div>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="finance">
+                <div class="nav-icon"><i class="fas fa-wallet"></i></div>
+                <div class="nav-text">फाइनेंस</div>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="tasks">
+                <div class="nav-icon"><i class="fas fa-tasks"></i></div>
+                <div class="nav-text">टास्क्स</div>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="calendar">
+                <div class="nav-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="nav-text">कैलेंडर</div>
+            </a>
+            
+            <div class="px-4 py-2 mt-8 text-xs text-white/60 font-semibold uppercase tracking-wider">अन्य</div>
+            
+            <a href="#" class="nav-item" data-section="messages">
+                <div class="nav-icon"><i class="fas fa-envelope"></i></div>
+                <div class="nav-text">मैसेजेस</div>
+                <span class="badge">5</span>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="settings">
+                <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                <div class="nav-text">सेटिंग्स</div>
+            </a>
+            
+            <a href="#" class="nav-item" data-section="help">
+                <div class="nav-icon"><i class="fas fa-question-circle"></i></div>
+                <div class="nav-text">हेल्प</div>
+            </a>
+        </nav>
+
+        <div class="mt-auto p-4 border-t border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="avatar">AD</div>
+                <div>
+                    <div class="text-white font-semibold">एडमिन</div>
+                    <div class="text-white/60 text-sm">सुपर एडमिन</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Top Bar -->
+    <div class="topbar" id="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="सर्च करें...">
+            </div>
+        </div>
+        
+        <div class="topbar-right">
+            <button class="action-btn" id="themeToggle" title="थीम बदलें">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <button class="action-btn" id="fullscreenToggle" title="फुलस्क्रीन">
+                <i class="fas fa-expand"></i>
+            </button>
+            
+            <button class="action-btn relative" id="notificationBtn" title="नोटिफिकेशन">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">8</span>
+            </button>
+            
+            <button class="action-btn" id="settingsBtn" title="क्विक सेटिंग्स">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+            
+            <div class="user-profile" id="userMenuBtn">
+                <div class="avatar">AD</div>
+                <div class="user-info">
+                    <div class="user-name">एडमिन</div>
+                    <div class="user-role">सुपर एडमिन</div>
+                </div>
+                <i class="fas fa-chevron-down text-gray-500"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="page-section active">
+            <div class="mb-6">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">डैशबोर्ड ओवरव्यू</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">आपका व्यक्तिगत बिजनेस इंटेलिजेंस डैशबोर्ड</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">कुल रेवेन्यू</div>
+                        <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    </div>
+                    <div class="stat-value">₹24,58,450</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12.5% पिछले महीने से</span>
+                    </div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <div class="stat-title">नए यूज़र्स</div>
+                        <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                    </div>
+                    <div class="stat-value">1,245</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8.2% पिछले सप्ताह से</span>
+                    </div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-header">
+                        <div class="stat-title">पेंडिंग ऑर्डर्स</div>
+                        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                    </div>
+                    <div class="stat-value">48</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3.2% पिछले दिन से</span>
+                    </div>
+                </div>
+
+                <div class="stat-card info">
+                    <div class="stat-header">
+                        <div class="stat-title">ग्रोथ रेट</div>
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    </div>
+                    <div class="stat-value">24.8%</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>4.5% लास्ट क्वार्टर से</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">रेवेन्यू ओवरव्यू</h3>
+                        <div class="chart-actions">
+                            <select class="form-control w-32">
+                                <option>लास्ट 7 डेज़</option>
+                                <option>लास्ट 30 डेज़</option>
+                                <option selected>लास्ट 90 डेज़</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="revenueChart" style="height: 300px;"></div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">यूज़र एक्टिविटी</h3>
+                    </div>
+                    <div id="activityChart" style="height: 300px;"></div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">रिसेंट एक्टिविटी</h3>
+                        <button class="btn btn-secondary btn-sm">व्यू ऑल</button>
+                    </div>
+                    <div class="activity-feed">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>नया यूज़र रजिस्टर्ड</h4>
+                                <p>राजेश कुमार ने एकाउंट बनाया</p>
+                                <div class="activity-time">5 मिनट पहले</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>नया ऑर्डर प्लेस्ड</h4>
+                                <p>ऑर्डर #ORD-2458 सक्सेसफुली प्लेस्ड</p>
+                                <div class="activity-time">15 मिनट पहले</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>पेमेंट रिसीव्ड</h4>
+                                <p>₹24,500 का पेमेंट रिसीव्ड</p>
+                                <div class="activity-time">1 घंटा पहले</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">कैलेंडर</h3>
+                        <button class="btn btn-primary btn-sm">ऐड इवेंट</button>
+                    </div>
+                    <div class="calendar-widget" id="calendarWidget"></div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Table -->
+            <div class="data-table-container mt-6">
+                <div class="table-header">
+                    <h3 class="chart-title">रिसेंट ऑर्डर्स</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary btn-sm">फ़िल्टर</button>
+                        <button class="btn btn-primary btn-sm">ऐड ऑर्डर</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ऑर्डर ID</th>
+                                <th>कस्टमर</th>
+                                <th>डेट</th>
+                                <th>एमाउंट</th>
+                                <th>स्टेटस</th>
+                                <th>एक्शन</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <!-- Orders will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="pagination">
+                        <div class="page-item active">1</div>
+                        <div class="page-item">2</div>
+                        <div class="page-item">3</div>
+                        <div class="page-item">...</div>
+                        <div class="page-item">10</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="page-section">
+            <div class="mb-6">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">एडवांस्ड एनालिटिक्स</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">डीप बिजनेस इंटेलिजेंस और रिपोर्ट्स</p>
+            </div>
+
+            <!-- Analytics Cards -->
+            <div class="stats-grid">
+                <div class="analytics-card">
+                    <div class="stat-value text-white">₹54.2K</div>
+                    <div class="stat-title text-white/80">टोटल सेल्स</div>
+                    <div class="stat-change positive text-white">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>18.4% पिछले महीने से</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">एवरेज ऑर्डर वैल्यू</div>
+                        <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
+                    </div>
+                    <div class="stat-value">₹2,458</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5.2% पिछले सप्ताह से</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">कन्वर्जन रेट</div>
+                        <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                    </div>
+                    <div class="stat-value">3.24%</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>1.8% पिछले महीने से</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container mt-6">
+                <div class="chart-header">
+                    <h3 class="chart-title">सेल्स एनालिसिस</h3>
+                    <div class="chart-actions">
+                        <select class="form-control w-40">
+                            <option>क्वार्टरली</option>
+                            <option>मंथली</option>
+                            <option selected>वीकली</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="salesChart" style="height: 350px;"></div>
+            </div>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users" class="page-section">
+            <div class="mb-6">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">यूज़र मैनेजमेंट</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">सभी यूज़र्स का प्रबंधन और मॉनिटरिंग</p>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3 class="chart-title">यूज़र्स लिस्ट</h3>
+                    <div class="table-actions">
+                        <div class="search-bar w-64">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" placeholder="यूज़र सर्च करें...">
+                        </div>
+                        <button class="btn btn-primary" id="addUserBtn">नया यूज़र ऐड करें</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>यूज़र</th>
+                                <th>ईमेल</th>
+                                <th>रोल</th>
+                                <th>स्टेटस</th>
+                                <th>जॉइन डेट</th>
+                                <th>एक्शन</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <!-- Users will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add more sections for other features -->
+    </main>
+
+    <!-- Modals -->
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">नया यूज़र ऐड करें</h3>
+                <button class="modal-close" data-modal="addUserModal">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-        </form>
-    </div>
-</div>
-
-<!-- Applications (List View) -->
-<div id="applications" class="page-section">
-    <div class="bg-white rounded-xl shadow-sm p-6">
-        <h2 class="text-xl font-bold mb-4">सभी आवेदन</h2>
-        <p>डैशबोर्ड में हाल के आवेदन दिख रहे हैं।</p>
-    </div>
-</div>
-
-<!-- Settings -->
-<div id="settings" class="page-section">
-    <div class="bg-white rounded-xl shadow-sm p-6">
-        <h2 class="text-xl font-bold mb-4">सेटिंग्स</h2>
-        <div class="space-y-4">
-            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div>
-                    <p class="font-medium">डार्क मोड</p>
-                    <p class="text-sm text-gray-500">डार्क थीम इनेबल करें</p>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">फुल नेम</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ईमेल</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">फोन नंबर</label>
+                            <input type="tel" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">रोल</label>
+                            <select class="form-control" required>
+                                <option value="">सेलेक्ट रोल</option>
+                                <option value="admin">एडमिन</option>
+                                <option value="editor">एडिटर</option>
+                                <option value="viewer">व्यूअर</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">पासवर्ड</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">कंफर्म पासवर्ड</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" class="btn btn-secondary" data-modal="addUserModal">कैंसल</button>
+                        <button type="submit" class="btn btn-primary">यूज़र क्रिएट करें</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
 
-</main>
-
-<!-- View Modal -->
-<div id="viewModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header no-print">
-            <h3 class="text-xl font-bold"><i class="fas fa-file-invoice mr-2"></i>आवेदन विवरण</h3>
-            <button onclick="closeModal()" class="text-white hover:text-gray-200"><i class="fas fa-times text-xl"></i></button>
-        </div>
-        
-        <div id="pdfContent" class="p-6">
-            <div class="text-center mb-6 border-b-2 border-blue-200 pb-4">
-                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">MP</div>
-                <h2 class="text-2xl font-bold text-gray-800">मध्य प्रदेश सरकार</h2>
-                <p class="text-gray-600">AllInOne MP Portal</p>
-                <div class="mt-3 inline-block bg-blue-100 text-blue-800 px-4 py-1 rounded-full font-mono font-bold" id="viewAppNo">---</div>
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="modal-overlay">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">नोटिफिकेशन</h3>
+                <button class="modal-close" data-modal="notificationModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-3 border-b pb-2">आवेदक जानकारी</h4>
-                    <div id="viewApplicant" class="space-y-2 text-sm"></div>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-3 border-b pb-2">आवेदन विवरण</h4>
-                    <div id="viewApplication" class="space-y-2 text-sm"></div>
+            <div class="modal-body">
+                <div class="activity-feed">
+                    <!-- Notifications will be populated dynamically -->
                 </div>
             </div>
         </div>
-        
-        <div class="p-4 border-t bg-gray-50 flex justify-between no-print">
-            <div class="space-x-2">
-                <button onclick="changeStatus('processing')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">प्रोसेसिंग</button>
-                <button onclick="changeStatus('complete')" class="px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200">पूर्ण</button>
-                <button onclick="changeStatus('reject')" class="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">अस्वीकृत</button>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">सिस्टम सेटिंग्स</h3>
+                <button class="modal-close" data-modal="settingsModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="space-x-2">
-                <button onclick="downloadWord()" class="btn-primary text-sm"><i class="fas fa-file-word mr-1"></i> Word</button>
-                <button onclick="downloadPDF()" class="btn-primary text-sm bg-gray-700"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
-                <button onclick="window.print()" class="btn-primary text-sm bg-gray-600"><i class="fas fa-print mr-1"></i> प्रिंट</button>
+            <div class="modal-body">
+                <div class="space-y-6">
+                    <div class="form-group">
+                        <label class="form-label">सिस्टम नाम</label>
+                        <input type="text" class="form-control" value="UltraPro Admin">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">डिफ़ॉल्ट टाइमज़ोन</label>
+                        <select class="form-control">
+                            <option value="Asia/Kolkata" selected>IST (भारत)</option>
+                            <option value="America/New_York">EST (USA)</option>
+                            <option value="Europe/London">GMT (UK)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-semibold">डार्क मोड</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">डार्क थीम एक्टिवेट करें</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-// ✅ Firebase Configuration - Ab sab sahi hai
-const firebaseConfig = {
-    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-    authDomain: "allinone-mp.firebaseapp.com",
-    projectId: "allinone-mp",  // Error mein yahi dikh raha tha
-    storageBucket: "allinone-mp.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef123456"
-};
-
-// Initialize
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-
-// Enable offline persistence (optional but recommended)
-db.enablePersistence()
-  .catch((err) => {
-      if (err.code == 'failed-precondition') {
-          console.log("Multiple tabs open, persistence can only be enabled in one tab at a a time.");
-      } else if (err.code == 'unimplemented') {
-          console.log("Browser doesn't support persistence");
-      }
-  });
-
-// Global Variables
-let allApplications = [];
-let currentEditId = null;
-
-// 🚀 Main Initialization
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Page loaded, checking auth...");
-    
-    // Auth State Observer
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            console.log("✅ Auth success:", user.email);
+    <!-- JavaScript -->
+    <script>
+        class UltraProDashboard {
+            constructor() {
+                this.currentSection = 'dashboard';
+                this.isDarkMode = false;
+                this.isSidebarCollapsed = false;
+                this.isFullscreen = false;
+                this.notifications = [];
+                this.users = [];
+                this.orders = [];
+                this.charts = {};
+                
+                this.init();
+            }
             
-            // Update UI
-            document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
-            document.getElementById('userEmail').textContent = user.email;
-            document.getElementById('userAvatar').textContent = (user.displayName || user.email).charAt(0).toUpperCase();
+            async init() {
+                this.showLoading('सिस्टम इनिशियलाइज़ कर रहा है...', 10);
+                await this.loadDependencies();
+                this.showLoading('कंपोनेंट्स लोड हो रहे हैं...', 30);
+                this.initializeUI();
+                this.showLoading('डेटा लोड हो रहा है...', 60);
+                await this.loadData();
+                this.showLoading('फाइनलाइज़िंग...', 90);
+                await this.initializeCharts();
+                this.hideLoading();
+                this.bindEvents();
+                this.startRealtimeUpdates();
+            }
             
-            // Hide loading after short delay
-            setTimeout(() => {
-                document.getElementById('loadingScreen').style.display = 'none';
-            }, 1000);
+            showLoading(message, progress) {
+                const loadingScreen = document.getElementById('loadingScreen');
+                const loadingMessage = document.getElementById('loadingMessage');
+                const loadingProgress = document.getElementById('loadingProgress');
+                
+                loadingMessage.textContent = message;
+                loadingProgress.style.width = `${progress}%`;
+            }
             
-            // Load Data
-            loadData();
+            hideLoading() {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
             
-        } else {
-            console.log("❌ Not authenticated");
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('authError').classList.add('active');
-            document.getElementById('errorDetails').textContent = "कृपया पहले लॉगिन करें";
+            async loadDependencies() {
+                // Dependencies already loaded via CDN
+                return Promise.resolve();
+            }
+            
+            initializeUI() {
+                // Set current date
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                document.querySelector('.page-section.active h1').innerHTML += 
+                    `<span class="text-sm font-normal text-gray-600 dark:text-gray-400 ml-2">${now.toLocaleDateString('hi-IN', options)}</span>`;
+                
+                // Initialize calendar
+                this.initializeCalendar();
+                
+                // Sample data for demo
+                this.generateSampleData();
+            }
+            
+            async loadData() {
+                // In real app, load from Firebase/Firestore
+                await this.simulateDataLoading();
+            }
+            
+            async simulateDataLoading() {
+                return new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            initializeCharts() {
+                // Revenue Chart
+                this.charts.revenue = new ApexCharts(document.querySelector("#revenueChart"), {
+                    series: [{
+                        name: 'रेवेन्यू',
+                        data: [45000, 52000, 48000, 61000, 58000, 72000, 68000]
+                    }],
+                    chart: {
+                        type: 'area',
+                        height: '100%',
+                        toolbar: { show: false },
+                        zoom: { enabled: false }
+                    },
+                    colors: ['#3B82F6'],
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 3 },
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.4,
+                            opacityTo: 0.1,
+                            stops: [0, 90, 100]
+                        }
+                    },
+                    xaxis: {
+                        categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        labels: { style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' } }
+                    },
+                    yaxis: {
+                        labels: { 
+                            formatter: (value) => `₹${(value/1000).toFixed(0)}K`,
+                            style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' }
+                        }
+                    },
+                    grid: { borderColor: this.isDarkMode ? '#334155' : '#E2E8F0' }
+                });
+                
+                this.charts.revenue.render();
+                
+                // Activity Chart
+                this.charts.activity = new ApexCharts(document.querySelector("#activityChart"), {
+                    series: [44, 55, 41, 17],
+                    chart: {
+                        type: 'donut',
+                        height: '100%'
+                    },
+                    labels: ['यूज़र्स', 'ऑर्डर्स', 'पेमेंट्स', 'कमेंट्स'],
+                    colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
+                    legend: { position: 'bottom' },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: { chart: { width: 200 } }
+                    }]
+                });
+                
+                this.charts.activity.render();
+                
+                // Sales Chart
+                this.charts.sales = new ApexCharts(document.querySelector("#salesChart"), {
+                    series: [{
+                        name: 'ऑनलाइन',
+                        data: [28, 45, 35, 50, 42, 60, 55]
+                    }, {
+                        name: 'ऑफलाइन',
+                        data: [15, 25, 20, 30, 25, 35, 30]
+                    }],
+                    chart: {
+                        type: 'bar',
+                        height: '100%',
+                        stacked: true,
+                        toolbar: { show: false }
+                    },
+                    colors: ['#3B82F6', '#8B5CF6'],
+                    plotOptions: { bar: { columnWidth: '70%' } },
+                    xaxis: {
+                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        labels: { style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' } }
+                    },
+                    yaxis: {
+                        labels: { 
+                            formatter: (value) => `₹${(value/1000).toFixed(0)}K`,
+                            style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' }
+                        }
+                    },
+                    legend: { position: 'top' },
+                    grid: { borderColor: this.isDarkMode ? '#334155' : '#E2E8F0' }
+                });
+                
+                this.charts.sales.render();
+            }
+            
+            initializeCalendar() {
+                const calendarWidget = document.getElementById('calendarWidget');
+                const now = new Date();
+                const month = now.getMonth();
+                const year = now.getFullYear();
+                
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                
+                let calendarHTML = `
+                    <div class="calendar-header">
+                        <div>
+                            <div class="text-lg font-bold">${now.toLocaleDateString('hi-IN', { month: 'long' })} ${year}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">${daysInMonth} दिन</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="action-btn"><i class="fas fa-chevron-left"></i></button>
+                            <button class="action-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid mt-4">
+                `;
+                
+                // Day headers
+                const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                dayNames.forEach(day => {
+                    calendarHTML += `<div class="text-center text-sm font-semibold text-gray-500 dark:text-gray-400">${day}</div>`;
+                });
+                
+                // Empty cells for first day
+                for(let i = 0; i < firstDay.getDay(); i++) {
+                    calendarHTML += `<div class="calendar-day"></div>`;
+                }
+                
+                // Days of month
+                for(let day = 1; day <= daysInMonth; day++) {
+                    const isToday = day === now.getDate();
+                    calendarHTML += `
+                        <div class="calendar-day ${isToday ? 'today' : ''}">
+                            ${day}
+                        </div>
+                    `;
+                }
+                
+                calendarHTML += '</div>';
+                calendarWidget.innerHTML = calendarHTML;
+            }
+            
+            generateSampleData() {
+                // Generate sample users
+                this.users = [
+                    { id: 1, name: 'राजेश कुमार', email: 'rajesh@example.com', role: 'एडमिन', status: 'active', joinDate: '2024-01-15' },
+                    { id: 2, name: 'सीता शर्मा', email: 'sita@example.com', role: 'एडिटर', status: 'active', joinDate: '2024-01-20' },
+                    { id: 3, name: 'मोहन लाल', email: 'mohan@example.com', role: 'व्यूअर', status: 'inactive', joinDate: '2024-01-25' },
+                    { id: 4, name: 'प्रिया सिंह', email: 'priya@example.com', role: 'एडिटर', status: 'active', joinDate: '2024-02-01' },
+                    { id: 5, name: 'अमित वर्मा', email: 'amit@example.com', role: 'व्यूअर', status: 'active', joinDate: '2024-02-05' }
+                ];
+                
+                // Generate sample orders
+                this.orders = [
+                    { id: 'ORD-2458', customer: 'राजेश कुमार', date: '2024-02-15', amount: '₹12,500', status: 'Delivered' },
+                    { id: 'ORD-2459', customer: 'सीता शर्मा', date: '2024-02-14', amount: '₹8,750', status: 'Processing' },
+                    { id: 'ORD-2460', customer: 'मोहन लाल', date: '2024-02-13', amount: '₹24,300', status: 'Pending' },
+                    { id: 'ORD-2461', customer: 'प्रिया सिंह', date: '2024-02-12', amount: '₹15,800', status: 'Delivered' },
+                    { id: 'ORD-2462', customer: 'अमित वर्मा', date: '2024-02-11', amount: '₹9,450', status: 'Cancelled' }
+                ];
+                
+                // Generate notifications
+                this.notifications = [
+                    { id: 1, type: 'user', message: 'नया यूज़र रजिस्टर्ड', time: '5 मिनट पहले' },
+                    { id: 2, type: 'order', message: 'नया ऑर्डर प्लेस्ड', time: '15 मिनट पहले' },
+                    { id: 3, type: 'payment', message: 'पेमेंट रिसीव्ड', time: '1 घंटा पहले' },
+                    { id: 4, type: 'system', message: 'सिस्टम अपडेट उपलब्ध', time: '2 घंटे पहले' }
+                ];
+                
+                // Populate tables
+                this.populateUsersTable();
+                this.populateOrdersTable();
+                this.updateNotificationBadge();
+            }
+            
+            populateUsersTable() {
+                const tbody = document.getElementById('usersTable');
+                tbody.innerHTML = this.users.map(user => `
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                                    ${user.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <div class="font-semibold">${user.name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td><span class="status-badge ${user.role === 'एडमिन' ? 'info' : user.role === 'एडिटर' ? 'warning' : 'success'}">${user.role}</span></td>
+                        <td><span class="status-badge ${user.status === 'active' ? 'success' : 'danger'}">${user.status}</span></td>
+                        <td>${user.joinDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary btn-icon" onclick="dashboard.editUser(${user.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-icon" onclick="dashboard.deleteUser(${user.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            populateOrdersTable() {
+                const tbody = document.getElementById('ordersTable');
+                tbody.innerHTML = this.orders.map(order => `
+                    <tr>
+                        <td class="font-semibold">${order.id}</td>
+                        <td>${order.customer}</td>
+                        <td>${order.date}</td>
+                        <td class="font-semibold">${order.amount}</td>
+                        <td>
+                            <span class="status-badge ${
+                                order.status === 'Delivered' ? 'success' :
+                                order.status === 'Processing' ? 'warning' :
+                                order.status === 'Pending' ? 'info' : 'danger'
+                            }">
+                                ${order.status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary btn-sm" onclick="dashboard.viewOrder('${order.id}')">
+                                    <i class="fas fa-eye mr-1"></i> व्यू
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="dashboard.editOrder('${order.id}')">
+                                    <i class="fas fa-edit mr-1"></i> एडिट
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            updateNotificationBadge() {
+                const badge = document.querySelector('.notification-badge');
+                if (badge) {
+                    badge.textContent = this.notifications.length;
+                }
+            }
+            
+            bindEvents() {
+                // Sidebar toggle
+                document.getElementById('sidebarToggle').addEventListener('click', () => {
+                    this.toggleSidebar();
+                });
+                
+                // Theme toggle
+                document.getElementById('themeToggle').addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+                
+                // Fullscreen toggle
+                document.getElementById('fullscreenToggle').addEventListener('click', () => {
+                    this.toggleFullscreen();
+                });
+                
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = item.dataset.section;
+                        this.switchSection(section);
+                    });
+                });
+                
+                // Modal close buttons
+                document.querySelectorAll('.modal-close').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const modalId = button.dataset.modal;
+                        this.closeModal(modalId);
+                    });
+                });
+                
+                // Modal overlay click
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.closeModal(modal.id);
+                        }
+                    });
+                });
+                
+                // Notification button
+                document.getElementById('notificationBtn').addEventListener('click', () => {
+                    this.showNotifications();
+                });
+                
+                // Settings button
+                document.getElementById('settingsBtn').addEventListener('click', () => {
+                    this.showSettings();
+                });
+                
+                // Add user button
+                document.getElementById('addUserBtn').addEventListener('click', () => {
+                    this.showAddUserModal();
+                });
+                
+                // User form submission
+                document.getElementById('userForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addUser();
+                });
+                
+                // Search functionality
+                document.querySelectorAll('.search-bar input').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        this.handleSearch(e.target.value);
+                    });
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === '/') {
+                        e.preventDefault();
+                        document.querySelector('.search-bar input').focus();
+                    }
+                    
+                    if (e.ctrlKey && e.key === 'd') {
+                        e.preventDefault();
+                        this.toggleTheme();
+                    }
+                    
+                    if (e.key === 'Escape') {
+                        this.closeAllModals();
+                    }
+                });
+                
+                // Window resize
+                window.addEventListener('resize', () => {
+                    this.handleResize();
+                });
+            }
+            
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const topbar = document.getElementById('topbar');
+                
+                this.isSidebarCollapsed = !this.isSidebarCollapsed;
+                
+                if (this.isSidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                    topbar.classList.add('expanded');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                    topbar.classList.remove('expanded');
+                }
+            }
+            
+            toggleTheme() {
+                this.isDarkMode = !this.isDarkMode;
+                document.body.classList.toggle('dark-mode', this.isDarkMode);
+                
+                const themeIcon = document.querySelector('#themeToggle i');
+                if (this.isDarkMode) {
+                    themeIcon.className = 'fas fa-sun';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeIcon.className = 'fas fa-moon';
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                // Update charts for dark mode
+                this.updateChartsTheme();
+            }
+            
+            toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                    });
+                    this.isFullscreen = true;
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                        this.isFullscreen = false;
+                    }
+                }
+                
+                const fullscreenIcon = document.querySelector('#fullscreenToggle i');
+                fullscreenIcon.className = this.isFullscreen ? 'fas fa-compress' : 'fas fa-expand';
+            }
+            
+            switchSection(sectionId) {
+                // Hide all sections
+                document.querySelectorAll('.page-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Show selected section
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.classList.add('active');
+                }
+                
+                // Activate corresponding nav item
+                const navItem = document.querySelector(`[data-section="${sectionId}"]`);
+                if (navItem) {
+                    navItem.classList.add('active');
+                }
+                
+                // Update current section
+                this.currentSection = sectionId;
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }
+            
+            showModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+            
+            closeAllModals() {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = 'auto';
+            }
+            
+            showNotifications() {
+                const modal = document.getElementById('notificationModal');
+                const feed = modal.querySelector('.activity-feed');
+                
+                feed.innerHTML = this.notifications.map(notification => `
+                    <div class="activity-item">
+                        <div class="activity-icon ${notification.type === 'user' ? 'bg-blue-100 text-blue-600' : 
+                            notification.type === 'order' ? 'bg-green-100 text-green-600' : 
+                            notification.type === 'payment' ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-600'}">
+                            <i class="fas fa-${notification.type === 'user' ? 'user' : 
+                                notification.type === 'order' ? 'shopping-cart' : 
+                                notification.type === 'payment' ? 'credit-card' : 'info'}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>${notification.message}</h4>
+                            <div class="activity-time">${notification.time}</div>
+                        </div>
+                        <button class="text-gray-400 hover:text-gray-600" onclick="dashboard.clearNotification(${notification.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+                
+                this.showModal('notificationModal');
+            }
+            
+            showSettings() {
+                this.showModal('settingsModal');
+            }
+            
+            showAddUserModal() {
+                this.showModal('addUserModal');
+            }
+            
+            addUser() {
+                // In real app, add to Firebase
+                Swal.fire({
+                    icon: 'success',
+                    title: 'यूज़र क्रिएटेड',
+                    text: 'नया यूज़र सफलतापूर्वक ऐड हो गया!',
+                    timer: 2000
+                });
+                
+                this.closeModal('addUserModal');
+                document.getElementById('userForm').reset();
+            }
+            
+            editUser(userId) {
+                const user = this.users.find(u => u.id === userId);
+                Swal.fire({
+                    title: 'यूज़र एडिट करें',
+                    html: `
+                        <input id="userName" class="swal2-input" placeholder="नाम" value="${user.name}">
+                        <input id="userEmail" class="swal2-input" placeholder="ईमेल" value="${user.email}" type="email">
+                        <select id="userRole" class="swal2-input">
+                            <option value="एडमिन" ${user.role === 'एडमिन' ? 'selected' : ''}>एडमिन</option>
+                            <option value="एडिटर" ${user.role === 'एडिटर' ? 'selected' : ''}>एडिटर</option>
+                            <option value="व्यूअर" ${user.role === 'व्यूअर' ? 'selected' : ''}>व्यूअर</option>
+                        </select>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'सेव',
+                    cancelButtonText: 'कैंसल',
+                    preConfirm: () => {
+                        return {
+                            name: document.getElementById('userName').value,
+                            email: document.getElementById('userEmail').value,
+                            role: document.getElementById('userRole').value
+                        };
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        Swal.fire('सेव्ड!', 'यूज़र डिटेल्स अपडेट हो गईं।', 'success');
+                    }
+                });
+            }
+            
+            deleteUser(userId) {
+                Swal.fire({
+                    title: 'क्या आप सुनिश्चित हैं?',
+                    text: "आप इस यूज़र को डिलीट नहीं कर पाएंगे!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'हाँ, डिलीट करें!',
+                    cancelButtonText: 'कैंसल'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire(
+                            'डिलीटेड!',
+                            'यूज़र डिलीट हो गया है।',
+                            'success'
+                        );
+                    }
+                });
+            }
+            
+            viewOrder(orderId) {
+                const order = this.orders.find(o => o.id === orderId);
+                Swal.fire({
+                    title: `ऑर्डर डिटेल्स: ${orderId}`,
+                    html: `
+                        <div class="text-left">
+                            <p><strong>कस्टमर:</strong> ${order.customer}</p>
+                            <p><strong>डेट:</strong> ${order.date}</p>
+                            <p><strong>एमाउंट:</strong> ${order.amount}</p>
+                            <p><strong>स्टेटस:</strong> ${order.status}</p>
+                        </div>
+                    `,
+                    icon: 'info'
+                });
+            }
+            
+            editOrder(orderId) {
+                Swal.fire({
+                    title: 'ऑर्डर एडिट करें',
+                    text: 'फीचर जल्द ही उपलब्ध होगा...',
+                    icon: 'info'
+                });
+            }
+            
+            clearNotification(notificationId) {
+                this.notifications = this.notifications.filter(n => n.id !== notificationId);
+                this.updateNotificationBadge();
+                this.showNotifications();
+            }
+            
+            handleSearch(query) {
+                const currentSection = this.currentSection;
+                
+                if (currentSection === 'users') {
+                    this.filterUsers(query);
+                } else if (currentSection === 'orders') {
+                    this.filterOrders(query);
+                }
+            }
+            
+            filterUsers(query) {
+                const filteredUsers = this.users.filter(user => 
+                    user.name.toLowerCase().includes(query.toLowerCase()) ||
+                    user.email.toLowerCase().includes(query.toLowerCase()) ||
+                    user.role.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                const tbody = document.getElementById('usersTable');
+                tbody.innerHTML = filteredUsers.map(user => `
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                                    ${user.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <div class="font-semibold">${user.name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td><span class="status-badge ${user.role === 'एडमिन' ? 'info' : user.role === 'एडिटर' ? 'warning' : 'success'}">${user.role}</span></td>
+                        <td><span class="status-badge ${user.status === 'active' ? 'success' : 'danger'}">${user.status}</span></td>
+                        <td>${user.joinDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary btn-icon" onclick="dashboard.editUser(${user.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-icon" onclick="dashboard.deleteUser(${user.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            filterOrders(query) {
+                const filteredOrders = this.orders.filter(order => 
+                    order.id.toLowerCase().includes(query.toLowerCase()) ||
+                    order.customer.toLowerCase().includes(query.toLowerCase()) ||
+                    order.status.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                const tbody = document.getElementById('ordersTable');
+                tbody.innerHTML = filteredOrders.map(order => `
+                    <tr>
+                        <td class="font-semibold">${order.id}</td>
+                        <td>${order.customer}</td>
+                        <td>${order.date}</td>
+                        <td class="font-semibold">${order.amount}</td>
+                        <td>
+                            <span class="status-badge ${
+                                order.status === 'Delivered' ? 'success' :
+                                order.status === 'Processing' ? 'warning' :
+                                order.status === 'Pending' ? 'info' : 'danger'
+                            }">
+                                ${order.status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary btn-sm" onclick="dashboard.viewOrder('${order.id}')">
+                                    <i class="fas fa-eye mr-1"></i> व्यू
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="dashboard.editOrder('${order.id}')">
+                                    <i class="fas fa-edit mr-1"></i> एडिट
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            handleResize() {
+                if (window.innerWidth < 1024) {
+                    document.getElementById('sidebar').classList.remove('collapsed');
+                    document.getElementById('mainContent').classList.remove('expanded');
+                    document.getElementById('topbar').classList.remove('expanded');
+                    this.isSidebarCollapsed = false;
+                }
+            }
+            
+            updateChartsTheme() {
+                if (this.charts.revenue) {
+                    this.charts.revenue.updateOptions({
+                        xaxis: {
+                            labels: { style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' } }
+                        },
+                        yaxis: {
+                            labels: { style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' } }
+                        },
+                        grid: { borderColor: this.isDarkMode ? '#334155' : '#E2E8F0' }
+                    });
+                }
+                
+                if (this.charts.sales) {
+                    this.charts.sales.updateOptions({
+                        xaxis: {
+                            labels: { style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' } }
+                        },
+                        yaxis: {
+                            labels: { style: { colors: this.isDarkMode ? '#CBD5E1' : '#64748B' } }
+                        },
+                        grid: { borderColor: this.isDarkMode ? '#334155' : '#E2E8F0' }
+                    });
+                }
+            }
+            
+            startRealtimeUpdates() {
+                // Simulate real-time updates
+                setInterval(() => {
+                    this.simulateRealtimeData();
+                }, 10000);
+            }
+            
+            simulateRealtimeData() {
+                // Update stats randomly
+                const statCards = document.querySelectorAll('.stat-card .stat-value');
+                statCards.forEach(card => {
+                    const current = parseInt(card.textContent.replace(/[^0-9]/g, ''));
+                    const change = Math.floor(Math.random() * 1000) - 500;
+                    const newValue = Math.max(0, current + change);
+                    card.textContent = newValue.toLocaleString('hi-IN');
+                });
+                
+                // Add random notification
+                const messages = [
+                    'नया लॉगिन डिटेक्ट हुआ',
+                    'सिस्टम बैकअप कम्पलीट',
+                    'नया प्रोडक्ट ऐड किया गया',
+                    'यूज़र प्रोफाइल अपडेटेड'
+                ];
+                
+                const newNotification = {
+                    id: Date.now(),
+                    type: ['user', 'system', 'order', 'payment'][Math.floor(Math.random() * 4)],
+                    message: messages[Math.floor(Math.random() * messages.length)],
+                    time: 'अभी'
+                };
+                
+                this.notifications.unshift(newNotification);
+                if (this.notifications.length > 10) {
+                    this.notifications.pop();
+                }
+                this.updateNotificationBadge();
+            }
         }
-    });
-});
-
-// 📊 Load Data from Firestore
-function loadData() {
-    document.getElementById('connectionStatus').textContent = "डेटा लोड हो रहा है...";
-    
-    // Real-time listener
-    db.collection('applications')
-        .orderBy('createdAt', 'desc')
-        .onSnapshot((snapshot) => {
-            console.log("Data received:", snapshot.size);
-            
-            allApplications = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                createdAt: doc.data().createdAt?.toDate() || new Date()
-            }));
-            
-            renderTable(allApplications);
-            updateStats(allApplications);
-            
-        }, (error) => {
-            console.error("Firestore Error:", error);
-            document.getElementById('connectionStatus').textContent = "Error: " + error.message;
-            
-            // Show error in table
-            document.getElementById('tableBody').innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center py-8 text-red-500">
-                        <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
-                        <p>डेटा लोड नहीं हो सका</p>
-                        <p class="text-sm">${error.message}</p>
-                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">रीफ्रेश करें</button>
-                    </td>
-                </tr>
-            `;
+        
+        // Initialize dashboard
+        let dashboard;
+        document.addEventListener('DOMContentLoaded', () => {
+            dashboard = new UltraProDashboard();
         });
-}
-
-// 📋 Render Table
-function renderTable(data) {
-    const tbody = document.getElementById('tableBody');
-    
-    if(data.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="text-center py-8 text-gray-500">
-                    <i class="fas fa-inbox text-3xl mb-2"></i>
-                    <p>कोई आवेदन नहीं मिला</p>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    let html = '';
-    data.forEach(item => {
-        const appNo = item.applicationNumber || `AIO-${item.id.substr(0,6).toUpperCase()}`;
-        const date = item.createdAt.toLocaleDateString('hi-IN');
-        const status = item.status || 'pending';
-        
-        const statusClass = {
-            'pending': 'status-pending',
-            'processing': 'status-processing', 
-            'complete': 'status-complete',
-            'reject': 'status-reject'
-        }[status] || 'status-pending';
-        
-        const statusText = {
-            'pending': 'लंबित',
-            'processing': 'प्रोसेसिंग',
-            'complete': 'पूर्ण',
-            'reject': 'अस्वीकृत'
-        }[status] || 'लंबित';
-        
-        html += `
-            <tr>
-                <td class="font-mono text-sm font-bold text-blue-700">${appNo}</td>
-                <td class="font-medium">${item.applicantName || '-'}</td>
-                <td><span class="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">${getServiceName(item.serviceType)}</span></td>
-                <td class="text-sm">${item.mobileNumber || '-'}</td>
-                <td class="text-sm text-gray-600">${date}</td>
-                <td><span class="status-badge ${statusClass}" onclick="quickStatus('${item.id}', '${status}')">${statusText}</span></td>
-                <td>
-                    <button onclick="viewDetails('${item.id}')" class="text-blue-600 hover:text-blue-800 mr-2" title="देखें"><i class="fas fa-eye"></i></button>
-                    <button onclick="deleteApp('${item.id}')" class="text-red-600 hover:text-red-800" title="हटाएं"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
-    });
-    
-    tbody.innerHTML = html;
-}
-
-// 📊 Update Stats
-function updateStats(data) {
-    document.getElementById('statTotal').textContent = data.length;
-    document.getElementById('statPending').textContent = data.filter(a => !a.status || a.status === 'pending').length;
-    document.getElementById('statComplete').textContent = data.filter(a => a.status === 'complete').length;
-    document.getElementById('statRejected').textContent = data.filter(a => a.status === 'reject').length;
-}
-
-// 👁️ View Details - FIXED
-function viewDetails(id) {
-    const item = allApplications.find(a => a.id === id);
-    if(!item) return alert("डेटा नहीं मिला");
-    
-    currentEditId = id;
-    
-    const appNo = item.applicationNumber || `AIO-${item.id.substr(0,6).toUpperCase()}`;
-    document.getElementById('viewAppNo').textContent = appNo;
-    
-    // Applicant Details
-    document.getElementById('viewApplicant').innerHTML = `
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">नाम:</span> <span class="font-medium">${item.applicantName || '-'}</span></div>
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">पिता का नाम:</span> <span class="font-medium">${item.fatherName || '-'}</span></div>
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">मोबाइल:</span> <span class="font-medium">${item.mobileNumber || '-'}</span></div>
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">आधार:</span> <span class="font-medium">${maskAadhar(item.aadharNumber)}</span></div>
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">पता:</span> <span class="font-medium">${item.address || '-'}</span></div>
-    `;
-    
-    // Application Details
-    document.getElementById('viewApplication').innerHTML = `
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">सेवा:</span> <span class="font-medium">${getServiceName(item.serviceType)}</span></div>
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">जिला:</span> <span class="font-medium">${getDistrictName(item.district)}</span></div>
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">तिथि:</span> <span class="font-medium">${item.createdAt.toLocaleDateString('hi-IN')}</span></div>
-        <div class="flex justify-between border-b py-2"><span class="text-gray-600">स्थिति:</span> <span class="font-medium text-${item.status === 'complete' ? 'green' : item.status === 'reject' ? 'red' : 'yellow'}-600">${item.status === 'complete' ? 'पूर्ण' : item.status === 'reject' ? 'अस्वीकृत' : item.status === 'processing' ? 'प्रोसेसिंग' : 'लंबित'}</span></div>
-    `;
-    
-    document.getElementById('viewModal').classList.add('active');
-}
-
-// 💾 Submit Application
-async function submitApplication(e) {
-    e.preventDefault();
-    
-    const data = {
-        applicantName: document.getElementById('inpName').value,
-        fatherName: document.getElementById('inpFather').value,
-        mobileNumber: document.getElementById('inpMobile').value,
-        aadharNumber: document.getElementById('inpAadhar').value,
-        serviceType: document.getElementById('inpService').value,
-        district: document.getElementById('inpDistrict').value,
-        address: document.getElementById('inpAddress').value,
-        status: 'pending',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    
-    try {
-        await db.collection('applications').add(data);
-        alert('✅ आवेदन सफलतापूर्वक सेव हो गया!');
-        document.getElementById('appForm').reset();
-        showSection('dashboard');
-    } catch(err) {
-        alert('❌ त्रुटि: ' + err.message);
-    }
-}
-
-// 🔄 Quick Status Change
-async function quickStatus(id, current) {
-    const statuses = ['pending', 'processing', 'complete', 'reject'];
-    const next = statuses[(statuses.indexOf(current) + 1) % 4];
-    
-    try {
-        await db.collection('applications').doc(id).update({
-            status: next,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-    } catch(err) {
-        alert('त्रुटि: ' + err.message);
-    }
-}
-
-// 🔄 Change Status from Modal
-async function changeStatus(status) {
-    if(!currentEditId) return;
-    try {
-        await db.collection('applications').doc(currentEditId).update({
-            status: status,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        alert('स्थिति अपडेट हो गई');
-        closeModal();
-    } catch(err) {
-        alert('त्रुटि: ' + err.message);
-    }
-}
-
-// 🗑️ Delete
-async function deleteApp(id) {
-    if(!confirm('हटाना चाहते हैं?')) return;
-    try {
-        await db.collection('applications').doc(id).delete();
-        alert('हटा दिया गया');
-    } catch(err) {
-        alert('त्रुटि: ' + err.message);
-    }
-}
-
-// 📄 Download Word - FIXED
-function downloadWord() {
-    if(!currentEditId) return alert("कोई आवेदन चयनित नहीं");
-    
-    const item = allApplications.find(a => a.id === currentEditId);
-    const appNo = item.applicationNumber || `AIO-${item.id.substr(0,6).toUpperCase()}`;
-    
-    const html = `
-    <html xmlns:o='urn:schemas-microsoft-com:office:office'>
-    <head><meta charset='utf-8'><title>Receipt</title></head>
-    <body style="font-family: Arial; padding: 40px;">
-        <h1 style="color: #1e40af; text-align: center;">मध्य प्रदेश सरकार</h1>
-        <h2 style="text-align: center;">AllInOne MP Portal</h2>
-        <hr style="margin: 20px 0;">
-        
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">आवेदन क्रमांक:</td><td style="padding: 8px; border: 1px solid #ddd;">${appNo}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">आवेदक का नाम:</td><td style="padding: 8px; border: 1px solid #ddd;">${item.applicantName || '-'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">पिता का नाम:</td><td style="padding: 8px; border: 1px solid #ddd;">${item.fatherName || '-'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">मोबाइल:</td><td style="padding: 8px; border: 1px solid #ddd;">${item.mobileNumber || '-'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">सेवा:</td><td style="padding: 8px; border: 1px solid #ddd;">${getServiceName(item.serviceType)}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">जिला:</td><td style="padding: 8px; border: 1px solid #ddd;">${getDistrictName(item.district)}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">पता:</td><td style="padding: 8px; border: 1px solid #ddd;">${item.address || '-'}</td></tr>
-            <tr><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">स्थिति:</td><td style="padding: 8px; border: 1px solid #ddd;">${item.status === 'complete' ? 'पूर्ण' : item.status === 'reject' ? 'अस्वीकृत' : 'लंबित'}</td></tr>
-        </table>
-        
-        <p style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
-            यह कंप्यूटर जनरेटेड रसीद है।<br>
-            https://allinonemp.harshtiwari.in
-        </p>
-    </body>
-    </html>`;
-    
-    const blob = new Blob(['\ufeff', html], {type: 'application/msword'});
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Receipt_${appNo}.doc`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-// 📄 Download PDF
-function downloadPDF() {
-    const element = document.getElementById('pdfContent');
-    if(!element) return;
-    
-    html2pdf().from(element).set({
-        margin: 0.5,
-        filename: 'application_receipt.pdf',
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    }).save();
-}
-
-// Filter
-function applyFilter() {
-    const status = document.getElementById('filterStatus').value;
-    const search = document.getElementById('searchBox').value.toLowerCase();
-    
-    let filtered = allApplications;
-    if(status) filtered = filtered.filter(a => (a.status || 'pending') === status);
-    if(search) filtered = filtered.filter(a => (a.applicantName || '').toLowerCase().includes(search));
-    
-    renderTable(filtered);
-}
-
-// Navigation
-function showSection(id) {
-    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    event.target.closest('.nav-item').classList.add('active');
-    
-    const titles = {
-        'dashboard': 'डैशबोर्ड',
-        'applications': 'आवेदन प्रबंधन',
-        'newApplication': 'नया आवेदन',
-        'settings': 'सेटिंग्स'
-    };
-    document.getElementById('pageTitle').textContent = titles[id] || 'डैशबोर्ड';
-}
-
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-}
-
-function closeModal() {
-    document.getElementById('viewModal').classList.remove('active');
-}
-
-function logout() {
-    auth.signOut().then(() => location.href = 'adminlogin.html');
-}
-
-// Helpers
-function getServiceName(type) {
-    const map = {samagra: 'समग्र', mpbhoj: 'भोज', scholarship: 'छात्रवृत्ति', pension: 'पेंशन', housing: 'आवास'};
-    return map[type] || type;
-}
-function getDistrictName(d) {
-    const map = {bhopal: 'भोपाल', indore: 'इंदौर', jabalpur: 'जबलपुर', gwalior: 'ग्वालियर', ujjain: 'उज्जैन'};
-    return map[d] || d;
-}
-function maskAadhar(a) {
-    return a ? a.toString().replace(/.(?=.{4})/g, 'X') : '-';
-}
-</script>
-
+    </script>
 </body>
 </html>
