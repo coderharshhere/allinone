@@ -110,23 +110,17 @@
             </div>
         </div>
     </div>
-</section>
 <!-- TRACK APPLICATION (FIXED & CENTER) -->
 <section class="bg-white py-6">
   <div class="container mx-auto px-4 flex justify-center">
-
-    <div class="bg-white shadow-md rounded-2xl border-l-8 border-blue-600
-                w-full max-w-xl px-6 py-5">
-
+    <div class="bg-white shadow-lg rounded-2xl border-l-8 border-blue-600 w-full max-w-xl px-6 py-5 transform transition-all hover:shadow-xl">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-
         <div class="text-center md:text-left">
-          <h4 class="font-bold text-gray-800 text-lg">
+          <h4 class="font-bold text-gray-800 text-lg flex items-center gap-2">
+            <i class="fas fa-search-location text-blue-600"></i>
             आवेदन की स्थिति जांचें
           </h4>
-          <p class="text-sm text-gray-500">
-            अपना आवेदन क्रमांक डालें
-          </p>
+          <p class="text-sm text-gray-500">अपना आवेदन क्रमांक डालें (जैसे: AIO-123456)</p>
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto">
@@ -134,28 +128,216 @@
             id="trackInput"
             type="text"
             placeholder="AIO-XXXXXX"
-            class="border px-4 py-2 rounded-lg
-                   focus:ring-2 focus:ring-blue-400
-                   outline-none w-full md:w-56"
+            class="border-2 border-gray-200 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none w-full md:w-56 uppercase font-semibold tracking-wide"
+            onkeypress="if(event.key==='Enter') trackApplication()"
           />
           <button
+            id="trackBtn"
             onclick="trackApplication()"
-            class="bg-blue-600 text-white px-5 py-2 rounded-lg
-                   font-bold hover:bg-blue-700 whitespace-nowrap">
-            Track
+            class="bg-blue-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-700 active:scale-95 transition-all whitespace-nowrap flex items-center gap-2"
+          >
+            <span>Track</span>
+            <i class="fas fa-arrow-right text-sm"></i>
           </button>
         </div>
-
       </div>
 
-      <!-- RESULT -->
-      <div id="trackResult" class="hidden mt-4 text-center"></div>
-
+      <!-- RESULT BOX -->
+      <div id="trackResult" class="hidden mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in"></div>
     </div>
-
   </div>
 </section>
 
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+</style>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    onSnapshot,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+  /* ===== FIREBASE CONFIG ===== */
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+    authDomain: "allinone-aa89.firebaseapp.com",
+    projectId: "allinone-aa89"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  /* ===== GLOBAL TRACK FUNCTION ===== */
+  window.trackApplication = async function () {
+    const input = document.getElementById("trackInput").value.trim().toUpperCase();
+    const resultBox = document.getElementById("trackResult");
+    const trackBtn = document.getElementById("trackBtn");
+    
+    // Reset and show loading
+    resultBox.classList.remove("hidden");
+    resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-blue-50 border-blue-500 text-blue-700";
+    resultBox.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> खोज रहे हैं... कृपया प्रतीक्षा करें';
+    
+    // Disable button
+    trackBtn.disabled = true;
+    trackBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+    // Validation
+    if (!input || !input.startsWith("AIO-") || input.length < 8) {
+      resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
+      resultBox.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i> ⚠️ कृपया सही आवेदन क्रमांक डालें (AIO-XXXXXX)';
+      trackBtn.disabled = false;
+      trackBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+      return;
+    }
+
+    try {
+      const collections = [
+        "applications",
+        "samagra_ekyc_requests", 
+        "mpbhojApplications"
+      ];
+
+      let foundData = null;
+      let foundCollection = "";
+
+      // Search in all collections
+      for (const col of collections) {
+        const q = query(
+          collection(db, col),
+          where("applicationNumber", "==", input)
+        );
+        const snap = await getDocs(q);
+        
+        if (!snap.empty) {
+          foundData = snap.docs[0].data();
+          foundCollection = col;
+          break;
+        }
+      }
+
+      if (!foundData) {
+        resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
+        resultBox.innerHTML = `
+          <div class="flex items-start gap-3">
+            <i class="fas fa-times-circle text-xl mt-0.5"></i>
+            <div>
+              <p class="font-bold">आवेदन नहीं मिला</p>
+              <p class="text-xs mt-1 opacity-80">कृपया अपना आवेदन क्रमांक जांचें या बाद में प्रयास करें।</p>
+            </div>
+          </div>
+        `;
+      } else {
+        // Determine status color and icon
+        let statusConfig = {
+          color: "yellow",
+          icon: "clock",
+          text: foundData.status || "PENDING"
+        };
+        
+        if (foundData.status === "complete" || foundData.status === "approved" || foundData.status === "success") {
+          statusConfig = { color: "green", icon: "check-circle", text: "सफलतापूर्वक पूर्ण" };
+        } else if (foundData.status === "reject" || foundData.status === "rejected" || foundData.status === "cancelled") {
+          statusConfig = { color: "red", icon: "times-circle", text: "अस्वीकृत" };
+        } else if (foundData.status === "processing" || foundData.status === "under_review") {
+          statusConfig = { color: "blue", icon: "spinner", text: "प्रक्रियाधीन" };
+        }
+
+        resultBox.className = `mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-${statusConfig.color}-50 border-${statusConfig.color}-500 text-${statusConfig.color}-800`;
+        
+        resultBox.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 mb-3 pb-2 border-b border-${statusConfig.color}-200">
+              <i class="fas fa-${statusConfig.icon} text-lg"></i>
+              <span class="font-bold text-lg">स्थिति: ${statusConfig.text.toUpperCase()}</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+              <div>
+                <span class="font-semibold opacity-70">आवेदन क्रमांक:</span>
+                <p class="font-bold text-base">${foundData.applicationNumber}</p>
+              </div>
+              <div>
+                <span class="font-semibold opacity-70">आवेदक का नाम:</span>
+                <p class="font-bold text-base">${foundData.applicantName || foundData.name || "-"}</p>
+              </div>
+              <div>
+                <span class="font-semibold opacity-70">सेवा का प्रकार:</span>
+                <p>${foundData.serviceType || foundData.service || foundCollection}</p>
+              </div>
+              <div>
+                <span class="font-semibold opacity-70">आवेदन तिथि:</span>
+                <p>${foundData.createdAt ? new Date(foundData.createdAt.toDate()).toLocaleDateString('hi-IN') : "-"}</p>
+              </div>
+            </div>
+            ${foundData.remarks ? `
+              <div class="mt-3 p-2 bg-white/50 rounded-lg text-xs">
+                <span class="font-semibold">टिप्पणी:</span> ${foundData.remarks}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error("Track Error:", error);
+      resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
+      resultBox.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> ⚠️ तकनीकी त्रुटि। कृपया बाद में प्रयास करें।';
+    } finally {
+      // Re-enable button
+      trackBtn.disabled = false;
+      trackBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+    }
+  };
+
+  /* ===== NOTIFICATION LISTENER ===== */
+  const notifQuery = query(
+    collection(db, "notifications"),
+    where("active", "==", true),
+    orderBy("createdAt", "desc")
+  );
+
+  onSnapshot(notifQuery, (snapshot) => {
+    const drawerBox = document.getElementById("drawer-notif-list");
+    if (!drawerBox) return;
+
+    if (snapshot.empty) {
+      drawerBox.innerHTML = `
+        <div class="text-center py-8 text-gray-400">
+          <i class="fas fa-inbox text-4xl mb-2 opacity-30"></i>
+          <p class="text-sm">कोई नई सूचना नहीं</p>
+        </div>`;
+      return;
+    }
+
+    let html = "";
+    snapshot.forEach(doc => {
+      const n = doc.data();
+      const time = n.createdAt ? new Date(n.createdAt.toDate()).toLocaleDateString('hi-IN') : '';
+      html += `
+        <div class="border-l-4 border-blue-600 bg-gradient-to-r from-blue-50 to-white p-4 rounded-r-xl shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex justify-between items-start mb-1">
+            <h4 class="font-bold text-sm text-gray-800">${n.title}</h4>
+            <span class="text-[10px] text-gray-400">${time}</span>
+          </div>
+          <p class="text-xs text-gray-600 leading-relaxed">${n.message}</p>
+        </div>
+      `;
+    });
+    drawerBox.innerHTML = html;
+  });
+</script>
 
 
     <style>
@@ -742,6 +924,7 @@ window.trackApplication = async function () {
 <div id="notif-overlay" class="fixed inset-0 bg-blue-900/20 backdrop-blur-sm z-[105] hidden transition-opacity duration-300"></div>
 </body>
 </html>
+
 
 
 
