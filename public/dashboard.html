@@ -1039,6 +1039,152 @@
             background: #dbeafe;
             transform: scale(1.02);
         }
+        
+        /* DARK MODE STYLES */
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .sidebar {
+            background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            border-right: 1px solid #334155;
+        }
+        
+        .dark-mode .nav-item {
+            color: #cbd5e1;
+        }
+        
+        .dark-mode .nav-item:hover {
+            background-color: rgba(51, 65, 85, 0.5);
+            color: #fff;
+        }
+        
+        .dark-mode .nav-item.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        .dark-mode .top-bar {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid #334155;
+        }
+        
+        .dark-mode .bg-white {
+            background-color: #1e293b !important;
+            border: 1px solid #334155;
+        }
+        
+        .dark-mode .text-gray-800 {
+            color: #e2e8f0 !important;
+        }
+        
+        .dark-mode .text-gray-700 {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark-mode .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+        
+        .dark-mode .text-gray-500 {
+            color: #64748b !important;
+        }
+        
+        .dark-mode .border-gray-200 {
+            border-color: #334155 !important;
+        }
+        
+        .dark-mode .table-row:hover {
+            background-color: #334155 !important;
+        }
+        
+        .dark-mode .form-control {
+            background-color: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .form-control:focus {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+        }
+        
+        .dark-mode .stats-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 1px solid #475569;
+        }
+        
+        .dark-mode .settings-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+        
+        .dark-mode .bg-gray-50 {
+            background-color: #0f172a !important;
+        }
+        
+        .dark-mode .bg-gray-100 {
+            background-color: #1e293b !important;
+        }
+        
+        .dark-mode .data-table thead {
+            background: linear-gradient(135deg, #1e293b, #334155);
+        }
+        
+        .dark-mode .data-table th {
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .data-table td {
+            color: #cbd5e1;
+            border-color: #334155;
+        }
+        
+        .dark-mode .modal-content {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+        }
+        
+        .dark-mode .btn-secondary {
+            background-color: #334155;
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+        
+        .dark-mode .btn-secondary:hover {
+            background-color: #475569;
+        }
+        
+        .dark-mode .sidebar-toggle-fixed {
+            background-color: #1e293b;
+            color: #3b82f6;
+            border-color: #334155;
+        }
+        
+        .dark-mode .notification-item:hover {
+            background-color: #334155;
+        }
+        
+        .dark-mode #notificationDropdown {
+            background-color: #1e293b;
+            border-color: #334155;
+        }
+        
+        .dark-mode .import-dropzone {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        
+        .dark-mode .import-dropzone:hover {
+            background: #1e293b;
+            border-color: #3b82f6;
+        }
+        
+        /* Dark mode transitions */
+        body, .sidebar, .top-bar, .bg-white, .form-control, .stats-card, .settings-card {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -3105,15 +3251,27 @@ document.getElementById('editApplicationForm')?.addEventListener('submit', async
 window.updateApplicationStatus = async function(newStatus) {
     if (!currentDetailId) return;
     
+    const item = allApplications.find(a => a.id === currentDetailId);
+    const appNo = item?.applicationNumber || 'Unknown';
+    
     try {
         await updateDoc(doc(db, 'applications', currentDetailId), {
             status: newStatus,
             updatedAt: serverTimestamp()
         });
-        alert('स्थिति सफलतापूर्वक अपडेट हो गई!');
+        
+        // Log activity
+        ActivityLogger.log('STATUS_UPDATE', {
+            applicationNumber: appNo,
+            oldStatus: item?.status,
+            newStatus: newStatus,
+            applicantName: item?.applicantName
+        });
+        
+        showToast(`✓ स्थिति "${newStatus === 'complete' ? 'पूर्ण' : newStatus === 'reject' ? 'अस्वीकृत' : newStatus === 'processing' ? 'प्रोसेसिंग' : 'लंबित'}" में अपडेट हो गई!`, 'success');
         closeModal();
     } catch (error) {
-        alert('त्रुटि: ' + error.message);
+        showToast('त्रुटि: ' + error.message, 'error');
     }
 };
 
@@ -3332,11 +3490,228 @@ window.toggleDarkMode = function() {
     const enabled = document.getElementById('darkMode').checked;
     if (enabled) {
         document.body.classList.add('dark-mode');
-        alert('डार्क मोड सक्षम किया गया! (जल्द ही उपलब्ध)');
+        localStorage.setItem('darkMode', 'enabled');
+        // Show success message
+        showToast('✓ डार्क मोड सक्षम किया गया!', 'success');
     } else {
         document.body.classList.remove('dark-mode');
+        localStorage.setItem('darkMode', 'disabled');
+        showToast('✓ लाइट मोड सक्षम किया गया!', 'success');
+    }
+    
+    // Save to database if user is logged in
+    if (currentUser) {
+        updateDoc(doc(db, 'admins', currentUser.uid), {
+            'settings.darkMode': enabled,
+            updatedAt: serverTimestamp()
+        }).catch(err => console.error('Error saving dark mode:', err));
     }
 };
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-20 right-6 z-50 px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-300 translate-x-0 ${
+        type === 'success' ? 'bg-green-500' : 
+        type === 'error' ? 'bg-red-500' : 
+        type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+    } text-white font-medium flex items-center gap-3`;
+    
+    toast.innerHTML = `
+        <i class="fas ${
+            type === 'success' ? 'fa-check-circle' : 
+            type === 'error' ? 'fa-exclamation-circle' : 
+            type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'
+        }"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => toast.style.transform = 'translateX(0)', 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.style.transform = 'translateX(400px)';
+        setTimeout(() => document.body.removeChild(toast), 300);
+    }, 3000);
+}
+
+// Check dark mode on page load
+function initDarkMode() {
+    const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
+    if (darkModeEnabled) {
+        document.body.classList.add('dark-mode');
+        const darkModeToggle = document.getElementById('darkMode');
+        if (darkModeToggle) darkModeToggle.checked = true;
+    }
+}
+
+// ADVANCED FEATURES
+
+// Keyboard Shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + K - Search focus
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.getElementById('searchApplications') || document.querySelector('input[type="text"]');
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+        }
+    }
+    
+    // Ctrl/Cmd + N - New Application
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        showSection('newApplication');
+    }
+    
+    // Ctrl/Cmd + D - Toggle Dark Mode
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        const darkModeToggle = document.getElementById('darkMode');
+        if (darkModeToggle) {
+            darkModeToggle.checked = !darkModeToggle.checked;
+            toggleDarkMode();
+        }
+    }
+    
+    // Ctrl/Cmd + P - Print (override default to use our print function)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        const modal = document.getElementById('detailModal');
+        if (modal && modal.classList.contains('active')) {
+            e.preventDefault();
+            printReceipt();
+        }
+    }
+    
+    // Escape - Close modals
+    if (e.key === 'Escape') {
+        closeModal();
+        closeEditModal();
+    }
+    
+    // Ctrl/Cmd + E - Export
+    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault();
+        if (window.location.hash === '#applications' || document.getElementById('applications').classList.contains('active')) {
+            exportToCSV();
+        }
+    }
+});
+
+// Auto-save draft for new applications
+let draftSaveTimer;
+function saveDraft() {
+    const form = document.getElementById('applicationForm');
+    if (!form) return;
+    
+    const formData = new FormData(form);
+    const draftData = {};
+    formData.forEach((value, key) => {
+        draftData[key] = value;
+    });
+    
+    if (Object.keys(draftData).length > 0) {
+        localStorage.setItem('applicationDraft', JSON.stringify({
+            data: draftData,
+            timestamp: Date.now()
+        }));
+        showToast('ड्राफ्ट सहेजा गया', 'info');
+    }
+}
+
+// Load draft on form fields change
+function initDraftSaving() {
+    const form = document.getElementById('applicationForm');
+    if (!form) return;
+    
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('change', () => {
+            clearTimeout(draftSaveTimer);
+            draftSaveTimer = setTimeout(saveDraft, 2000); // Auto-save after 2 seconds
+        });
+    });
+    
+    // Load existing draft
+    const draft = localStorage.getItem('applicationDraft');
+    if (draft) {
+        try {
+            const { data, timestamp } = JSON.parse(draft);
+            const age = Date.now() - timestamp;
+            
+            // Only load draft if less than 24 hours old
+            if (age < 24 * 60 * 60 * 1000) {
+                if (confirm('पिछला ड्राफ्ट मिला। क्या आप इसे लोड करना चाहते हैं?')) {
+                    Object.keys(data).forEach(key => {
+                        const field = form.elements[key];
+                        if (field) field.value = data[key];
+                    });
+                    showToast('ड्राफ्ट लोड किया गया', 'success');
+                }
+            }
+        } catch (e) {
+            console.error('Error loading draft:', e);
+        }
+    }
+}
+
+// Activity Logger
+class ActivityLogger {
+    static log(action, details = {}) {
+        const log = {
+            timestamp: new Date().toISOString(),
+            action: action,
+            details: details,
+            user: currentUser?.email || 'Unknown'
+        };
+        
+        // Get existing logs
+        let logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
+        logs.unshift(log);
+        
+        // Keep only last 100 logs
+        logs = logs.slice(0, 100);
+        
+        localStorage.setItem('activityLogs', JSON.stringify(logs));
+        
+        // Also save to database if possible
+        if (db && currentUser) {
+            addDoc(collection(db, 'activityLogs'), {
+                ...log,
+                userId: currentUser.uid,
+                timestamp: serverTimestamp()
+            }).catch(err => console.error('Error logging activity:', err));
+        }
+    }
+    
+    static getLogs(limit = 20) {
+        const logs = JSON.parse(localStorage.getItem('activityLogs') || '[]');
+        return logs.slice(0, limit);
+    }
+}
+
+// Offline detection and notification
+window.addEventListener('online', () => {
+    showToast('✓ इंटरनेट कनेक्शन बहाल हो गया', 'success');
+});
+
+window.addEventListener('offline', () => {
+    showToast('⚠ इंटरनेट कनेक्शन नहीं है', 'warning');
+});
+
+// Performance monitoring
+const performanceObserver = new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+        if (entry.duration > 1000) {
+            console.warn(`Slow operation detected: ${entry.name} took ${entry.duration}ms`);
+        }
+    }
+});
+performanceObserver.observe({ entryTypes: ['measure'] });
 
 window.changeProfilePicture = function() {
     alert('प्रोफाइल फोटो अपडेट फीचर जल्द ही उपलब्ध होगा!');
@@ -3508,18 +3883,30 @@ window.downloadPDF = function() {
     // Get application number for filename
     const appNo = document.getElementById('receiptAppNumber').textContent.replace(/\s+/g, '-');
     
+    // Optimize content for single page
+    const originalPadding = element.style.padding;
+    const originalFontSize = element.style.fontSize;
+    element.style.padding = '15px';
+    element.style.fontSize = '10px';
+    
+    // Hide elements that take too much space
+    const qrContainer = document.querySelector('.qr-container');
+    const originalQRDisplay = qrContainer ? qrContainer.style.display : 'block';
+    if (qrContainer) qrContainer.style.display = 'none';
+    
     const opt = {
-        margin: [0.5, 0.5, 0.5, 0.5],
+        margin: [0.3, 0.3, 0.3, 0.3],
         filename: `AllInOneMP_${appNo}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
+        image: { type: 'jpeg', quality: 0.92 },
         html2canvas: { 
-            scale: 3,
+            scale: 2,
             useCORS: true, 
             logging: false,
             letterRendering: true,
             allowTaint: true,
             scrollY: 0,
-            scrollX: 0
+            scrollX: 0,
+            windowWidth: 800
         },
         jsPDF: { 
             unit: 'in', 
@@ -3528,10 +3915,7 @@ window.downloadPDF = function() {
             compress: true
         },
         pagebreak: { 
-            mode: ['avoid-all', 'css', 'legacy'],
-            before: '.page-break-before',
-            after: '.page-break-after',
-            avoid: ['tr', '.no-break']
+            mode: 'avoid-all'
         }
     };
     
@@ -3539,22 +3923,33 @@ window.downloadPDF = function() {
     const loadingMsg = document.createElement('div');
     loadingMsg.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
     loadingMsg.innerHTML = `
-        <div class="bg-white rounded-xl p-6 shadow-2xl">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-2xl">
             <div class="text-center">
                 <div class="loading-spinner mx-auto mb-4"></div>
-                <p class="text-gray-800 font-medium">PDF तैयार हो रहा है...</p>
+                <p class="text-gray-800 dark:text-gray-200 font-medium">PDF तैयार हो रहा है...</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">कृपया प्रतीक्षा करें</p>
             </div>
         </div>
     `;
     document.body.appendChild(loadingMsg);
     
     html2pdf().set(opt).from(element).save().then(() => {
+        // Restore original styles
+        element.style.padding = originalPadding;
+        element.style.fontSize = originalFontSize;
+        if (qrContainer) qrContainer.style.display = originalQRDisplay;
+        
         document.body.removeChild(loadingMsg);
-        alert('✓ PDF सफलतापूर्वक डाउनलोड हो गया!');
+        showToast('✓ PDF सफलतापूर्वक डाउनलोड हो गया!', 'success');
     }).catch((error) => {
+        // Restore original styles
+        element.style.padding = originalPadding;
+        element.style.fontSize = originalFontSize;
+        if (qrContainer) qrContainer.style.display = originalQRDisplay;
+        
         document.body.removeChild(loadingMsg);
         console.error('PDF generation error:', error);
-        alert('PDF बनाने में त्रुटि हुई। कृपया पुनः प्रयास करें।');
+        showToast('PDF बनाने में त्रुटि हुई। कृपया पुनः प्रयास करें।', 'error');
     });
 };
 
@@ -3796,12 +4191,25 @@ document.getElementById('applicationForm')?.addEventListener('submit', async fun
         };
         
         const docRef = await addDoc(collection(db, 'applications'), formData);
-        alert(`आवेदन सफलतापूर्वक जमा हो गया!\n\nआवेदन क्रमांक: ${applicationNumber}\n\nकृपया इस क्रमांक को सुरक्षित रखें।`);
+        
+        // Log activity
+        ActivityLogger.log('NEW_APPLICATION', {
+            applicationNumber: applicationNumber,
+            applicantName: formData.applicantName,
+            serviceType: formData.serviceType
+        });
+        
+        // Clear draft
+        localStorage.removeItem('applicationDraft');
+        
+        showToast(`✓ आवेदन सफलतापूर्वक जमा हो गया!\n\nआवेदन क्रमांक: ${applicationNumber}`, 'success');
         this.reset();
-        showSection('applications');
+        
+        // Show success animation
+        setTimeout(() => showSection('applications'), 1000);
     } catch (error) {
         console.error("Error adding application:", error);
-        alert("आवेदन जमा करने में त्रुटि: " + error.message);
+        showToast("आवेदन जमा करने में त्रुटि: " + error.message, 'error');
     }
 });
 
@@ -3943,6 +4351,9 @@ function showError(msg) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize dark mode
+    initDarkMode();
+    
     const now = new Date();
     document.getElementById('currentDate').textContent = now.toLocaleDateString('hi-IN', {
         weekday: 'long',
@@ -3967,6 +4378,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     initCharts();
+    
+    // Initialize draft saving for new applications
+    setTimeout(initDraftSaving, 1000);
+    
+    // Show keyboard shortcuts info on first load
+    if (!localStorage.getItem('keyboardShortcutsShown')) {
+        setTimeout(() => {
+            showToast('💡 शॉर्टकट: Ctrl+K (खोज), Ctrl+N (नया), Ctrl+D (डार्क मोड)', 'info');
+            localStorage.setItem('keyboardShortcutsShown', 'true');
+        }, 2000);
+    }
     
     if (db) {
         setupRealtimeListeners();
