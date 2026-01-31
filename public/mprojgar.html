@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP रोजगार पंजीयन | AllInOne MP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .form-input {
+            width: 100%; border: 1.5px solid #e2e8f0; padding: 0.75rem; border-radius: 0.85rem; outline: none; transition: all 0.3s; font-size: 0.95rem;
+        }
+        .form-input:focus { border-color: #1e3a8a; box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1); background-color: #fff; }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+<div id="header"></div>
+
+<main class="container mx-auto px-4 py-10">
+    <div class="max-w-4xl mx-auto mb-8">
+        <nav class="text-sm text-gray-500 mb-2">
+            <a href="#">होम</a> / <span>रोजगार सेवा</span> /
+            <span class="text-blue-900 font-semibold">रोजगार पंजीयन</span>
+        </nav>
+        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+            <i class="fas fa-briefcase text-blue-600"></i> MP रोजगार पंजीयन (नया/नवीनीकरण)
+        </h2>
+    </div>
+
+    <div class="max-w-3xl mx-auto my-6 bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+        <div class="bg-gradient-to-r from-blue-900 to-navy-900 p-5" style="background: linear-gradient(to right, #1e3a8a, #0f172a);">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-start gap-3 text-white">
+                    <div class="bg-white/10 p-2 rounded-lg shrink-0"><i class="fas fa-user-plus text-yellow-400"></i></div>
+                    <p class="text-xs md:text-sm leading-relaxed opacity-90">
+                        नया पंजीयन या रिन्यूअल करने में सहायता के लिए <b>नीचे फॉर्म भरें</b>, <br>
+                        अथवा स्वयं स्टेटस देखने के लिए <b>ऑफिशियल साइट पर जाएं।</b>
+                    </p>
+                </div>
+                <a href="https://mprozgar.gov.in/" target="_blank" 
+                   class="bg-yellow-400 hover:bg-yellow-500 text-navy-900 px-5 py-2.5 rounded-xl text-sm font-extrabold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg">
+                    ऑफिशियल साइट <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-blue-50 border-b border-blue-100 p-4 flex items-start gap-3">
+            <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+            <p class="text-xs text-blue-800 leading-relaxed">
+                <strong>नोट:</strong> पंजीयन के लिए <b>समग्र आईडी (e-KYC)</b> अनिवार्य है। कृपया अपनी शैक्षणिक योग्यता की जानकारी साथ रखें।
+            </p>
+        </div>
+
+        <form id="rojgarForm" class="p-6 md:p-10 space-y-8">
+            
+            <section>
+                <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2">1. व्यक्तिगत जानकारी</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-2 text-slate-700">पूरा नाम (आधार/समग्र अनुसार) *</label>
+                        <input type="text" name="applicantName" class="form-input" placeholder="अपना नाम लिखें" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-slate-700">मोबाइल नंबर *</label>
+                        <input type="tel" name="mobile" maxlength="10" class="form-input" placeholder="91XXXXXXXX" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-slate-700">ईमेल आईडी *</label>
+                        <input type="email" name="email" class="form-input" placeholder="example@mail.com" required>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                <h3 class="text-lg font-bold text-blue-800 mb-6">2. शैक्षणिक एवं पहचान विवरण</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-slate-700">समग्र आईडी (9 अंक) *</label>
+                        <input type="number" name="samagraId" class="form-input" placeholder="123456789" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-slate-700">उच्चतम योग्यता (Qualification) *</label>
+                        <select name="qualification" class="form-input bg-white" required>
+                            <option value="">चुनें</option>
+                            <option>10वीं</option>
+                            <option>12वीं</option>
+                            <option>स्नातक (Graduate)</option>
+                            <option>स्नातकोत्तर (Post Graduate)</option>
+                            <option>डिप्लोमा / ITI</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="text-lg font-bold text-blue-800 mb-6 border-b pb-2">3. पते का विवरण</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-2 text-slate-700">पूरा पता *</label>
+                        <textarea name="fullAddress" class="form-input h-20" placeholder="मकान नंबर, वार्ड/गाँव, तहसील, जिला..." required></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex gap-4 pt-4">
+                <button type="submit" class="flex-1 bg-blue-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-800 shadow-xl transition active:scale-95 flex items-center justify-center gap-3">
+                    पंजीयन हेतु सबमिट करें <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+                <button type="reset" class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
+                    रीसेट
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<div id="footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="assets/js/common.js?v=1.0" defer></script>
+<script type="module" src="assets/js/form.js?v=1.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</body>
+</html>
