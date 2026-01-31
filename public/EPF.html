@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EWS प्रमाण पत्र | AllInOne MP</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+ <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+        }
+        .form-input {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+        .step-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+
+  <style>
+    :root {
+    --navy-900: #0f172a;
+    --navy-800: #1e293b;
+}
+
+.bg-navy-900 { background-color: var(--navy-900); }
+.text-navy-900 { color: var(--navy-900); }
+.border-navy-600 { border-color: #334155; }
+.focus\:ring-navy-100:focus { --tw-ring-opacity: 1; --tw-ring-color: rgba(203, 213, 225, 0.5); }
+
+/* Banner Slide Animation */
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* --- Dedicated Mobile CSS (Up to 768px) --- */
+@media screen and (max-width: 768px) {
+    
+    /* 1. Fixed Font Size: 16px is perfect for mobile forms */
+    input, select, textarea, label, p, span {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100%; /* Auto-zoom rokne ke liye */
+    }
+
+    /* 2. Headline Adjustments */
+    h2 {
+        font-size: 1.25rem !important; /* Na zyada bada, na chhota */
+        line-height: 1.4;
+    }
+
+    /* 3. Padding & Spacing: Thoda compact lekin saaf */
+    .max-w-3xl {
+        margin: 10px !important; /* Screen se bilkul chipka na rahe */
+        border-radius: 20px !important; /* Thoda kam round mobile ke liye */
+    }
+
+    .p-6 {
+        padding: 20px !important; /* Mobile par screen space bachane ke liye */
+    }
+
+    /* 4. Banner Layout: Text aur Button ko sahi se set karein */
+    #filterWrapper, .bg-gradient-to-r {
+        flex-direction: column !important;
+        height: auto !important;
+        padding: 15px !important;
+        gap: 12px;
+    }
+
+    #filterLabel {
+        padding: 0 !important;
+        justify-content: center;
+    }
+
+    /* 5. Inputs & Buttons: Touch-friendly height */
+    input, select, .submit-btn {
+        height: 50px !important; /* Ungli se tap karne ke liye best height */
+        padding: 0 15px !important;
+    }
+
+    .submit-btn {
+        font-size: 18px !important; /* Button ka text thoda highlight hona chahiye */
+    }
+
+    /* 6. Checkbox & Declaration */
+    #ghoshna {
+        width: 22px !important;
+        height: 22px !important;
+        margin-top: 4px;
+    }
+
+    label[for="ghoshna"] {
+        font-size: 14px !important; /* Hindi text mobile par thoda compact rakha hai */
+        line-height: 1.5;
+    }
+
+    /* 7. Official Link Button in Banner */
+    .bg-yellow-400 {
+        width: 100%; /* Mobile par full width button zyada professional lagta hai */
+        text-align: center;
+    }
+}
+</style>
+
+<div class="max-w-3xl mx-auto my-10 bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+    
+    <div class="bg-gradient-to-r from-blue-900 to-navy-900 p-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+                <div class="bg-white/10 p-2 rounded-lg shrink-0">
+                    <i class="fas fa-info-circle text-white"></i>
+                </div>
+                <div class="text-white">
+                    <p class="text-xs md:text-sm leading-relaxed opacity-90">
+                        हमसे सहायता लेने के लिए <b>नीचे दिया गया फॉर्म भरें</b>, 
+                        <br class="hidden md:block">
+                        अथवा अपना कार्य स्वयं करने के लिए <b>ऑफिशियल साइट पर जाएं।</b>
+                    </p>
+                </div>
+            </div>
+
+            <a href="https://unifiedportal-mem.epfindia.gov.in/" target="_blank" 
+               class="bg-yellow-400 hover:bg-yellow-500 text-navy-900 px-5 py-2.5 rounded-xl text-sm font-extrabold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-yellow-900/20">
+                ऑफिशियल साइट <i class="fas fa-external-link-alt"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="p-6 md:p-8">
+        <div class="mb-8 border-b border-slate-100 pb-4">
+            <h2 class="text-xl font-bold text-slate-800">PF/EPF ऑनलाइन सहायता फॉर्म</h2>
+            <p class="text-slate-500 text-xs mt-1">विवरण भरें, हमारी टीम आपसे जल्द संपर्क करेगी।</p>
+        </div>
+
+        <form action="#" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="group">
+                    <label class="text-xs font-bold text-slate-600 mb-1 block group-focus-within:text-blue-700 transition-colors">UAN नंबर</label>
+                    <input type="number" placeholder="12 अंकों का UAN लिखें" 
+                           class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50">
+                </div>
+                <div class="group">
+                    <label class="text-xs font-bold text-slate-600 mb-1 block group-focus-within:text-blue-700 transition-colors">आधार अनुसार नाम</label>
+                    <input type="text" placeholder="पूरा नाम लिखें" 
+                           class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition-all focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50">
+                </div>
+            </div>
+            <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700 ml-1">Mobile (Linked with Aadhaar)</label>
+                    <input type="tel" placeholder="+91 00000 00000" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy-600 focus:ring-4 focus:ring-navy-100 outline-none transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700 ml-1">Claim Type</label>
+                    <select class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-navy-600 focus:ring-4 focus:ring-navy-100 outline-none transition-all appearance-none">
+                        <option>PF Advance (Form 31)</option>
+                        <option>Final Settlement (Form 19)</option>
+                        <option>Pension Withdrawal (10C)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100/50 space-y-3">
+                <h4 class="text-[10px] font-black text-blue-900 uppercase tracking-widest">स्व-घोषणा (Self Declaration)</h4>
+                <div class="flex gap-3">
+                    <input type="checkbox" id="ghoshna" class="w-5 h-5 mt-0.5 accent-blue-900 shrink-0 cursor-pointer">
+                    <label for="ghoshna" class="text-sm text-slate-700 leading-relaxed cursor-pointer select-none">
+                        मैं यह घोषित करता/करती हूँ कि मेरे द्वारा दी गई उपरोक्त सभी जानकारी सत्य है। मुझे ज्ञात है कि PF निकासी के लिए मेरा आधार कार्ड, बैंक खाते और मोबाइल नंबर से लिंक होना अनिवार्य है।
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-blue-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-blue-900/20 transition-all active:scale-[0.98] active:bg-navy-950 flex items-center justify-center gap-3">
+                फॉर्म जमा करें <i class="fas fa-paper-plane text-sm"></i>
+            </button>
+        </form>
+    </div>
+</div>
+     </div>
+</form>
+</div>
+</main>
+
+<div id="footer"></div>
+
+<!-- SAME JS PATTERN -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){ emailjs.init("-HjIyXVqfuRKrznVE"); })();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+authDomain: "allinone-aa89.firebaseapp.com",
+projectId: "allinone-aa89",
+storageBucket: "allinone-aa89.firebasestorage.app",
+messagingSenderId: "924003122498",
+appId: "1:924003122498:web:2c86505457236e60055cdb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const form = document.getElementById("ewsForm");
+
+form.addEventListener("submit", async (e)=>{
+e.preventDefault();
+const fd = new FormData(form);
+
+await addDoc(collection(db,"ews_certificate_requests"),{
+serviceType:"EWS Certificate",
+applicantName:fd.get("applicantName"),
+gender:fd.get("gender"),
+dob:fd.get("dob"),
+mobile:fd.get("mobile"),
+email:fd.get("email"),
+aadhaarLast4:fd.get("aadhaarNumber").slice(-4),
+samagraId:fd.get("samagraId"),
+annualIncome:fd.get("annualIncome"),
+incomeSource:fd.get("incomeSource"),
+landStatus:fd.get("landStatus"),
+govEmployee:fd.get("govEmployee"),
+status:"pending",
+createdAt:serverTimestamp()
+});
+
+alert("✅ EWS आवेदन सफलतापूर्वक जमा हो गया");
+form.reset();
+});
+</script>
+
+<script>
+fetch("header.html").then(r=>r.text()).then(d=>header.innerHTML=d);
+fetch("footer.html").then(r=>r.text()).then(d=>footer.innerHTML=d);
+</script>
+
+</body>
+</html>
