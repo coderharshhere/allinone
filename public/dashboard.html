@@ -2555,7 +2555,7 @@ function renderDashboardTable(data) {
     
     let html = '';
     data.slice(0, 10).forEach((item) => {
-        const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
+        const appNo = item.applicationNumber || `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
         const name = item.applicantName || item.name || "अज्ञात";
         const service = item.serviceType || "समग्र";
         const mobile = item.mobileNumber || item.mobile || "N/A";
@@ -2621,7 +2621,7 @@ function renderApplicationsTable(data) {
     
     let html = '';
     data.forEach((item) => {
-        const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
+        const appNo = item.applicationNumber || `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
         const name = item.applicantName || item.name || "अज्ञात";
         const fatherName = item.fatherName || item.guardianName || "-";
         const service = item.serviceType || "समग्र";
@@ -2939,7 +2939,7 @@ window.viewDetails = function(id) {
     
     currentDetailId = id;
     
-    const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
+    const appNo = item.applicationNumber || `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
     document.getElementById('receiptAppNumber').textContent = appNo;
     document.getElementById('receiptDate').textContent = formatDate(new Date());
     document.getElementById('lastUpdated').textContent = formatDate(item.updatedAt || item.createdAt);
@@ -3454,7 +3454,7 @@ window.exportToCSV = function() {
         : allApplications;
     
     dataToExport.forEach(item => {
-        const appNo = `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
+        const appNo = item.applicationNumber || `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
         const name = item.applicantName || item.name || '';
         const service = getServiceName(item.serviceType) || 'समग्र आईडी';
         const mobile = item.mobileNumber || item.mobile || '';
@@ -3578,30 +3578,64 @@ window.resetForm = function() {
     }
 };
 
+// Generate Unique Application Number
+async function generateApplicationNumber() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    
+    try {
+        // Get counter from database
+        const counterRef = doc(db, 'counters', 'applicationCounter');
+        const counterDoc = await getDoc(counterRef);
+        
+        let counter = 1;
+        if (counterDoc.exists()) {
+            counter = (counterDoc.data().count || 0) + 1;
+        }
+        
+        // Update counter
+        await setDoc(counterRef, { count: counter, lastUpdated: serverTimestamp() });
+        
+        // Format: AIO-MP-YYYY-NNNNNN (e.g., AIO-MP-2024-000001)
+        const appNumber = `AIO-MP-${year}-${String(counter).padStart(6, '0')}`;
+        return appNumber;
+    } catch (error) {
+        console.error("Error generating application number:", error);
+        // Fallback to timestamp-based number if counter fails
+        const timestamp = Date.now().toString().slice(-6);
+        return `AIO-MP-${year}-${timestamp}`;
+    }
+}
+
 // Submit Application Form
 document.getElementById('applicationForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const formData = {
-        applicantName: document.getElementById('applicantName').value,
-        fatherName: document.getElementById('fatherName').value,
-        mobileNumber: document.getElementById('mobileNumber').value,
-        aadharNumber: document.getElementById('aadharNumber').value,
-        dob: document.getElementById('dob').value,
-        gender: document.getElementById('gender').value,
-        serviceType: document.getElementById('serviceType').value,
-        district: document.getElementById('district').value,
-        address: document.getElementById('address').value,
-        pincode: document.getElementById('pincode').value,
-        email: document.getElementById('email').value,
-        status: 'pending',
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-    };
-    
     try {
+        // Generate unique application number
+        const applicationNumber = await generateApplicationNumber();
+        
+        const formData = {
+            applicationNumber: applicationNumber,
+            applicantName: document.getElementById('applicantName').value,
+            fatherName: document.getElementById('fatherName').value,
+            mobileNumber: document.getElementById('mobileNumber').value,
+            aadharNumber: document.getElementById('aadharNumber').value,
+            dob: document.getElementById('dob').value,
+            gender: document.getElementById('gender').value,
+            serviceType: document.getElementById('serviceType').value,
+            district: document.getElementById('district').value,
+            address: document.getElementById('address').value,
+            pincode: document.getElementById('pincode').value,
+            email: document.getElementById('email').value,
+            status: 'pending',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        };
+        
         const docRef = await addDoc(collection(db, 'applications'), formData);
-        alert(`आवेदन सफलतापूर्वक जमा हो गया! आवेदन क्रमांक: AIO-MP-${docRef.id.substring(0, 8).toUpperCase()}`);
+        alert(`आवेदन सफलतापूर्वक जमा हो गया!\n\nआवेदन क्रमांक: ${applicationNumber}\n\nकृपया इस क्रमांक को सुरक्षित रखें।`);
         this.reset();
         showSection('applications');
     } catch (error) {
@@ -3840,7 +3874,11 @@ async function handleImportFile(file) {
             
             for (const row of jsonData) {
                 try {
+                    // Generate unique application number for each import
+                    const applicationNumber = await generateApplicationNumber();
+                    
                     const applicationData = {
+                        applicationNumber: applicationNumber,
                         applicantName: row['नाम'] || row['Name'] || '',
                         fatherName: row['पिता का नाम'] || row['Father Name'] || '',
                         mobileNumber: row['मोबाइल'] || row['Mobile'] || '',
