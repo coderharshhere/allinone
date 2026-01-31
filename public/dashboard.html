@@ -883,7 +883,8 @@
                 height: auto;
                 margin: 0;
                 padding: 20px;
-                font-size: 14pt;
+                font-size: 12pt;
+                background: white;
             }
             .no-print {
                 display: none !important;
@@ -894,6 +895,21 @@
             .qr-container img {
                 width: 150px !important;
                 height: 150px !important;
+            }
+            /* Better page breaks */
+            .receipt-header, .section-title {
+                page-break-after: avoid;
+            }
+            table, .field {
+                page-break-inside: avoid;
+            }
+            /* Better colors for print */
+            .status-badge {
+                border: 2px solid currentColor !important;
+            }
+            /* Ensure proper spacing */
+            h1, h2, h3 {
+                page-break-after: avoid;
             }
         }
         /* Additional Styles for Advanced Features */
@@ -1214,7 +1230,7 @@
         <div class="user-avatar" id="topBarAvatar">A</div>
         <div class="user-info">
             <div class="user-name" id="adminName">प्रशासक</div>
-            <div class="user-email" id="adminEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="19787d74707759787575707776777c7469377e766f377077">[email&#160;protected]</a></div>
+            <div class="user-email" id="adminEmail">admin@allinonemp.gov.in</div>
         </div>
         <i class="fas fa-chevron-down text-gray-500 text-sm ml-1"></i>
     </div>
@@ -2224,6 +2240,9 @@
                 <button onclick="downloadPDF()" class="btn-primary px-6 py-3">
                     <i class="fas fa-file-pdf"></i> PDF डाउनलोड करें
                 </button>
+                <button onclick="downloadWord()" class="btn-primary bg-blue-600 hover:bg-blue-700 px-6 py-3">
+                    <i class="fas fa-file-word"></i> Word डाउनलोड करें
+                </button>
                 <button onclick="printReceipt()" class="btn-secondary px-6 py-3">
                     <i class="fas fa-print"></i> प्रिंट रसीद
                 </button>
@@ -2422,7 +2441,7 @@
 </div>
 
 <!-- JAVASCRIPT -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+<script type="module">
 // Firebase Import (Version 11.6.1)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { 
@@ -3354,7 +3373,6 @@ window.deleteAccount = function() {
         }
     }
 };
-});
 
 window.editUser = function(id) {
     alert('उपयोगकर्ता संपादित करें: ' + id);
@@ -3486,23 +3504,166 @@ window.exportToPDF = function() {
 // Download PDF Receipt
 window.downloadPDF = function() {
     const element = document.getElementById('pdfContent');
+    
+    // Get application number for filename
+    const appNo = document.getElementById('receiptAppNumber').textContent.replace(/\s+/g, '-');
+    
     const opt = {
-        margin: 0.5,
-        filename: `AllInOneMP_Receipt_${currentDetailId.substring(0, 8)}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait', compressPDF: true },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `AllInOneMP_${appNo}.pdf`,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { 
+            scale: 3,
+            useCORS: true, 
+            logging: false,
+            letterRendering: true,
+            allowTaint: true,
+            scrollY: 0,
+            scrollX: 0
+        },
+        jsPDF: { 
+            unit: 'in', 
+            format: 'a4', 
+            orientation: 'portrait',
+            compress: true
+        },
+        pagebreak: { 
+            mode: ['avoid-all', 'css', 'legacy'],
+            before: '.page-break-before',
+            after: '.page-break-after',
+            avoid: ['tr', '.no-break']
+        }
     };
     
+    // Add loading indicator
+    const loadingMsg = document.createElement('div');
+    loadingMsg.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    loadingMsg.innerHTML = `
+        <div class="bg-white rounded-xl p-6 shadow-2xl">
+            <div class="text-center">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-gray-800 font-medium">PDF तैयार हो रहा है...</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loadingMsg);
+    
     html2pdf().set(opt).from(element).save().then(() => {
-        alert('PDF सफलतापूर्वक डाउनलोड हो गया!');
+        document.body.removeChild(loadingMsg);
+        alert('✓ PDF सफलतापूर्वक डाउनलोड हो गया!');
+    }).catch((error) => {
+        document.body.removeChild(loadingMsg);
+        console.error('PDF generation error:', error);
+        alert('PDF बनाने में त्रुटि हुई। कृपया पुनः प्रयास करें।');
     });
 };
 
 // Print Receipt
 window.printReceipt = function() {
     window.print();
+};
+
+// Download Word Document
+window.downloadWord = async function() {
+    if (!currentDetailId) {
+        alert('कोई आवेदन चयनित नहीं है!');
+        return;
+    }
+    
+    const item = allApplications.find(a => a.id === currentDetailId);
+    if (!item) {
+        alert('आवेदन डेटा नहीं मिला!');
+        return;
+    }
+    
+    const appNo = item.applicationNumber || `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
+    
+    // Create Word document content in HTML format
+    let htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Noto Sans Devanagari', Arial, sans-serif; margin: 40px; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #1e3a8a; padding-bottom: 20px; }
+        .logo { font-size: 48px; font-weight: bold; color: #1e3a8a; }
+        .title { font-size: 24px; font-weight: bold; color: #1e3a8a; margin: 10px 0; }
+        .subtitle { font-size: 16px; color: #666; }
+        .app-number { background: #dbeafe; color: #1e40af; padding: 10px 20px; border-radius: 8px; display: inline-block; margin: 10px 0; font-weight: bold; font-size: 18px; }
+        .section { margin: 25px 0; }
+        .section-title { font-size: 18px; font-weight: bold; color: #1e3a8a; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 15px; }
+        .field { margin: 12px 0; display: flex; }
+        .field-label { font-weight: bold; min-width: 180px; color: #374151; }
+        .field-value { color: #1f2937; }
+        .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin: 10px 0; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-complete { background: #d1fae5; color: #065f46; }
+        .status-reject { background: #fee2e2; color: #991b1b; }
+        .status-processing { background: #dbeafe; color: #1e40af; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">MP</div>
+        <div class="title">मध्य प्रदेश सरकार</div>
+        <div class="subtitle">AllInOne MP पोर्टल - आवेदन रसीद</div>
+        <div class="app-number">आवेदन क्रमांक: ${appNo}</div>
+        <div style="margin-top: 10px;">रसीद तिथि: ${formatDate(new Date())}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">आवेदन स्थिति</div>
+        <div class="status-badge status-${item.status || 'pending'}">
+            ${item.status === 'complete' ? '✓ पूर्ण' : 
+              item.status === 'reject' ? '✗ अस्वीकृत' : 
+              item.status === 'processing' ? '⟳ प्रोसेसिंग' : '⏱ लंबित'}
+        </div>
+        <div style="margin-top: 10px; color: #6b7280;">अंतिम अपडेट: ${formatDate(item.updatedAt || item.createdAt)}</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">आवेदक विवरण</div>
+        <div class="field"><span class="field-label">आवेदक का नाम:</span><span class="field-value">${item.applicantName || '-'}</span></div>
+        <div class="field"><span class="field-label">पिता/पति का नाम:</span><span class="field-value">${item.fatherName || '-'}</span></div>
+        <div class="field"><span class="field-label">मोबाइल नंबर:</span><span class="field-value">${item.mobileNumber || '-'}</span></div>
+        <div class="field"><span class="field-label">ईमेल:</span><span class="field-value">${item.email || '-'}</span></div>
+        <div class="field"><span class="field-label">आधार नंबर:</span><span class="field-value">${maskAadhar(item.aadharNumber)}</span></div>
+        <div class="field"><span class="field-label">जन्म तिथि:</span><span class="field-value">${item.dob || '-'}</span></div>
+        <div class="field"><span class="field-label">लिंग:</span><span class="field-value">${getGenderText(item.gender)}</span></div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">आवेदन विवरण</div>
+        <div class="field"><span class="field-label">सेवा प्रकार:</span><span class="field-value">${getServiceName(item.serviceType)}</span></div>
+        <div class="field"><span class="field-label">जिला:</span><span class="field-value">${getDistrictName(item.district)}</span></div>
+        <div class="field"><span class="field-label">पता:</span><span class="field-value">${item.address || '-'}</span></div>
+        <div class="field"><span class="field-label">पिनकोड:</span><span class="field-value">${item.pincode || '-'}</span></div>
+        <div class="field"><span class="field-label">आवेदन तिथि:</span><span class="field-value">${formatDate(item.createdAt)}</span></div>
+    </div>
+    
+    <div class="footer">
+        <p>यह एक कंप्यूटर जनरेटेड रसीद है और हस्ताक्षर की आवश्यकता नहीं है।</p>
+        <p style="margin-top: 8px;">AllInOne MP पोर्टल, मध्य प्रदेश सरकार | सहायता हेतु: 1800-123-4567</p>
+        <p style="margin-top: 8px; font-weight: bold;">आवेदन स्थिति जांचने हेतु: https://allinonemp.gov.in/verify</p>
+    </div>
+</body>
+</html>`;
+    
+    // Convert to blob and download
+    const blob = new Blob(['\ufeff', htmlContent], {
+        type: 'application/msword'
+    });
+    
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `AllInOneMP_${appNo}.doc`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    alert('✓ Word दस्तावेज़ सफलतापूर्वक डाउनलोड हो गया!');
 };
 
 // Close Modal
