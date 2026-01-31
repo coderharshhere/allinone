@@ -113,7 +113,7 @@
 <!-- TRACK APPLICATION (FIXED & CENTER) -->
 <section class="bg-white py-6">
   <div class="container mx-auto px-4 flex justify-center">
-    <div class="bg-white shadow-lg rounded-2xl border-l-8 border-blue-600 w-full max-w-xl px-6 py-5 transform transition-all hover:shadow-xl">
+    <div class="bg-white shadow-lg rounded-2xl border-l-8 border-blue-600 w-full max-w-2xl px-6 py-6 transform transition-all hover:shadow-xl">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="text-center md:text-left">
           <h4 class="font-bold text-gray-800 text-lg flex items-center gap-2">
@@ -143,7 +143,9 @@
       </div>
 
       <!-- RESULT BOX -->
-      <div id="trackResult" class="hidden mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in"></div>
+      <div id="trackResult" class="hidden mt-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in overflow-hidden">
+        <!-- यहाँ रिजल्ट दिखेगा -->
+      </div>
     </div>
   </div>
 </section>
@@ -153,9 +155,29 @@
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
+  .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+  
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
   }
+  
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .info-row:last-child { border-bottom: none; }
+  
+  .label { font-weight: 600; color: #4b5563; }
+  .value { font-weight: 700; color: #1f2937; text-align: right; }
 </style>
 
 <script type="module">
@@ -166,7 +188,6 @@
     query,
     where,
     getDocs,
-    onSnapshot,
     orderBy
   } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -188,17 +209,29 @@
     
     // Reset and show loading
     resultBox.classList.remove("hidden");
-    resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-blue-50 border-blue-500 text-blue-700";
-    resultBox.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> खोज रहे हैं... कृपया प्रतीक्षा करें';
+    resultBox.className = "mt-4 p-5 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-blue-50 border-blue-500 text-blue-700";
+    resultBox.innerHTML = `
+      <div class="flex items-center justify-center gap-3 py-4">
+        <i class="fas fa-spinner fa-spin text-2xl"></i>
+        <span class="font-semibold">आपका आवेदन खोजा जा रहा है...</span>
+      </div>
+    `;
     
-    // Disable button
     trackBtn.disabled = true;
     trackBtn.classList.add('opacity-75', 'cursor-not-allowed');
 
     // Validation
     if (!input || !input.startsWith("AIO-") || input.length < 8) {
-      resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
-      resultBox.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i> ⚠️ कृपया सही आवेदन क्रमांक डालें (AIO-XXXXXX)';
+      resultBox.className = "mt-4 p-5 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
+      resultBox.innerHTML = `
+        <div class="flex items-start gap-3">
+          <i class="fas fa-exclamation-circle text-xl mt-0.5"></i>
+          <div>
+            <p class="font-bold text-lg">अमान्य आवेदन क्रमांक</p>
+            <p class="text-sm mt-1">कृपया सही प्रारूप में डालें: <b>AIO-123456</b></p>
+          </div>
+        </div>
+      `;
       trackBtn.disabled = false;
       trackBtn.classList.remove('opacity-75', 'cursor-not-allowed');
       return;
@@ -230,77 +263,254 @@
       }
 
       if (!foundData) {
-        resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
+        resultBox.className = "mt-4 p-5 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
         resultBox.innerHTML = `
           <div class="flex items-start gap-3">
-            <i class="fas fa-times-circle text-xl mt-0.5"></i>
+            <i class="fas fa-times-circle text-2xl mt-0.5"></i>
             <div>
-              <p class="font-bold">आवेदन नहीं मिला</p>
-              <p class="text-xs mt-1 opacity-80">कृपया अपना आवेदन क्रमांक जांचें या बाद में प्रयास करें।</p>
+              <p class="font-bold text-lg">आवेदन नहीं मिला</p>
+              <p class="text-sm mt-1">इस क्रमांक से कोई आवेदन हमारे रिकॉर्ड में नहीं मिला। कृपया जाँचें:</p>
+              <ul class="text-xs mt-2 space-y-1 list-disc list-inside opacity-80">
+                <li>क्या क्रमांक सही लिखा है?</li>
+                <li>AIO- के बाद कम से कम 6 अंक होने चाहिए</li>
+                <li>कैपिटल लेटर्स में लिखें</li>
+              </ul>
             </div>
           </div>
         `;
       } else {
-        // Determine status color and icon
+        // Determine status configuration
         let statusConfig = {
-          color: "yellow",
+          bg: "bg-yellow-50",
+          border: "border-yellow-500",
+          text: "text-yellow-800",
+          badgeBg: "bg-yellow-100",
+          badgeText: "text-yellow-800",
           icon: "clock",
-          text: foundData.status || "PENDING"
+          label: "प्रक्रियाधीन"
         };
         
-        if (foundData.status === "complete" || foundData.status === "approved" || foundData.status === "success") {
-          statusConfig = { color: "green", icon: "check-circle", text: "सफलतापूर्वक पूर्ण" };
-        } else if (foundData.status === "reject" || foundData.status === "rejected" || foundData.status === "cancelled") {
-          statusConfig = { color: "red", icon: "times-circle", text: "अस्वीकृत" };
-        } else if (foundData.status === "processing" || foundData.status === "under_review") {
-          statusConfig = { color: "blue", icon: "spinner", text: "प्रक्रियाधीन" };
+        const status = (foundData.status || "").toLowerCase();
+        
+        if (status === "complete" || status === "completed" || status === "approved" || status === "success") {
+          statusConfig = { 
+            bg: "bg-green-50", 
+            border: "border-green-500", 
+            text: "text-green-800",
+            badgeBg: "bg-green-100",
+            badgeText: "text-green-800",
+            icon: "check-circle", 
+            label: "पूर्ण / स्वीकृत" 
+          };
+        } else if (status === "reject" || status === "rejected" || status === "cancelled" || status === "declined") {
+          statusConfig = { 
+            bg: "bg-red-50", 
+            border: "border-red-500", 
+            text: "text-red-800",
+            badgeBg: "bg-red-100",
+            badgeText: "text-red-800",
+            icon: "times-circle", 
+            label: "अस्वीकृत" 
+          };
+        } else if (status === "processing" || status === "under_review" || status === "pending") {
+          statusConfig = { 
+            bg: "bg-blue-50", 
+            border: "border-blue-500", 
+            text: "text-blue-800",
+            badgeBg: "bg-blue-100",
+            badgeText: "text-blue-800",
+            icon: "spinner", 
+            label: "प्रक्रियाधीन" 
+          };
         }
 
-        resultBox.className = `mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-${statusConfig.color}-50 border-${statusConfig.color}-500 text-${statusConfig.color}-800`;
+        // Get Service Type (check multiple possible field names)
+        const serviceType = foundData.serviceType || foundData.service || foundData.serviceName || 
+                           foundData.applicationType || foundData.type || getServiceNameFromCollection(foundCollection);
+        
+        // Get Applicant Name (check multiple fields)
+        const applicantName = foundData.applicantName || foundData.name || foundData.fullName || 
+                             foundData.studentName || foundData.userName || "-";
+        
+        // Get Mobile
+        const mobile = foundData.mobile || foundData.phone || foundData.mobileNumber || foundData.contact || "-";
+        
+        // Get Date
+        let dateStr = "-";
+        if (foundData.createdAt) {
+          if (foundData.createdAt.toDate) {
+            dateStr = foundData.createdAt.toDate().toLocaleDateString('hi-IN', {
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric'
+            });
+          } else if (foundData.createdAt.seconds) {
+            dateStr = new Date(foundData.createdAt.seconds * 1000).toLocaleDateString('hi-IN', {
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric'
+            });
+          }
+        } else if (foundData.date) {
+          dateStr = foundData.date;
+        } else if (foundData.applicationDate) {
+          dateStr = foundData.applicationDate;
+        }
+
+        // Build Result HTML
+        resultBox.className = `mt-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in ${statusConfig.bg} ${statusConfig.border} ${statusConfig.text}`;
         
         resultBox.innerHTML = `
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 mb-3 pb-2 border-b border-${statusConfig.color}-200">
-              <i class="fas fa-${statusConfig.icon} text-lg"></i>
-              <span class="font-bold text-lg">स्थिति: ${statusConfig.text.toUpperCase()}</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+          <div class="space-y-3">
+            <!-- Header with Status -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 pb-3 border-b border-current border-opacity-20">
               <div>
-                <span class="font-semibold opacity-70">आवेदन क्रमांक:</span>
-                <p class="font-bold text-base">${foundData.applicationNumber}</p>
+                <span class="text-xs opacity-70 uppercase tracking-wider">आवेदन क्रमांक</span>
+                <h3 class="text-xl font-black tracking-wide">${foundData.applicationNumber}</h3>
               </div>
-              <div>
-                <span class="font-semibold opacity-70">आवेदक का नाम:</span>
-                <p class="font-bold text-base">${foundData.applicantName || foundData.name || "-"}</p>
-              </div>
-              <div>
-                <span class="font-semibold opacity-70">सेवा का प्रकार:</span>
-                <p>${foundData.serviceType || foundData.service || foundCollection}</p>
-              </div>
-              <div>
-                <span class="font-semibold opacity-70">आवेदन तिथि:</span>
-                <p>${foundData.createdAt ? new Date(foundData.createdAt.toDate()).toLocaleDateString('hi-IN') : "-"}</p>
+              <div class="status-badge ${statusConfig.badgeBg} ${statusConfig.badgeText}">
+                <i class="fas fa-${statusConfig.icon}"></i>
+                <span>${statusConfig.label}</span>
               </div>
             </div>
-            ${foundData.remarks ? `
-              <div class="mt-3 p-2 bg-white/50 rounded-lg text-xs">
-                <span class="font-semibold">टिप्पणी:</span> ${foundData.remarks}
+            
+            <!-- Service Type Highlight -->
+            <div class="bg-white bg-opacity-60 p-3 rounded-lg">
+              <div class="label text-xs uppercase tracking-wider mb-1">सेवा का प्रकार (Service Type)</div>
+              <div class="value text-lg text-blue-700">${serviceType}</div>
+            </div>
+            
+            <!-- Details Grid -->
+            <div class="grid md:grid-cols-2 gap-4 mt-3">
+              <div class="space-y-2">
+                <div class="info-row">
+                  <span class="label text-xs">आवेदक का नाम:</span>
+                  <span class="value text-sm">${applicantName}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label text-xs">मोबाइल नंबर:</span>
+                  <span class="value text-sm">${mobile}</span>
+                </div>
+              </div>
+              
+              <div class="space-y-2">
+                <div class="info-row">
+                  <span class="label text-xs">आवेदन तिथि:</span>
+                  <span class="value text-sm">${dateStr}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label text-xs">विभाग:</span>
+                  <span class="value text-sm">${getDepartmentName(foundCollection)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Remarks if any -->
+            ${foundData.remarks || foundData.comment || foundData.notes ? `
+              <div class="mt-3 p-3 bg-white bg-opacity-40 rounded-lg border border-current border-opacity-10">
+                <div class="label text-xs mb-1">टिप्पणी / Remarks:</div>
+                <div class="text-sm font-medium">${foundData.remarks || foundData.comment || foundData.notes}</div>
               </div>
             ` : ''}
+            
+            <!-- Action Buttons -->
+            <div class="flex gap-2 mt-4 pt-3 border-t border-current border-opacity-20">
+              <button onclick="printApplication('${foundData.applicationNumber}')" 
+                      class="flex-1 bg-white bg-opacity-50 hover:bg-opacity-100 text-current py-2 rounded-lg font-semibold text-xs transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-print"></i> प्रिंट करें
+              </button>
+              <button onclick="downloadReceipt('${foundData.applicationNumber}')" 
+                      class="flex-1 bg-white bg-opacity-50 hover:bg-opacity-100 text-current py-2 rounded-lg font-semibold text-xs transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-download"></i> रसीद डाउनलोड
+              </button>
+            </div>
           </div>
         `;
       }
     } catch (error) {
       console.error("Track Error:", error);
-      resultBox.className = "mt-4 p-4 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
-      resultBox.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> ⚠️ तकनीकी त्रुटि। कृपया बाद में प्रयास करें।';
+      resultBox.className = "mt-4 p-5 rounded-xl border-l-4 text-sm md:text-base animate-fade-in bg-red-50 border-red-500 text-red-700";
+      resultBox.innerHTML = `
+        <div class="flex items-center gap-3">
+          <i class="fas fa-exclamation-triangle text-2xl"></i>
+          <div>
+            <p class="font-bold">तकनीकी त्रुटि</p>
+            <p class="text-xs mt-1">कृपया बाद में प्रयास करें या हेल्पलाइन पर संपर्क करें।</p>
+          </div>
+        </div>
+      `;
     } finally {
-      // Re-enable button
       trackBtn.disabled = false;
       trackBtn.classList.remove('opacity-75', 'cursor-not-allowed');
     }
   };
 
+  // Helper function to get service name from collection
+  function getServiceNameFromCollection(colName) {
+    const map = {
+      "applications": "सामान्य सेवा",
+      "samagra_ekyc_requests": "समग्र ई-केवाईसी",
+      "mpbhojApplications": "MP भोज यूनिवर्सिटी"
+    };
+    return map[colName] || "सरकारी सेवा";
+  }
+
+  // Helper function to get department name
+  function getDepartmentName(colName) {
+    const map = {
+      "applications": "सामान्य प्रशासन",
+      "samagra_ekyc_requests": "समग्र पोर्टल",
+      "mpbhojApplications": "MP भोज मुक्त विश्वविद्यालय"
+    };
+    return map[colName] || "मध्य प्रदेश सरकार";
+  }
+
+  // Placeholder functions for print/download
+  window.printApplication = function(appNo) {
+    alert("प्रिंट फंक्शन: " + appNo + "\n(इसे अपने backend से जोड़ें)");
+  };
+  
+  window.downloadReceipt = function(appNo) {
+    alert("डाउनलोड फंक्शन: " + appNo + "\n(इसे अपने backend से जोड़ें)");
+  };
+
+  /* ===== NOTIFICATION LISTENER ===== */
+  const notifQuery = query(
+    collection(db, "notifications"),
+    where("active", "==", true),
+    orderBy("createdAt", "desc")
+  );
+
+  onSnapshot(notifQuery, (snapshot) => {
+    const drawerBox = document.getElementById("drawer-notif-list");
+    if (!drawerBox) return;
+
+    if (snapshot.empty) {
+      drawerBox.innerHTML = `
+        <div class="text-center py-8 text-gray-400">
+          <i class="fas fa-inbox text-4xl mb-2 opacity-30"></i>
+          <p class="text-sm">कोई नई सूचना नहीं</p>
+        </div>`;
+      return;
+    }
+
+    let html = "";
+    snapshot.forEach(doc => {
+      const n = doc.data();
+      const time = n.createdAt ? new Date(n.createdAt.toDate()).toLocaleDateString('hi-IN') : '';
+      html += `
+        <div class="border-l-4 border-blue-600 bg-gradient-to-r from-blue-50 to-white p-4 rounded-r-xl shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex justify-between items-start mb-1">
+            <h4 class="font-bold text-sm text-gray-800">${n.title}</h4>
+            <span class="text-[10px] text-gray-400">${time}</span>
+          </div>
+          <p class="text-xs text-gray-600 leading-relaxed">${n.message}</p>
+        </div>
+      `;
+    });
+    drawerBox.innerHTML = html;
+  });
+</script>
   /* ===== NOTIFICATION LISTENER ===== */
   const notifQuery = query(
     collection(db, "notifications"),
@@ -924,6 +1134,7 @@ window.trackApplication = async function () {
 <div id="notif-overlay" class="fixed inset-0 bg-blue-900/20 backdrop-blur-sm z-[105] hidden transition-opacity duration-300"></div>
 </body>
 </html>
+
 
 
 
