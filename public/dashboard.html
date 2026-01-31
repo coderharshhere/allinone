@@ -1,2379 +1,1267 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AllInOne MP – Advanced Admin Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap');
-:root {
---primary-color: #1e3a8a;
---secondary-color: #3b82f6;
---success-color: #22c55e;
---warning-color: #f59e0b;
---danger-color: #ef4444;
---sidebar-width: 280px;
---sidebar-collapsed-width: 80px;
---card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
---transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
-body {
-font-family: 'Noto Sans Devanagari', sans-serif;
-background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
-overflow-x: hidden;
-color: #1e293b;
-min-height: 100vh;
-}
-.loading-screen {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: white;
-display: flex;
-align-items: center;
-justify-content: center;
-z-index: 9999;
-flex-direction: column;
-transition: opacity 0.5s ease;
-}
-.loading-spinner {
-width: 60px;
-height: 60px;
-border: 6px solid rgba(59, 130, 246, 0.2);
-border-top-color: #3b82f6;
-border-radius: 50%;
-animation: spin 1s linear infinite;
-margin-bottom: 20px;
-box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-}
-@keyframes spin {
-to { transform: rotate(360deg); }
-}
-.sidebar {
-width: var(--sidebar-width);
-transition: var(--transition);
-position: fixed;
-left: 0;
-top: 0;
-height: 100vh;
-z-index: 40;
-overflow-x: hidden;
-box-shadow: var(--card-shadow);
-background: linear-gradient(180deg, #1e3a8a 0%, #0f296b 100%);
-}
-.sidebar.collapsed {
-width: var(--sidebar-collapsed-width);
-}
-.sidebar.collapsed .sidebar-text {
-display: none;
-}
-.sidebar.collapsed .logo-text {
-display: none;
-}
-.sidebar-toggle-fixed {
-position: fixed;
-left: var(--sidebar-width);
-top: 20px;
-z-index: 50;
-background: white;
-border: 1px solid #e2e8f0;
-border-radius: 0 12px 12px 0;
-padding: 10px 12px;
-cursor: pointer;
-box-shadow: var(--card-shadow);
-transition: var(--transition);
-color: var(--primary-color);
-font-weight: 600;
-display: flex;
-align-items: center;
-gap: 6px;
-height: 42px;
-}
-.sidebar.collapsed + .sidebar-toggle-fixed {
-left: var(--sidebar-collapsed-width);
-}
-.main-content {
-transition: margin-left 0.3s ease;
-margin-left: var(--sidebar-width);
-padding: 20px;
-padding-top: 90px;
-}
-.main-content.sidebar-collapsed {
-margin-left: var(--sidebar-collapsed-width);
-}
-.status-badge {
-padding: 6px 16px;
-border-radius: 50px;
-font-size: 13px;
-font-weight: 600;
-display: inline-flex;
-align-items: center;
-gap: 6px;
-border: 2px solid transparent;
-transition: var(--transition);
-cursor: pointer;
-box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-.status-badge:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-.status-complete {
-background-color: #dcfce7;
-color: #166534;
-border-color: #bbf7d0;
-}
-.status-pending {
-background-color: #ffedd5;
-color: #9a3412;
-border-color: #fed7aa;
-}
-.status-reject {
-background-color: #fee2e2;
-color: #991b1b;
-border-color: #fecaca;
-}
-.status-processing {
-background-color: #dbeafe;
-color: #1e40af;
-border-color: #bfdbfe;
-}
-.action-btn {
-padding: 0.6rem;
-border-radius: 10px;
-transition: var(--transition);
-display: flex;
-align-items: center;
-justify-content: center;
-width: 2.5rem;
-height: 2.5rem;
-border: none;
-cursor: pointer;
-font-size: 1.1rem;
-box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-}
-.action-btn:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-.action-view {
-background-color: rgba(59, 130, 246, 0.15);
-color: #3b82f6;
-}
-.action-edit {
-background-color: rgba(245, 158, 11, 0.15);
-color: #f59e0b;
-}
-.action-delete {
-background-color: rgba(239, 68, 68, 0.15);
-color: #ef4444;
-}
-.action-download {
-background-color: rgba(34, 197, 94, 0.15);
-color: #22c55e;
-}
-.notification-badge {
-position: absolute;
-top: -4px;
-right: -4px;
-background-color: #ef4444;
-color: white;
-font-size: 10px;
-width: 20px;
-height: 20px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-font-weight: bold;
-box-shadow: 0 0 0 2px white;
-animation: pulse 2s infinite;
-}
-@keyframes pulse {
-0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-.fade-in {
-animation: fadeIn 0.6s ease-out forwards;
-}
-@keyframes fadeIn {
-from {
-opacity: 0;
-transform: translateY(15px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.table-row {
-transition: var(--transition);
-border-bottom: 1px solid #f1f5f9;
-}
-.table-row:hover {
-background-color: #f8fafc;
-transform: translateX(5px);
-}
-.page-section {
-display: none;
-animation: fadeIn 0.5s ease-out;
-}
-.page-section.active {
-display: block;
-}
-.modal {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: rgba(0, 0, 0, 0.65);
-z-index: 1000;
-align-items: center;
-justify-content: center;
-padding: 20px;
-backdrop-filter: blur(4px);
-animation: modalFadeIn 0.3s ease-out;
-}
-@keyframes modalFadeIn {
-from { opacity: 0; }
-to { opacity: 1; }
-}
-.modal.active {
-display: flex;
-}
-.modal-content {
-background: white;
-border-radius: 24px;
-max-width: 950px;
-width: 100%;
-max-height: 95vh;
-overflow-y: auto;
-position: relative;
-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-transform: translateY(0);
-transition: transform 0.4s ease, opacity 0.4s ease;
-opacity: 1;
-animation: modalContentFadeIn 0.4s ease-out;
-}
-@keyframes modalContentFadeIn {
-from {
-transform: translateY(20px);
-opacity: 0;
-}
-to {
-transform: translateY(0);
-opacity: 1;
-}
-}
-.modal-header {
-background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-color: white;
-padding: 28px 32px;
-border-radius: 24px 24px 0 0;
-position: relative;
-overflow: hidden;
-}
-.modal-header::after {
-content: "";
-position: absolute;
-top: -50%;
-right: -10%;
-width: 200%;
-height: 200%;
-background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-transform: rotate(30deg);
-}
-.qr-container {
-background: white;
-padding: 20px;
-border-radius: 16px;
-display: inline-block;
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-border: 1px solid #e2e8f0;
-margin: 15px 0;
-}
-.detail-row {
-display: flex;
-padding: 14px 0;
-border-bottom: 1px dashed #e2e8f0;
-}
-.detail-label {
-font-weight: 700;
-color: #475569;
-width: 40%;
-font-size: 0.95rem;
-}
-.detail-value {
-color: #0f172a;
-font-weight: 600;
-width: 60%;
-font-size: 1rem;
-}
-.stat-card {
-transition: var(--transition);
-border-radius: 20px;
-overflow: hidden;
-position: relative;
-box-shadow: var(--card-shadow);
-}
-.stat-card:hover {
-transform: translateY(-5px);
-box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
-}
-.stat-card::before {
-content: "";
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 4px;
-background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-}
-.stat-card.pending::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-.stat-card.complete::before { background: linear-gradient(90deg, #22c55e, #10b981); }
-.stat-card.rejected::before { background: linear-gradient(90deg, #ef4444, #f87171); }
-.search-container {
-background: white;
-border-radius: 16px;
-padding: 20px;
-box-shadow: var(--card-shadow);
-margin-bottom: 25px;
-transition: var(--transition);
-}
-.search-container:hover {
-box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.12);
-}
-.filter-badge {
-background: linear-gradient(135deg, #3b82f6, #60a5fa);
-color: white;
-padding: 4px 12px;
-border-radius: 50px;
-font-weight: 600;
-font-size: 0.85rem;
-display: inline-flex;
-align-items: center;
-gap: 6px;
-box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
-}
-.chart-container {
-background: white;
-border-radius: 20px;
-padding: 25px;
-box-shadow: var(--card-shadow);
-margin-top: 25px;
-transition: var(--transition);
-}
-.chart-container:hover {
-box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.12);
-}
-.form-section {
-background: white;
-border-radius: 20px;
-padding: 30px;
-box-shadow: var(--card-shadow);
-margin-top: 25px;
-display: none;
-}
-.form-section.active {
-display: block;
-animation: fadeIn 0.6s ease-out;
-}
-.form-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-gap: 25px;
-margin-top: 20px;
-}
-.form-group {
-margin-bottom: 15px;
-}
-.form-group label {
-display: block;
-margin-bottom: 8px;
-font-weight: 600;
-color: #334155;
-font-size: 0.95rem;
-}
-.form-control {
-width: 100%;
-padding: 14px 16px;
-border: 1px solid #cbd5e1;
-border-radius: 14px;
-font-family: 'Noto Sans Devanagari', sans-serif;
-font-size: 1rem;
-transition: var(--transition);
-}
-.form-control:focus {
-outline: none;
-border-color: var(--secondary-color);
-box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-.btn-primary {
-background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-color: white;
-border: none;
-padding: 14px 28px;
-border-radius: 14px;
-font-weight: 700;
-font-size: 1.05rem;
-cursor: pointer;
-transition: var(--transition);
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 10px;
-box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
-.btn-primary:hover {
-transform: translateY(-2px);
-box-shadow: 0 6px 20px rgba(59, 130, 246, 0.55);
-}
-.btn-secondary {
-background: white;
-color: var(--primary-color);
-border: 2px solid var(--secondary-color);
-padding: 12px 26px;
-border-radius: 14px;
-font-weight: 600;
-font-size: 1rem;
-cursor: pointer;
-transition: var(--transition);
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 8px;
-}
-.btn-secondary:hover {
-background: #f1f5ff;
-transform: translateY(-2px);
-}
-.btn-danger {
-background: linear-gradient(135deg, #ef4444, #f87171);
-color: white;
-border: none;
-padding: 12px 24px;
-border-radius: 14px;
-font-weight: 600;
-cursor: pointer;
-transition: var(--transition);
-}
-.btn-danger:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-}
-.receipt-header {
-text-align: center;
-padding: 25px 0;
-border-bottom: 3px solid #3b82f6;
-margin-bottom: 30px;
-position: relative;
-}
-.receipt-header::after {
-content: "";
-position: absolute;
-bottom: -3px;
-left: 50%;
-transform: translateX(-50%);
-width: 80%;
-height: 3px;
-background: linear-gradient(90deg, transparent, #3b82f6, transparent);
-}
-.receipt-logo {
-width: 80px;
-height: 80px;
-background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-margin: 0 auto 15px;
-color: white;
-font-weight: 800;
-font-size: 1.8rem;
-box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-}
-.receipt-title {
-font-size: 2.2rem;
-font-weight: 800;
-color: var(--primary-color);
-margin: 10px 0;
-letter-spacing: -0.5px;
-}
-.receipt-subtitle {
-color: #475569;
-font-size: 1.25rem;
-margin-top: 5px;
-}
-.receipt-meta {
-display: flex;
-justify-content: space-between;
-margin-top: 25px;
-padding-top: 15px;
-border-top: 1px dashed #cbd5e1;
-font-size: 0.95rem;
-}
-.receipt-footer {
-text-align: center;
-margin-top: 40px;
-padding-top: 25px;
-border-top: 2px solid #e2e8f0;
-color: #475569;
-font-size: 0.95rem;
-line-height: 1.6;
-}
-.document-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-gap: 15px;
-margin-top: 15px;
-}
-.document-item {
-border: 1px solid #e2e8f0;
-border-radius: 12px;
-padding: 15px;
-text-align: center;
-transition: var(--transition);
-background: #f8fafc;
-}
-.document-item:hover {
-transform: translateY(-3px);
-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-border-color: var(--secondary-color);
-}
-.document-icon {
-font-size: 2.5rem;
-margin-bottom: 10px;
-color: var(--secondary-color);
-}
-.document-name {
-font-weight: 600;
-font-size: 0.9rem;
-color: #1e293b;
-display: block;
-margin-top: 5px;
-}
-.document-link {
-color: var(--secondary-color);
-font-weight: 600;
-font-size: 0.85rem;
-text-decoration: none;
-display: block;
-margin-top: 5px;
-transition: var(--transition);
-}
-.document-link:hover {
-color: var(--primary-color);
-text-decoration: underline;
-}
-.service-badge {
-padding: 4px 14px;
-border-radius: 50px;
-font-weight: 600;
-font-size: 0.85rem;
-display: inline-block;
-background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-color: #1e40af;
-}
-.top-bar {
-position: fixed;
-top: 0;
-left: var(--sidebar-width);
-right: 0;
-background: white;
-padding: 15px 30px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-z-index: 30;
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-transition: left 0.3s ease;
-height: 70px;
-}
-.sidebar-collapsed + .top-bar {
-left: var(--sidebar-collapsed-width);
-}
-.user-card {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 8px 16px;
-border-radius: 16px;
-background: #f1f5ff;
-transition: var(--transition);
-cursor: pointer;
-}
-.user-card:hover {
-background: #e0e7ff;
-transform: translateX(3px);
-}
-.user-avatar {
-width: 42px;
-height: 42px;
-border-radius: 50%;
-background: linear-gradient(135deg, #3b82f6, #60a5fa);
-display: flex;
-align-items: center;
-justify-content: center;
-color: white;
-font-weight: 700;
-font-size: 1.2rem;
-flex-shrink: 0;
-}
-.user-info {
-display: flex;
-flex-direction: column;
-}
-.user-name {
-font-weight: 700;
-font-size: 0.95rem;
-color: var(--primary-color);
-}
-.user-email {
-font-size: 0.8rem;
-color: #475569;
-}
-.notification-card {
-position: relative;
-background: white;
-border-radius: 16px;
-padding: 15px;
-box-shadow: var(--card-shadow);
-cursor: pointer;
-transition: var(--transition);
-min-width: 280px;
-margin-left: 15px;
-}
-.notification-card:hover {
-transform: translateY(-3px);
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-}
-.notification-title {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding-bottom: 10px;
-border-bottom: 1px solid #f1f5f9;
-margin-bottom: 10px;
-}
-.notification-list {
-max-height: 300px;
-overflow-y: auto;
-padding-right: 8px;
-}
-.notification-item {
-padding: 12px 0;
-border-bottom: 1px solid #f1f5f9;
-display: flex;
-gap: 12px;
-}
-.notification-item:last-child {
-border-bottom: none;
-}
-.notification-icon {
-width: 36px;
-height: 36px;
-border-radius: 12px;
-display: flex;
-align-items: center;
-justify-content: center;
-flex-shrink: 0;
-font-size: 1.1rem;
-}
-.notification-icon.pending {
-background: rgba(245, 158, 11, 0.15);
-color: #f59e0b;
-}
-.notification-icon.complete {
-background: rgba(34, 197, 94, 0.15);
-color: #22c55e;
-}
-.notification-content h4 {
-font-weight: 600;
-margin-bottom: 4px;
-color: #0f172a;
-}
-.notification-content p {
-font-size: 0.85rem;
-color: #64748b;
-margin-bottom: 4px;
-}
-.notification-time {
-font-size: 0.75rem;
-color: #94a3b8;
-}
-.nav-item {
-display: flex;
-align-items: center;
-gap: 16px;
-padding: 14px 20px;
-border-radius: 16px;
-margin-bottom: 8px;
-cursor: pointer;
-transition: var(--transition);
-font-weight: 600;
-position: relative;
-}
-.nav-item:hover {
-background: rgba(255, 255, 255, 0.15);
-}
-.nav-item.active {
-background: rgba(255, 255, 255, 0.25);
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-position: relative;
-}
-.nav-item.active::before {
-content: "";
-position: absolute;
-left: 0;
-top: 8px;
-bottom: 8px;
-width: 4px;
-background: white;
-border-radius: 0 4px 4px 0;
-}
-.nav-icon {
-width: 28px;
-height: 28px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 1.2rem;
-}
-.sidebar-footer {
-position: absolute;
-bottom: 0;
-left: 0;
-right: 0;
-padding: 20px;
-border-top: 1px solid rgba(255, 255, 255, 0.15);
-}
-.logout-btn {
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 12px;
-width: 100%;
-padding: 14px;
-border-radius: 16px;
-background: rgba(255, 255, 255, 0.15);
-color: white;
-font-weight: 600;
-cursor: pointer;
-transition: var(--transition);
-border: none;
-font-family: 'Noto Sans Devanagari', sans-serif;
-}
-.logout-btn:hover {
-background: rgba(239, 68, 68, 0.25);
-transform: translateX(5px);
-}
-.empty-state {
-text-align: center;
-padding: 60px 20px;
-color: #64748b;
-}
-.empty-icon {
-font-size: 5rem;
-margin-bottom: 20px;
-opacity: 0.7;
-}
-.empty-title {
-font-size: 1.8rem;
-font-weight: 700;
-margin-bottom: 10px;
-color: #334155;
-}
-.empty-message {
-font-size: 1.1rem;
-max-width: 500px;
-margin: 0 auto 25px;
-}
-.data-table {
-width: 100%;
-border-collapse: collapse;
-min-width: 800px;
-}
-.data-table th {
-background-color: #f8fafc;
-font-weight: 700;
-text-transform: uppercase;
-font-size: 0.85rem;
-letter-spacing: 0.5px;
-color: #334155;
-padding: 16px 12px;
-text-align: left;
-}
-.data-table td {
-padding: 16px 12px;
-vertical-align: middle;
-}
-.data-table tr:last-child td {
-border-bottom: none;
-}
-@media (max-width: 768px) {
-.sidebar {
-transform: translateX(-100%);
-box-shadow: none;
-}
-.sidebar.active {
-transform: translateX(0);
-}
-.main-content {
-margin-left: 0;
-padding-top: 120px;
-}
-.sidebar-collapsed + .sidebar-toggle-fixed {
-left: 0;
-}
-.top-bar {
-left: 0;
-padding: 15px;
-}
-.sidebar-collapsed + .top-bar {
-left: 0;
-}
-.data-table {
-min-width: 600px;
-}
-.detail-label, .detail-value {
-width: 100%;
-padding: 8px 0;
-}
-.detail-row {
-flex-direction: column;
-align-items: flex-start;
-}
-.receipt-meta {
-flex-direction: column;
-gap: 10px;
-align-items: flex-start;
-}
-.form-grid {
-grid-template-columns: 1fr;
-}
-}
-@media print {
-body * {
-visibility: hidden;
-}
-#pdfContent, #pdfContent * {
-visibility: visible;
-}
-#pdfContent {
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: auto;
-margin: 0;
-padding: 20px;
-font-size: 14pt;
-}
-.no-print {
-display: none !important;
-}
-.modal, .modal * {
-visibility: hidden;
-}
-.qr-container img {
-width: 150px !important;
-height: 150px !important;
-}
-}
-.edit-input {
-width: 100%;
-padding: 8px 12px;
-border: 2px solid #e2e8f0;
-border-radius: 8px;
-font-family: 'Noto Sans Devanagari', sans-serif;
-transition: all 0.3s;
-}
-.edit-input:focus {
-border-color: #3b82f6;
-outline: none;
-box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-.user-status {
-width: 10px;
-height: 10px;
-border-radius: 50%;
-display: inline-block;
-margin-right: 8px;
-}
-.user-status.online {
-background-color: #22c55e;
-box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
-}
-.user-status.offline {
-background-color: #94a3b8;
-}
-.settings-card {
-background: white;
-border-radius: 20px;
-padding: 30px;
-box-shadow: var(--card-shadow);
-margin-bottom: 25px;
-transition: var(--transition);
-}
-.settings-card:hover {
-box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-.toggle-switch {
-position: relative;
-display: inline-block;
-width: 50px;
-height: 26px;
-}
-.toggle-switch input {
-opacity: 0;
-width: 0;
-height: 0;
-}
-.toggle-slider {
-position: absolute;
-cursor: pointer;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background-color: #cbd5e1;
-transition: .4s;
-border-radius: 34px;
-}
-.toggle-slider:before {
-position: absolute;
-content: "";
-height: 20px;
-width: 20px;
-left: 3px;
-bottom: 3px;
-background-color: white;
-transition: .4s;
-border-radius: 50%;
-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-input:checked + .toggle-slider {
-background-color: #3b82f6;
-}
-input:checked + .toggle-slider:before {
-transform: translateX(24px);
-}
-.bulk-action-bar {
-background: linear-gradient(135deg, #1e293b, #334155);
-color: white;
-padding: 15px 25px;
-border-radius: 16px;
-margin-bottom: 20px;
-display: none;
-align-items: center;
-justify-content: space-between;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-.bulk-action-bar.active {
-display: flex;
-animation: slideDown 0.3s ease-out;
-}
-@keyframes slideDown {
-from {
-opacity: 0;
-transform: translateY(-10px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.date-range-picker {
-display: flex;
-gap: 10px;
-align-items: center;
-}
-.import-dropzone {
-border: 3px dashed #cbd5e1;
-border-radius: 20px;
-padding: 40px;
-text-align: center;
-transition: all 0.3s;
-cursor: pointer;
-background: #f8fafc;
-}
-.import-dropzone:hover {
-border-color: #3b82f6;
-background: #f0f7ff;
-}
-.import-dropzone.dragover {
-border-color: #3b82f6;
-background: #dbeafe;
-transform: scale(1.02);
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllInOne MP – Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase v9 Compat (Zyada stable) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Noto Sans Devanagari', sans-serif; 
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
+            overflow-x: hidden;
+        }
+        .loading-screen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: white; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 9999;
+        }
+        .loading-spinner {
+            width: 60px; height: 60px;
+            border: 6px solid rgba(59, 130, 246, 0.2);
+            border-top-color: #3b82f6; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .sidebar {
+            width: 280px; position: fixed; left: 0; top: 0; height: 100vh;
+            background: linear-gradient(180deg, #1e3a8a 0%, #0f296b 100%);
+            z-index: 40; overflow-x: hidden; transition: all 0.3s;
+        }
+        .sidebar.collapsed { width: 80px; }
+        .sidebar.collapsed .sidebar-text { display: none; }
+        
+        .main-content {
+            margin-left: 280px; padding: 90px 20px 20px;
+            transition: margin-left 0.3s;
+        }
+        .main-content.collapsed { margin-left: 80px; }
+        
+        .top-bar {
+            position: fixed; top: 0; left: 280px; right: 0; height: 70px;
+            background: white; z-index: 30; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; transition: left 0.3s;
+        }
+        .top-bar.collapsed { left: 80px; }
+        
+        .status-badge {
+            padding: 6px 16px; border-radius: 50px; font-size: 13px;
+            font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
+            cursor: pointer; border: 2px solid transparent;
+        }
+        .status-complete { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+        .status-pending { background: #ffedd5; color: #9a3412; border-color: #fed7aa; }
+        .status-reject { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+        .status-processing { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+        
+        .action-btn {
+            padding: 0.6rem; border-radius: 10px; border: none; cursor: pointer;
+            width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+        }
+        .action-btn:hover { transform: translateY(-2px); }
+        .action-view { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .action-edit { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .action-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        
+        .nav-item {
+            display: flex; align-items: center; gap: 16px;
+            padding: 14px 20px; margin-bottom: 8px; cursor: pointer;
+            color: white; border-radius: 16px; transition: all 0.3s;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.15); }
+        .nav-item.active { background: rgba(255,255,255,0.25); }
+        
+        .page-section { display: none; animation: fadeIn 0.5s; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.65); z-index: 1000; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; border-radius: 24px; max-width: 950px; width: 100%;
+            max-height: 95vh; overflow-y: auto; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white; padding: 28px 32px; border-radius: 24px 24px 0 0;
+        }
+        
+        .detail-row { display: flex; padding: 12px 0; border-bottom: 1px dashed #e2e8f0; }
+        .detail-label { font-weight: 700; color: #475569; width: 40%; }
+        .detail-value { color: #0f172a; font-weight: 600; width: 60%; }
+        
+        .stat-card {
+            background: white; border-radius: 20px; padding: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            position: relative; overflow: hidden; transition: all 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+        .stat-card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+        }
+        
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8fafc; padding: 16px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 16px; border-bottom: 1px solid #f1f5f9; }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white; border: none; padding: 14px 28px; border-radius: 14px;
+            font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 10px;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59,130,246,0.4); }
+        
+        .btn-secondary {
+            background: white; color: #1e3a8a; border: 2px solid #3b82f6;
+            padding: 12px 26px; border-radius: 14px; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s;
+        }
+        .btn-secondary:hover { background: #f1f5ff; }
+        
+        .form-control {
+            width: 100%; padding: 14px 16px; border: 1px solid #cbd5e1;
+            border-radius: 14px; font-family: inherit; font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .form-control:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        
+        .auth-error-screen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10000; color: white; text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding-top: 80px; }
+            .top-bar { left: 0; padding: 0 15px; }
+            .detail-row { flex-direction: column; }
+            .detail-label, .detail-value { width: 100%; }
+        }
+        
+        @media print {
+            body * { visibility: hidden; }
+            #pdfContent, #pdfContent * { visibility: visible; }
+            #pdfContent { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-<!-- LOADING SCREEN -->
+<body>
+
+<!-- Loading Screen -->
 <div id="loadingScreen" class="loading-screen">
-<div class="loading-spinner"></div>
-<h2 class="text-2xl font-bold text-gray-800 mt-4">AllInOne MP प्रणाली</h2>
-<p class="mt-3 text-gray-600 font-medium text-lg">डेटा लोड हो रहा है...</p>
-<p id="loadingStatus" class="mt-3 text-sm text-blue-600 flex items-center gap-2">
-<i class="fas fa-cloud-download-alt"></i> Firebase से कनेक्ट हो रहा है...
-</p>
-<div class="mt-6 flex gap-3">
-<div class="w-40 bg-gray-200 rounded-full overflow-hidden">
-<div id="loadingProgress" class="h-2 bg-blue-600" style="width: 15%"></div>
+    <div class="loading-spinner"></div>
+    <h2 class="text-2xl font-bold text-gray-800">AllInOne MP प्रणाली</h2>
+    <p class="mt-3 text-gray-600">डेटाबेस से कनेक्ट हो रहा है...</p>
+    <p id="loadingStatus" class="mt-2 text-sm text-blue-600">Initializing...</p>
 </div>
-<span id="progressText" class="text-sm font-medium text-gray-700">15%</span>
+
+<!-- Auth Error Screen -->
+<div id="authErrorScreen" class="auth-error-screen">
+    <i class="fas fa-lock text-6xl mb-6"></i>
+    <h1 class="text-3xl font-bold mb-4">🔒 पहुंच अस्वीकृत</h1>
+    <p class="text-xl mb-2">इस पेज को देखने के लिए लॉगिन आवश्यक है</p>
+    <p class="text-lg opacity-75 mb-8">कृपया पहले प्रमाणीकृत करें</p>
+    <button onclick="window.location.href='https://allinonemp.harshtiwari.in/adminlogin.html'" 
+            class="bg-white text-blue-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        <i class="fas fa-sign-in-alt mr-2"></i>लॉगिन पेज पर जाएं
+    </button>
 </div>
-</div>
-<!-- SIDEBAR -->
+
+<!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
-<div class="p-6 border-b border-blue-700/50">
-<div class="flex items-center justify-between mb-8">
-<div class="flex items-center gap-3">
-<div class="bg-white/20 backdrop-blur-sm p-2.5 rounded-xl">
-<div class="bg-white w-11 h-11 rounded-lg flex items-center justify-center shadow-md">
-<span class="text-blue-900 font-bold text-xl">MP</span>
-</div>
-</div>
-<div class="logo-text">
-<h1 class="text-xl font-bold tracking-tight">AllInOne-MP</h1>
-<p class="text-xs opacity-95 mt-0.5">प्रशासन पैनल</p>
-</div>
-</div>
-<button class="text-white p-1.5 hover:bg-white/20 rounded-lg transition no-sidebar-text" onclick="toggleSidebar()">
-<i class="fas fa-times text-xl"></i>
-</button>
-</div>
-<div class="mb-3 sidebar-text">
-<div class="bg-white/15 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-xs opacity-95 flex items-center gap-1.5">
-<i class="fas fa-user-shield"></i> सक्रिय प्रशासक
-</p>
-<p class="font-bold mt-1.5 text-white text-lg" id="sidebarAdminName">लोड हो रहा है...</p>
-</div>
-<div class="bg-yellow-300/90 text-blue-900 font-bold w-10 h-10 rounded-xl flex items-center justify-center text-base shadow-md">
-<i class="fas fa-user"></i>
-</div>
-</div>
-</div>
-</div>
-</div>
-<nav class="mt-2 p-4">
-<div class="px-3 py-2 text-xs font-bold text-blue-200 uppercase tracking-wider mb-3 sidebar-text">मुख्य मेनू</div>
-<ul class="space-y-1.5">
-<li>
-<a class="nav-item active" onclick="showSection('dashboard')">
-<div class="nav-icon">
-<i class="fas fa-home"></i>
-</div>
-<span class="sidebar-text">डैशबोर्ड</span>
-</a>
-</li>
-<li>
-<a class="nav-item" onclick="showSection('applications')">
-<div class="nav-icon">
-<i class="fas fa-file-signature"></i>
-</div>
-<span class="sidebar-text">आवेदन प्रबंधन</span>
-</a>
-</li>
-<li>
-<a class="nav-item" onclick="showSection('newApplication')">
-<div class="nav-icon">
-<i class="fas fa-plus-circle"></i>
-</div>
-<span class="sidebar-text">नया आवेदन</span>
-</a>
-</li>
-<li>
-<a class="nav-item" onclick="showSection('analysis')">
-<div class="nav-icon">
-<i class="fas fa-chart-pie"></i>
-</div>
-<span class="sidebar-text">विश्लेषण रिपोर्ट</span>
-</a>
-</li>
-<li>
-<a class="nav-item" onclick="showSection('users')">
-<div class="nav-icon">
-<i class="fas fa-users-cog"></i>
-</div>
-<span class="sidebar-text">उपयोगकर्ता प्रबंधन</span>
-</a>
-</li>
-<li>
-<a class="nav-item" onclick="showSection('settings')">
-<div class="nav-icon">
-<i class="fas fa-cog"></i>
-</div>
-<span class="sidebar-text">सेटिंग्स</span>
-</a>
-</li>
-</ul>
-<div class="px-3 py-2 text-xs font-bold text-blue-200 uppercase tracking-wider mt-8 mb-3 sidebar-text">रिपोर्ट्स</div>
-<ul class="space-y-1.5">
-<li>
-<a class="nav-item" onclick="showSection('dailyReports')">
-<div class="nav-icon">
-<i class="fas fa-calendar-day"></i>
-</div>
-<span class="sidebar-text">दैनिक रिपोर्ट</span>
-</a>
-</li>
-<li>
-<a class="nav-item" onclick="showSection('exportData')">
-<div class="nav-icon">
-<i class="fas fa-file-export"></i>
-</div>
-<span class="sidebar-text">आयात/निर्यात</span>
-</a>
-</li>
-</ul>
-</nav>
-<div class="sidebar-footer">
-<button onclick="logout()" class="logout-btn">
-<i class="fas fa-sign-out-alt text-lg"></i>
-<span class="sidebar-text">प्रणाली से बाहर निकलें</span>
-</button>
-<div class="mt-4 text-center text-xs text-blue-100/80 sidebar-text">
-<div>संस्करण 3.0.0</div>
-<div class="mt-1 flex items-center justify-center gap-1.5">
-<i class="fas fa-shield-alt"></i>
-<span>सुरक्षित कनेक्शन</span>
-</div>
-</div>
-</div>
+    <div class="p-6 border-b border-blue-700/50">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="bg-white w-12 h-12 rounded-lg flex items-center justify-center shadow-md">
+                <span class="text-blue-900 font-bold text-xl">MP</span>
+            </div>
+            <div class="sidebar-text">
+                <h1 class="text-xl font-bold text-white">AllInOne-MP</h1>
+                <p class="text-xs text-blue-200">प्रशासन पैनल</p>
+            </div>
+        </div>
+        <div class="sidebar-text">
+            <div class="bg-white/15 p-4 rounded-xl border border-white/20">
+                <p class="text-xs text-blue-200 mb-1"><i class="fas fa-user-shield mr-2"></i>सक्रिय प्रशासक</p>
+                <p class="font-bold text-white text-lg" id="sidebarAdminName">लोड हो रहा है...</p>
+            </div>
+        </div>
+    </div>
+    
+    <nav class="mt-4 p-4">
+        <div class="sidebar-text px-3 py-2 text-xs font-bold text-blue-300 uppercase mb-3">मुख्य मेनू</div>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-home w-6"></i>
+            <span class="sidebar-text">डैशबोर्ड</span>
+        </div>
+        <div class="nav-item" onclick="showSection('applications')">
+            <i class="fas fa-file-signature w-6"></i>
+            <span class="sidebar-text">आवेदन प्रबंधन</span>
+        </div>
+        <div class="nav-item" onclick="showSection('newApplication')">
+            <i class="fas fa-plus-circle w-6"></i>
+            <span class="sidebar-text">नया आवेदन</span>
+        </div>
+        <div class="nav-item" onclick="showSection('analysis')">
+            <i class="fas fa-chart-pie w-6"></i>
+            <span class="sidebar-text">विश्लेषण</span>
+        </div>
+        <div class="nav-item" onclick="showSection('settings')">
+            <i class="fas fa-cog w-6"></i>
+            <span class="sidebar-text">सेटिंग्स</span>
+        </div>
+    </nav>
+    
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/20">
+        <button onclick="logout()" class="w-full bg-white/10 hover:bg-red-500/20 text-white py-3 rounded-xl transition flex items-center justify-center gap-2">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="sidebar-text">बाहर निकलें</span>
+        </button>
+    </div>
 </aside>
-<!-- SIDEBAR TOGGLE BUTTON -->
-<button class="sidebar-toggle-fixed" onclick="toggleSidebar()" id="sidebarToggleBtn">
-<i class="fas fa-bars" id="toggleIcon"></i>
-</button>
-<!-- TOP BAR -->
+
+<!-- Top Bar -->
 <div class="top-bar" id="topBar">
-<div class="flex items-center gap-4">
-<div class="relative">
-<button class="relative p-2.5 hover:bg-gray-100 rounded-xl transition shadow-md" id="notificationBtn">
-<i class="fas fa-bell text-xl text-gray-700"></i>
-<span class="notification-badge">8</span>
-</button>
-<div class="notification-card absolute top-full mt-2 right-0 hidden" id="notificationDropdown">
-<div class="notification-title">
-<h3 class="font-bold text-lg">सूचनाएं</h3>
-<span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">8 नई</span>
-</div>
-<div class="notification-list">
-<div class="notification-item">
-<div class="notification-icon pending">
-<i class="fas fa-hourglass-half"></i>
-</div>
-<div class="notification-content">
-<h4>नया आवेदन प्राप्त हुआ</h4>
-<p>राजेश कुमार ने समग्र आईडी आवेदन जमा किया</p>
-<span class="notification-time">2 मिनट पहले</span>
-</div>
-</div>
-<div class="notification-item">
-<div class="notification-icon complete">
-<i class="fas fa-check-circle"></i>
-</div>
-<div class="notification-content">
-<h4>आवेदन स्वीकृत</h4>
-<p>सोनू शर्मा का आवेदन सफलतापूर्वक पूर्ण हुआ</p>
-<span class="notification-time">15 मिनट पहले</span>
-</div>
-</div>
-</div>
-<div class="mt-3 pt-3 border-t border-gray-100 text-center">
-<button class="text-blue-600 font-medium hover:text-blue-800 text-sm">सभी सूचनाएं देखें</button>
-</div>
-</div>
-</div>
-<div class="hidden md:block">
-<div class="bg-gray-100 text-gray-600 rounded-xl px-4 py-2.5 flex items-center gap-2">
-<i class="fas fa-search"></i>
-<input type="text" placeholder="आवेदन खोजें..." class="bg-transparent border-none outline-none w-48">
-</div>
-</div>
-</div>
-<div class="user-card" onclick="showSection('settings')">
-<div class="user-avatar" id="topBarAvatar">A</div>
-<div class="user-info">
-<div class="user-name" id="adminName">प्रशासक</div>
-<div class="user-email" id="adminEmail">admin@allinonemp.gov.in</div>
-</div>
-<i class="fas fa-chevron-down text-gray-500 text-sm ml-1"></i>
-</div>
-</div>
-<!-- MAIN CONTENT -->
-<main class="main-content flex-1 transition-all" id="mainContent">
-<!-- DASHBOARD -->
-<div id="dashboard" class="page-section active">
-<div class="max-w-7xl mx-auto">
-<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-<div>
-<h1 class="text-2.5xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
-<i class="fas fa-tachometer-alt text-blue-600"></i>
-डैशबोर्ड में आपका स्वागत है, <span id="welcomeAdminName" class="text-blue-600">प्रशासक</span>
-</h1>
-<p class="text-gray-500 mt-2 text-lg">आज की तारीख: <span id="currentDate" class="font-medium text-gray-700"></span></p>
-</div>
-<div class="flex flex-wrap items-center gap-3">
-<div class="bg-blue-50 text-blue-800 px-4 py-2.5 rounded-xl font-medium flex items-center gap-2">
-<i class="fas fa-cloud text-lg"></i>
-<span>Firebase स्थिति: <span id="firebaseStatus" class="font-bold text-green-600">कनेक्टेड</span></span>
-</div>
-<button onclick="refreshData()" class="btn-primary">
-<i class="fas fa-sync-alt"></i> डेटा रीफ्रेश करें
-</button>
-</div>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-<div class="stat-card bg-white p-6">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-gray-500 text-sm font-medium mb-1.5">कुल आवेदन</p>
-<h3 class="text-3xl font-bold text-gray-800" id="statTotal">0</h3>
-<p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
-<i class="fas fa-arrow-up"></i>
-<span id="statTotalGrowth">12.5%</span> पिछले माह से
-</p>
-</div>
-<div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-<i class="fas fa-file-alt"></i>
-</div>
-</div>
-</div>
-<div class="stat-card bg-white p-6 pending">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-gray-500 text-sm font-medium mb-1.5">लंबित आवेदन</p>
-<h3 class="text-3xl font-bold text-gray-800" id="statPending">0</h3>
-<p class="text-yellow-600 font-medium mt-1 flex items-center gap-1.5">
-<i class="fas fa-exclamation-triangle"></i>
-<span id="statPendingCount">15</span> तत्काल कार्रवाई हेतु
-</p>
-</div>
-<div class="bg-yellow-100 text-yellow-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-<i class="fas fa-clock"></i>
-</div>
-</div>
-</div>
-<div class="stat-card bg-white p-6 complete">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-gray-500 text-sm font-medium mb-1.5">सफल आवेदन</p>
-<h3 class="text-3xl font-bold text-gray-800" id="statComplete">0</h3>
-<p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
-<i class="fas fa-check-circle"></i>
-<span id="statCompleteRate">98.2%</span> सफलता दर
-</p>
-</div>
-<div class="bg-green-100 text-green-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-<i class="fas fa-check-circle"></i>
-</div>
-</div>
-</div>
-<div class="stat-card bg-white p-6 rejected">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-gray-500 text-sm font-medium mb-1.5">अस्वीकृत आवेदन</p>
-<h3 class="text-3xl font-bold text-gray-800" id="statRejected">0</h3>
-<p class="text-red-600 font-medium mt-1 flex items-center gap-1.5">
-<i class="fas fa-times-circle"></i>
-<span id="statRejectedRate">1.8%</span> अस्वीकृति दर
-</p>
-</div>
-<div class="bg-red-100 text-red-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-<i class="fas fa-times-circle"></i>
-</div>
-</div>
-</div>
-</div>
-<div class="search-container fade-in">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
-<div>
-<h2 class="text-xl font-bold text-gray-800 flex items-center gap-2.5">
-<i class="fas fa-list text-blue-600"></i>
-आवेदन सूची
-</h2>
-<p class="text-gray-500 mt-1">नवीनतम आवेदन और कार्रवाई की स्थिति</p>
-</div>
-<div class="flex flex-wrap gap-3">
-<div class="relative">
-<select id="statusFilter" class="form-control pl-4 pr-10 py-2.5 text-sm w-full md:w-48">
-<option value="">सभी स्थितियाँ</option>
-<option value="pending">लंबित</option>
-<option value="processing">प्रोसेसिंग</option>
-<option value="complete">पूर्ण</option>
-<option value="reject">अस्वीकृत</option>
-</select>
-<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-<i class="fas fa-filter text-gray-400"></i>
-</div>
-</div>
-<div class="relative">
-<input type="text" id="searchApplications" placeholder="नाम या आवेदन आईडी खोजें" class="form-control pl-10 pr-4 py-2.5 text-sm w-full md:w-64">
-<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-<i class="fas fa-search text-gray-400"></i>
-</div>
-</div>
-<button onclick="applyFilters()" class="btn-primary px-5 py-2.5">
-<i class="fas fa-search"></i> खोजें
-</button>
-</div>
-</div>
-<div class="flex flex-wrap gap-2 mb-4" id="activeFilters">
-</div>
-</div>
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-<div class="overflow-x-auto">
-<table class="data-table">
-<thead>
-<tr>
-<th>आवेदन क्रमांक</th>
-<th>आवेदक का नाम</th>
-<th>सेवा प्रकार</th>
-<th class="hidden md:table-cell">मोबाइल नंबर</th>
-<th class="hidden md:table-cell">तारीख</th>
-<th>स्थिति</th>
-<th>कार्रवाई</th>
-</tr>
-</thead>
-<tbody id="dataTable">
-<tr>
-<td colspan="7" class="text-center py-12 text-gray-500">
-<i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
-<p class="text-lg font-medium">डेटा लोड हो रहा है...</p>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-<div class="text-gray-600">
-कुल <span id="totalRecords">0</span> आवेदन प्रदर्शित किए जा रहे हैं
-</div>
-<div class="flex flex-wrap items-center gap-3">
-<button onclick="exportToCSV()" class="btn-secondary">
-<i class="fas fa-file-csv"></i> CSV निर्यात करें
-</button>
-<button onclick="exportToPDF()" class="btn-secondary">
-<i class="fas fa-file-pdf"></i> PDF रिपोर्ट
-</button>
-<div class="flex items-center gap-2">
-<span class="text-gray-600 font-medium">प्रति पृष्ठ:</span>
-<select id="entriesPerPage" class="form-control py-1.5 px-3 text-sm w-20">
-<option value="10">10</option>
-<option value="25" selected>25</option>
-<option value="50">50</option>
-<option value="100">100</option>
-</select>
-</div>
-</div>
-</div>
-</div>
-<div class="chart-container fade-in">
-<h2 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2.5">
-<i class="fas fa-chart-bar text-blue-600"></i>
-आवेदन विश्लेषण
-</h2>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-<div>
-<canvas id="applicationsChart" height="250"></canvas>
-</div>
-<div>
-<canvas id="statusChart" height="250"></canvas>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- APPLICATIONS MANAGEMENT SECTION -->
-<div id="applications" class="page-section">
-<div class="max-w-7xl mx-auto">
-<!-- Bulk Action Bar -->
-<div id="bulkActionBar" class="bulk-action-bar">
-<div class="flex items-center gap-3">
-<i class="fas fa-check-square text-xl"></i>
-<span class="font-bold"><span id="selectedCount">0</span> आवेदन चयनित</span>
-</div>
-<div class="flex gap-3">
-<button onclick="bulkStatusUpdate('processing')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
-<i class="fas fa-cog mr-2"></i>प्रोसेसिंग
-</button>
-<button onclick="bulkStatusUpdate('complete')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition">
-<i class="fas fa-check mr-2"></i>पूर्ण करें
-</button>
-<button onclick="bulkStatusUpdate('reject')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition">
-<i class="fas fa-times mr-2"></i>अस्वीकृत करें
-</button>
-<button onclick="clearSelection()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">
-<i class="fas fa-times mr-2"></i>रद्द करें
-</button>
-</div>
-</div>
-<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-<div>
-<h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-<i class="fas fa-file-signature text-blue-600"></i>
-आवेदन प्रबंधन प्रणाली
-</h1>
-<p class="text-gray-500 mt-1">सभी आवेदनों का प्रबंधन और निगरानी करें</p>
-</div>
-<div class="flex flex-wrap gap-3">
-<button onclick="showSection('newApplication')" class="btn-primary">
-<i class="fas fa-plus"></i> नया आवेदन जोड़ें
-</button>
-<button onclick="bulkExport()" class="btn-secondary">
-<i class="fas fa-download"></i> बल्क निर्यात
-</button>
-</div>
-</div>
-</div>
-<!-- Advanced Filters -->
-<div class="search-container fade-in">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">तिथि सीमा (से)</label>
-<input type="date" id="dateFrom" class="form-control">
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">तिथि सीमा (तक)</label>
-<input type="date" id="dateTo" class="form-control">
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">जिला</label>
-<select id="districtFilter" class="form-control">
-<option value="">सभी जिले</option>
-<option value="bhopal">भोपाल</option>
-<option value="indore">इंदौर</option>
-<option value="jabalpur">जबलपुर</option>
-<option value="gwalior">ग्वालियर</option>
-<option value="ujjain">उज्जैन</option>
-</select>
-</div>
-<div class="flex items-end">
-<button onclick="applyAdvancedFilters()" class="btn-primary w-full">
-<i class="fas fa-filter"></i> फिल्टर लागू करें
-</button>
-</div>
-</div>
-</div>
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-<div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-<div class="relative w-full md:w-96">
-<input type="text" placeholder="नाम, आवेदन आईडी, मोबाइल नंबर खोजें..." class="form-control pl-12 pr-4 py-3 w-full" id="applicationsSearch">
-<div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-<i class="fas fa-search text-lg"></i>
-</div>
-</div>
-<div class="flex flex-wrap gap-3">
-<select class="form-control py-2.5 px-4 w-48" id="serviceTypeFilter">
-<option value="">सभी सेवाएं</option>
-<option value="samagra">समग्र आईडी</option>
-<option value="mpbhoj">एमपी भोज योजना</option>
-<option value="scholarship">छात्रवृत्ति</option>
-<option value="pension">पेंशन</option>
-</select>
-<select class="form-control py-2.5 px-4 w-48" id="assigneeFilter">
-<option value="">सभी अधिकारी</option>
-<option value="admin">प्रशासक</option>
-<option value="officer1">अधिकारी 1</option>
-<option value="officer2">अधिकारी 2</option>
-</select>
-</div>
-</div>
-<div class="overflow-x-auto">
-<table class="data-table">
-<thead>
-<tr>
-<th><input type="checkbox" id="selectAllCheckbox" class="form-checkbox h-5 w-5 text-blue-600 rounded" onchange="toggleSelectAll()"></th>
-<th>आवेदन क्रमांक</th>
-<th>आवेदक का नाम</th>
-<th>पिता/पति का नाम</th>
-<th>सेवा प्रकार</th>
-<th class="hidden md:table-cell">जिला</th>
-<th>स्थिति</th>
-<th class="hidden md:table-cell">आवेदन तिथि</th>
-<th>कार्रवाई</th>
-</tr>
-</thead>
-<tbody id="applicationsTableBody">
-</tbody>
-</table>
-</div>
-<div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-<div class="text-gray-600">
-<span id="applicationsTotal">0</span> आवेदन में से <span id="applicationsShowing">0</span> प्रदर्शित
-</div>
-<div class="flex flex-wrap items-center gap-3">
-<div class="flex items-center gap-2">
-<span class="text-gray-600 font-medium">पृष्ठ:</span>
-<div class="flex items-center gap-1">
-<button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-<i class="fas fa-chevron-left"></i>
-</button>
-<span class="font-medium px-3">1 of 15</span>
-<button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-<i class="fas fa-chevron-right"></i>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- USERS MANAGEMENT SECTION -->
-<div id="users" class="page-section">
-<div class="max-w-7xl mx-auto">
-<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-<div>
-<h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-<i class="fas fa-users-cog text-indigo-600"></i>
-उपयोगकर्ता प्रबंधन
-</h1>
-<p class="text-gray-500 mt-1">सिस्टम उपयोगकर्ताओं और अधिकारियों का प्रबंधन</p>
-</div>
-<button onclick="openAddUserModal()" class="btn-primary">
-<i class="fas fa-user-plus"></i> नया उपयोगकर्ता जोड़ें
-</button>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-<div class="settings-card">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-lg font-bold text-gray-800">सक्रिय उपयोगकर्ता</h3>
-<div class="bg-green-100 text-green-600 p-3 rounded-xl">
-<i class="fas fa-user-check text-xl"></i>
-</div>
-</div>
-<div class="text-3xl font-bold text-gray-800 mb-2" id="activeUsersCount">5</div>
-<p class="text-sm text-gray-600">वर्तमान में सक्रिय सत्र</p>
-</div>
-<div class="settings-card">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-lg font-bold text-gray-800">कुल अधिकारी</h3>
-<div class="bg-blue-100 text-blue-600 p-3 rounded-xl">
-<i class="fas fa-user-tie text-xl"></i>
-</div>
-</div>
-<div class="text-3xl font-bold text-gray-800 mb-2" id="totalOfficers">12</div>
-<p class="text-sm text-gray-600">पंजीकृत प्रशासनीय अधिकारी</p>
-</div>
-<div class="settings-card">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-lg font-bold text-gray-800">रोल्स</h3>
-<div class="bg-purple-100 text-purple-600 p-3 rounded-xl">
-<i class="fas fa-user-shield text-xl"></i>
-</div>
-</div>
-<div class="text-3xl font-bold text-gray-800 mb-2">3</div>
-<p class="text-sm text-gray-600">विभिन्न पहुंच स्तर</p>
-</div>
-</div>
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-<div class="p-5 border-b border-gray-200">
-<div class="flex flex-col md:flex-row justify-between items-center gap-4">
-<h2 class="text-xl font-bold text-gray-800">उपयोगकर्ता सूची</h2>
-<div class="relative w-full md:w-64">
-<input type="text" id="userSearch" placeholder="उपयोगकर्ता खोजें..." class="form-control pl-10 pr-4 py-2.5 w-full">
-<div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-<i class="fas fa-search"></i>
-</div>
-</div>
-</div>
-</div>
-<div class="overflow-x-auto">
-<table class="data-table">
-<thead>
-<tr>
-<th>उपयोगकर्ता</th>
-<th>ईमेल</th>
-<th>भूमिका</th>
-<th>स्थिति</th>
-<th>अंतिम लॉगिन</th>
-<th>कार्रवाई</th>
-</tr>
-</thead>
-<tbody id="usersTableBody">
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<!-- SETTINGS SECTION -->
-<div id="settings" class="page-section">
-<div class="max-w-7xl mx-auto">
-<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-<h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-<i class="fas fa-cog text-gray-600"></i>
-सेटिंग्स
-</h1>
-<p class="text-gray-500 mt-1">सिस्टम कॉन्फ़िगरेशन और प्रोफाइल प्रबंधन</p>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<!-- Profile Card -->
-<div class="lg:col-span-1">
-<div class="settings-card text-center">
-<div class="relative inline-block mb-4">
-<div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold mx-auto shadow-lg" id="profileAvatar">
-A
-</div>
-<button class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:shadow-lg transition border border-gray-200">
-<i class="fas fa-camera text-gray-600"></i>
-</button>
-</div>
-<h3 class="text-xl font-bold text-gray-800" id="profileName">प्रशासक</h3>
-<p class="text-gray-600 mb-4" id="profileEmail">admin@allinonemp.gov.in</p>
-<div class="flex justify-center gap-2 mb-4">
-<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">सुपर एडमिन</span>
-<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">सक्रिय</span>
-</div>
-<button onclick="openEditProfileModal()" class="btn-secondary w-full">
-<i class="fas fa-edit mr-2"></i>प्रोफाइल संपादित करें
-</button>
-</div>
-<div class="settings-card mt-6">
-<h3 class="text-lg font-bold text-gray-800 mb-4">सुरक्षा</h3>
-<div class="space-y-4">
-<div class="flex items-center justify-between">
-<div>
-<p class="font-medium text-gray-800">दो-चरणीय सत्यापन</p>
-<p class="text-sm text-gray-600">OTP के माध्यम से अतिरिक्त सुरक्षा</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" id="twoFactorToggle">
-<span class="toggle-slider"></span>
-</label>
-</div>
-<div class="flex items-center justify-between">
-<div>
-<p class="font-medium text-gray-800">लॉगिन सूचनाएं</p>
-<p class="text-sm text-gray-600">नए लॉगिन पर ईमेल अलर्ट</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-</div>
-</div>
-<!-- System Settings -->
-<div class="lg:col-span-2">
-<div class="settings-card">
-<h3 class="text-lg font-bold text-gray-800 mb-6">सिस्टम सेटिंग्स</h3>
-<div class="form-grid">
-<div class="form-group">
-<label>कार्यालय का नाम</label>
-<input type="text" class="form-control" value="AllInOne MP प्रशासनिक कार्यालय">
-</div>
-<div class="form-group">
-<label>संपर्क ईमेल</label>
-<input type="email" class="form-control" value="support@allinonemp.gov.in">
-</div>
-<div class="form-group">
-<label>हेल्पलाइन नंबर</label>
-<input type="text" class="form-control" value="1800-123-4567">
-</div>
-<div class="form-group">
-<label>कार्यालय समय</label>
-<input type="text" class="form-control" value="10:00 AM - 5:00 PM">
-</div>
-</div>
-<div class="mt-6 pt-6 border-t border-gray-200">
-<h4 class="font-bold text-gray-800 mb-4">ऑटोमेशन सेटिंग्स</h4>
-<div class="space-y-4">
-<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-<div>
-<p class="font-medium text-gray-800">स्वचालित रसीद भेजना</p>
-<p class="text-sm text-gray-600">आवेदन जमा होने पर स्वचालित ईमेल/SMS</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-<div>
-<p class="font-medium text-gray-800">दैनिक बैकअप</p>
-<p class="text-sm text-gray-600">प्रत्येक दिन रात्रि 12 बजे बैकअप</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-</div>
-<div class="mt-6 flex justify-end">
-<button onclick="saveSettings()" class="btn-primary px-8">
-<i class="fas fa-save mr-2"></i>सेटिंग्स सहेजें
-</button>
-</div>
-</div>
-<div class="settings-card mt-6 border-l-4 border-red-500">
-<h3 class="text-lg font-bold text-red-600 mb-4">जोखिम क्षेत्र</h3>
-<div class="space-y-4">
-<div class="flex items-center justify-between">
-<div>
-<p class="font-medium text-gray-800">सभी डेटा साफ़ करें</p>
-<p class="text-sm text-gray-600">सावधानी: यह सभी आवेदन डेटा हटा देगा</p>
-</div>
-<button class="btn-danger" onclick="clearAllData()">
-<i class="fas fa-trash-alt mr-2"></i>साफ़ करें
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+    <div class="flex items-center gap-4">
+        <button onclick="toggleSidebar()" class="p-2 hover:bg-gray-100 rounded-lg lg:hidden">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+        <div class="hidden md:flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl">
+            <i class="fas fa-search text-gray-500"></i>
+            <input type="text" placeholder="आवेदन खोजें..." class="bg-transparent border-none outline-none w-48">
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="relative">
+            <button class="p-2 hover:bg-gray-100 rounded-xl relative" id="notificationBtn">
+                <i class="fas fa-bell text-xl text-gray-700"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center" id="notifCount">0</span>
+            </button>
+        </div>
+        <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('settings')">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold" id="topBarAvatar">A</div>
+            <div class="hidden md:block">
+                <div class="font-bold text-gray-800" id="adminName">प्रशासक</div>
+                <div class="text-xs text-gray-500" id="adminEmail">Loading...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main class="main-content" id="mainContent">
+
+    <!-- DASHBOARD SECTION -->
+    <div id="dashboard" class="page-section active">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                            <i class="fas fa-tachometer-alt text-blue-600"></i>
+                            डैशबोर्ड में आपका स्वागत है, <span id="welcomeAdminName" class="text-blue-600">प्रशासक</span>
+                        </h1>
+                        <p class="text-gray-500 mt-1">आज: <span id="currentDate"></span></p>
+                    </div>
+                    <div class="bg-green-50 text-green-700 px-4 py-2 rounded-xl font-medium flex items-center gap-2">
+                        <i class="fas fa-circle text-xs animate-pulse"></i>
+                        <span>Firebase: <span id="firebaseStatus">कनेक्ट हो रहा है...</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="stat-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">कुल आवेदन</p>
+                            <h3 class="text-3xl font-bold text-gray-800" id="statTotal">0</h3>
+                        </div>
+                        <div class="bg-blue-100 text-blue-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">लंबित</p>
+                            <h3 class="text-3xl font-bold text-gray-800" id="statPending">0</h3>
+                        </div>
+                        <div class="bg-yellow-100 text-yellow-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">पूर्ण</p>
+                            <h3 class="text-3xl font-bold text-gray-800" id="statComplete">0</h3>
+                        </div>
+                        <div class="bg-green-100 text-green-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm mb-1">अस्वीकृत</p>
+                            <h3 class="text-3xl font-bold text-gray-800" id="statRejected">0</h3>
+                        </div>
+                        <div class="bg-red-100 text-red-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications Table -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="p-6 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <h2 class="text-xl font-bold text-gray-800">हाल के आवेदन</h2>
+                    <div class="flex gap-3">
+                        <select id="statusFilter" onchange="filterData()" class="form-control w-40 py-2 text-sm">
+                            <option value="">सभी स्थिति</option>
+                            <option value="pending">लंबित</option>
+                            <option value="processing">प्रोसेसिंग</option>
+                            <option value="complete">पूर्ण</option>
+                            <option value="reject">अस्वीकृत</option>
+                        </select>
+                        <input type="text" id="searchInput" onkeyup="searchData()" placeholder="नाम से खोजें..." class="form-control w-64 py-2 text-sm">
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>आवेदन क्रमांक</th>
+                                <th>आवेदक का नाम</th>
+                                <th>सेवा</th>
+                                <th>मोबाइल</th>
+                                <th>तिथि</th>
+                                <th>स्थिति</th>
+                                <th>कार्रवाई</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTable">
+                            <tr>
+                                <td colspan="7" class="text-center py-12 text-gray-500">
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
+                                    <p>डेटा लोड हो रहा है...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW APPLICATION FORM -->
+    <div id="newApplication" class="page-section">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                        <i class="fas fa-plus-circle text-green-600"></i>
+                        नया आवेदन
+                    </h1>
+                    <button onclick="showSection('dashboard')" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> वापस
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <form id="applicationForm" onsubmit="submitApplication(event)">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">आवेदक का पूरा नाम <span class="text-red-500">*</span></label>
+                            <input type="text" id="appName" class="form-control" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">पिता/पति का नाम <span class="text-red-500">*</span></label>
+                            <input type="text" id="appFatherName" class="form-control" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">मोबाइल नंबर <span class="text-red-500">*</span></label>
+                            <input type="tel" id="appMobile" class="form-control" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">आधार नंबर <span class="text-red-500">*</span></label>
+                            <input type="text" id="appAadhar" class="form-control" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">जन्म तिथि</label>
+                            <input type="date" id="appDob" class="form-control">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">लिंग</label>
+                            <select id="appGender" class="form-control">
+                                <option value="">चुनें</option>
+                                <option value="male">पुरुष</option>
+                                <option value="female">महिला</option>
+                                <option value="other">अन्य</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">सेवा प्रकार <span class="text-red-500">*</span></label>
+                            <select id="appService" class="form-control" required>
+                                <option value="">चुनें</option>
+                                <option value="samagra">समग्र आईडी</option>
+                                <option value="mpbhoj">एमपी भोज</option>
+                                <option value="scholarship">छात्रवृत्ति</option>
+                                <option value="pension">पेंशन</option>
+                                <option value="housing">आवास</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">जिला <span class="text-red-500">*</span></label>
+                            <select id="appDistrict" class="form-control" required>
+                                <option value="">चुनें</option>
+                                <option value="bhopal">भोपाल</option>
+                                <option value="indore">इंदौर</option>
+                                <option value="jabalpur">जबलपुर</option>
+                                <option value="gwalior">ग्वालियर</option>
+                                <option value="ujjain">उज्जैन</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">पता <span class="text-red-500">*</span></label>
+                            <textarea id="appAddress" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">पिन कोड</label>
+                            <input type="text" id="appPincode" class="form-control">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ईमेल</label>
+                            <input type="email" id="appEmail" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-4 mt-8 pt-6 border-t">
+                        <button type="button" onclick="resetForm()" class="btn-secondary">रीसेट</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> आवेदन सेव करें
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other sections placeholder -->
+    <div id="applications" class="page-section">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h1 class="text-2xl font-bold mb-4">सभी आवेदन</h1>
+                <p>यह सभी आवेदन दिखाएगा (डैशबोर्ड की तरह)</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="analysis" class="page-section">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h1 class="text-2xl font-bold mb-4">विश्लेषण रिपोर्ट</h1>
+                <canvas id="analysisChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div id="settings" class="page-section">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h1 class="text-2xl font-bold mb-4">सेटिंग्स</h1>
+                <p>प्रोफाइल और सिस्टम सेटिंग्स यहाँ होंगी</p>
+            </div>
+        </div>
+    </div>
+
 </main>
-<!-- DETAIL VIEW MODAL -->
+
+<!-- View Details Modal -->
 <div id="detailModal" class="modal">
-<div class="modal-content">
-<div class="modal-header">
-<h2 class="text-2xl font-bold flex items-center gap-3">
-<i class="fas fa-file-invoice"></i>
-आवेदन विवरण एवं रसीद
-</h2>
-<button onclick="closeModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
-<i class="fas fa-times"></i>
-</button>
+    <div class="modal-content">
+        <div class="modal-header no-print">
+            <h2 class="text-2xl font-bold flex items-center gap-3">
+                <i class="fas fa-file-invoice"></i>
+                आवेदन विवरण
+            </h2>
+            <button onclick="closeModal()" class="text-white hover:text-gray-200 text-2xl ml-auto">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div id="pdfContent" class="p-8">
+            <div class="text-center mb-8 border-b-2 border-blue-600 pb-6">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-800 to-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">MP</div>
+                <h1 class="text-3xl font-bold text-blue-900">मध्य प्रदेश सरकार</h1>
+                <p class="text-lg text-gray-600 mt-2">AllInOne MP पोर्टल - आवेदन रसीद</p>
+                <div class="mt-4 inline-block bg-blue-50 text-blue-800 px-6 py-2 rounded-full font-mono font-bold text-lg border-2 border-blue-200" id="receiptAppNo">AIO-MP-001</div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">आवेदक विवरण</h3>
+                    <div id="applicantDetails">
+                        <!-- Data populated by JS -->
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">आवेदन विवरण</h3>
+                    <div id="applicationDetails">
+                        <!-- Data populated by JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8 pt-6 border-t-2 border-gray-200 text-gray-600 text-sm">
+                <p>यह एक कंप्यूटर जनरेटेड रसीद है</p>
+                <p class="mt-1">AllInOne MP Portal | https://allinonemp.harshtiwari.in</p>
+            </div>
+        </div>
+
+        <div class="p-6 border-t bg-gray-50 flex flex-wrap justify-between gap-3 no-print">
+            <div class="flex gap-2">
+                <button onclick="updateStatus('processing')" class="btn-primary bg-blue-600">प्रोसेसिंग</button>
+                <button onclick="updateStatus('complete')" class="btn-primary bg-green-600">पूर्ण</button>
+                <button onclick="updateStatus('reject')" class="btn-primary bg-red-600">अस्वीकृत</button>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="downloadWord()" class="btn-secondary">
+                    <i class="fas fa-file-word"></i> Word
+                </button>
+                <button onclick="downloadPDF()" class="btn-secondary">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button onclick="printReceipt()" class="btn-secondary">
+                    <i class="fas fa-print"></i> प्रिंट
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
-<div id="pdfContent" class="p-8">
-<!-- Receipt Header -->
-<div class="receipt-header">
-<div class="receipt-logo">MP</div>
-<h1 class="receipt-title">मध्य प्रदेश सरकार</h1>
-<p class="receipt-subtitle">AllInOne MP पोर्टल - आवेदन रसीद</p>
-<div class="mt-3 flex justify-center gap-6 text-sm">
-<div class="flex flex-col items-center">
-<span class="font-bold text-blue-800">आवेदन क्रमांक:</span>
-<span id="receiptAppNumber" class="mt-1 bg-blue-50 text-blue-800 px-3 py-1 rounded-full font-mono">AIO-MP-2024-789456</span>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2 class="text-2xl font-bold"><i class="fas fa-edit mr-2"></i>आवेदन संपादित करें</h2>
+            <button onclick="closeEditModal()" class="text-white hover:text-gray-200 text-2xl ml-auto">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <form id="editForm" onsubmit="saveEdit(event)">
+                <input type="hidden" id="editId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">नाम</label>
+                        <input type="text" id="editName" class="form-control" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">पिता का नाम</label>
+                        <input type="text" id="editFather" class="form-control" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">मोबाइल</label>
+                        <input type="tel" id="editMobile" class="form-control" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">स्थिति</label>
+                        <select id="editStatus" class="form-control">
+                            <option value="pending">लंबित</option>
+                            <option value="processing">प्रोसेसिंग</option>
+                            <option value="complete">पूर्ण</option>
+                            <option value="reject">अस्वीकृत</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeEditModal()" class="btn-secondary">रद्द</button>
+                    <button type="submit" class="btn-primary">सेव करें</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-<div class="flex flex-col items-center">
-<span class="font-bold text-blue-800">रसीद तिथि:</span>
-<span id="receiptDate" class="mt-1">25 जनवरी, 2024</span>
-</div>
-</div>
-</div>
-<!-- QR Code and Application Status -->
-<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
-<div class="mb-6 lg:mb-0">
-<h3 class="text-xl font-bold text-gray-800 mb-2">आवेदन स्थिति</h3>
-<div class="flex items-center gap-3">
-<span id="receiptStatusBadge" class="status-badge status-pending text-base px-5 py-2.5 font-bold">
-<i class="fas fa-clock mr-2"></i> लंबित
-</span>
-<div class="text-sm text-gray-600">
-<div>अंतिम अपडेट: <span id="lastUpdated">25 जनवरी, 2024</span></div>
-</div>
-</div>
-</div>
-<div class="qr-container">
-<div id="qrCode" class="flex justify-center"></div>
-<p class="text-center text-xs text-gray-600 mt-2 font-medium">स्कैन करें और स्थिति जांचें</p>
-</div>
-</div>
-<!-- Applicant Details -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-<div>
-<h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-blue-100 flex items-center gap-2">
-<i class="fas fa-user text-blue-600"></i> आवेदक विवरण
-</h3>
-<div id="applicantDetails">
-</div>
-</div>
-<div>
-<h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-blue-100 flex items-center gap-2">
-<i class="fas fa-file-alt text-blue-600"></i> आवेदन विवरण
-</h3>
-<div id="applicationDetails">
-</div>
-</div>
-</div>
-<!-- Documents Section -->
-<div class="mb-8">
-<h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-blue-100 flex items-center gap-2">
-<i class="fas fa-paperclip text-blue-600"></i> संलग्न दस्तावेज़
-</h3>
-<div class="document-grid" id="documentsSection">
-</div>
-</div>
-<!-- Receipt Footer -->
-<div class="receipt-footer">
-<p>यह एक कंप्यूटर जनरेटेड रसीद है और हस्ताक्षर की आवश्यकता नहीं है।</p>
-<p class="mt-1">AllInOne MP पोर्टल, मध्य प्रदेश सरकार | सहायता हेतु: 1800-123-4567</p>
-<p class="mt-1 font-medium">आवेदन स्थिति जांचने हेतु: <span class="text-blue-600">https://allinonemp.gov.in/verify</span></p>
-</div>
-</div>
-<div class="p-6 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between gap-4 no-print">
-<div class="flex flex-wrap gap-3">
-<button onclick="updateApplicationStatus('processing')" class="btn-secondary">
-<i class="fas fa-cog"></i> प्रोसेसिंग में बदलें
-</button>
-<button onclick="updateApplicationStatus('complete')" class="btn-secondary bg-green-600 hover:bg-green-700 text-white border-none">
-<i class="fas fa-check-circle"></i> पूर्ण घोषित करें
-</button>
-<button onclick="updateApplicationStatus('reject')" class="btn-secondary bg-red-600 hover:bg-red-700 text-white border-none">
-<i class="fas fa-times-circle"></i> अस्वीकृत करें
-</button>
-</div>
-<div class="flex flex-wrap gap-3">
-<button onclick="openEditModalFromDetail()" class="btn-secondary bg-yellow-500 hover:bg-yellow-600 text-white border-none">
-<i class="fas fa-edit"></i> संपादित करें
-</button>
-<button onclick="downloadPDF()" class="btn-primary px-6 py-3">
-<i class="fas fa-file-pdf"></i> PDF डाउनलोड करें
-</button>
-<button onclick="printReceipt()" class="btn-secondary px-6 py-3">
-<i class="fas fa-print"></i> प्रिंट रसीद
-</button>
-<button onclick="closeModal()" class="btn-secondary bg-gray-500 hover:bg-gray-600 px-6 py-3">
-<i class="fas fa-times"></i> बंद करें
-</button>
-</div>
-</div>
-</div>
-</div>
-<!-- EDIT PROFILE MODAL -->
-<div id="editProfileModal" class="modal">
-<div class="modal-content" style="max-width: 500px;">
-<div class="modal-header">
-<h2 class="text-2xl font-bold flex items-center gap-3">
-<i class="fas fa-user-edit"></i>
-प्रोफाइल संपादित करें
-</h2>
-<button onclick="closeEditProfileModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
-<i class="fas fa-times"></i>
-</button>
-</div>
-<div class="p-8">
-<form id="editProfileForm">
-<div class="space-y-4">
-<div class="form-group">
-<label>पूरा नाम</label>
-<input type="text" id="editProfileName" class="form-control" value="प्रशासक" required>
-</div>
-<div class="form-group">
-<label>ईमेल</label>
-<input type="email" id="editProfileEmail" class="form-control" value="admin@allinonemp.gov.in" required>
-</div>
-<div class="form-group">
-<label>पदनाम</label>
-<input type="text" id="editProfileDesignation" class="form-control" value="वरिष्ठ प्रशासनिक अधिकारी">
-</div>
-<div class="form-group">
-<label>मोबाइल नंबर</label>
-<input type="tel" id="editProfilePhone" class="form-control" value="9876543210">
-</div>
-</div>
-<div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-<button type="button" onclick="closeEditProfileModal()" class="btn-secondary">रद्द करें</button>
-<button type="submit" class="btn-primary px-8">
-<i class="fas fa-save mr-2"></i>सहेजें
-</button>
-</div>
-</form>
-</div>
-</div>
-</div>
-<!-- ADD USER MODAL -->
-<div id="addUserModal" class="modal">
-<div class="modal-content" style="max-width: 600px;">
-<div class="modal-header">
-<h2 class="text-2xl font-bold flex items-center gap-3">
-<i class="fas fa-user-plus"></i>
-नया उपयोगकर्ता जोड़ें
-</h2>
-<button onclick="closeAddUserModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
-<i class="fas fa-times"></i>
-</button>
-</div>
-<div class="p-8">
-<form id="addUserForm">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="form-group md:col-span-2">
-<label>पूरा नाम</label>
-<input type="text" id="newUserName" class="form-control" required>
-</div>
-<div class="form-group md:col-span-2">
-<label>ईमेल</label>
-<input type="email" id="newUserEmail" class="form-control" required>
-</div>
-<div class="form-group">
-<label>भूमिका</label>
-<select id="newUserRole" class="form-control">
-<option value="admin">प्रशासक</option>
-<option value="officer">अधिकारी</option>
-<option value="viewer">दर्शक</option>
-</select>
-</div>
-<div class="form-group">
-<label>जिला</label>
-<select id="newUserDistrict" class="form-control">
-<option value="all">सभी</option>
-<option value="bhopal">भोपाल</option>
-<option value="indore">इंदौर</option>
-<option value="jabalpur">जबलपुर</option>
-</select>
-</div>
-<div class="form-group md:col-span-2">
-<label>पासवर्ड</label>
-<input type="password" id="newUserPassword" class="form-control" required>
-<p class="text-xs text-gray-500 mt-1">न्यूनतम 8 अक्षर, एक अपरकेस और एक संख्या आवश्यक</p>
-</div>
-</div>
-<div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-<button type="button" onclick="closeAddUserModal()" class="btn-secondary">रद्द करें</button>
-<button type="submit" class="btn-primary px-8">
-<i class="fas fa-user-plus mr-2"></i>उपयोगकर्ता जोड़ें
-</button>
-</div>
-</form>
-</div>
-</div>
-</div>
-<!-- JAVASCRIPT -->
+
 <script>
-// Fix hidden character issue - clean initialization
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize date
-    const today = new Date();
-    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-    document.getElementById('currentDate').textContent = today.toLocaleDateString('hi-IN', options);
-    
-    // Set admin avatar based on name
-    const adminName = 'प्रशासक';
-    document.getElementById('topBarAvatar').textContent = adminName.charAt(0);
-    document.getElementById('adminName').textContent = adminName;
-    document.getElementById('sidebarAdminName').textContent = adminName;
-    document.getElementById('welcomeAdminName').textContent = adminName;
-    document.getElementById('profileAvatar').textContent = adminName.charAt(0);
-    document.getElementById('profileName').textContent = adminName;
-    
-    // Simulate loading completion
-    setTimeout(() => {
-        document.getElementById('loadingProgress').style.width = "100%";
-        document.getElementById('progressText').textContent = "100%";
-        setTimeout(hideLoading, 300);
-    }, 800);
-    
-    // Initialize charts with dummy data
-    initCharts();
-    
-    // Render sample users
-    renderUsers();
-    
-    // Setup event listeners
-    setupEventListeners();
+// 🔥 Firebase Configuration - APNI CONFIG YAHAN DALEN
+const firebaseConfig = {
+    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
+    authDomain: "allinone-mp.firebaseapp.com",
+    projectId: "allinone-mp",
+    storageBucket: "allinone-mp.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:abcdef123456"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// Global Variables
+let allApplications = [];
+let currentDetailId = null;
+let currentUser = null;
+
+// 🚀 Initialize App
+document.addEventListener('DOMContentLoaded', async function() {
+    // Check Auth State
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            console.log("✅ User logged in:", user.email);
+            
+            // Update UI with user info
+            const userName = user.displayName || user.email.split('@')[0];
+            document.getElementById('adminName').textContent = userName;
+            document.getElementById('sidebarAdminName').textContent = userName;
+            document.getElementById('welcomeAdminName').textContent = userName;
+            document.getElementById('topBarAvatar').textContent = userName.charAt(0).toUpperCase();
+            document.getElementById('adminEmail').textContent = user.email;
+            
+            // Set current date
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('hi-IN', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            
+            // Load Data
+            await loadApplications();
+            
+            // Hide loading
+            hideLoading();
+            
+        } else {
+            console.log("❌ No user logged in");
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('authErrorScreen').style.display = 'flex';
+            
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'https://allinonemp.harshtiwari.in/adminlogin.html';
+            }, 3000);
+        }
+    });
 });
 
-function hideLoading() {
-    const loadingScreen = document.getElementById('loadingScreen');
-    loadingScreen.style.opacity = '0';
-    setTimeout(() => {
-        loadingScreen.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }, 300);
+// 📊 Load Applications from Firestore
+async function loadApplications() {
+    try {
+        document.getElementById('firebaseStatus').textContent = 'कनेक्टेड';
+        document.getElementById('firebaseStatus').className = 'font-bold text-green-600';
+        
+        // Real-time listener
+        db.collection('applications')
+            .orderBy('createdAt', 'desc')
+            .onSnapshot((snapshot) => {
+                console.log("📥 Data received:", snapshot.docs.length, "documents");
+                
+                allApplications = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+                        updatedAt: data.updatedAt ? data.updatedAt.toDate() : new Date()
+                    };
+                });
+                
+                renderTable(allApplications);
+                updateStats(allApplications);
+                
+            }, (error) => {
+                console.error("❌ Error:", error);
+                document.getElementById('firebaseStatus').textContent = 'एरर';
+                document.getElementById('firebaseStatus').className = 'font-bold text-red-600';
+                
+                document.getElementById('dataTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-12 text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-3"></i>
+                            <p>डेटा लोड करने में त्रुटि: ${error.message}</p>
+                            <button onclick="location.reload()" class="btn-primary mt-4">रीफ्रेश करें</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+    } catch (error) {
+        console.error("Initialization error:", error);
+    }
 }
 
-function showLoading() {
-    document.getElementById('loadingScreen').style.display = 'flex';
-    document.getElementById('loadingScreen').style.opacity = '1';
-    document.body.style.overflow = 'hidden';
-}
-
-function setupEventListeners() {
-    // Notification dropdown toggle
-    document.getElementById('notificationBtn').addEventListener('click', function(e) {
-        e.stopPropagation();
-        const dropdown = document.getElementById('notificationDropdown');
-        dropdown.classList.toggle('hidden');
-    });
+// 📋 Render Table
+function renderTable(data) {
+    const tbody = document.getElementById('dataTable');
+    const notifCount = document.getElementById('notifCount');
     
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        const dropdown = document.getElementById('notificationDropdown');
-        const btn = document.getElementById('notificationBtn');
-        if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
-            dropdown.classList.add('hidden');
-        }
-    });
-}
-
-function initCharts() {
-    // Applications Chart
-    const ctx1 = document.getElementById('applicationsChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'line',
-         {
-            labels: ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नवं', 'दिसं'],
-            datasets: [{
-                label: 'आवेदन',
-                 [65, 59, 80, 81, 56, 55, 40, 78, 86, 92, 75, 88],
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 3,
-                pointBackgroundColor: '#ffffff',
-                pointBorderColor: '#3b82f6',
-                pointBorderWidth: 3,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'मासिक आवेदन रुझान (2024)',
-                    font: { size: 16, weight: 'bold' },
-                    color: '#1e293b'
-                },
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                    ticks: { color: '#64748b' }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#64748b' }
-                }
-            }
-        }
-    });
+    if (data.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-12 text-gray-500">
+                    <i class="fas fa-inbox text-4xl mb-3"></i>
+                    <p>कोई आवेदन नहीं मिला</p>
+                </td>
+            </tr>
+        `;
+        if(notifCount) notifCount.textContent = '0';
+        return;
+    }
     
-    // Status Chart
-    const ctx2 = document.getElementById('statusChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'doughnut',
-         {
-            labels: ['पूर्ण', 'लंबित', 'प्रोसेसिंग', 'अस्वीकृत'],
-            datasets: [{
-                data: [75, 15, 7, 3],
-                backgroundColor: ['#22c55e', '#f59e0b', '#3b82f6', '#ef4444'],
-                borderWidth: 0,
-                hoverOffset: 20
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'आवेदन स्थिति वितरण',
-                    font: { size: 16, weight: 'bold' },
-                    color: '#1e293b'
-                },
-                legend: {
-                    position: 'bottom',
-                    labels: { padding: 20, color: '#475569', font: { size: 13 } }
-                }
-            },
-            cutout: '65%'
-        }
-    });
-}
-
-function renderUsers() {
-    const users = [
-        { id: 1, name: 'प्रशासक', email: 'admin@allinonemp.gov.in', role: 'सुपर एडमिन', status: 'online', lastLogin: '2 मिनट पहले' },
-        { id: 2, name: 'राजेश शर्मा', email: 'rajesh@mp.gov.in', role: 'अधिकारी', status: 'online', lastLogin: '5 मिनट पहले' },
-        { id: 3, name: 'सीता वर्मा', email: 'sita@mp.gov.in', role: 'अधिकारी', status: 'offline', lastLogin: '2 घंटे पहले' },
-        { id: 4, name: 'मोहन लाल', email: 'mohan@mp.gov.in', role: 'दर्शक', status: 'offline', lastLogin: '1 दिन पहले' }
-    ];
-    
-    const tbody = document.getElementById('usersTableBody');
     let html = '';
-    users.forEach(user => {
+    let pendingCount = 0;
+    
+    data.forEach((item) => {
+        if(item.status === 'pending' || !item.status) pendingCount++;
+        
+        const appNo = item.applicationNumber || `AIO-MP-${item.id.substr(0,8).toUpperCase()}`;
+        const name = item.applicantName || item.name || "N/A";
+        const service = getServiceName(item.serviceType);
+        const mobile = item.mobileNumber || item.mobile || "-";
+        const date = formatDate(item.createdAt);
+        const status = item.status || 'pending';
+        
+        const statusClass = status === 'complete' ? 'status-complete' : 
+                           status === 'reject' ? 'status-reject' : 
+                           status === 'processing' ? 'status-processing' : 'status-pending';
+        
+        const statusText = status === 'complete' ? 'पूर्ण' : 
+                          status === 'reject' ? 'अस्वीकृत' : 
+                          status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
+        
         html += `
-        <tr class="table-row">
+        <tr class="hover:bg-gray-50 transition">
+            <td class="font-mono font-bold text-blue-800">${appNo}</td>
+            <td class="font-bold text-gray-800">${name}</td>
+            <td><span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${service}</span></td>
+            <td>${mobile}</td>
+            <td class="text-gray-600">${date}</td>
             <td>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                        ${user.name.charAt(0)}
-                    </div>
-                    <span class="user-status ${user.status}"></span>
-                    <span class="font-bold text-gray-800">${user.name}</span>
-                </div>
+                <span class="status-badge ${statusClass}" onclick="quickUpdateStatus('${item.id}', '${status}')">
+                    <i class="fas ${status === 'complete' ? 'fa-check' : status === 'reject' ? 'fa-times' : 'fa-clock'} mr-1"></i>
+                    ${statusText}
+                </span>
             </td>
-            <td class="text-gray-600">${user.email}</td>
-            <td><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">${user.role}</span></td>
-            <td><span class="${user.status === 'online' ? 'text-green-600' : 'text-gray-500'} text-sm font-medium capitalize">${user.status}</span></td>
-            <td class="text-gray-600 text-sm">${user.lastLogin}</td>
             <td>
                 <div class="flex gap-2">
-                    <button class="action-btn action-edit" onclick="editUser('${user.id}')"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn action-delete" onclick="deleteUser('${user.id}')"><i class="fas fa-trash"></i></button>
+                    <button onclick="viewDetails('${item.id}')" class="action-btn action-view" title="विवरण">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button onclick="openEditModal('${item.id}')" class="action-btn action-edit" title="एडिट">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button onclick="deleteApp('${item.id}')" class="action-btn action-delete" title="डिलीट">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             </td>
         </tr>
         `;
     });
+    
     tbody.innerHTML = html;
+    if(notifCount) notifCount.textContent = pendingCount;
 }
 
-// Navigation Functions
-function showSection(sectionId) {
-    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-        if (item.getAttribute('onclick')?.includes(sectionId)) {
-            item.classList.add('active');
-        }
-    });
+// 📊 Update Stats
+function updateStats(data) {
+    const total = data.length;
+    const pending = data.filter(a => a.status === 'pending' || !a.status).length;
+    const complete = data.filter(a => a.status === 'complete').length;
+    const rejected = data.filter(a => a.status === 'reject').length;
     
-    if (sectionId === 'users') {
-        renderUsers();
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statComplete').textContent = complete;
+    document.getElementById('statRejected').textContent = rejected;
+}
+
+// 👁️ View Details - FIXED
+function viewDetails(id) {
+    console.log("Viewing details for:", id);
+    const item = allApplications.find(a => a.id === id);
+    if (!item) {
+        alert("डेटा नहीं मिला!");
+        return;
     }
     
-    if (window.innerWidth < 768) {
-        const sidebar = document.getElementById('sidebar');
-        if (!sidebar.classList.contains('collapsed')) {
-            toggleSidebar();
-        }
-    }
+    currentDetailId = id;
     
-    window.scrollTo(0, 0);
-}
-
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const topBar = document.getElementById('topBar');
-    sidebar.classList.toggle('collapsed');
-    mainContent.classList.toggle('sidebar-collapsed');
-    topBar.classList.toggle('sidebar-collapsed');
+    // App Number
+    const appNo = item.applicationNumber || `AIO-MP-${item.id.substr(0,8).toUpperCase()}`;
+    document.getElementById('receiptAppNo').textContent = appNo;
     
-    if (window.innerWidth < 768) {
-        sidebar.classList.toggle('active');
-    }
+    // Applicant Details
+    const appDetails = document.getElementById('applicantDetails');
+    appDetails.innerHTML = `
+        <div class="detail-row">
+            <div class="detail-label">आवेदक का नाम</div>
+            <div class="detail-value">${item.applicantName || item.name || '-'}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">पिता/पति का नाम</div>
+            <div class="detail-value">${item.fatherName || item.guardianName || '-'}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">मोबाइल नंबर</div>
+            <div class="detail-value">${item.mobileNumber || item.mobile || '-'}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">ईमेल</div>
+            <div class="detail-value">${item.email || '-'}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">आधार नंबर</div>
+            <div class="detail-value">${maskAadhar(item.aadharNumber)}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">लिंग</div>
+            <div class="detail-value">${getGenderText(item.gender)}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">जन्म तिथि</div>
+            <div class="detail-value">${item.dob ? formatDate(new Date(item.dob)) : '-'}</div>
+        </div>
+    `;
+    
+    // Application Details
+    const applDetails = document.getElementById('applicationDetails');
+    applDetails.innerHTML = `
+        <div class="detail-row">
+            <div class="detail-label">सेवा प्रकार</div>
+            <div class="detail-value">${getServiceName(item.serviceType)}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">जिला</div>
+            <div class="detail-value">${getDistrictName(item.district)}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">पता</div>
+            <div class="detail-value">${item.address || '-'}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">पिन कोड</div>
+            <div class="detail-value">${item.pincode || '-'}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">आवेदन तिथि</div>
+            <div class="detail-value">${formatDate(item.createdAt)}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">स्थिति</div>
+            <div class="detail-value">
+                <span class="status-badge status-${item.status || 'pending'}">
+                    ${item.status === 'complete' ? '✓ पूर्ण' : 
+                      item.status === 'reject' ? '✗ अस्वीकृत' : 
+                      item.status === 'processing' ? '⟳ प्रोसेसिंग' : '⏱ लंबित'}
+                </span>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('detailModal').classList.add('active');
 }
 
-// User Modal Functions
-function openAddUserModal() {
-    document.getElementById('addUserModal').classList.add('active');
-}
-
-function closeAddUserModal() {
-    document.getElementById('addUserModal').classList.remove('active');
-}
-
-document.getElementById('addUserForm')?.addEventListener('submit', function(e) {
+// 💾 Submit New Application
+async function submitApplication(e) {
     e.preventDefault();
-    alert('नया उपयोगकर्ता सफलतापूर्वक जोड़ा गया!');
-    closeAddUserModal();
-    this.reset();
-});
-
-function editUser(id) {
-    alert('उपयोगकर्ता संपादित करें: ' + id);
-}
-
-function deleteUser(id) {
-    if (confirm('क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?')) {
-        alert('उपयोगकर्ता हटा दिया गया!');
-        renderUsers();
+    
+    const data = {
+        applicantName: document.getElementById('appName').value,
+        fatherName: document.getElementById('appFatherName').value,
+        mobileNumber: document.getElementById('appMobile').value,
+        aadharNumber: document.getElementById('appAadhar').value,
+        dob: document.getElementById('appDob').value,
+        gender: document.getElementById('appGender').value,
+        serviceType: document.getElementById('appService').value,
+        district: document.getElementById('appDistrict').value,
+        address: document.getElementById('appAddress').value,
+        pincode: document.getElementById('appPincode').value,
+        email: document.getElementById('appEmail').value,
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    try {
+        const docRef = await db.collection('applications').add(data);
+        console.log("Document written with ID:", docRef.id);
+        
+        alert('✅ आवेदन सफलतापूर्वक सेव हो गया!');
+        document.getElementById('applicationForm').reset();
+        showSection('dashboard');
+        
+    } catch (error) {
+        console.error("Error adding document:", error);
+        alert('❌ त्रुटि: ' + error.message);
     }
 }
 
-// Profile Functions
-function openEditProfileModal() {
-    document.getElementById('editProfileModal').classList.add('active');
+// ✏️ Open Edit Modal
+function openEditModal(id) {
+    const item = allApplications.find(a => a.id === id);
+    if(!item) return;
+    
+    currentDetailId = id;
+    document.getElementById('editId').value = id;
+    document.getElementById('editName').value = item.applicantName || item.name || '';
+    document.getElementById('editFather').value = item.fatherName || '';
+    document.getElementById('editMobile').value = item.mobileNumber || item.mobile || '';
+    document.getElementById('editStatus').value = item.status || 'pending';
+    
+    document.getElementById('editModal').classList.add('active');
 }
 
-function closeEditProfileModal() {
-    document.getElementById('editProfileModal').classList.remove('active');
-}
-
-document.getElementById('editProfileForm')?.addEventListener('submit', function(e) {
+// 💾 Save Edit
+async function saveEdit(e) {
     e.preventDefault();
-    const newName = document.getElementById('editProfileName').value;
-    document.getElementById('adminName').textContent = newName;
-    document.getElementById('sidebarAdminName').textContent = newName;
-    document.getElementById('profileName').textContent = newName;
-    alert('प्रोफाइल सफलतापूर्वक अपडेट हो गई!');
-    closeEditProfileModal();
-});
-
-// Settings Functions
-function saveSettings() {
-    alert('सेटिंग्स सफलतापूर्वक सहेजी गईं!');
-}
-
-function clearAllData() {
-    if (confirm('चेतावनी: यह सभी आवेदन डेटा हमेशा के लिए हटा देगा। क्या आप सुनिश्चित हैं?')) {
-        alert('डेटा सफलतापूर्वक साफ़ कर दिया गया!');
+    if(!currentDetailId) return;
+    
+    try {
+        await db.collection('applications').doc(currentDetailId).update({
+            applicantName: document.getElementById('editName').value,
+            fatherName: document.getElementById('editFather').value,
+            mobileNumber: document.getElementById('editMobile').value,
+            status: document.getElementById('editStatus').value,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        alert('✅ अपडेट सफल!');
+        closeEditModal();
+        
+    } catch (error) {
+        alert('❌ त्रुटि: ' + error.message);
     }
 }
 
-// Modal Functions
-function closeModal() {
-    document.getElementById('detailModal').classList.remove('active');
-    document.body.style.overflow = 'auto';
+// 🔄 Quick Status Update
+async function quickUpdateStatus(id, currentStatus) {
+    const statuses = ['pending', 'processing', 'complete', 'reject'];
+    const currentIndex = statuses.indexOf(currentStatus);
+    const nextStatus = statuses[(currentIndex + 1) % statuses.length];
+    
+    try {
+        await db.collection('applications').doc(id).update({
+            status: nextStatus,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log("Status updated to:", nextStatus);
+    } catch (error) {
+        alert('त्रुटि: ' + error.message);
+    }
 }
 
+// 🔄 Update Status from Modal
+async function updateStatus(status) {
+    if(!currentDetailId) return;
+    
+    try {
+        await db.collection('applications').doc(currentDetailId).update({
+            status: status,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert('✅ स्थिति अपडेट हो गई!');
+        closeModal();
+    } catch (error) {
+        alert('❌ त्रुटि: ' + error.message);
+    }
+}
+
+// 🗑️ Delete Application
+async function deleteApp(id) {
+    if(!confirm('क्या आप वाकई इसे हटाना चाहते हैं?')) return;
+    
+    try {
+        await db.collection('applications').doc(id).delete();
+        alert('✅ हटा दिया गया!');
+    } catch (error) {
+        alert('❌ त्रुटि: ' + error.message);
+    }
+}
+
+// 📄 Download Word Document - FIXED
+function downloadWord() {
+    if(!currentDetailId) {
+        alert('कोई आवेदन चयनित नहीं!');
+        return;
+    }
+    
+    const item = allApplications.find(a => a.id === currentDetailId);
+    if(!item) {
+        alert('डेटा नहीं मिला!');
+        return;
+    }
+    
+    const appNo = item.applicationNumber || `AIO-MP-${item.id.substr(0,8).toUpperCase()}`;
+    
+    const htmlContent = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+        <meta charset="UTF-8">
+        <title>Application Receipt</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #1e3a8a; padding-bottom: 20px; }
+            .title { font-size: 28px; font-weight: bold; color: #1e3a8a; margin: 10px 0; }
+            .subtitle { font-size: 18px; color: #666; margin-bottom: 15px; }
+            .app-number { background: #dbeafe; color: #1e40af; padding: 10px 20px; border-radius: 8px; display: inline-block; margin: 10px 0; font-weight: bold; font-size: 18px; }
+            .section { margin: 25px 0; background: #f8fafc; padding: 20px; border-radius: 10px; }
+            .section-title { font-size: 20px; font-weight: bold; color: #1e3a8a; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+            .field { margin: 12px 0; display: flex; border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; }
+            .field-label { font-weight: bold; min-width: 200px; color: #374151; font-size: 15px; }
+            .field-value { color: #1f2937; font-weight: 600; flex: 1; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="title">मध्य प्रदेश सरकार</div>
+            <div class="subtitle">AllInOne MP पोर्टल</div>
+            <div class="app-number">आवेदन क्रमांक: ${appNo}</div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">आवेदक व्यक्तिगत विवरण</div>
+            <div class="field">
+                <div class="field-label">आवेदक का नाम:</div>
+                <div class="field-value">${item.applicantName || item.name || 'N/A'}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">पिता/पति का नाम:</div>
+                <div class="field-value">${item.fatherName || 'N/A'}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">मोबाइल नंबर:</div>
+                <div class="field-value">${item.mobileNumber || item.mobile || 'N/A'}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">ईमेल:</div>
+                <div class="field-value">${item.email || 'N/A'}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">आधार नंबर:</div>
+                <div class="field-value">${maskAadhar(item.aadharNumber)}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">जन्म तिथि:</div>
+                <div class="field-value">${item.dob || 'N/A'}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">लिंग:</div>
+                <div class="field-value">${getGenderText(item.gender)}</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">आवेदन विवरण</div>
+            <div class="field">
+                <div class="field-label">सेवा प्रकार:</div>
+                <div class="field-value">${getServiceName(item.serviceType)}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">जिला:</div>
+                <div class="field-value">${getDistrictName(item.district)}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">पता:</div>
+                <div class="field-value">${item.address || 'N/A'}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">पिनकोड:</div>
+                <div class="field-value">${item.pincode || 'N/A'}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">आवेदन तिथि:</div>
+                <div class="field-value">${formatDate(item.createdAt)}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">स्थिति:</div>
+                <div class="field-value">${item.status === 'complete' ? 'पूर्ण' : item.status === 'reject' ? 'अस्वीकृत' : item.status === 'processing' ? 'प्रोसेसिंग' : 'लंबित'}</div>
+            </div>
+        </div>
+    </body>
+    </html>`;
+    
+    const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Receipt_${appNo}.doc`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// 📄 Download PDF
 function downloadPDF() {
-    alert('PDF रसीद डाउनलोड हो गई!');
+    const element = document.getElementById('pdfContent');
+    const opt = {
+        margin: 0.5,
+        filename: 'application_receipt.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save();
 }
 
+// 🖨️ Print
 function printReceipt() {
     window.print();
 }
 
-function updateApplicationStatus(status) {
-    const statusText = status === 'complete' ? 'पूर्ण' : 
-                       status === 'reject' ? 'अस्वीकृत' : 
-                       status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
-    alert(`आवेदन स्थिति "${statusText}" में बदल दी गई!`);
-    closeModal();
-}
-
-function openEditModalFromDetail() {
-    closeModal();
-    setTimeout(() => {
-        alert('आवेदन संपादन मोड खुल गया!');
-    }, 300);
-}
-
-// Bulk Actions
-function toggleSelectAll() {
-    const checkbox = document.getElementById('selectAllCheckbox');
-    const count = checkbox.checked ? 5 : 0; // Sample count
-    document.getElementById('selectedCount').textContent = count;
-    document.getElementById('bulkActionBar').classList.toggle('active', checkbox.checked && count > 0);
-}
-
-function clearSelection() {
-    document.getElementById('selectAllCheckbox').checked = false;
-    document.getElementById('selectedCount').textContent = '0';
-    document.getElementById('bulkActionBar').classList.remove('active');
-}
-
-function bulkStatusUpdate(status) {
-    const count = document.getElementById('selectedCount').textContent;
-    const statusText = status === 'complete' ? 'पूर्ण' : 
-                       status === 'reject' ? 'अस्वीकृत' : 
-                       status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
-    alert(`${count} आवेदनों की स्थिति "${statusText}" में बदल दी गई!`);
-    clearSelection();
-}
-
-function bulkExport() {
-    const count = document.getElementById('selectedCount').textContent || 'सभी';
-    alert(`${count} आवेदनों का CSV निर्यात हो रहा है...`);
-}
-
-function exportToCSV() {
-    alert('आवेदन डेटा CSV में निर्यात हो गया!');
-}
-
-function exportToPDF() {
-    alert('PDF रिपोर्ट तैयार हो रही है...');
-}
-
-function refreshData() {
-    showLoading();
-    setTimeout(() => {
-        hideLoading();
-        alert('डेटा सफलतापूर्वक रीफ्रेश हो गया!');
-    }, 800);
-}
-
-function logout() {
-    if (confirm('क्या आप प्रणाली से बाहर निकलना चाहते हैं?')) {
-        showLoading();
-        setTimeout(() => {
-            alert('आप सफलतापूर्वक लॉगआउट हो गए हैं!');
-            // In real app: redirect to login page
-        }, 1000);
+// 🔍 Filter Data
+function filterData() {
+    const status = document.getElementById('statusFilter').value;
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    
+    let filtered = allApplications;
+    
+    if(status) {
+        filtered = filtered.filter(a => (a.status || 'pending') === status);
     }
+    
+    if(search) {
+        filtered = filtered.filter(a => 
+            (a.applicantName || '').toLowerCase().includes(search) ||
+            (a.mobileNumber || '').includes(search)
+        );
+    }
+    
+    renderTable(filtered);
 }
 
-// Utility Functions
-function formatDate(date) {
-    if (!date) return '-';
-    if (typeof date === 'string') date = new Date(date);
-    return date.toLocaleDateString('hi-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
+function searchData() {
+    filterData();
+}
+
+// 🧭 Navigation
+function showSection(sectionId) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if(item.getAttribute('onclick')?.includes(sectionId)) {
+            item.classList.add('active');
+        }
     });
 }
 
-function getServiceName(type) {
-    const services = {
-        'samagra': 'समग्र आईडी',
-        'mpbhoj': 'एमपी भोज योजना',
-        'scholarship': 'छात्रवृत्ति',
-        'pension': 'पेंशन',
-        'housing': 'आवास योजना'
-    };
-    return services[type] || 'अन्य सेवा';
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('mainContent');
+    const topBar = document.getElementById('topBar');
+    
+    sidebar.classList.toggle('collapsed');
+    main.classList.toggle('collapsed');
+    topBar.classList.toggle('collapsed');
+    
+    if(window.innerWidth < 1024) {
+        sidebar.classList.toggle('active');
+    }
 }
 
-function getDistrictName(district) {
-    const districts = {
-        'bhopal': 'भोपाल',
-        'indore': 'इंदौर',
-        'jabalpur': 'जबलपुर',
-        'gwalior': 'ग्वालियर',
-        'ujjain': 'उज्जैन',
-        'sagar': 'सागर',
-        'ratlam': 'रतलाम',
-        'satna': 'सतना'
+function closeModal() {
+    document.getElementById('detailModal').classList.remove('active');
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('active');
+}
+
+function resetForm() {
+    document.getElementById('applicationForm').reset();
+}
+
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = 'https://allinonemp.harshtiwari.in/adminlogin.html';
+    });
+}
+
+function hideLoading() {
+    document.getElementById('loadingScreen').style.display = 'none';
+}
+
+// Helper Functions
+function formatDate(date) {
+    if(!date || date == 'Invalid Date') return "-";
+    try {
+        const d = new Date(date);
+        return d.toLocaleDateString('hi-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+    } catch(e) {
+        return "-";
+    }
+}
+
+function getServiceName(type) {
+    const names = {
+        'samagra': 'समग्र आईडी',
+        'mpbhoj': 'एमपी भोज',
+        'scholarship': 'छात्रवृत्ति',
+        'pension': 'पेंशन',
+        'housing': 'आवास'
     };
-    return districts[district] || district;
+    return names[type] || type || 'अन्य';
+}
+
+function getDistrictName(dist) {
+    const names = {
+        'bhopal': 'भोपाल', 'indore': 'इंदौर', 'jabalpur': 'जबलपुर',
+        'gwalior': 'ग्वालियर', 'ujjain': 'उज्जैन'
+    };
+    return names[dist] || dist || '-';
+}
+
+function getGenderText(g) {
+    const genders = { 'male': 'पुरुष', 'female': 'महिला', 'other': 'अन्य' };
+    return genders[g] || g || '-';
 }
 
 function maskAadhar(aadhar) {
-    if (!aadhar) return 'XXXX XXXX XXXX';
-    return aadhar.replace(/(\d{4})\d{8}(\d{4})/, '$1 XXXX XXXX $2');
-}
-
-function getGenderText(gender) {
-    const genders = {
-        'male': 'पुरुष',
-        'female': 'महिला',
-        'other': 'अन्य'
-    };
-    return genders[gender] || gender;
+    if(!aadhar) return '-';
+    const str = aadhar.toString().replace(/\s/g, '');
+    if(str.length === 12) return str.substr(0,4) + ' XXXX XXXX ' + str.substr(8);
+    return str;
 }
 </script>
+
 </body>
 </html>
