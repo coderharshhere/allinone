@@ -156,6 +156,119 @@
   </div>
 </section>
 
+
+
+    <style>
+/* Navy Blue Color Palette */
+:root {
+    --navy-dark: #1e3a8a; /* Navy Blue */
+    --blue-soft: #eff6ff; /* Very Light Blue */
+    --blue-border: #dbeafe;
+}
+
+/* Arrow Animation: Left to Right */
+@keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+}
+.animate-bounce-right {
+    animation: bounceRight 1s infinite;
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* Soft Tab Styling */
+.soft-tab {
+    padding: 0.5rem 1.2rem;
+    background-color: transparent;
+    color: #64748b; /* Slate-500 */
+    font-weight: 500;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.soft-tab:hover {
+    background-color: var(--blue-soft);
+    color: var(--navy-dark);
+}
+
+/* Active State: Soft Blue Background with Navy Text */
+.active-soft {
+    background-color: var(--blue-soft) !important;
+    color: var(--navy-dark) !important;
+    font-weight: 700;
+    border: 1px solid var(--blue-border) !important;
+}
+
+.text-navy-700 { color: var(--navy-dark); }
+
+</style>
+
+<div class="max-w-7xl mx-auto px-4 mb-10">
+    <div id="filterWrapper" class="relative flex items-center bg-slate-50 rounded-2xl p-1 transition-all duration-500 ease-in-out border border-slate-200 overflow-hidden h-14">
+        
+        <div id="filterLabel" class="flex items-center gap-2 px-4 cursor-pointer min-w-max text-navy-700 hover:text-blue-600 transition-colors">
+            <span class="text-xs md:text-sm font-semibold tracking-tight uppercase opacity-70"> click for Fast Search</span>
+            <i class="fas fa-arrow-right text-xs animate-bounce-right"></i>
+        </div>
+
+        <div id="scrollTabs" class="flex gap-2 overflow-x-auto items-center px-2 opacity-0 invisible transition-all duration-500 translate-x-5 scrollbar-hide">
+            <button onclick="filterServices('all', this)" class="soft-tab active-soft">All</button>
+            <button onclick="filterServices('certificates', this)" class="soft-tab">प्रमाण पत्र</button>
+            <button onclick="filterServices('yojna', this)" class="soft-tab">सरकारी योजनाएं</button>
+            <button onclick="filterServices('form', this)" class="soft-tab">यूनिवर्सिटी/फार्म</button>
+            <button onclick="filterServices('yojna', this)" class="soft-tab">कृषि सेवा (MP)</button>
+            <button onclick="filterServices('job', this)" class="soft-tab">रोजगार पंजीयन </button>
+        </div>
+    </div>
+</div>
+
+<script>
+const filterLabel = document.getElementById('filterLabel');
+const scrollTabs = document.getElementById('scrollTabs');
+
+filterLabel.addEventListener('click', () => {
+    // Label ko slide karke gayab karein
+    filterLabel.classList.add('opacity-0', '-translate-x-full');
+    setTimeout(() => { filterLabel.style.display = 'none'; }, 300);
+    
+    // Tabs ko soft tarike se show karein
+    scrollTabs.classList.remove('opacity-0', 'invisible', 'translate-x-5');
+    scrollTabs.classList.add('opacity-100', 'visible', 'translate-x-0');
+});
+
+function filterServices(category, btn) {
+    // Remove active style from all
+    document.querySelectorAll('.soft-tab').forEach(t => t.classList.remove('active-soft'));
+    // Add to clicked
+    if(btn) btn.classList.add('active-soft');
+
+    // Your existing card filter logic
+    const cards = document.querySelectorAll('.service-card');
+    cards.forEach(card => {
+        const cats = card.getAttribute('data-category') || "";
+        card.style.display = (category === 'all' || cats.includes(category)) ? "block" : "none";
+    });
+}
+</script>
+
+
+ 
+
+
+
+
+    
+            <!-- Grid --
+          <div class="w-full max-w-[1200px] mx-auto">
+    <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">-->
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 max-w-7xl mx-auto">
+
+
     <!-- Main Content -->
             <!-- Samagra Card -->
                     <div class="service-card bg-white p-6 rounded-2xl shadow-sm" data-category="all">
@@ -637,6 +750,7 @@ window.trackApplication = async function () {
 <div id="notif-overlay" class="fixed inset-0 bg-blue-900/20 backdrop-blur-sm z-[105] hidden transition-opacity duration-300"></div>
 </body>
 </html>
+
 
 
 
