@@ -1,1679 +1,2051 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllInOne MP – Advanced Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap');
-        :root {
-            --primary-color: #1e3a8a;
-            --secondary-color: #3b82f6;
-            --success-color: #22c55e;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --sidebar-width: 280px;
-            --sidebar-collapsed-width: 80px;
-            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Noto Sans Devanagari', sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
-            overflow-x: hidden;
-            color: #1e293b;
-            min-height: 100vh;
-        }
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            flex-direction: column;
-            transition: opacity 0.5s ease;
-        }
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid rgba(59, 130, 246, 0.2);
-            border-top-color: #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .sidebar {
-            width: var(--sidebar-width);
-            transition: var(--transition);
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            z-index: 40;
-            overflow-x: hidden;
-            box-shadow: var(--card-shadow);
-            background: linear-gradient(180deg, #1e3a8a 0%, #0f296b 100%);
-        }
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed-width);
-        }
-        .sidebar.collapsed .sidebar-text {
-            display: none;
-        }
-        .sidebar.collapsed .logo-text {
-            display: none;
-        }
-        .sidebar-toggle-fixed {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: 20px;
-            z-index: 50;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 0 12px 12px 0;
-            padding: 10px 12px;
-            cursor: pointer;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            color: var(--primary-color);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            height: 42px;
-        }
-        .sidebar.collapsed + .sidebar-toggle-fixed {
-            left: var(--sidebar-collapsed-width);
-        }
-        .main-content {
-            transition: margin-left 0.3s ease;
-            margin-left: var(--sidebar-width);
-            padding: 20px;
-            padding-top: 90px;
-        }
-        .main-content.sidebar-collapsed {
-            margin-left: var(--sidebar-collapsed-width);
-        }
-        .status-badge {
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 13px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: 2px solid transparent;
-            transition: var(--transition);
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .status-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .status-complete {
-            background-color: #dcfce7;
-            color: #166534;
-            border-color: #bbf7d0;
-        }
-        .status-pending {
-            background-color: #ffedd5;
-            color: #9a3412;
-            border-color: #fed7aa;
-        }
-        .status-reject {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #fecaca;
-        }
-        .status-processing {
-            background-color: #dbeafe;
-            color: #1e40af;
-            border-color: #bfdbfe;
-        }
-        .action-btn {
-            padding: 0.6rem;
-            border-radius: 10px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .action-view {
-            background-color: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
-        }
-        .action-edit {
-            background-color: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-        }
-        .action-delete {
-            background-color: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-        }
-        .action-download {
-            background-color: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
-        .notification-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background-color: #ef4444;
-            color: white;
-            font-size: 10px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 0 0 2px white;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        .fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(15px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0);
-            }
-        }
-        .table-row {
-            transition: var(--transition);
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .table-row:hover {
-            background-color: #f8fafc;
-            transform: translateX(5px);
-        }
-        .page-section {
-            display: none;
-            animation: fadeIn 0.5s ease-out;
-        }
-        .page-section.active {
-            display: block;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.65);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-            animation: modalFadeIn 0.3s ease-out;
-        }
-        @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 24px;
-            max-width: 950px;
-            width: 100%;
-            max-height: 95vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-            transform: translateY(0);
-            transition: transform 0.4s ease, opacity 0.4s ease;
-            opacity: 1;
-            animation: modalContentFadeIn 0.4s ease-out;
-        }
-        @keyframes modalContentFadeIn {
-            from { 
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to { 
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 28px 32px;
-            border-radius: 24px 24px 0 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .modal-header::after {
-            content: "";
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            transform: rotate(30deg);
-        }
-        .qr-container {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            display: inline-block;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-            border: 1px solid #e2e8f0;
-            margin: 15px 0;
-        }
-        .detail-row {
-            display: flex;
-            padding: 14px 0;
-            border-bottom: 1px dashed #e2e8f0;
-        }
-        .detail-label {
-            font-weight: 700;
-            color: #475569;
-            width: 40%;
-            font-size: 0.95rem;
-        }
-        .detail-value {
-            color: #0f172a;
-            font-weight: 600;
-            width: 60%;
-            font-size: 1rem;
-        }
-        .stat-card {
-            transition: var(--transition);
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: var(--card-shadow);
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
-        }
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        }
-        .stat-card.pending::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-        .stat-card.complete::before { background: linear-gradient(90deg, #22c55e, #10b981); }
-        .stat-card.rejected::before { background: linear-gradient(90deg, #ef4444, #f87171); }
-        .search-container {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 25px;
-            transition: var(--transition);
-        }
-        .search-container:hover {
-            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.12);
-        }
-        .filter-badge {
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
-        }
-        .chart-container {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: var(--card-shadow);
-            margin-top: 25px;
-            transition: var(--transition);
-        }
-        .chart-container:hover {
-            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.12);
-        }
-        .form-section {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: var(--card-shadow);
-            margin-top: 25px;
-            display: none;
-        }
-        .form-section.active {
-            display: block;
-            animation: fadeIn 0.6s ease-out;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #334155;
-            font-size: 0.95rem;
-        }
-        .form-control {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid #cbd5e1;
-            border-radius: 14px;
-            font-family: 'Noto Sans Devanagari', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.55);
-        }
-        .btn-secondary {
-            background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--secondary-color);
-            padding: 12px 26px;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-secondary:hover {
-            background: #f1f5ff;
-            transform: translateY(-2px);
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #f87171);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
-        .receipt-header {
-            text-align: center;
-            padding: 25px 0;
-            border-bottom: 3px solid #3b82f6;
-            margin-bottom: 30px;
-            position: relative;
-        }
-        .receipt-header::after {
-            content: "";
-            position: absolute;
-            bottom: -3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
-        }
-        .receipt-logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            color: white;
-            font-weight: 800;
-            font-size: 1.8rem;
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-        }
-        .receipt-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin: 10px 0;
-            letter-spacing: -0.5px;
-        }
-        .receipt-subtitle {
-            color: #475569;
-            font-size: 1.25rem;
-            margin-top: 5px;
-        }
-        .receipt-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px dashed #cbd5e1;
-            font-size: 0.95rem;
-        }
-        .receipt-footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 25px;
-            border-top: 2px solid #e2e8f0;
-            color: #475569;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        .document-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .document-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            transition: var(--transition);
-            background: #f8fafc;
-        }
-        .document-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            border-color: var(--secondary-color);
-        }
-        .document-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--secondary-color);
-        }
-        .document-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #1e293b;
-            display: block;
-            margin-top: 5px;
-        }
-        .document-link {
-            color: var(--secondary-color);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            display: block;
-            margin-top: 5px;
-            transition: var(--transition);
-        }
-        .document-link:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
-        .service-badge {
-            padding: 4px 14px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: inline-block;
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            color: #1e40af;
-        }
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: var(--sidebar-width);
-            right: 0;
-            background: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 30;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: left 0.3s ease;
-            height: 70px;
-        }
-        .sidebar.collapsed + .sidebar-toggle-fixed + .top-bar {
-            left: var(--sidebar-collapsed-width);
-        }
-        .user-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            border-radius: 16px;
-            background: #f1f5ff;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        .user-card:hover {
-            background: #e0e7ff;
-            transform: translateX(3px);
-        }
-        .user-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-        .user-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .user-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--primary-color);
-        }
-        .user-email {
-            font-size: 0.8rem;
-            color: #475569;
-        }
-        .notification-card {
-            position: relative;
-            background: white;
-            border-radius: 16px;
-            padding: 15px;
-            box-shadow: var(--card-shadow);
-            cursor: pointer;
-            transition: var(--transition);
-            min-width: 280px;
-            margin-left: 15px;
-        }
-        .notification-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-        }
-        .notification-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f1f5f9;
-            margin-bottom: 10px;
-        }
-        .notification-list {
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-        .notification-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            gap: 12px;
-        }
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-        .notification-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 1.1rem;
-        }
-        .notification-icon.pending {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-        }
-        .notification-icon.complete {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
-        .notification-content h4 {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #0f172a;
-        }
-        .notification-content p {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
-        .notification-time {
-            font-size: 0.75rem;
-            color: #94a3b8;
-        }
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 14px 20px;
-            border-radius: 16px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            position: relative;
-            color: #cbd5e1;
-        }
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            position: relative;
-        }
-        .nav-item.active::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 8px;
-            bottom: 8px;
-            width: 4px;
-            background: white;
-            border-radius: 0 4px 4px 0;
-        }
-        .nav-icon {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-        .sidebar-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        .logout-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 14px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            font-family: 'Noto Sans Devanagari', sans-serif;
-        }
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.25);
-            transform: translateX(5px);
-        }
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
-        }
-        .empty-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            opacity: 0.7;
-        }
-        .empty-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #334155;
-        }
-        .empty-message {
-            font-size: 1.1rem;
-            max-width: 500px;
-            margin: 0 auto 25px;
-        }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-        .data-table th {
-            background-color: #f8fafc;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            color: #334155;
-            padding: 16px 12px;
-            text-align: left;
-        }
-        .data-table td {
-            padding: 16px 12px;
-            vertical-align: middle;
-        }
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-        .auth-error-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            color: white;
-            text-align: center;
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                box-shadow: none;
-            }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-                padding-top: 120px;
-            }
-            .sidebar-collapsed + .sidebar-toggle-fixed {
-                left: 0;
-            }
-            .top-bar {
-                left: 0;
-                padding: 15px;
-            }
-            .sidebar.collapsed + .sidebar-toggle-fixed + .top-bar {
-                left: 0;
-            }
-            .data-table {
-                min-width: 600px;
-            }
-            .detail-label, .detail-value {
-                width: 100%;
-                padding: 8px 0;
-            }
-            .detail-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .receipt-meta {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllInOne MP – Advanced Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap');
+:root {
+--primary-color: #1e3a8a;
+--secondary-color: #3b82f6;
+--success-color: #22c55e;
+--warning-color: #f59e0b;
+--danger-color: #ef4444;
+--sidebar-width: 280px;
+--sidebar-collapsed-width: 80px;
+--card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+--transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Noto Sans Devanagari', sans-serif;
+background: linear-gradient(135deg, #f0f4f8 0%, #e6f7ff 100%);
+overflow-x: hidden;
+color: #1e293b;
+min-height: 100vh;
+}
+.loading-screen {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: white;
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 9999;
+flex-direction: column;
+transition: opacity 0.5s ease;
+}
+.loading-spinner {
+width: 60px;
+height: 60px;
+border: 6px solid rgba(59, 130, 246, 0.2);
+border-top-color: #3b82f6;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin-bottom: 20px;
+box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+.sidebar {
+width: var(--sidebar-width);
+transition: var(--transition);
+position: fixed;
+left: 0;
+top: 0;
+height: 100vh;
+z-index: 40;
+overflow-x: hidden;
+box-shadow: var(--card-shadow);
+background: linear-gradient(180deg, #1e3a8a 0%, #0f296b 100%);
+}
+.sidebar.collapsed {
+width: var(--sidebar-collapsed-width);
+}
+.sidebar.collapsed .sidebar-text {
+display: none;
+}
+.sidebar.collapsed .logo-text {
+display: none;
+}
+.sidebar-toggle-fixed {
+position: fixed;
+left: var(--sidebar-width);
+top: 20px;
+z-index: 50;
+background: white;
+border: 1px solid #e2e8f0;
+border-radius: 0 12px 12px 0;
+padding: 10px 12px;
+cursor: pointer;
+box-shadow: var(--card-shadow);
+transition: var(--transition);
+color: var(--primary-color);
+font-weight: 600;
+display: flex;
+align-items: center;
+gap: 6px;
+height: 42px;
+}
+.sidebar.collapsed + .sidebar-toggle-fixed {
+left: var(--sidebar-collapsed-width);
+}
+.main-content {
+transition: margin-left 0.3s ease;
+margin-left: var(--sidebar-width);
+padding: 20px;
+padding-top: 90px;
+}
+.main-content.sidebar-collapsed {
+margin-left: var(--sidebar-collapsed-width);
+}
+.status-badge {
+padding: 6px 16px;
+border-radius: 50px;
+font-size: 13px;
+font-weight: 600;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+border: 2px solid transparent;
+transition: var(--transition);
+cursor: pointer;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.status-badge:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.status-complete {
+background-color: #dcfce7;
+color: #166534;
+border-color: #bbf7d0;
+}
+.status-pending {
+background-color: #ffedd5;
+color: #9a3412;
+border-color: #fed7aa;
+}
+.status-reject {
+background-color: #fee2e2;
+color: #991b1b;
+border-color: #fecaca;
+}
+.status-processing {
+background-color: #dbeafe;
+color: #1e40af;
+border-color: #bfdbfe;
+}
+.action-btn {
+padding: 0.6rem;
+border-radius: 10px;
+transition: var(--transition);
+display: flex;
+align-items: center;
+justify-content: center;
+width: 2.5rem;
+height: 2.5rem;
+border: none;
+cursor: pointer;
+font-size: 1.1rem;
+box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+.action-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.action-view {
+background-color: rgba(59, 130, 246, 0.15);
+color: #3b82f6;
+}
+.action-edit {
+background-color: rgba(245, 158, 11, 0.15);
+color: #f59e0b;
+}
+.action-delete {
+background-color: rgba(239, 68, 68, 0.15);
+color: #ef4444;
+}
+.action-download {
+background-color: rgba(34, 197, 94, 0.15);
+color: #22c55e;
+}
+.notification-badge {
+position: absolute;
+top: -4px;
+right: -4px;
+background-color: #ef4444;
+color: white;
+font-size: 10px;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+box-shadow: 0 0 0 2px white;
+animation: pulse 2s infinite;
+}
+@keyframes pulse {
+0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+.fade-in {
+animation: fadeIn 0.6s ease-out forwards;
+}
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(15px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.table-row {
+transition: var(--transition);
+border-bottom: 1px solid #f1f5f9;
+}
+.table-row:hover {
+background-color: #f8fafc;
+transform: translateX(5px);
+}
+.page-section {
+display: none;
+animation: fadeIn 0.5s ease-out;
+}
+.page-section.active {
+display: block;
+}
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.65);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+padding: 20px;
+backdrop-filter: blur(4px);
+animation: modalFadeIn 0.3s ease-out;
+}
+@keyframes modalFadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+.modal.active {
+display: flex;
+}
+.modal-content {
+background: white;
+border-radius: 24px;
+max-width: 950px;
+width: 100%;
+max-height: 95vh;
+overflow-y: auto;
+position: relative;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+transform: translateY(0);
+transition: transform 0.4s ease, opacity 0.4s ease;
+opacity: 1;
+animation: modalContentFadeIn 0.4s ease-out;
+}
+@keyframes modalContentFadeIn {
+from {
+transform: translateY(20px);
+opacity: 0;
+}
+to {
+transform: translateY(0);
+opacity: 1;
+}
+}
+.modal-header {
+background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+color: white;
+padding: 28px 32px;
+border-radius: 24px 24px 0 0;
+position: relative;
+overflow: hidden;
+}
+.modal-header::after {
+content: "";
+position: absolute;
+top: -50%;
+right: -10%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+transform: rotate(30deg);
+}
+.qr-container {
+background: white;
+padding: 20px;
+border-radius: 16px;
+display: inline-block;
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+border: 1px solid #e2e8f0;
+margin: 15px 0;
+}
+.detail-row {
+display: flex;
+padding: 14px 0;
+border-bottom: 1px dashed #e2e8f0;
+}
+.detail-label {
+font-weight: 700;
+color: #475569;
+width: 40%;
+font-size: 0.95rem;
+}
+.detail-value {
+color: #0f172a;
+font-weight: 600;
+width: 60%;
+font-size: 1rem;
+}
+.stat-card {
+transition: var(--transition);
+border-radius: 20px;
+overflow: hidden;
+position: relative;
+box-shadow: var(--card-shadow);
+}
+.stat-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+}
+.stat-card::before {
+content: "";
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 4px;
+background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+.stat-card.pending::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.stat-card.complete::before { background: linear-gradient(90deg, #22c55e, #10b981); }
+.stat-card.rejected::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+.search-container {
+background: white;
+border-radius: 16px;
+padding: 20px;
+box-shadow: var(--card-shadow);
+margin-bottom: 25px;
+transition: var(--transition);
+}
+.search-container:hover {
+box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.12);
+}
+.filter-badge {
+background: linear-gradient(135deg, #3b82f6, #60a5fa);
+color: white;
+padding: 4px 12px;
+border-radius: 50px;
+font-weight: 600;
+font-size: 0.85rem;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+.chart-container {
+background: white;
+border-radius: 20px;
+padding: 25px;
+box-shadow: var(--card-shadow);
+margin-top: 25px;
+transition: var(--transition);
+}
+.chart-container:hover {
+box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.12);
+}
+.form-section {
+background: white;
+border-radius: 20px;
+padding: 30px;
+box-shadow: var(--card-shadow);
+margin-top: 25px;
+display: none;
+}
+.form-section.active {
+display: block;
+animation: fadeIn 0.6s ease-out;
+}
+.form-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+gap: 25px;
+margin-top: 20px;
+}
+.form-group {
+margin-bottom: 15px;
+}
+.form-group label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: #334155;
+font-size: 0.95rem;
+}
+.form-control {
+width: 100%;
+padding: 14px 16px;
+border: 1px solid #cbd5e1;
+border-radius: 14px;
+font-family: 'Noto Sans Devanagari', sans-serif;
+font-size: 1rem;
+transition: var(--transition);
+}
+.form-control:focus {
+outline: none;
+border-color: var(--secondary-color);
+box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+.btn-primary {
+background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+color: white;
+border: none;
+padding: 14px 28px;
+border-radius: 14px;
+font-weight: 700;
+font-size: 1.05rem;
+cursor: pointer;
+transition: var(--transition);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+.btn-primary:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(59, 130, 246, 0.55);
+}
+.btn-secondary {
+background: white;
+color: var(--primary-color);
+border: 2px solid var(--secondary-color);
+padding: 12px 26px;
+border-radius: 14px;
+font-weight: 600;
+font-size: 1rem;
+cursor: pointer;
+transition: var(--transition);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+.btn-secondary:hover {
+background: #f1f5ff;
+transform: translateY(-2px);
+}
+.btn-danger {
+background: linear-gradient(135deg, #ef4444, #f87171);
+color: white;
+border: none;
+padding: 12px 24px;
+border-radius: 14px;
+font-weight: 600;
+cursor: pointer;
+transition: var(--transition);
+}
+.btn-danger:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+.receipt-header {
+text-align: center;
+padding: 25px 0;
+border-bottom: 3px solid #3b82f6;
+margin-bottom: 30px;
+position: relative;
+}
+.receipt-header::after {
+content: "";
+position: absolute;
+bottom: -3px;
+left: 50%;
+transform: translateX(-50%);
+width: 80%;
+height: 3px;
+background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+}
+.receipt-logo {
+width: 80px;
+height: 80px;
+background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 0 auto 15px;
+color: white;
+font-weight: 800;
+font-size: 1.8rem;
+box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+}
+.receipt-title {
+font-size: 2.2rem;
+font-weight: 800;
+color: var(--primary-color);
+margin: 10px 0;
+letter-spacing: -0.5px;
+}
+.receipt-subtitle {
+color: #475569;
+font-size: 1.25rem;
+margin-top: 5px;
+}
+.receipt-meta {
+display: flex;
+justify-content: space-between;
+margin-top: 25px;
+padding-top: 15px;
+border-top: 1px dashed #cbd5e1;
+font-size: 0.95rem;
+}
+.receipt-footer {
+text-align: center;
+margin-top: 40px;
+padding-top: 25px;
+border-top: 2px solid #e2e8f0;
+color: #475569;
+font-size: 0.95rem;
+line-height: 1.6;
+}
+.document-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+gap: 15px;
+margin-top: 15px;
+}
+.document-item {
+border: 1px solid #e2e8f0;
+border-radius: 12px;
+padding: 15px;
+text-align: center;
+transition: var(--transition);
+background: #f8fafc;
+}
+.document-item:hover {
+transform: translateY(-3px);
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+border-color: var(--secondary-color);
+}
+.document-icon {
+font-size: 2.5rem;
+margin-bottom: 10px;
+color: var(--secondary-color);
+}
+.document-name {
+font-weight: 600;
+font-size: 0.9rem;
+color: #1e293b;
+display: block;
+margin-top: 5px;
+}
+.document-link {
+color: var(--secondary-color);
+font-weight: 600;
+font-size: 0.85rem;
+text-decoration: none;
+display: block;
+margin-top: 5px;
+transition: var(--transition);
+}
+.document-link:hover {
+color: var(--primary-color);
+text-decoration: underline;
+}
+.service-badge {
+padding: 4px 14px;
+border-radius: 50px;
+font-weight: 600;
+font-size: 0.85rem;
+display: inline-block;
+background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+color: #1e40af;
+}
+.top-bar {
+position: fixed;
+top: 0;
+left: var(--sidebar-width);
+right: 0;
+background: white;
+padding: 15px 30px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+z-index: 30;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+transition: left 0.3s ease;
+height: 70px;
+}
+.sidebar-collapsed + .top-bar {
+left: var(--sidebar-collapsed-width);
+}
+.user-card {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 8px 16px;
+border-radius: 16px;
+background: #f1f5ff;
+transition: var(--transition);
+cursor: pointer;
+}
+.user-card:hover {
+background: #e0e7ff;
+transform: translateX(3px);
+}
+.user-avatar {
+width: 42px;
+height: 42px;
+border-radius: 50%;
+background: linear-gradient(135deg, #3b82f6, #60a5fa);
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: 700;
+font-size: 1.2rem;
+flex-shrink: 0;
+}
+.user-info {
+display: flex;
+flex-direction: column;
+}
+.user-name {
+font-weight: 700;
+font-size: 0.95rem;
+color: var(--primary-color);
+}
+.user-email {
+font-size: 0.8rem;
+color: #475569;
+}
+.notification-card {
+position: relative;
+background: white;
+border-radius: 16px;
+padding: 15px;
+box-shadow: var(--card-shadow);
+cursor: pointer;
+transition: var(--transition);
+min-width: 280px;
+margin-left: 15px;
+}
+.notification-card:hover {
+transform: translateY(-3px);
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+}
+.notification-title {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 10px;
+border-bottom: 1px solid #f1f5f9;
+margin-bottom: 10px;
+}
+.notification-list {
+max-height: 300px;
+overflow-y: auto;
+padding-right: 8px;
+}
+.notification-item {
+padding: 12px 0;
+border-bottom: 1px solid #f1f5f9;
+display: flex;
+gap: 12px;
+}
+.notification-item:last-child {
+border-bottom: none;
+}
+.notification-icon {
+width: 36px;
+height: 36px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+font-size: 1.1rem;
+}
+.notification-icon.pending {
+background: rgba(245, 158, 11, 0.15);
+color: #f59e0b;
+}
+.notification-icon.complete {
+background: rgba(34, 197, 94, 0.15);
+color: #22c55e;
+}
+.notification-content h4 {
+font-weight: 600;
+margin-bottom: 4px;
+color: #0f172a;
+}
+.notification-content p {
+font-size: 0.85rem;
+color: #64748b;
+margin-bottom: 4px;
+}
+.notification-time {
+font-size: 0.75rem;
+color: #94a3b8;
+}
+.nav-item {
+display: flex;
+align-items: center;
+gap: 16px;
+padding: 14px 20px;
+border-radius: 16px;
+margin-bottom: 8px;
+cursor: pointer;
+transition: var(--transition);
+font-weight: 600;
+position: relative;
+}
+.nav-item:hover {
+background: rgba(255, 255, 255, 0.15);
+}
+.nav-item.active {
+background: rgba(255, 255, 255, 0.25);
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+position: relative;
+}
+.nav-item.active::before {
+content: "";
+position: absolute;
+left: 0;
+top: 8px;
+bottom: 8px;
+width: 4px;
+background: white;
+border-radius: 0 4px 4px 0;
+}
+.nav-icon {
+width: 28px;
+height: 28px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.2rem;
+}
+.sidebar-footer {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+padding: 20px;
+border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+.logout-btn {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 12px;
+width: 100%;
+padding: 14px;
+border-radius: 16px;
+background: rgba(255, 255, 255, 0.15);
+color: white;
+font-weight: 600;
+cursor: pointer;
+transition: var(--transition);
+border: none;
+font-family: 'Noto Sans Devanagari', sans-serif;
+}
+.logout-btn:hover {
+background: rgba(239, 68, 68, 0.25);
+transform: translateX(5px);
+}
+.empty-state {
+text-align: center;
+padding: 60px 20px;
+color: #64748b;
+}
+.empty-icon {
+font-size: 5rem;
+margin-bottom: 20px;
+opacity: 0.7;
+}
+.empty-title {
+font-size: 1.8rem;
+font-weight: 700;
+margin-bottom: 10px;
+color: #334155;
+}
+.empty-message {
+font-size: 1.1rem;
+max-width: 500px;
+margin: 0 auto 25px;
+}
+.data-table {
+width: 100%;
+border-collapse: collapse;
+min-width: 800px;
+}
+.data-table th {
+background-color: #f8fafc;
+font-weight: 700;
+text-transform: uppercase;
+font-size: 0.85rem;
+letter-spacing: 0.5px;
+color: #334155;
+padding: 16px 12px;
+text-align: left;
+}
+.data-table td {
+padding: 16px 12px;
+vertical-align: middle;
+}
+.data-table tr:last-child td {
+border-bottom: none;
+}
+@media (max-width: 768px) {
+.sidebar {
+transform: translateX(-100%);
+box-shadow: none;
+}
+.sidebar.active {
+transform: translateX(0);
+}
+.main-content {
+margin-left: 0;
+padding-top: 120px;
+}
+.sidebar-collapsed + .sidebar-toggle-fixed {
+left: 0;
+}
+.top-bar {
+left: 0;
+padding: 15px;
+}
+.sidebar-collapsed + .top-bar {
+left: 0;
+}
+.data-table {
+min-width: 600px;
+}
+.detail-label, .detail-value {
+width: 100%;
+padding: 8px 0;
+}
+.detail-row {
+flex-direction: column;
+align-items: flex-start;
+}
+.receipt-meta {
+flex-direction: column;
+gap: 10px;
+align-items: flex-start;
+}
+.form-grid {
+grid-template-columns: 1fr;
+}
+}
+@media print {
+body * {
+visibility: hidden;
+}
+#pdfContent, #pdfContent * {
+visibility: visible;
+}
+#pdfContent {
+position: absolute;
+left: 0;
+top: 0;
+width: 100%;
+height: auto;
+margin: 0;
+padding: 20px;
+font-size: 14pt;
+}
+.no-print {
+display: none !important;
+}
+.modal, .modal * {
+visibility: hidden;
+}
+.qr-container img {
+width: 150px !important;
+height: 150px !important;
+}
+}
+.edit-input {
+width: 100%;
+padding: 8px 12px;
+border: 2px solid #e2e8f0;
+border-radius: 8px;
+font-family: 'Noto Sans Devanagari', sans-serif;
+transition: all 0.3s;
+}
+.edit-input:focus {
+border-color: #3b82f6;
+outline: none;
+box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.user-status {
+width: 10px;
+height: 10px;
+border-radius: 50%;
+display: inline-block;
+margin-right: 8px;
+}
+.user-status.online {
+background-color: #22c55e;
+box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+}
+.user-status.offline {
+background-color: #94a3b8;
+}
+.settings-card {
+background: white;
+border-radius: 20px;
+padding: 30px;
+box-shadow: var(--card-shadow);
+margin-bottom: 25px;
+transition: var(--transition);
+}
+.settings-card:hover {
+box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.toggle-switch {
+position: relative;
+display: inline-block;
+width: 50px;
+height: 26px;
+}
+.toggle-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.toggle-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #cbd5e1;
+transition: .4s;
+border-radius: 34px;
+}
+.toggle-slider:before {
+position: absolute;
+content: "";
+height: 20px;
+width: 20px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+input:checked + .toggle-slider {
+background-color: #3b82f6;
+}
+input:checked + .toggle-slider:before {
+transform: translateX(24px);
+}
+.bulk-action-bar {
+background: linear-gradient(135deg, #1e293b, #334155);
+color: white;
+padding: 15px 25px;
+border-radius: 16px;
+margin-bottom: 20px;
+display: none;
+align-items: center;
+justify-content: space-between;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.bulk-action-bar.active {
+display: flex;
+animation: slideDown 0.3s ease-out;
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.date-range-picker {
+display: flex;
+gap: 10px;
+align-items: center;
+}
+.import-dropzone {
+border: 3px dashed #cbd5e1;
+border-radius: 20px;
+padding: 40px;
+text-align: center;
+transition: all 0.3s;
+cursor: pointer;
+background: #f8fafc;
+}
+.import-dropzone:hover {
+border-color: #3b82f6;
+background: #f0f7ff;
+}
+.import-dropzone.dragover {
+border-color: #3b82f6;
+background: #dbeafe;
+transform: scale(1.02);
+}
+</style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-
 <!-- LOADING SCREEN -->
 <div id="loadingScreen" class="loading-screen">
-    <div class="loading-spinner"></div>
-    <h2 class="text-2xl font-bold text-gray-800 mt-4">AllInOne MP प्रणाली</h2>
-    <p class="mt-3 text-gray-600 font-medium text-lg">सुरक्षा जांच हो रही है...</p>
-    <p id="loadingStatus" class="mt-3 text-sm text-blue-600 flex items-center gap-2">
-        <i class="fas fa-shield-alt"></i> प्रमाणीकरण की जांच...
-    </p>
-    <div class="mt-6 flex gap-3">
-        <div class="w-40 bg-gray-200 rounded-full overflow-hidden">
-            <div id="loadingProgress" class="h-2 bg-blue-600" style="width: 15%"></div>
-        </div>
-        <span id="progressText" class="text-sm font-medium text-gray-700">15%</span>
-    </div>
+<div class="loading-spinner"></div>
+<h2 class="text-2xl font-bold text-gray-800 mt-4">AllInOne MP प्रणाली</h2>
+<p class="mt-3 text-gray-600 font-medium text-lg">डेटा लोड हो रहा है...</p>
+<p id="loadingStatus" class="mt-3 text-sm text-blue-600 flex items-center gap-2">
+<i class="fas fa-cloud-download-alt"></i> Firebase से कनेक्ट हो रहा है...
+</p>
+<div class="mt-6 flex gap-3">
+<div class="w-40 bg-gray-200 rounded-full overflow-hidden">
+<div id="loadingProgress" class="h-2 bg-blue-600" style="width: 15%"></div>
 </div>
-
-<!-- AUTH ERROR SCREEN (Hidden by default) -->
-<div id="authErrorScreen" class="auth-error-screen" style="display: none;">
-    <div class="text-center p-8">
-        <i class="fas fa-lock text-6xl mb-6 opacity-80"></i>
-        <h1 class="text-3xl font-bold mb-4">🔒 पहुंच अस्वीकृत</h1>
-        <p class="text-xl mb-2 opacity-90">इस पेज को देखने के लिए लॉगिन आवश्यक है</p>
-        <p class="text-lg opacity-75 mb-8">कृपया पहले प्रमाणीकृत करें</p>
-        <a href="https://allinonemp.harshtiwari.in/adminlogin.html" 
-           class="bg-white text-blue-900 px-8 py-3 rounded-xl font-bold text-lg hover:bg-blue-50 transition shadow-lg inline-flex items-center gap-2">
-            <i class="fas fa-sign-in-alt"></i>
-            लॉगिन पेज पर जाएं
-        </a>
-    </div>
+<span id="progressText" class="text-sm font-medium text-gray-700">15%</span>
 </div>
-
+</div>
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-    <div class="p-6 border-b border-blue-700/50">
-        <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 backdrop-blur-sm p-2.5 rounded-xl">
-                    <div class="bg-white w-11 h-11 rounded-lg flex items-center justify-center shadow-md">
-                        <span class="text-blue-900 font-bold text-xl">MP</span>
-                    </div>
-                </div>
-                <div class="logo-text">
-                    <h1 class="text-xl font-bold tracking-tight">AllInOne-MP</h1>
-                    <p class="text-xs opacity-95 mt-0.5">प्रशासन पैनल</p>
-                </div>
-            </div>
-            <button class="text-white p-1.5 hover:bg-white/20 rounded-lg transition no-sidebar-text" onclick="toggleSidebar()">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
-        <div class="mb-3 sidebar-text">
-            <div class="bg-white/15 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs opacity-95 flex items-center gap-1.5">
-                            <i class="fas fa-user-shield"></i> सक्रिय प्रशासक
-                        </p>
-                        <p class="font-bold mt-1.5 text-white text-lg" id="sidebarAdminName">लोड हो रहा है...</p>
-                    </div>
-                    <div class="bg-yellow-300/90 text-blue-900 font-bold w-10 h-10 rounded-xl flex items-center justify-center text-base shadow-md">
-                        <i class="fas fa-user"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <nav class="mt-2 p-4">
-        <div class="px-3 py-2 text-xs font-bold text-blue-200 uppercase tracking-wider mb-3 sidebar-text">मुख्य मेनू</div>
-        <ul class="space-y-1.5">
-            <li>
-                <a class="nav-item active" onclick="showSection('dashboard')">
-                    <div class="nav-icon">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <span class="sidebar-text">डैशबोर्ड</span>
-                </a>
-            </li>
-            <li>
-                <a class="nav-item" onclick="showSection('applications')">
-                    <div class="nav-icon">
-                        <i class="fas fa-file-signature"></i>
-                    </div>
-                    <span class="sidebar-text">आवेदन प्रबंधन</span>
-                </a>
-            </li>
-            <li>
-                <a class="nav-item" onclick="showSection('newApplication')">
-                    <div class="nav-icon">
-                        <i class="fas fa-plus-circle"></i>
-                    </div>
-                    <span class="sidebar-text">नया आवेदन</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <div class="sidebar-footer">
-        <button onclick="logout()" class="logout-btn">
-            <i class="fas fa-sign-out-alt text-lg"></i> 
-            <span class="sidebar-text">प्रणाली से बाहर निकलें</span>
-        </button>
-        <div class="mt-4 text-center text-xs text-blue-100/80 sidebar-text">
-            <div>संस्करण 3.0.0</div>
-            <div class="mt-1 flex items-center justify-center gap-1.5">
-                <i class="fas fa-shield-alt"></i>
-                <span>सुरक्षित कनेक्शन</span>
-            </div>
-        </div>
-    </div>
+<div class="p-6 border-b border-blue-700/50">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<div class="bg-white/20 backdrop-blur-sm p-2.5 rounded-xl">
+<div class="bg-white w-11 h-11 rounded-lg flex items-center justify-center shadow-md">
+<span class="text-blue-900 font-bold text-xl">MP</span>
+</div>
+</div>
+<div class="logo-text">
+<h1 class="text-xl font-bold tracking-tight">AllInOne-MP</h1>
+<p class="text-xs opacity-95 mt-0.5">प्रशासन पैनल</p>
+</div>
+</div>
+<button class="text-white p-1.5 hover:bg-white/20 rounded-lg transition no-sidebar-text" onclick="toggleSidebar()">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<div class="mb-3 sidebar-text">
+<div class="bg-white/15 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs opacity-95 flex items-center gap-1.5">
+<i class="fas fa-user-shield"></i> सक्रिय प्रशासक
+</p>
+<p class="font-bold mt-1.5 text-white text-lg" id="sidebarAdminName">लोड हो रहा है...</p>
+</div>
+<div class="bg-yellow-300/90 text-blue-900 font-bold w-10 h-10 rounded-xl flex items-center justify-center text-base shadow-md">
+<i class="fas fa-user"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="mt-2 p-4">
+<div class="px-3 py-2 text-xs font-bold text-blue-200 uppercase tracking-wider mb-3 sidebar-text">मुख्य मेनू</div>
+<ul class="space-y-1.5">
+<li>
+<a class="nav-item active" onclick="showSection('dashboard')">
+<div class="nav-icon">
+<i class="fas fa-home"></i>
+</div>
+<span class="sidebar-text">डैशबोर्ड</span>
+</a>
+</li>
+<li>
+<a class="nav-item" onclick="showSection('applications')">
+<div class="nav-icon">
+<i class="fas fa-file-signature"></i>
+</div>
+<span class="sidebar-text">आवेदन प्रबंधन</span>
+</a>
+</li>
+<li>
+<a class="nav-item" onclick="showSection('newApplication')">
+<div class="nav-icon">
+<i class="fas fa-plus-circle"></i>
+</div>
+<span class="sidebar-text">नया आवेदन</span>
+</a>
+</li>
+<li>
+<a class="nav-item" onclick="showSection('analysis')">
+<div class="nav-icon">
+<i class="fas fa-chart-pie"></i>
+</div>
+<span class="sidebar-text">विश्लेषण रिपोर्ट</span>
+</a>
+</li>
+<li>
+<a class="nav-item" onclick="showSection('users')">
+<div class="nav-icon">
+<i class="fas fa-users-cog"></i>
+</div>
+<span class="sidebar-text">उपयोगकर्ता प्रबंधन</span>
+</a>
+</li>
+<li>
+<a class="nav-item" onclick="showSection('settings')">
+<div class="nav-icon">
+<i class="fas fa-cog"></i>
+</div>
+<span class="sidebar-text">सेटिंग्स</span>
+</a>
+</li>
+</ul>
+<div class="px-3 py-2 text-xs font-bold text-blue-200 uppercase tracking-wider mt-8 mb-3 sidebar-text">रिपोर्ट्स</div>
+<ul class="space-y-1.5">
+<li>
+<a class="nav-item" onclick="showSection('dailyReports')">
+<div class="nav-icon">
+<i class="fas fa-calendar-day"></i>
+</div>
+<span class="sidebar-text">दैनिक रिपोर्ट</span>
+</a>
+</li>
+<li>
+<a class="nav-item" onclick="showSection('exportData')">
+<div class="nav-icon">
+<i class="fas fa-file-export"></i>
+</div>
+<span class="sidebar-text">आयात/निर्यात</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="sidebar-footer">
+<button onclick="logout()" class="logout-btn">
+<i class="fas fa-sign-out-alt text-lg"></i>
+<span class="sidebar-text">प्रणाली से बाहर निकलें</span>
+</button>
+<div class="mt-4 text-center text-xs text-blue-100/80 sidebar-text">
+<div>संस्करण 3.0.0</div>
+<div class="mt-1 flex items-center justify-center gap-1.5">
+<i class="fas fa-shield-alt"></i>
+<span>सुरक्षित कनेक्शन</span>
+</div>
+</div>
+</div>
 </aside>
-
 <!-- SIDEBAR TOGGLE BUTTON -->
 <button class="sidebar-toggle-fixed" onclick="toggleSidebar()" id="sidebarToggleBtn">
-    <i class="fas fa-bars" id="toggleIcon"></i>
+<i class="fas fa-bars" id="toggleIcon"></i>
 </button>
-
 <!-- TOP BAR -->
 <div class="top-bar" id="topBar">
-    <div class="flex items-center gap-4">
-        <div class="bg-gray-100 text-gray-600 rounded-xl px-4 py-2.5 flex items-center gap-2">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="आवेदन खोजें..." class="bg-transparent border-none outline-none w-48" id="globalSearch">
-        </div>
-    </div>
-    <div class="user-card">
-        <div class="user-avatar" id="topBarAvatar">A</div>
-        <div class="user-info">
-            <div class="user-name" id="adminName">प्रशासक</div>
-            <div class="user-email" id="adminEmail">admin@allinonemp.gov.in</div>
-        </div>
-        <i class="fas fa-chevron-down text-gray-500 text-sm ml-1"></i>
-    </div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<button class="relative p-2.5 hover:bg-gray-100 rounded-xl transition shadow-md" id="notificationBtn">
+<i class="fas fa-bell text-xl text-gray-700"></i>
+<span class="notification-badge">8</span>
+</button>
+<div class="notification-card absolute top-full mt-2 right-0 hidden" id="notificationDropdown">
+<div class="notification-title">
+<h3 class="font-bold text-lg">सूचनाएं</h3>
+<span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">8 नई</span>
 </div>
-
+<div class="notification-list">
+<div class="notification-item">
+<div class="notification-icon pending">
+<i class="fas fa-hourglass-half"></i>
+</div>
+<div class="notification-content">
+<h4>नया आवेदन प्राप्त हुआ</h4>
+<p>राजेश कुमार ने समग्र आईडी आवेदन जमा किया</p>
+<span class="notification-time">2 मिनट पहले</span>
+</div>
+</div>
+<div class="notification-item">
+<div class="notification-icon complete">
+<i class="fas fa-check-circle"></i>
+</div>
+<div class="notification-content">
+<h4>आवेदन स्वीकृत</h4>
+<p>सोनू शर्मा का आवेदन सफलतापूर्वक पूर्ण हुआ</p>
+<span class="notification-time">15 मिनट पहले</span>
+</div>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-gray-100 text-center">
+<button class="text-blue-600 font-medium hover:text-blue-800 text-sm">सभी सूचनाएं देखें</button>
+</div>
+</div>
+</div>
+<div class="hidden md:block">
+<div class="bg-gray-100 text-gray-600 rounded-xl px-4 py-2.5 flex items-center gap-2">
+<i class="fas fa-search"></i>
+<input type="text" placeholder="आवेदन खोजें..." class="bg-transparent border-none outline-none w-48">
+</div>
+</div>
+</div>
+<div class="user-card" onclick="showSection('settings')">
+<div class="user-avatar" id="topBarAvatar">A</div>
+<div class="user-info">
+<div class="user-name" id="adminName">प्रशासक</div>
+<div class="user-email" id="adminEmail">admin@allinonemp.gov.in</div>
+</div>
+<i class="fas fa-chevron-down text-gray-500 text-sm ml-1"></i>
+</div>
+</div>
 <!-- MAIN CONTENT -->
 <main class="main-content flex-1 transition-all" id="mainContent">
-
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="page-section active">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h1 class="text-2.5xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
-                            <i class="fas fa-tachometer-alt text-blue-600"></i>
-                            डैशबोर्ड में आपका स्वागत है, <span id="welcomeAdminName" class="text-blue-600">प्रशासक</span>
-                        </h1>
-                        <p class="text-gray-500 mt-2 text-lg">आज की तारीख: <span id="currentDate" class="font-medium text-gray-700"></span></p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <div class="bg-blue-50 text-blue-800 px-4 py-2.5 rounded-xl font-medium flex items-center gap-2">
-                            <i class="fas fa-cloud text-lg"></i>
-                            <span>Firebase स्थिति: <span id="firebaseStatus" class="font-bold text-green-600">कनेक्टेड</span></span>
-                        </div>
-                        <button onclick="refreshData()" class="btn-primary">
-                            <i class="fas fa-sync-alt"></i> डेटा रीफ्रेश करें
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <div class="stat-card bg-white p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium mb-1.5">कुल आवेदन</p>
-                            <h3 class="text-3xl font-bold text-gray-800" id="statTotal">0</h3>
-                            <p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-arrow-up"></i>
-                                <span id="statTotalGrowth">12.5%</span> पिछले माह से
-                            </p>
-                        </div>
-                        <div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="stat-card bg-white p-6 pending">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium mb-1.5">लंबित आवेदन</p>
-                            <h3 class="text-3xl font-bold text-gray-800" id="statPending">0</h3>
-                            <p class="text-yellow-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span id="statPendingCount">15</span> तत्काल कार्रवाई हेतु
-                            </p>
-                        </div>
-                        <div class="bg-yellow-100 text-yellow-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="stat-card bg-white p-6 complete">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium mb-1.5">सफल आवेदन</p>
-                            <h3 class="text-3xl font-bold text-gray-800" id="statComplete">0</h3>
-                            <p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-check-circle"></i>
-                                <span id="statCompleteRate">98.2%</span> सफलता दर
-                            </p>
-                        </div>
-                        <div class="bg-green-100 text-green-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="stat-card bg-white p-6 rejected">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium mb-1.5">अस्वीकृत आवेदन</p>
-                            <h3 class="text-3xl font-bold text-gray-800" id="statRejected">0</h3>
-                            <p class="text-red-600 font-medium mt-1 flex items-center gap-1.5">
-                                <i class="fas fa-times-circle"></i>
-                                <span id="statRejectedRate">1.8%</span> अस्वीकृति दर
-                            </p>
-                        </div>
-                        <div class="bg-red-100 text-red-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-                <div class="overflow-x-auto">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>आवेदन क्रमांक</th>
-                                <th>आवेदक का नाम</th>
-                                <th>सेवा प्रकार</th>
-                                <th class="hidden md:table-cell">मोबाइल नंबर</th>
-                                <th class="hidden md:table-cell">तारीख</th>
-                                <th>स्थिति</th>
-                                <th>कार्रवाई</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTable">
-                            <tr>
-                                <td colspan="7" class="text-center py-12 text-gray-500">
-                                    <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
-                                    <p class="text-lg font-medium">डेटा लोड हो रहा है...</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="text-gray-600">
-                        कुल <span id="totalRecords">0</span> आवेदन प्रदर्शित किए जा रहे हैं
-                    </div>
-                </div>
-            </div>
-
-            <div class="chart-container fade-in">
-                <h2 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2.5">
-                    <i class="fas fa-chart-bar text-blue-600"></i>
-                    आवेदन विश्लेषण
-                </h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                        <canvas id="applicationsChart" height="250"></canvas>
-                    </div>
-                    <div>
-                        <canvas id="statusChart" height="250"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NEW APPLICATION FORM SECTION -->
-    <div id="newApplication" class="page-section">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-                            <i class="fas fa-plus-circle text-green-600"></i>
-                            नया आवेदन फॉर्म
-                        </h1>
-                        <p class="text-gray-500 mt-1">नए आवेदक का विवरण दर्ज करें</p>
-                    </div>
-                    <button onclick="showSection('dashboard')" class="btn-secondary px-5 py-2.5">
-                        <i class="fas fa-arrow-left"></i> वापस जाएं
-                    </button>
-                </div>
-            </div>
-            
-            <div class="form-section active">
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                    <div class="border-b border-gray-200 pb-6 mb-8">
-                        <h2 class="text-xl font-bold text-gray-800">आवेदक का व्यक्तिगत विवरण</h2>
-                        <p class="text-gray-500 mt-1">कृपया आवेदक का सही और पूर्ण विवरण भरें</p>
-                    </div>
-                    
-                    <form id="applicationForm">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="applicantName">आवेदक का पूरा नाम <span class="text-red-500">*</span></label>
-                                <input type="text" id="applicantName" class="form-control" placeholder="रामशरण यादव" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="fatherName">पिता/पति का नाम <span class="text-red-500">*</span></label>
-                                <input type="text" id="fatherName" class="form-control" placeholder="श्यामशरण यादव" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="mobileNumber">मोबाइल नंबर <span class="text-red-500">*</span></label>
-                                <input type="tel" id="mobileNumber" class="form-control" placeholder="9876543210" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="aadharNumber">आधार नंबर <span class="text-red-500">*</span></label>
-                                <input type="text" id="aadharNumber" class="form-control" placeholder="1234 5678 9012" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="dob">जन्म तिथि <span class="text-red-500">*</span></label>
-                                <input type="date" id="dob" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender">लिंग <span class="text-red-500">*</span></label>
-                                <select id="gender" class="form-control" required>
-                                    <option value="">चुनें</option>
-                                    <option value="male">पुरुष</option>
-                                    <option value="female">महिला</option>
-                                    <option value="other">अन्य</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="serviceType">सेवा प्रकार <span class="text-red-500">*</span></label>
-                                <select id="serviceType" class="form-control" required>
-                                    <option value="">सेवा चुनें</option>
-                                    <option value="samagra">समग्र आईडी</option>
-                                    <option value="mpbhoj">एमपी भोज योजना</option>
-                                    <option value="scholarship">छात्रवृत्ति</option>
-                                    <option value="pension">पेंशन योजना</option>
-                                    <option value="housing">आवास योजना</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="district">जिला <span class="text-red-500">*</span></label>
-                                <select id="district" class="form-control" required>
-                                    <option value="">जिला चुनें</option>
-                                    <option value="bhopal">भोपाल</option>
-                                    <option value="indore">इंदौर</option>
-                                    <option value="jabalpur">जबलपुर</option>
-                                    <option value="gwalior">ग्वालियर</option>
-                                    <option value="ujjain">उज्जैन</option>
-                                    <option value="sagar">सागर</option>
-                                    <option value="ratlam">रतलाम</option>
-                                    <option value="satna">सतना</option>
-                                </select>
-                            </div>
-                            <div class="form-group md:col-span-2">
-                                <label for="address">पता <span class="text-red-500">*</span></label>
-                                <textarea id="address" class="form-control" rows="3" placeholder="गली नंबर 5, शास्त्री नगर, भोपाल, मध्य प्रदेश - 462001" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="pincode">पिन कोड <span class="text-red-500">*</span></label>
-                                <input type="text" id="pincode" class="form-control" placeholder="462001" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">ईमेल आईडी</label>
-                                <input type="email" id="email" class="form-control" placeholder="applicant@example.com">
-                            </div>
-                        </div>
-                        
-                        <div class="border-t border-gray-200 pt-8 mt-8">
-                            <div class="flex justify-end gap-4">
-                                <button type="button" onclick="resetForm()" class="btn-secondary px-6 py-3">
-                                    <i class="fas fa-redo"></i> फॉर्म रीसेट करें
-                                </button>
-                                <button type="submit" class="btn-primary px-8 py-3 text-lg">
-                                    <i class="fas fa-paper-plane"></i> आवेदन जमा करें
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- APPLICATIONS MANAGEMENT SECTION -->
-    <div id="applications" class="page-section">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-                <h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-                    <i class="fas fa-file-signature text-blue-600"></i>
-                    आवेदन प्रबंधन प्रणाली
-                </h1>
-                <p class="text-gray-500 mt-1">सभी आवेदनों का प्रबंधन और निगरानी करें</p>
-            </div>
-            
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-                <div class="overflow-x-auto">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>आवेदन क्रमांक</th>
-                                <th>आवेदक का नाम</th>
-                                <th>पिता/पति का नाम</th>
-                                <th>सेवा प्रकार</th>
-                                <th class="hidden md:table-cell">जिला</th>
-                                <th>स्थिति</th>
-                                <th class="hidden md:table-cell">आवेदन तिथि</th>
-                                <th>कार्रवाई</th>
-                            </tr>
-                        </thead>
-                        <tbody id="applicationsTableBody">
-                            <tr>
-                                <td colspan="8" class="text-center py-12 text-gray-500">
-                                    <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
-                                    <p class="text-lg font-medium">डेटा लोड हो रहा है...</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="page-section active">
+<div class="max-w-7xl mx-auto">
+<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="text-2.5xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
+<i class="fas fa-tachometer-alt text-blue-600"></i>
+डैशबोर्ड में आपका स्वागत है, <span id="welcomeAdminName" class="text-blue-600">प्रशासक</span>
+</h1>
+<p class="text-gray-500 mt-2 text-lg">आज की तारीख: <span id="currentDate" class="font-medium text-gray-700"></span></p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="bg-blue-50 text-blue-800 px-4 py-2.5 rounded-xl font-medium flex items-center gap-2">
+<i class="fas fa-cloud text-lg"></i>
+<span>Firebase स्थिति: <span id="firebaseStatus" class="font-bold text-green-600">कनेक्टेड</span></span>
+</div>
+<button onclick="refreshData()" class="btn-primary">
+<i class="fas fa-sync-alt"></i> डेटा रीफ्रेश करें
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="stat-card bg-white p-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm font-medium mb-1.5">कुल आवेदन</p>
+<h3 class="text-3xl font-bold text-gray-800" id="statTotal">0</h3>
+<p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
+<i class="fas fa-arrow-up"></i>
+<span id="statTotalGrowth">12.5%</span> पिछले माह से
+</p>
+</div>
+<div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
+<i class="fas fa-file-alt"></i>
+</div>
+</div>
+</div>
+<div class="stat-card bg-white p-6 pending">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm font-medium mb-1.5">लंबित आवेदन</p>
+<h3 class="text-3xl font-bold text-gray-800" id="statPending">0</h3>
+<p class="text-yellow-600 font-medium mt-1 flex items-center gap-1.5">
+<i class="fas fa-exclamation-triangle"></i>
+<span id="statPendingCount">15</span> तत्काल कार्रवाई हेतु
+</p>
+</div>
+<div class="bg-yellow-100 text-yellow-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
+<i class="fas fa-clock"></i>
+</div>
+</div>
+</div>
+<div class="stat-card bg-white p-6 complete">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm font-medium mb-1.5">सफल आवेदन</p>
+<h3 class="text-3xl font-bold text-gray-800" id="statComplete">0</h3>
+<p class="text-green-600 font-medium mt-1 flex items-center gap-1.5">
+<i class="fas fa-check-circle"></i>
+<span id="statCompleteRate">98.2%</span> सफलता दर
+</p>
+</div>
+<div class="bg-green-100 text-green-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
+<i class="fas fa-check-circle"></i>
+</div>
+</div>
+</div>
+<div class="stat-card bg-white p-6 rejected">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-gray-500 text-sm font-medium mb-1.5">अस्वीकृत आवेदन</p>
+<h3 class="text-3xl font-bold text-gray-800" id="statRejected">0</h3>
+<p class="text-red-600 font-medium mt-1 flex items-center gap-1.5">
+<i class="fas fa-times-circle"></i>
+<span id="statRejectedRate">1.8%</span> अस्वीकृति दर
+</p>
+</div>
+<div class="bg-red-100 text-red-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-md">
+<i class="fas fa-times-circle"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="search-container fade-in">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
+<div>
+<h2 class="text-xl font-bold text-gray-800 flex items-center gap-2.5">
+<i class="fas fa-list text-blue-600"></i>
+आवेदन सूची
+</h2>
+<p class="text-gray-500 mt-1">नवीनतम आवेदन और कार्रवाई की स्थिति</p>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="relative">
+<select id="statusFilter" class="form-control pl-4 pr-10 py-2.5 text-sm w-full md:w-48">
+<option value="">सभी स्थितियाँ</option>
+<option value="pending">लंबित</option>
+<option value="processing">प्रोसेसिंग</option>
+<option value="complete">पूर्ण</option>
+<option value="reject">अस्वीकृत</option>
+</select>
+<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+<i class="fas fa-filter text-gray-400"></i>
+</div>
+</div>
+<div class="relative">
+<input type="text" id="searchApplications" placeholder="नाम या आवेदन आईडी खोजें" class="form-control pl-10 pr-4 py-2.5 text-sm w-full md:w-64">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<i class="fas fa-search text-gray-400"></i>
+</div>
+</div>
+<button onclick="applyFilters()" class="btn-primary px-5 py-2.5">
+<i class="fas fa-search"></i> खोजें
+</button>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4" id="activeFilters">
+</div>
+</div>
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+<div class="overflow-x-auto">
+<table class="data-table">
+<thead>
+<tr>
+<th>आवेदन क्रमांक</th>
+<th>आवेदक का नाम</th>
+<th>सेवा प्रकार</th>
+<th class="hidden md:table-cell">मोबाइल नंबर</th>
+<th class="hidden md:table-cell">तारीख</th>
+<th>स्थिति</th>
+<th>कार्रवाई</th>
+</tr>
+</thead>
+<tbody id="dataTable">
+<tr>
+<td colspan="7" class="text-center py-12 text-gray-500">
+<i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
+<p class="text-lg font-medium">डेटा लोड हो रहा है...</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-gray-600">
+कुल <span id="totalRecords">0</span> आवेदन प्रदर्शित किए जा रहे हैं
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<button onclick="exportToCSV()" class="btn-secondary">
+<i class="fas fa-file-csv"></i> CSV निर्यात करें
+</button>
+<button onclick="exportToPDF()" class="btn-secondary">
+<i class="fas fa-file-pdf"></i> PDF रिपोर्ट
+</button>
+<div class="flex items-center gap-2">
+<span class="text-gray-600 font-medium">प्रति पृष्ठ:</span>
+<select id="entriesPerPage" class="form-control py-1.5 px-3 text-sm w-20">
+<option value="10">10</option>
+<option value="25" selected>25</option>
+<option value="50">50</option>
+<option value="100">100</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="chart-container fade-in">
+<h2 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2.5">
+<i class="fas fa-chart-bar text-blue-600"></i>
+आवेदन विश्लेषण
+</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div>
+<canvas id="applicationsChart" height="250"></canvas>
+</div>
+<div>
+<canvas id="statusChart" height="250"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- APPLICATIONS MANAGEMENT SECTION -->
+<div id="applications" class="page-section">
+<div class="max-w-7xl mx-auto">
+<!-- Bulk Action Bar -->
+<div id="bulkActionBar" class="bulk-action-bar">
+<div class="flex items-center gap-3">
+<i class="fas fa-check-square text-xl"></i>
+<span class="font-bold"><span id="selectedCount">0</span> आवेदन चयनित</span>
+</div>
+<div class="flex gap-3">
+<button onclick="bulkStatusUpdate('processing')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
+<i class="fas fa-cog mr-2"></i>प्रोसेसिंग
+</button>
+<button onclick="bulkStatusUpdate('complete')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition">
+<i class="fas fa-check mr-2"></i>पूर्ण करें
+</button>
+<button onclick="bulkStatusUpdate('reject')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition">
+<i class="fas fa-times mr-2"></i>अस्वीकृत करें
+</button>
+<button onclick="clearSelection()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition">
+<i class="fas fa-times mr-2"></i>रद्द करें
+</button>
+</div>
+</div>
+<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
+<i class="fas fa-file-signature text-blue-600"></i>
+आवेदन प्रबंधन प्रणाली
+</h1>
+<p class="text-gray-500 mt-1">सभी आवेदनों का प्रबंधन और निगरानी करें</p>
+</div>
+<div class="flex flex-wrap gap-3">
+<button onclick="showSection('newApplication')" class="btn-primary">
+<i class="fas fa-plus"></i> नया आवेदन जोड़ें
+</button>
+<button onclick="bulkExport()" class="btn-secondary">
+<i class="fas fa-download"></i> बल्क निर्यात
+</button>
+</div>
+</div>
+</div>
+<!-- Advanced Filters -->
+<div class="search-container fade-in">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">तिथि सीमा (से)</label>
+<input type="date" id="dateFrom" class="form-control">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">तिथि सीमा (तक)</label>
+<input type="date" id="dateTo" class="form-control">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">जिला</label>
+<select id="districtFilter" class="form-control">
+<option value="">सभी जिले</option>
+<option value="bhopal">भोपाल</option>
+<option value="indore">इंदौर</option>
+<option value="jabalpur">जबलपुर</option>
+<option value="gwalior">ग्वालियर</option>
+<option value="ujjain">उज्जैन</option>
+</select>
+</div>
+<div class="flex items-end">
+<button onclick="applyAdvancedFilters()" class="btn-primary w-full">
+<i class="fas fa-filter"></i> फिल्टर लागू करें
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+<div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="relative w-full md:w-96">
+<input type="text" placeholder="नाम, आवेदन आईडी, मोबाइल नंबर खोजें..." class="form-control pl-12 pr-4 py-3 w-full" id="applicationsSearch">
+<div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+<i class="fas fa-search text-lg"></i>
+</div>
+</div>
+<div class="flex flex-wrap gap-3">
+<select class="form-control py-2.5 px-4 w-48" id="serviceTypeFilter">
+<option value="">सभी सेवाएं</option>
+<option value="samagra">समग्र आईडी</option>
+<option value="mpbhoj">एमपी भोज योजना</option>
+<option value="scholarship">छात्रवृत्ति</option>
+<option value="pension">पेंशन</option>
+</select>
+<select class="form-control py-2.5 px-4 w-48" id="assigneeFilter">
+<option value="">सभी अधिकारी</option>
+<option value="admin">प्रशासक</option>
+<option value="officer1">अधिकारी 1</option>
+<option value="officer2">अधिकारी 2</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="data-table">
+<thead>
+<tr>
+<th><input type="checkbox" id="selectAllCheckbox" class="form-checkbox h-5 w-5 text-blue-600 rounded" onchange="toggleSelectAll()"></th>
+<th>आवेदन क्रमांक</th>
+<th>आवेदक का नाम</th>
+<th>पिता/पति का नाम</th>
+<th>सेवा प्रकार</th>
+<th class="hidden md:table-cell">जिला</th>
+<th>स्थिति</th>
+<th class="hidden md:table-cell">आवेदन तिथि</th>
+<th>कार्रवाई</th>
+</tr>
+</thead>
+<tbody id="applicationsTableBody">
+</tbody>
+</table>
+</div>
+<div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-gray-600">
+<span id="applicationsTotal">0</span> आवेदन में से <span id="applicationsShowing">0</span> प्रदर्शित
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="text-gray-600 font-medium">पृष्ठ:</span>
+<div class="flex items-center gap-1">
+<button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
+<i class="fas fa-chevron-left"></i>
+</button>
+<span class="font-medium px-3">1 of 15</span>
+<button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
+<i class="fas fa-chevron-right"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- USERS MANAGEMENT SECTION -->
+<div id="users" class="page-section">
+<div class="max-w-7xl mx-auto">
+<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
+<i class="fas fa-users-cog text-indigo-600"></i>
+उपयोगकर्ता प्रबंधन
+</h1>
+<p class="text-gray-500 mt-1">सिस्टम उपयोगकर्ताओं और अधिकारियों का प्रबंधन</p>
+</div>
+<button onclick="openAddUserModal()" class="btn-primary">
+<i class="fas fa-user-plus"></i> नया उपयोगकर्ता जोड़ें
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+<div class="settings-card">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-gray-800">सक्रिय उपयोगकर्ता</h3>
+<div class="bg-green-100 text-green-600 p-3 rounded-xl">
+<i class="fas fa-user-check text-xl"></i>
+</div>
+</div>
+<div class="text-3xl font-bold text-gray-800 mb-2" id="activeUsersCount">5</div>
+<p class="text-sm text-gray-600">वर्तमान में सक्रिय सत्र</p>
+</div>
+<div class="settings-card">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-gray-800">कुल अधिकारी</h3>
+<div class="bg-blue-100 text-blue-600 p-3 rounded-xl">
+<i class="fas fa-user-tie text-xl"></i>
+</div>
+</div>
+<div class="text-3xl font-bold text-gray-800 mb-2" id="totalOfficers">12</div>
+<p class="text-sm text-gray-600">पंजीकृत प्रशासनीय अधिकारी</p>
+</div>
+<div class="settings-card">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-gray-800">रोल्स</h3>
+<div class="bg-purple-100 text-purple-600 p-3 rounded-xl">
+<i class="fas fa-user-shield text-xl"></i>
+</div>
+</div>
+<div class="text-3xl font-bold text-gray-800 mb-2">3</div>
+<p class="text-sm text-gray-600">विभिन्न पहुंच स्तर</p>
+</div>
+</div>
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+<div class="p-5 border-b border-gray-200">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<h2 class="text-xl font-bold text-gray-800">उपयोगकर्ता सूची</h2>
+<div class="relative w-full md:w-64">
+<input type="text" id="userSearch" placeholder="उपयोगकर्ता खोजें..." class="form-control pl-10 pr-4 py-2.5 w-full">
+<div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+<i class="fas fa-search"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="data-table">
+<thead>
+<tr>
+<th>उपयोगकर्ता</th>
+<th>ईमेल</th>
+<th>भूमिका</th>
+<th>स्थिति</th>
+<th>अंतिम लॉगिन</th>
+<th>कार्रवाई</th>
+</tr>
+</thead>
+<tbody id="usersTableBody">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- SETTINGS SECTION -->
+<div id="settings" class="page-section">
+<div class="max-w-7xl mx-auto">
+<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
+<h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
+<i class="fas fa-cog text-gray-600"></i>
+सेटिंग्स
+</h1>
+<p class="text-gray-500 mt-1">सिस्टम कॉन्फ़िगरेशन और प्रोफाइल प्रबंधन</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Profile Card -->
+<div class="lg:col-span-1">
+<div class="settings-card text-center">
+<div class="relative inline-block mb-4">
+<div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold mx-auto shadow-lg" id="profileAvatar">
+A
+</div>
+<button class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:shadow-lg transition border border-gray-200">
+<i class="fas fa-camera text-gray-600"></i>
+</button>
+</div>
+<h3 class="text-xl font-bold text-gray-800" id="profileName">प्रशासक</h3>
+<p class="text-gray-600 mb-4" id="profileEmail">admin@allinonemp.gov.in</p>
+<div class="flex justify-center gap-2 mb-4">
+<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">सुपर एडमिन</span>
+<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">सक्रिय</span>
+</div>
+<button onclick="openEditProfileModal()" class="btn-secondary w-full">
+<i class="fas fa-edit mr-2"></i>प्रोफाइल संपादित करें
+</button>
+</div>
+<div class="settings-card mt-6">
+<h3 class="text-lg font-bold text-gray-800 mb-4">सुरक्षा</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-gray-800">दो-चरणीय सत्यापन</p>
+<p class="text-sm text-gray-600">OTP के माध्यम से अतिरिक्त सुरक्षा</p>
+</div>
+<label class="toggle-switch">
+<input type="checkbox" id="twoFactorToggle">
+<span class="toggle-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-gray-800">लॉगिन सूचनाएं</p>
+<p class="text-sm text-gray-600">नए लॉगिन पर ईमेल अलर्ट</p>
+</div>
+<label class="toggle-switch">
+<input type="checkbox" checked>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- System Settings -->
+<div class="lg:col-span-2">
+<div class="settings-card">
+<h3 class="text-lg font-bold text-gray-800 mb-6">सिस्टम सेटिंग्स</h3>
+<div class="form-grid">
+<div class="form-group">
+<label>कार्यालय का नाम</label>
+<input type="text" class="form-control" value="AllInOne MP प्रशासनिक कार्यालय">
+</div>
+<div class="form-group">
+<label>संपर्क ईमेल</label>
+<input type="email" class="form-control" value="support@allinonemp.gov.in">
+</div>
+<div class="form-group">
+<label>हेल्पलाइन नंबर</label>
+<input type="text" class="form-control" value="1800-123-4567">
+</div>
+<div class="form-group">
+<label>कार्यालय समय</label>
+<input type="text" class="form-control" value="10:00 AM - 5:00 PM">
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-gray-200">
+<h4 class="font-bold text-gray-800 mb-4">ऑटोमेशन सेटिंग्स</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+<div>
+<p class="font-medium text-gray-800">स्वचालित रसीद भेजना</p>
+<p class="text-sm text-gray-600">आवेदन जमा होने पर स्वचालित ईमेल/SMS</p>
+</div>
+<label class="toggle-switch">
+<input type="checkbox" checked>
+<span class="toggle-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+<div>
+<p class="font-medium text-gray-800">दैनिक बैकअप</p>
+<p class="text-sm text-gray-600">प्रत्येक दिन रात्रि 12 बजे बैकअप</p>
+</div>
+<label class="toggle-switch">
+<input type="checkbox" checked>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+</div>
+<div class="mt-6 flex justify-end">
+<button onclick="saveSettings()" class="btn-primary px-8">
+<i class="fas fa-save mr-2"></i>सेटिंग्स सहेजें
+</button>
+</div>
+</div>
+<div class="settings-card mt-6 border-l-4 border-red-500">
+<h3 class="text-lg font-bold text-red-600 mb-4">जोखिम क्षेत्र</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-gray-800">सभी डेटा साफ़ करें</p>
+<p class="text-sm text-gray-600">सावधानी: यह सभी आवेदन डेटा हटा देगा</p>
+</div>
+<button class="btn-danger" onclick="clearAllData()">
+<i class="fas fa-trash-alt mr-2"></i>साफ़ करें
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </main>
-
+<!-- DETAIL VIEW MODAL -->
+<div id="detailModal" class="modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="text-2xl font-bold flex items-center gap-3">
+<i class="fas fa-file-invoice"></i>
+आवेदन विवरण एवं रसीद
+</h2>
+<button onclick="closeModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
+<i class="fas fa-times"></i>
+</button>
+</div>
+<div id="pdfContent" class="p-8">
+<!-- Receipt Header -->
+<div class="receipt-header">
+<div class="receipt-logo">MP</div>
+<h1 class="receipt-title">मध्य प्रदेश सरकार</h1>
+<p class="receipt-subtitle">AllInOne MP पोर्टल - आवेदन रसीद</p>
+<div class="mt-3 flex justify-center gap-6 text-sm">
+<div class="flex flex-col items-center">
+<span class="font-bold text-blue-800">आवेदन क्रमांक:</span>
+<span id="receiptAppNumber" class="mt-1 bg-blue-50 text-blue-800 px-3 py-1 rounded-full font-mono">AIO-MP-2024-789456</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-bold text-blue-800">रसीद तिथि:</span>
+<span id="receiptDate" class="mt-1">25 जनवरी, 2024</span>
+</div>
+</div>
+</div>
+<!-- QR Code and Application Status -->
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+<div class="mb-6 lg:mb-0">
+<h3 class="text-xl font-bold text-gray-800 mb-2">आवेदन स्थिति</h3>
+<div class="flex items-center gap-3">
+<span id="receiptStatusBadge" class="status-badge status-pending text-base px-5 py-2.5 font-bold">
+<i class="fas fa-clock mr-2"></i> लंबित
+</span>
+<div class="text-sm text-gray-600">
+<div>अंतिम अपडेट: <span id="lastUpdated">25 जनवरी, 2024</span></div>
+</div>
+</div>
+</div>
+<div class="qr-container">
+<div id="qrCode" class="flex justify-center"></div>
+<p class="text-center text-xs text-gray-600 mt-2 font-medium">स्कैन करें और स्थिति जांचें</p>
+</div>
+</div>
+<!-- Applicant Details -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+<div>
+<h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-blue-100 flex items-center gap-2">
+<i class="fas fa-user text-blue-600"></i> आवेदक विवरण
+</h3>
+<div id="applicantDetails">
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-blue-100 flex items-center gap-2">
+<i class="fas fa-file-alt text-blue-600"></i> आवेदन विवरण
+</h3>
+<div id="applicationDetails">
+</div>
+</div>
+</div>
+<!-- Documents Section -->
+<div class="mb-8">
+<h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-blue-100 flex items-center gap-2">
+<i class="fas fa-paperclip text-blue-600"></i> संलग्न दस्तावेज़
+</h3>
+<div class="document-grid" id="documentsSection">
+</div>
+</div>
+<!-- Receipt Footer -->
+<div class="receipt-footer">
+<p>यह एक कंप्यूटर जनरेटेड रसीद है और हस्ताक्षर की आवश्यकता नहीं है।</p>
+<p class="mt-1">AllInOne MP पोर्टल, मध्य प्रदेश सरकार | सहायता हेतु: 1800-123-4567</p>
+<p class="mt-1 font-medium">आवेदन स्थिति जांचने हेतु: <span class="text-blue-600">https://allinonemp.gov.in/verify</span></p>
+</div>
+</div>
+<div class="p-6 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between gap-4 no-print">
+<div class="flex flex-wrap gap-3">
+<button onclick="updateApplicationStatus('processing')" class="btn-secondary">
+<i class="fas fa-cog"></i> प्रोसेसिंग में बदलें
+</button>
+<button onclick="updateApplicationStatus('complete')" class="btn-secondary bg-green-600 hover:bg-green-700 text-white border-none">
+<i class="fas fa-check-circle"></i> पूर्ण घोषित करें
+</button>
+<button onclick="updateApplicationStatus('reject')" class="btn-secondary bg-red-600 hover:bg-red-700 text-white border-none">
+<i class="fas fa-times-circle"></i> अस्वीकृत करें
+</button>
+</div>
+<div class="flex flex-wrap gap-3">
+<button onclick="openEditModalFromDetail()" class="btn-secondary bg-yellow-500 hover:bg-yellow-600 text-white border-none">
+<i class="fas fa-edit"></i> संपादित करें
+</button>
+<button onclick="downloadPDF()" class="btn-primary px-6 py-3">
+<i class="fas fa-file-pdf"></i> PDF डाउनलोड करें
+</button>
+<button onclick="printReceipt()" class="btn-secondary px-6 py-3">
+<i class="fas fa-print"></i> प्रिंट रसीद
+</button>
+<button onclick="closeModal()" class="btn-secondary bg-gray-500 hover:bg-gray-600 px-6 py-3">
+<i class="fas fa-times"></i> बंद करें
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- EDIT PROFILE MODAL -->
+<div id="editProfileModal" class="modal">
+<div class="modal-content" style="max-width: 500px;">
+<div class="modal-header">
+<h2 class="text-2xl font-bold flex items-center gap-3">
+<i class="fas fa-user-edit"></i>
+प्रोफाइल संपादित करें
+</h2>
+<button onclick="closeEditProfileModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
+<i class="fas fa-times"></i>
+</button>
+</div>
+<div class="p-8">
+<form id="editProfileForm">
+<div class="space-y-4">
+<div class="form-group">
+<label>पूरा नाम</label>
+<input type="text" id="editProfileName" class="form-control" value="प्रशासक" required>
+</div>
+<div class="form-group">
+<label>ईमेल</label>
+<input type="email" id="editProfileEmail" class="form-control" value="admin@allinonemp.gov.in" required>
+</div>
+<div class="form-group">
+<label>पदनाम</label>
+<input type="text" id="editProfileDesignation" class="form-control" value="वरिष्ठ प्रशासनिक अधिकारी">
+</div>
+<div class="form-group">
+<label>मोबाइल नंबर</label>
+<input type="tel" id="editProfilePhone" class="form-control" value="9876543210">
+</div>
+</div>
+<div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+<button type="button" onclick="closeEditProfileModal()" class="btn-secondary">रद्द करें</button>
+<button type="submit" class="btn-primary px-8">
+<i class="fas fa-save mr-2"></i>सहेजें
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- ADD USER MODAL -->
+<div id="addUserModal" class="modal">
+<div class="modal-content" style="max-width: 600px;">
+<div class="modal-header">
+<h2 class="text-2xl font-bold flex items-center gap-3">
+<i class="fas fa-user-plus"></i>
+नया उपयोगकर्ता जोड़ें
+</h2>
+<button onclick="closeAddUserModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
+<i class="fas fa-times"></i>
+</button>
+</div>
+<div class="p-8">
+<form id="addUserForm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="form-group md:col-span-2">
+<label>पूरा नाम</label>
+<input type="text" id="newUserName" class="form-control" required>
+</div>
+<div class="form-group md:col-span-2">
+<label>ईमेल</label>
+<input type="email" id="newUserEmail" class="form-control" required>
+</div>
+<div class="form-group">
+<label>भूमिका</label>
+<select id="newUserRole" class="form-control">
+<option value="admin">प्रशासक</option>
+<option value="officer">अधिकारी</option>
+<option value="viewer">दर्शक</option>
+</select>
+</div>
+<div class="form-group">
+<label>जिला</label>
+<select id="newUserDistrict" class="form-control">
+<option value="all">सभी</option>
+<option value="bhopal">भोपाल</option>
+<option value="indore">इंदौर</option>
+<option value="jabalpur">जबलपुर</option>
+</select>
+</div>
+<div class="form-group md:col-span-2">
+<label>पासवर्ड</label>
+<input type="password" id="newUserPassword" class="form-control" required>
+<p class="text-xs text-gray-500 mt-1">न्यूनतम 8 अक्षर, एक अपरकेस और एक संख्या आवश्यक</p>
+</div>
+</div>
+<div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+<button type="button" onclick="closeAddUserModal()" class="btn-secondary">रद्द करें</button>
+<button type="submit" class="btn-primary px-8">
+<i class="fas fa-user-plus mr-2"></i>उपयोगकर्ता जोड़ें
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
 <!-- JAVASCRIPT -->
-<script type="module">
-// ============================================
-// FIREBASE CONFIGURATION - FIXED VERSION
-// ============================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { 
-    getFirestore, 
-    collection, 
-    onSnapshot, 
-    doc, 
-    getDoc, 
-    getDocs, 
-    updateDoc,
-    setDoc,
-    query, 
-    orderBy, 
-    limit,
-    where,
-    addDoc,
-    serverTimestamp,
-    deleteDoc,
-    writeBatch
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { 
-    getAuth, 
-    onAuthStateChanged, 
-    signOut,
-    updateProfile,
-    updateEmail
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-// ============================================
-// CORRECT FIREBASE CONFIG
-// ============================================
-const firebaseConfig = {
-    apiKey: "AIzaSyA-iZvVroV-H6aRs7X-mlnt_ra3_vnaNzg",
-    authDomain: "allinone-mp.firebaseapp.com",
-    projectId: "allinone-mp",
-    storageBucket: "allinone-mp.firebasestorage.app",
-    messagingSenderId: "826932399310",
-    appId: "1:826932399310:web:a09b1b8a29a30d3f24f1ba",
-    measurementId: "G-3SD0LDNLR6"
-};
-
-// Global Variables
-let app, db, auth;
-let allApplications = [];
-let currentUser = null;
-let isDataLoaded = false;
-let applicationsChart, statusChart;
-
-// ============================================
-// INITIALIZE FIREBASE
-// ============================================
-function initFirebase() {
-    try {
-        console.log("🔥 Initializing Firebase...");
-        app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
-        
-        console.log("✅ Firebase initialized successfully!");
-        
-        // Check auth state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                console.log("✅ User authenticated:", user.email);
-                document.getElementById('firebaseStatus').textContent = "कनेक्टेड ✓";
-                document.getElementById('firebaseStatus').className = "font-bold text-green-600";
-                
-                initDashboard();
-            } else {
-                console.log("❌ User not authenticated - Redirecting to login");
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('authErrorScreen').style.display = 'flex';
-                
-                setTimeout(() => {
-                    window.location.href = 'https://allinonemp.harshtiwari.in/adminlogin.html';
-                }, 2000);
-            }
-        });
-        
-    } catch (error) {
-        console.error("❌ Firebase Init Error:", error);
-        document.getElementById('firebaseStatus').textContent = "कनेक्शन विफल ✗";
-        document.getElementById('firebaseStatus').className = "font-bold text-red-600";
-        showError("Firebase कनेक्शन विफल: " + error.message);
-    }
-}
-
-// ============================================
-// INITIALIZE DASHBOARD
-// ============================================
-function initDashboard() {
-    console.log("📊 Initializing Dashboard...");
-    updateLoadingStatus("डैशबोर्ड लोड हो रहा है...");
+<script>
+// Fix hidden character issue - clean initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize date
+    const today = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+    document.getElementById('currentDate').textContent = today.toLocaleDateString('hi-IN', options);
     
-    let progress = 15;
-    const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15) + 5;
-        if (progress > 95) progress = 95;
-        document.getElementById('loadingProgress').style.width = `${progress}%`;
-        document.getElementById('progressText').textContent = `${progress}%`;
-        
-        if (progress > 90) {
-            clearInterval(interval);
-            setTimeout(() => {
-                document.getElementById('loadingProgress').style.width = "100%";
-                document.getElementById('progressText').textContent = "100%";
-                setTimeout(hideLoading, 300);
-            }, 500);
-        }
-    }, 400);
+    // Set admin avatar based on name
+    const adminName = 'प्रशासक';
+    document.getElementById('topBarAvatar').textContent = adminName.charAt(0);
+    document.getElementById('adminName').textContent = adminName;
+    document.getElementById('sidebarAdminName').textContent = adminName;
+    document.getElementById('welcomeAdminName').textContent = adminName;
+    document.getElementById('profileAvatar').textContent = adminName.charAt(0);
+    document.getElementById('profileName').textContent = adminName;
     
-    setupRealtimeListeners();
-    initUI();
-}
-
-// ============================================
-// SETUP UI
-// ============================================
-function initUI() {
-    const now = new Date();
-    document.getElementById('currentDate').textContent = now.toLocaleDateString('hi-IN', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    // Simulate loading completion
+    setTimeout(() => {
+        document.getElementById('loadingProgress').style.width = "100%";
+        document.getElementById('progressText').textContent = "100%";
+        setTimeout(hideLoading, 300);
+    }, 800);
     
-    if (currentUser) {
-        const displayName = currentUser.displayName || currentUser.email?.split('@')[0] || 'प्रशासक';
-        document.getElementById('adminName').textContent = displayName;
-        document.getElementById('sidebarAdminName').textContent = displayName;
-        document.getElementById('welcomeAdminName').textContent = displayName;
-        document.getElementById('adminEmail').textContent = currentUser.email || '';
-        document.getElementById('topBarAvatar').textContent = displayName.charAt(0).toUpperCase();
-    }
-    
+    // Initialize charts with dummy data
     initCharts();
+    
+    // Render sample users
+    renderUsers();
+    
+    // Setup event listeners
+    setupEventListeners();
+});
+
+function hideLoading() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    loadingScreen.style.opacity = '0';
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }, 300);
 }
 
-// ============================================
-// SETUP REALTIME LISTENERS
-// ============================================
-function setupRealtimeListeners() {
-    console.log("👂 Setting up real-time listeners...");
-    updateLoadingStatus("रीयल-टाइम डेटा सिंक हो रहा है...");
-    
-    try {
-        const applicationsCol = collection(db, 'applications');
-        const q = query(applicationsCol, orderBy('createdAt', 'desc'), limit(100));
-        
-        onSnapshot(q, (snapshot) => {
-            console.log(`📥 Received ${snapshot.docs.length} documents from Firebase`);
-            
-            allApplications = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date()
-            }));
-            
-            console.log("✅ Applications data loaded:", allApplications.length);
-            
-            renderDashboardTable(allApplications);
-            renderApplicationsTable(allApplications);
-            updateStats(allApplications);
-            updateCharts(allApplications);
-            
-            if (!isDataLoaded) {
-                isDataLoaded = true;
-                console.log("✅ Initial data load complete!");
-            }
-        }, (error) => {
-            console.error("❌ Error in real-time listener:", error);
-            showError("डेटा लोड करने में त्रुटि: " + error.message);
-        });
-        
-    } catch (error) {
-        console.error("❌ Error setting up listeners:", error);
-        showError("Listener सेटअप में त्रुटि: " + error.message);
-    }
+function showLoading() {
+    document.getElementById('loadingScreen').style.display = 'flex';
+    document.getElementById('loadingScreen').style.opacity = '1';
+    document.body.style.overflow = 'hidden';
 }
 
-// ============================================
-// RENDER DASHBOARD TABLE
-// ============================================
-function renderDashboardTable(data) {
-    const tbody = document.getElementById('dataTable');
-    if (!data || data.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="py-12">
-                    <div class="empty-state">
-                        <i class="fas fa-inbox empty-icon"></i>
-                        <h3 class="empty-title">कोई आवेदन नहीं मिला</h3>
-                        <p class="empty-message">अभी तक कोई आवेदन जमा नहीं किया गया है।</p>
-                        <button onclick="showSection('newApplication')" class="btn-primary mt-4 px-6 py-3">
-                            <i class="fas fa-plus"></i> नया आवेदन जोड़ें
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    let html = '';
-    data.slice(0, 10).forEach((item) => {
-        const appNo = item.applicationNumber || `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
-        const name = item.applicantName || item.name || "अज्ञात";
-        const service = item.serviceType || "samagra";
-        const mobile = item.mobileNumber || item.mobile || "N/A";
-        const date = formatDate(item.createdAt);
-        const status = item.status || 'pending';
-        
-        let statusClass = status === 'complete' ? 'status-complete' : 
-                         status === 'reject' ? 'status-reject' : 
-                         status === 'processing' ? 'status-processing' : 'status-pending';
-        
-        let statusText = status === 'complete' ? 'पूर्ण' : 
-                        status === 'reject' ? 'अस्वीकृत' : 
-                        status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
-        
-        html += `
-        <tr class="table-row">
-            <td class="font-mono font-bold text-blue-800">${appNo}</td>
-            <td class="font-bold text-gray-800">${name}</td>
-            <td><span class="service-badge">${getServiceName(service)}</span></td>
-            <td class="hidden md:table-cell font-medium">${mobile}</td>
-            <td class="hidden md:table-cell text-gray-600">${date}</td>
-            <td>
-                <span class="status-badge ${statusClass}">
-                    <i class="fas ${status === 'complete' ? 'fa-check-circle' : status === 'reject' ? 'fa-times-circle' : status === 'processing' ? 'fa-cog' : 'fa-clock'}"></i>
-                    ${statusText}
-                </span>
-            </td>
-            <td>
-                <div class="flex items-center gap-2">
-                    <button onclick="alert('View: ${item.id}')" class="action-btn action-view">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button onclick="alert('Edit: ${item.id}')" class="action-btn action-edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button onclick="deleteApplication('${item.id}')" class="action-btn action-delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        `;
+function setupEventListeners() {
+    // Notification dropdown toggle
+    document.getElementById('notificationBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const dropdown = document.getElementById('notificationDropdown');
+        dropdown.classList.toggle('hidden');
     });
     
-    tbody.innerHTML = html;
-    document.getElementById('totalRecords').textContent = data.length;
-}
-
-// ============================================
-// RENDER APPLICATIONS TABLE
-// ============================================
-function renderApplicationsTable(data) {
-    const tbody = document.getElementById('applicationsTableBody');
-    if (!data || data.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="py-12 text-center text-gray-500">
-                    <i class="fas fa-inbox text-4xl mb-3"></i>
-                    <p class="text-lg font-medium">कोई आवेदन नहीं मिला</p>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    let html = '';
-    data.forEach((item) => {
-        const appNo = item.applicationNumber || `AIO-MP-${item.id.substring(0, 8).toUpperCase()}`;
-        const name = item.applicantName || item.name || "अज्ञात";
-        const fatherName = item.fatherName || item.guardianName || "-";
-        const service = item.serviceType || "samagra";
-        const district = item.district || "bhopal";
-        const date = formatDate(item.createdAt);
-        const status = item.status || 'pending';
-        
-        let statusClass = status === 'complete' ? 'status-complete' : 
-                         status === 'reject' ? 'status-reject' : 
-                         status === 'processing' ? 'status-processing' : 'status-pending';
-        
-        let statusText = status === 'complete' ? 'पूर्ण' : 
-                        status === 'reject' ? 'अस्वीकृत' : 
-                        status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
-        
-        html += `
-        <tr class="table-row">
-            <td class="font-mono font-bold text-blue-800">${appNo}</td>
-            <td class="font-bold text-gray-800">${name}</td>
-            <td class="text-gray-700">${fatherName}</td>
-            <td><span class="service-badge">${getServiceName(service)}</span></td>
-            <td class="hidden md:table-cell text-gray-700 font-medium">${getDistrictName(district)}</td>
-            <td>
-                <select class="form-control text-sm py-1 ${statusClass}" style="border-radius: 20px; padding: 4px 12px;" onchange="quickStatusChange('${item.id}', this.value)">
-                    <option value="pending" ${status === 'pending' ? 'selected' : ''}>लंबित</option>
-                    <option value="processing" ${status === 'processing' ? 'selected' : ''}>प्रोसेसिंग</option>
-                    <option value="complete" ${status === 'complete' ? 'selected' : ''}>पूर्ण</option>
-                    <option value="reject" ${status === 'reject' ? 'selected' : ''}>अस्वीकृत</option>
-                </select>
-            </td>
-            <td class="hidden md:table-cell text-gray-600">${date}</td>
-            <td>
-                <div class="flex items-center gap-2">
-                    <button onclick="alert('View: ${item.id}')" class="action-btn action-view">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button onclick="alert('Edit: ${item.id}')" class="action-btn action-edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        `;
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('notificationDropdown');
+        const btn = document.getElementById('notificationBtn');
+        if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
     });
-    
-    tbody.innerHTML = html;
 }
 
-// ============================================
-// UPDATE STATISTICS
-// ============================================
-function updateStats(data) {
-    const total = data.length;
-    const pending = data.filter(a => a.status === 'pending' || !a.status).length;
-    const complete = data.filter(a => a.status === 'complete').length;
-    const rejected = data.filter(a => a.status === 'reject').length;
-    
-    document.getElementById('statTotal').textContent = total.toLocaleString();
-    document.getElementById('statPending').textContent = pending.toLocaleString();
-    document.getElementById('statComplete').textContent = complete.toLocaleString();
-    document.getElementById('statRejected').textContent = rejected.toLocaleString();
-    document.getElementById('statPendingCount').textContent = pending;
-}
-
-// ============================================
-// INITIALIZE CHARTS
-// ============================================
 function initCharts() {
-    const ctx1 = document.getElementById('applicationsChart')?.getContext('2d');
-    const ctx2 = document.getElementById('statusChart')?.getContext('2d');
-    
-    if (!ctx1 || !ctx2) return;
-    
-    applicationsChart = new Chart(ctx1, {
+    // Applications Chart
+    const ctx1 = document.getElementById('applicationsChart').getContext('2d');
+    new Chart(ctx1, {
         type: 'line',
-        data: {
-            labels: ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित'],
+         {
+            labels: ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नवं', 'दिसं'],
             datasets: [{
                 label: 'आवेदन',
-                data: [65, 59, 80, 81, 56, 55, 40, 78, 86],
+                 [65, 59, 80, 81, 56, 55, 40, 78, 86, 92, 75, 88],
                 borderColor: '#3b82f6',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 borderWidth: 3,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#3b82f6',
+                pointBorderWidth: 3,
+                pointRadius: 5,
+                pointHoverRadius: 7,
                 fill: true,
                 tension: 0.3
             }]
@@ -1681,113 +2053,104 @@ function initCharts() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } }
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'मासिक आवेदन रुझान (2024)',
+                    font: { size: 16, weight: 'bold' },
+                    color: '#1e293b'
+                },
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                    ticks: { color: '#64748b' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#64748b' }
+                }
+            }
         }
     });
     
-    statusChart = new Chart(ctx2, {
+    // Status Chart
+    const ctx2 = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx2, {
         type: 'doughnut',
-        data: {
+         {
             labels: ['पूर्ण', 'लंबित', 'प्रोसेसिंग', 'अस्वीकृत'],
             datasets: [{
                 data: [75, 15, 7, 3],
                 backgroundColor: ['#22c55e', '#f59e0b', '#3b82f6', '#ef4444'],
-                borderWidth: 0
+                borderWidth: 0,
+                hoverOffset: 20
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'आवेदन स्थिति वितरण',
+                    font: { size: 16, weight: 'bold' },
+                    color: '#1e293b'
+                },
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 20, color: '#475569', font: { size: 13 } }
+                }
+            },
+            cutout: '65%'
         }
     });
 }
 
-function updateCharts(data) {
-    if (!statusChart) return;
-    const pending = data.filter(a => a.status === 'pending' || !a.status).length;
-    const complete = data.filter(a => a.status === 'complete').length;
-    const rejected = data.filter(a => a.status === 'reject').length;
-    const processing = data.filter(a => a.status === 'processing').length;
+function renderUsers() {
+    const users = [
+        { id: 1, name: 'प्रशासक', email: 'admin@allinonemp.gov.in', role: 'सुपर एडमिन', status: 'online', lastLogin: '2 मिनट पहले' },
+        { id: 2, name: 'राजेश शर्मा', email: 'rajesh@mp.gov.in', role: 'अधिकारी', status: 'online', lastLogin: '5 मिनट पहले' },
+        { id: 3, name: 'सीता वर्मा', email: 'sita@mp.gov.in', role: 'अधिकारी', status: 'offline', lastLogin: '2 घंटे पहले' },
+        { id: 4, name: 'मोहन लाल', email: 'mohan@mp.gov.in', role: 'दर्शक', status: 'offline', lastLogin: '1 दिन पहले' }
+    ];
     
-    statusChart.data.datasets[0].data = [complete, pending, processing, rejected];
-    statusChart.update();
+    const tbody = document.getElementById('usersTableBody');
+    let html = '';
+    users.forEach(user => {
+        html += `
+        <tr class="table-row">
+            <td>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                        ${user.name.charAt(0)}
+                    </div>
+                    <span class="user-status ${user.status}"></span>
+                    <span class="font-bold text-gray-800">${user.name}</span>
+                </div>
+            </td>
+            <td class="text-gray-600">${user.email}</td>
+            <td><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">${user.role}</span></td>
+            <td><span class="${user.status === 'online' ? 'text-green-600' : 'text-gray-500'} text-sm font-medium capitalize">${user.status}</span></td>
+            <td class="text-gray-600 text-sm">${user.lastLogin}</td>
+            <td>
+                <div class="flex gap-2">
+                    <button class="action-btn action-edit" onclick="editUser('${user.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn action-delete" onclick="deleteUser('${user.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+        `;
+    });
+    tbody.innerHTML = html;
 }
 
-// ============================================
-// FORM SUBMISSION
-// ============================================
-document.getElementById('applicationForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    try {
-        const formData = {
-            applicantName: document.getElementById('applicantName').value,
-            fatherName: document.getElementById('fatherName').value,
-            mobileNumber: document.getElementById('mobileNumber').value,
-            aadharNumber: document.getElementById('aadharNumber').value,
-            dob: document.getElementById('dob').value,
-            gender: document.getElementById('gender').value,
-            serviceType: document.getElementById('serviceType').value,
-            district: document.getElementById('district').value,
-            address: document.getElementById('address').value,
-            pincode: document.getElementById('pincode').value,
-            email: document.getElementById('email').value,
-            status: 'pending',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-        };
-        
-        const docRef = await addDoc(collection(db, 'applications'), formData);
-        console.log("✅ Application submitted:", docRef.id);
-        showToast('✓ आवेदन सफलतापूर्वक जमा हो गया!', 'success');
-        this.reset();
-        showSection('dashboard');
-    } catch (error) {
-        console.error("❌ Error submitting application:", error);
-        showToast("आवेदन जमा करने में त्रुटि: " + error.message, 'error');
-    }
-});
-
-// ============================================
-// STATUS UPDATE
-// ============================================
-window.quickStatusChange = async function(id, newStatus) {
-    try {
-        await updateDoc(doc(db, 'applications', id), {
-            status: newStatus,
-            updatedAt: serverTimestamp()
-        });
-        console.log("✅ Status updated for:", id);
-    } catch (error) {
-        console.error("❌ Error updating status:", error);
-        alert("स्थिति अपडेट करने में त्रुटि!");
-    }
-};
-
-// ============================================
-// DELETE APPLICATION
-// ============================================
-window.deleteApplication = async function(id) {
-    if (!confirm('क्या आप वाकई इस आवेदन को हटाना चाहते हैं?')) return;
-    
-    try {
-        await deleteDoc(doc(db, 'applications', id));
-        console.log("✅ Application deleted:", id);
-        showToast('आवेदन सफलतापूर्वक हटा दिया गया', 'success');
-    } catch (error) {
-        console.error("❌ Error deleting application:", error);
-        showToast('त्रुटि: ' + error.message, 'error');
-    }
-};
-
-// ============================================
-// NAVIGATION & UI FUNCTIONS
-// ============================================
-window.showSection = function(sectionId) {
+// Navigation Functions
+function showSection(sectionId) {
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-    const section = document.getElementById(sectionId);
-    if (section) section.classList.add('active');
-    
+    document.getElementById(sectionId).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
         if (item.getAttribute('onclick')?.includes(sectionId)) {
@@ -1795,73 +2158,197 @@ window.showSection = function(sectionId) {
         }
     });
     
+    if (sectionId === 'users') {
+        renderUsers();
+    }
+    
+    if (window.innerWidth < 768) {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar.classList.contains('collapsed')) {
+            toggleSidebar();
+        }
+    }
+    
     window.scrollTo(0, 0);
-};
+}
 
-window.toggleSidebar = function() {
+function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
-    
+    const topBar = document.getElementById('topBar');
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('sidebar-collapsed');
+    topBar.classList.toggle('sidebar-collapsed');
     
     if (window.innerWidth < 768) {
         sidebar.classList.toggle('active');
     }
-};
+}
 
-window.logout = function() {
-    if (confirm("क्या आप प्रणाली से बाहर निकलना चाहते हैं?")) {
-        signOut(auth).then(() => {
-            showToast('सफलतापूर्वक लॉगआउट हो गए', 'success');
-            setTimeout(() => {
-                window.location.href = 'https://allinonemp.harshtiwari.in/adminlogin.html';
-            }, 1000);
-        }).catch(err => console.error(err));
-    }
-};
+// User Modal Functions
+function openAddUserModal() {
+    document.getElementById('addUserModal').classList.add('active');
+}
 
-window.refreshData = function() {
-    showToast('डेटा रीफ्रेश हो रहा है...', 'info');
-    setupRealtimeListeners();
-};
+function closeAddUserModal() {
+    document.getElementById('addUserModal').classList.remove('active');
+}
 
-window.resetForm = function() {
-    document.getElementById('applicationForm')?.reset();
-    showToast('फॉर्म रीसेट हो गया', 'success');
-};
+document.getElementById('addUserForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('नया उपयोगकर्ता सफलतापूर्वक जोड़ा गया!');
+    closeAddUserModal();
+    this.reset();
+});
 
-// ============================================
-// HELPER FUNCTIONS
-// ============================================
-function formatDate(date) {
-    if (!date) return "-";
-    try {
-        if (date.toDate) date = date.toDate();
-        const d = new Date(date);
-        return d.toLocaleDateString('hi-IN', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
-        });
-    } catch (e) {
-        return "-";
+function editUser(id) {
+    alert('उपयोगकर्ता संपादित करें: ' + id);
+}
+
+function deleteUser(id) {
+    if (confirm('क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?')) {
+        alert('उपयोगकर्ता हटा दिया गया!');
+        renderUsers();
     }
 }
 
+// Profile Functions
+function openEditProfileModal() {
+    document.getElementById('editProfileModal').classList.add('active');
+}
+
+function closeEditProfileModal() {
+    document.getElementById('editProfileModal').classList.remove('active');
+}
+
+document.getElementById('editProfileForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const newName = document.getElementById('editProfileName').value;
+    document.getElementById('adminName').textContent = newName;
+    document.getElementById('sidebarAdminName').textContent = newName;
+    document.getElementById('profileName').textContent = newName;
+    alert('प्रोफाइल सफलतापूर्वक अपडेट हो गई!');
+    closeEditProfileModal();
+});
+
+// Settings Functions
+function saveSettings() {
+    alert('सेटिंग्स सफलतापूर्वक सहेजी गईं!');
+}
+
+function clearAllData() {
+    if (confirm('चेतावनी: यह सभी आवेदन डेटा हमेशा के लिए हटा देगा। क्या आप सुनिश्चित हैं?')) {
+        alert('डेटा सफलतापूर्वक साफ़ कर दिया गया!');
+    }
+}
+
+// Modal Functions
+function closeModal() {
+    document.getElementById('detailModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function downloadPDF() {
+    alert('PDF रसीद डाउनलोड हो गई!');
+}
+
+function printReceipt() {
+    window.print();
+}
+
+function updateApplicationStatus(status) {
+    const statusText = status === 'complete' ? 'पूर्ण' : 
+                       status === 'reject' ? 'अस्वीकृत' : 
+                       status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
+    alert(`आवेदन स्थिति "${statusText}" में बदल दी गई!`);
+    closeModal();
+}
+
+function openEditModalFromDetail() {
+    closeModal();
+    setTimeout(() => {
+        alert('आवेदन संपादन मोड खुल गया!');
+    }, 300);
+}
+
+// Bulk Actions
+function toggleSelectAll() {
+    const checkbox = document.getElementById('selectAllCheckbox');
+    const count = checkbox.checked ? 5 : 0; // Sample count
+    document.getElementById('selectedCount').textContent = count;
+    document.getElementById('bulkActionBar').classList.toggle('active', checkbox.checked && count > 0);
+}
+
+function clearSelection() {
+    document.getElementById('selectAllCheckbox').checked = false;
+    document.getElementById('selectedCount').textContent = '0';
+    document.getElementById('bulkActionBar').classList.remove('active');
+}
+
+function bulkStatusUpdate(status) {
+    const count = document.getElementById('selectedCount').textContent;
+    const statusText = status === 'complete' ? 'पूर्ण' : 
+                       status === 'reject' ? 'अस्वीकृत' : 
+                       status === 'processing' ? 'प्रोसेसिंग' : 'लंबित';
+    alert(`${count} आवेदनों की स्थिति "${statusText}" में बदल दी गई!`);
+    clearSelection();
+}
+
+function bulkExport() {
+    const count = document.getElementById('selectedCount').textContent || 'सभी';
+    alert(`${count} आवेदनों का CSV निर्यात हो रहा है...`);
+}
+
+function exportToCSV() {
+    alert('आवेदन डेटा CSV में निर्यात हो गया!');
+}
+
+function exportToPDF() {
+    alert('PDF रिपोर्ट तैयार हो रही है...');
+}
+
+function refreshData() {
+    showLoading();
+    setTimeout(() => {
+        hideLoading();
+        alert('डेटा सफलतापूर्वक रीफ्रेश हो गया!');
+    }, 800);
+}
+
+function logout() {
+    if (confirm('क्या आप प्रणाली से बाहर निकलना चाहते हैं?')) {
+        showLoading();
+        setTimeout(() => {
+            alert('आप सफलतापूर्वक लॉगआउट हो गए हैं!');
+            // In real app: redirect to login page
+        }, 1000);
+    }
+}
+
+// Utility Functions
+function formatDate(date) {
+    if (!date) return '-';
+    if (typeof date === 'string') date = new Date(date);
+    return date.toLocaleDateString('hi-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
+}
+
 function getServiceName(type) {
-    const map = {
+    const services = {
         'samagra': 'समग्र आईडी',
         'mpbhoj': 'एमपी भोज योजना',
         'scholarship': 'छात्रवृत्ति',
         'pension': 'पेंशन',
-        'housing': 'आवास'
+        'housing': 'आवास योजना'
     };
-    return map[type] || 'समग्र आईडी';
+    return services[type] || 'अन्य सेवा';
 }
 
 function getDistrictName(district) {
-    const map = {
+    const districts = {
         'bhopal': 'भोपाल',
         'indore': 'इंदौर',
         'jabalpur': 'जबलपुर',
@@ -1871,58 +2358,22 @@ function getDistrictName(district) {
         'ratlam': 'रतलाम',
         'satna': 'सतना'
     };
-    return map[district] || district || '-';
+    return districts[district] || district;
 }
 
-function updateLoadingStatus(msg) {
-    const el = document.getElementById('loadingStatus');
-    if (el) el.innerHTML = `<i class="fas fa-sync-alt fa-spin mr-2"></i>${msg}`;
+function maskAadhar(aadhar) {
+    if (!aadhar) return 'XXXX XXXX XXXX';
+    return aadhar.replace(/(\d{4})\d{8}(\d{4})/, '$1 XXXX XXXX $2');
 }
 
-function hideLoading() {
-    const loader = document.getElementById('loadingScreen');
-    if (loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => loader.style.display = 'none', 500);
-    }
+function getGenderText(gender) {
+    const genders = {
+        'male': 'पुरुष',
+        'female': 'महिला',
+        'other': 'अन्य'
+    };
+    return genders[gender] || gender;
 }
-
-function showError(msg) {
-    console.error(msg);
-    const el = document.getElementById('loadingStatus');
-    if (el) {
-        el.innerHTML = `<i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>${msg}`;
-        el.className = "mt-2 text-sm text-red-600 font-bold flex items-center";
-    }
-}
-
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `fixed top-20 right-6 z-50 px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-300 ${
-        type === 'success' ? 'bg-green-500' : 
-        type === 'error' ? 'bg-red-500' : 
-        'bg-blue-500'
-    } text-white font-medium flex items-center gap-3`;
-    
-    toast.innerHTML = `
-        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-        <span>${message}</span>
-    `;
-    
-    document.body.appendChild(toast);
-    setTimeout(() => toast.style.transform = 'translateX(0)', 10);
-    setTimeout(() => {
-        toast.style.transform = 'translateX(400px)';
-        setTimeout(() => document.body.removeChild(toast), 300);
-    }, 3000);
-}
-
-// ============================================
-// INITIALIZE ON PAGE LOAD
-// ============================================
-console.log("🚀 Starting application...");
-initFirebase();
-
 </script>
 </body>
 </html>
