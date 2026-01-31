@@ -1,1345 +1,1275 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<!-- [Previous head content remains same] -->
-<style>
-/* Add these new styles */
-.user-profile-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: var(--card-shadow);
-    position: relative;
-    overflow: hidden;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllInOne MP - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== COLOR PALETTE ===== */
+        :root {
+            --primary: #1e40af;
+            --primary-dark: #1d4ed8;
+            --secondary: #7e22ce;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --info: #0ea5e9;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-.user-profile-card::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-}
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.activity-log-item {
-    padding: 12px;
-    border-left: 3px solid #3b82f6;
-    margin-bottom: 10px;
-    background: #f8fafc;
-    border-radius: 0 8px 8px 0;
-    transition: all 0.3s ease;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--gray-800);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-.activity-log-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
 
-.permission-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--dark), var(--gray-900));
+            color: var(--white);
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            transition: var(--transition);
+        }
 
-.permission-item {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    border: 2px solid #e2e8f0;
-    transition: all 0.3s ease;
-}
+        .logo-container {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
 
-.permission-item:hover {
-    border-color: #3b82f6;
-    transform: translateY(-2px);
-}
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
 
-.session-item {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
+        .logo i {
+            color: var(--secondary);
+        }
 
-.badge-role {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
+        .logo-subtitle {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-top: 5px;
+        }
 
-.role-admin { background: linear-gradient(135deg, #ef4444, #f87171); color: white; }
-.role-officer { background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white; }
-.role-viewer { background: linear-gradient(135deg, #10b981, #34d399); color: white; }
+        .nav-menu {
+            list-style: none;
+            padding: 0 10px;
+        }
 
-.user-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
+        .nav-item {
+            margin-bottom: 5px;
+        }
 
-.stat-item {
-    background: rgba(255, 255, 255, 0.15);
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-}
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--gray-300);
+            text-decoration: none;
+            border-radius: 12px;
+            margin: 0 5px;
+            transition: var(--transition);
+            font-weight: 500;
+            gap: 12px;
+        }
 
-.user-search-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
 
-.user-filter-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
+        .nav-link.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+        }
 
-.filter-tab {
-    padding: 8px 20px;
-    border-radius: 20px;
-    background: #e0e7ff;
-    color: #3b82f6;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
 
-.filter-tab.active {
-    background: #3b82f6;
-    color: white;
-}
+        .nav-link span {
+            flex: 1;
+        }
 
-.filter-tab:hover:not(.active) {
-    background: #bfdbfe;
-}
+        .nav-link .badge {
+            background: var(--danger);
+            color: var(--white);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
 
-.user-action-menu {
-    position: relative;
-    display: inline-block;
-}
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            transition: var(--transition);
+        }
 
-.action-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    padding: 8px 0;
-    min-width: 180px;
-    z-index: 1000;
-    display: none;
-}
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            background: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
 
-.action-dropdown.show {
-    display: block;
-}
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-.action-item {
-    padding: 10px 16px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
 
-.action-item:hover {
-    background: #f1f5ff;
-    color: #3b82f6;
-}
+        .menu-toggle:hover {
+            background: var(--gray-100);
+        }
 
-.user-detail-modal {
-    max-width: 900px;
-}
+        .search-container {
+            position: relative;
+        }
 
-.user-avatar-large {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6, #60a5fa);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin: 0 auto 20px;
-    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-}
+        .search-input {
+            padding: 10px 40px 10px 15px;
+            border: 2px solid var(--gray-200);
+            border-radius: 50px;
+            width: 300px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
 
-.security-setting {
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    border-left: 4px solid #3b82f6;
-}
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
 
-.notification-preference {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: #f8fafc;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-</style>
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification-bell {
+            position: relative;
+            color: var(--gray-600);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-bell:hover {
+            color: var(--primary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: var(--white);
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: var(--gray-100);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.95rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== PAGE SECTIONS ===== */
+        .page-section {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gray-800);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title i {
+            color: var(--primary);
+        }
+
+        /* ===== CARDS ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stats-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stats-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .stats-icon.primary {
+            background: rgba(30, 64, 175, 0.1);
+            color: var(--primary);
+        }
+
+        .stats-icon.success {
+            background: rgba(22, 163, 74, 0.1);
+            color: var(--success);
+        }
+
+        .stats-icon.warning {
+            background: rgba(217, 119, 6, 0.1);
+            color: var(--warning);
+        }
+
+        .stats-icon.danger {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--gray-800);
+            margin: 5px 0;
+        }
+
+        .stats-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .stats-trend.positive {
+            color: var(--success);
+        }
+
+        .stats-trend.negative {
+            color: var(--danger);
+        }
+
+        /* ===== TABLES ===== */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--white);
+        }
+
+        .data-table th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--gray-50);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #15803d);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #b91c1c);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* ===== FORMS ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: rgba(30, 64, 175, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: rgba(22, 163, 74, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(217, 119, 6, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--gray-800);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--gray-100);
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-content {
+                margin-left: 240px;
+            }
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .main-content.sidebar-active {
+                margin-left: 240px;
+            }
+            .search-input {
+                width: 150px;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            .top-bar-left,
+            .top-bar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .search-container {
+                width: 100%;
+            }
+            .search-input {
+                width: 100%;
+            }
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ===== USER PROFILE CARD ===== */
+        .user-profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .badge-role {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, var(--danger), #f87171);
+            color: white;
+        }
+
+        .role-officer {
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            color: white;
+        }
+
+        .role-viewer {
+            background: linear-gradient(135deg, var(--success), #34d399);
+            color: white;
+        }
+
+        /* ===== ACTIVITY LOG ===== */
+        .activity-log-item {
+            padding: 12px;
+            border-left: 3px solid var(--primary);
+            margin-bottom: 10px;
+            background: var(--gray-50);
+            border-radius: 0 8px 8px 0;
+            transition: var(--transition);
+        }
+
+        .activity-log-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===== PERMISSION GRID ===== */
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .permission-item {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid var(--gray-200);
+            transition: var(--transition);
+        }
+
+        .permission-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* ===== TOGGLE SWITCH ===== */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+    </style>
 </head>
 <body>
-<!-- [Previous sidebar and top bar remain same] -->
-
-<!-- Enhanced USERS MANAGEMENT SECTION -->
-<div id="users" class="page-section">
-<div class="max-w-7xl mx-auto">
-<!-- User Dashboard Header -->
-<div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-2xl shadow-lg p-6 mb-6 text-white fade-in">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-<div>
-<h1 class="text-2.5xl font-bold flex items-center gap-3">
-<i class="fas fa-users-cog"></i>
-उपयोगकर्ता प्रबंधन प्रणाली
-</h1>
-<p class="text-purple-100 mt-1 text-lg">सभी उपयोगकर्ताओं और अधिकारियों का व्यापक प्रबंधन</p>
-</div>
-<div class="flex flex-wrap gap-3">
-<button onclick="openAddUserModal()" class="bg-white text-purple-700 hover:bg-purple-50 px-6 py-3 rounded-xl font-bold transition shadow-lg">
-<i class="fas fa-user-plus mr-2"></i>नया उपयोगकर्ता जोड़ें
-</button>
-<button onclick="bulkUserActions()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-bold transition">
-<i class="fas fa-users mr-2"></i>बल्क कार्रवाई
-</button>
-</div>
-</div>
-</div>
-
-<!-- User Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-<div class="settings-card">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-lg font-bold text-gray-800">कुल उपयोगकर्ता</h3>
-<div class="bg-blue-100 text-blue-600 p-3 rounded-xl">
-<i class="fas fa-users text-xl"></i>
-</div>
-</div>
-<div class="text-3xl font-bold text-gray-800 mb-2" id="totalUsersCount">24</div>
-<p class="text-sm text-gray-600">सभी सक्रिय उपयोगकर्ता</p>
-</div>
-
-<div class="settings-card">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-lg font-bold text-gray-800">सक्रिय अधिकारी</h3>
-<div class="bg-green-100 text-green-600 p-3 rounded-xl">
-<i class="fas fa-user-check text-xl"></i>
-</div>
-</div>
-<div class="text-3xl font-bold text-gray-800 mb-2" id="activeOfficers">12</div>
-<p class="text-sm text-gray-600">ऑनलाइन अधिकारी</p>
-</div>
-
-<div class="settings-card">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-lg font-bold text-gray-800">नए उपयोगकर्ता</h3>
-<div class="bg-purple-100 text-purple-600 p-3 rounded-xl">
-<i class="fas fa-user-plus text-xl"></i>
-</div>
-</div>
-<div class="text-3xl font-bold text-gray-800 mb-2">8</div>
-<p class="text-sm text-gray-600">इस सप्ताह जोड़े गए</p>
-</div>
-
-<div class="settings-card">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-lg font-bold text-gray-800">भूमिकाएं</h3>
-<div class="bg-orange-100 text-orange-600 p-3 rounded-xl">
-<i class="fas fa-user-shield text-xl"></i>
-</div>
-</div>
-<div class="text-3xl font-bold text-gray-800 mb-2">4</div>
-<p class="text-sm text-gray-600">विभिन्न पहुंच स्तर</p>
-</div>
-</div>
-
-<!-- User Profile Card (Admin Details) -->
-<div class="user-profile-card mb-6 fade-in">
-<div class="flex flex-col md:flex-row items-center justify-between">
-<div class="flex items-center gap-5 mb-4 md:mb-0">
-<div class="user-avatar-large" id="adminAvatarLarge">A</div>
-<div>
-<h2 class="text-2xl font-bold mb-1" id="adminFullName">प्रशासक</h2>
-<p class="text-purple-100 mb-2" id="adminDesignation">वरिष्ठ प्रशासनिक अधिकारी</p>
-<div class="flex gap-2 mt-2">
-<span class="badge-role role-admin">सुपर एडमिन</span>
-<span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-<i class="fas fa-circle text-green-400 mr-1"></i>ऑनलाइन
-</span>
-</div>
-</div>
-</div>
-<div class="flex flex-wrap gap-3">
-<button onclick="openEditProfileModal()" class="bg-white text-purple-700 px-5 py-2.5 rounded-lg font-medium hover:bg-purple-50 transition">
-<i class="fas fa-edit mr-2"></i>प्रोफाइल संपादित करें
-</button>
-<button onclick="viewActivityLog()" class="bg-purple-700 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-purple-800 transition">
-<i class="fas fa-history mr-2"></i>गतिविधि देखें
-</button>
-</div>
-</div>
-
-<!-- User Stats Grid -->
-<div class="user-stats-grid mt-6 pt-4 border-t border-white/20">
-<div class="stat-item">
-<div class="text-2xl font-bold">156</div>
-<div class="text-sm opacity-90">कुल लॉगिन</div>
-</div>
-<div class="stat-item">
-<div class="text-2xl font-bold">42</div>
-<div class="text-sm opacity-90">आज की गतिविधि</div>
-</div>
-<div class="stat-item">
-<div class="text-2xl font-bold">8</div>
-<div class="text-sm opacity-90">सक्रिय सत्र</div>
-</div>
-<div class="stat-item">
-<div class="text-2xl font-bold">98%</div>
-<div class="text-sm opacity-90">सफलता दर</div>
-</div>
-</div>
-</div>
-
-<!-- User Search and Filters -->
-<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-<div class="user-search-container">
-<div class="relative flex-1">
-<input type="text" id="userSearch" placeholder="उपयोगकर्ता नाम, ईमेल या भूमिका खोजें..." 
-       class="form-control pl-12 pr-4 py-3 w-full" 
-       oninput="filterUsers()">
-<div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-<i class="fas fa-search text-lg"></i>
-</div>
-</div>
-<div class="flex gap-2">
-<button onclick="toggleAdvancedFilters()" class="btn-secondary px-4 py-3">
-<i class="fas fa-sliders-h"></i>
-</button>
-<button onclick="exportUserList()" class="btn-primary px-4 py-3">
-<i class="fas fa-download"></i>
-</button>
-</div>
-</div>
-
-<!-- Advanced Filters (Initially Hidden) -->
-<div id="advancedFilters" class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4" style="display: none;">
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">भूमिका</label>
-<select id="roleFilter" class="form-control" onchange="applyUserFilters()">
-<option value="">सभी भूमिकाएं</option>
-<option value="admin">प्रशासक</option>
-<option value="officer">अधिकारी</option>
-<option value="viewer">दर्शक</option>
-<option value="dataentry">डेटा एंट्री</option>
-</select>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">स्थिति</label>
-<select id="statusFilterUser" class="form-control" onchange="applyUserFilters()">
-<option value="">सभी स्थितियां</option>
-<option value="active">सक्रिय</option>
-<option value="inactive">निष्क्रिय</option>
-<option value="suspended">निलंबित</option>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">जिला</label>
-<select id="districtFilterUser" class="form-control" onchange="applyUserFilters()">
-<option value="">सभी जिले</option>
-<option value="bhopal">भोपाल</option>
-<option value="indore">इंदौर</option>
-<option value="jabalpur">जबलपुर</option>
-<option value="gwalior">ग्वालियर</option>
-<option value="ujjain">उज्जैन</option>
-</select>
-</div>
-<div class="flex items-end">
-<button onclick="resetUserFilters()" class="btn-secondary w-full">
-<i class="fas fa-redo mr-2"></i>रीसेट करें
-</button>
-</div>
-</div>
-</div>
-
-<!-- User Filter Tabs -->
-<div class="user-filter-tabs mb-6">
-<span class="filter-tab active" onclick="filterByRole('all')">सभी उपयोगकर्ता</span>
-<span class="filter-tab" onclick="filterByRole('admin')">प्रशासक</span>
-<span class="filter-tab" onclick="filterByRole('officer')">अधिकारी</span>
-<span class="filter-tab" onclick="filterByRole('viewer')">दर्शक</span>
-<span class="filter-tab" onclick="filterByStatus('active')">सक्रिय</span>
-<span class="filter-tab" onclick="filterByStatus('inactive')">निष्क्रिय</span>
-</div>
-
-<!-- Users Table -->
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-<div class="overflow-x-auto">
-<table class="data-table">
-<thead>
-<tr>
-<th><input type="checkbox" id="selectAllUsers" class="form-checkbox h-5 w-5 text-blue-600 rounded" onchange="toggleSelectAllUsers()"></th>
-<th>उपयोगकर्ता</th>
-<th>ईमेल</th>
-<th>भूमिका</th>
-<th>जिला</th>
-<th>स्थिति</th>
-<th>अंतिम लॉगिन</th>
-<th>कार्रवाई</th>
-</tr>
-</thead>
-<tbody id="usersTableBody">
-<!-- Users will be populated by JavaScript -->
-</tbody>
-</table>
-</div>
-
-<!-- Pagination and Actions -->
-<div class="p-5 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-<div class="text-gray-600">
-<span id="usersTotal">0</span> उपयोगकर्ताओं में से <span id="usersShowing">0</span> प्रदर्शित
-</div>
-<div class="flex flex-wrap items-center gap-3">
-<div class="flex items-center gap-2">
-<span class="text-gray-600 font-medium">पृष्ठ:</span>
-<div class="flex items-center gap-1">
-<button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-<i class="fas fa-chevron-left"></i>
-</button>
-<span class="font-medium px-3">1 of 5</span>
-<button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200">
-<i class="fas fa-chevron-right"></i>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- Enhanced SETTINGS SECTION with User Options -->
-<div id="settings" class="page-section">
-<div class="max-w-7xl mx-auto">
-<!-- Settings Header -->
-<div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-<div>
-<h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-<i class="fas fa-cog text-gray-600"></i>
-सेटिंग्स और उपयोगकर्ता विकल्प
-</h1>
-<p class="text-gray-500 mt-1">सिस्टम कॉन्फ़िगरेशन और व्यक्तिगत प्रोफाइल प्रबंधन</p>
-</div>
-<div class="flex gap-3">
-<button onclick="saveAllSettings()" class="btn-primary px-6 py-3">
-<i class="fas fa-save mr-2"></i>सभी सहेजें
-</button>
-<button onclick="resetAllSettings()" class="btn-secondary px-6 py-3">
-<i class="fas fa-redo mr-2"></i>रीसेट करें
-</button>
-</div>
-</div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<!-- Enhanced Profile Card -->
-<div class="lg:col-span-1">
-<div class="settings-card text-center">
-<div class="relative inline-block mb-4">
-<div class="w-36 h-36 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-5xl font-bold mx-auto shadow-2xl" id="profileAvatarLarge">
-A
-</div>
-<button class="absolute bottom-2 right-2 bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition border-2 border-white">
-<i class="fas fa-camera text-gray-600 text-xl"></i>
-</button>
-</div>
-<h3 class="text-2xl font-bold text-gray-800 mb-1" id="profileNameLarge">प्रशासक</h3>
-<p class="text-gray-600 mb-2 text-lg" id="profileDesignation">वरिष्ठ प्रशासनिक अधिकारी</p>
-<p class="text-sm text-gray-500 mb-4" id="profileEmailLarge">admin@allinonemp.gov.in</p>
-<div class="flex justify-center gap-2 mb-4 flex-wrap">
-<span class="badge-role role-admin">सुपर एडमिन</span>
-<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-<i class="fas fa-circle text-green-500 mr-1"></i>सक्रिय
-</span>
-<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-<i class="fas fa-user-clock mr-1"></i>ऑनलाइन
-</span>
-</div>
-<div class="grid grid-cols-3 gap-3 mb-4">
-<div class="bg-gray-50 p-3 rounded-lg">
-<div class="text-2xl font-bold text-blue-600">156</div>
-<div class="text-xs text-gray-600">लॉगिन</div>
-</div>
-<div class="bg-gray-50 p-3 rounded-lg">
-<div class="text-2xl font-bold text-green-600">42</div>
-<div class="text-xs text-gray-600">आज की गतिविधि</div>
-</div>
-<div class="bg-gray-50 p-3 rounded-lg">
-<div class="text-2xl font-bold text-purple-600">8</div>
-<div class="text-xs text-gray-600">प्रोजेक्ट</div>
-</div>
-</div>
-<button onclick="openEditProfileModal()" class="btn-secondary w-full mb-3">
-<i class="fas fa-edit mr-2"></i>प्रोफाइल संपादित करें
-</button>
-<button onclick="changePassword()" class="btn-secondary w-full bg-yellow-500 hover:bg-yellow-600 text-white border-none">
-<i class="fas fa-lock mr-2"></i>पासवर्ड बदलें
-</button>
-</div>
-
-<!-- Security Settings -->
-<div class="settings-card mt-6">
-<h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-<i class="fas fa-shield-alt text-red-500"></i>
-सुरक्षा सेटिंग्स
-</h3>
-<div class="space-y-4">
-<div class="security-setting">
-<div class="flex items-center justify-between mb-2">
-<div>
-<p class="font-medium text-gray-800">दो-चरणीय सत्यापन</p>
-<p class="text-sm text-gray-600">OTP के माध्यम से अतिरिक्त सुरक्षा</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" id="twoFactorToggle" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-<button class="btn-secondary w-full mt-2" onclick="setupTwoFactor()">
-<i class="fas fa-mobile-alt mr-2"></i>सेटअप करें
-</button>
-</div>
-
-<div class="security-setting">
-<div class="flex items-center justify-between mb-2">
-<div>
-<p class="font-medium text-gray-800">लॉगिन सूचनाएं</p>
-<p class="text-sm text-gray-600">नए लॉगिन पर ईमेल/SMS अलर्ट</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-
-<div class="security-setting">
-<div class="flex items-center justify-between mb-2">
-<div>
-<p class="font-medium text-gray-800">सत्र समय सीमा</p>
-<p class="text-sm text-gray-600">निष्क्रियता के बाद लॉगआउट</p>
-</div>
-<select class="form-control w-32">
-<option>15 मिनट</option>
-<option selected>30 मिनट</option>
-<option>1 घंटा</option>
-<option>कभी नहीं</option>
-</select>
-</div>
-</div>
-
-<div class="mt-4 pt-4 border-t border-gray-200">
-<button onclick="viewSecurityLog()" class="btn-secondary w-full">
-<i class="fas fa-history mr-2"></i>सुरक्षा लॉग देखें
-</button>
-</div>
-</div>
-
-<!-- Active Sessions -->
-<div class="settings-card mt-6">
-<h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-<i class="fas fa-laptop text-blue-500"></i>
-सक्रिय सत्र
-</h3>
-<div class="space-y-3 max-h-60 overflow-y-auto pr-2">
-<div class="session-item">
-<div class="flex justify-between items-start">
-<div>
-<p class="font-medium">Chrome - Windows</p>
-<p class="text-sm text-gray-600">भोपाल, भारत • आज 10:30 AM</p>
-</div>
-<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs">वर्तमान</span>
-</div>
-</div>
-<div class="session-item">
-<div class="flex justify-between items-start">
-<div>
-<p class="font-medium">Firefox - Android</p>
-<p class="text-sm text-gray-600">इंदौर, भारत • कल 4:15 PM</p>
-</div>
-<button class="text-sm text-red-600 hover:text-red-800 font-medium">समाप्त करें</button>
-</div>
-</div>
-</div>
-<button class="btn-secondary w-full mt-3" onclick="terminateAllSessions()">
-<i class="fas fa-sign-out-alt mr-2"></i>सभी सत्र समाप्त करें
-</button>
-</div>
-</div>
-
-<!-- Enhanced System Settings -->
-<div class="lg:col-span-2">
-<!-- Personal Preferences -->
-<div class="settings-card mb-6">
-<h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-<i class="fas fa-user-cog text-purple-600"></i>
-व्यक्तिगत प्राथमिकताएं
-</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<div class="notification-preference">
-<div>
-<p class="font-medium text-gray-800">ईमेल सूचनाएं</p>
-<p class="text-sm text-gray-600">नए आवेदन और अपडेट पर</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-<div class="notification-preference">
-<div>
-<p class="font-medium text-gray-800">SMS अलर्ट</p>
-<p class="text-sm text-gray-600">तत्काल अधिसूचनाएं</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox">
-<span class="toggle-slider"></span>
-</label>
-</div>
-<div class="notification-preference">
-<div>
-<p class="font-medium text-gray-800">डैशबोर्ड विजेट</p>
-<p class="text-sm text-gray-600">कस्टमाइज करें</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-<div class="notification-preference">
-<div>
-<p class="font-medium text-gray-800">डार्क मोड</p>
-<p class="text-sm text-gray-600">आंखों की सुरक्षा</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox">
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-</div>
-
-<!-- System Configuration -->
-<div class="settings-card">
-<h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-<i class="fas fa-server text-blue-600"></i>
-सिस्टम कॉन्फ़िगरेशन
-</h3>
-<div class="form-grid">
-<div class="form-group">
-<label>कार्यालय का नाम</label>
-<input type="text" class="form-control" value="AllInOne MP प्रशासनिक कार्यालय" id="officeName">
-</div>
-<div class="form-group">
-<label>संपर्क ईमेल</label>
-<input type="email" class="form-control" value="support@allinonemp.gov.in" id="contactEmail">
-</div>
-<div class="form-group">
-<label>हेल्पलाइन नंबर</label>
-<input type="text" class="form-control" value="1800-123-4567" id="helplineNumber">
-</div>
-<div class="form-group">
-<label>कार्यालय समय</label>
-<input type="text" class="form-control" value="10:00 AM - 5:00 PM" id="officeHours">
-</div>
-<div class="form-group">
-<label>प्राथमिक जिला</label>
-<select class="form-control" id="primaryDistrict">
-<option value="bhopal">भोपाल</option>
-<option value="indore">इंदौर</option>
-<option value="jabalpur">जबलपुर</option>
-<option value="gwalior">ग्वालियर</option>
-<option value="ujjain">उज्जैन</option>
-</select>
-</div>
-<div class="form-group">
-<label>भाषा प्राथमिकता</label>
-<select class="form-control" id="languagePreference">
-<option value="hi">हिंदी (प्राथमिक)</option>
-<option value="en">English</option>
-<option value="hi-en">हिंदी + English</option>
-</select>
-</div>
-</div>
-
-<!-- Automation Settings -->
-<div class="mt-6 pt-6 border-t border-gray-200">
-<h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-<i class="fas fa-robot text-green-600"></i>
-ऑटोमेशन सेटिंग्स
-</h4>
-<div class="space-y-4">
-<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-<div>
-<p class="font-medium text-gray-800">स्वचालित रसीद भेजना</p>
-<p class="text-sm text-gray-600">आवेदन जमा होने पर स्वचालित ईमेल/SMS</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-<div>
-<p class="font-medium text-gray-800">दैनिक बैकअप</p>
-<p class="text-sm text-gray-600">प्रत्येक दिन रात्रि 12 बजे बैकअप</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-<div>
-<p class="font-medium text-gray-800">स्थिति अपडेट अधिसूचना</p>
-<p class="text-sm text-gray-600">आवेदन स्थिति परिवर्तन पर</p>
-</div>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-</div>
-
-<!-- Permission Matrix -->
-<div class="mt-6 pt-6 border-t border-gray-200">
-<h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-<i class="fas fa-key text-orange-600"></i>
-अनुमतियां और पहुंच
-</h4>
-<div class="permission-grid">
-<div class="permission-item">
-<div class="flex items-center justify-between mb-2">
-<p class="font-medium text-gray-800">आवेदन देखें</p>
-<label class="toggle-switch">
-<input type="checkbox" checked disabled>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between mb-2">
-<p class="font-medium text-gray-800">आवेदन संपादित करें</p>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between mb-2">
-<p class="font-medium text-gray-800">उपयोगकर्ता प्रबंधित करें</p>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between mb-2">
-<p class="font-medium text-gray-800">डेटा निर्यात करें</p>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between mb-2">
-<p class="font-medium text-gray-800">सेटिंग्स बदलें</p>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between mb-2">
-<p class="font-medium text-gray-800">रिपोर्ट जेनरेट करें</p>
-<label class="toggle-switch">
-<input type="checkbox" checked>
-<span class="toggle-slider"></span>
-</label>
-</div>
-</div>
-</div>
-</div>
-
-<div class="mt-6 pt-6 border-t border-gray-200 flex justify-end gap-3">
-<button onclick="testSettings()" class="btn-secondary px-6 py-3">
-<i class="fas fa-flask mr-2"></i>परीक्षण करें
-</button>
-<button onclick="saveSettings()" class="btn-primary px-8 py-3">
-<i class="fas fa-save mr-2"></i>सेटिंग्स सहेजें
-</button>
-</div>
-</div>
-
-<!-- Activity Log Section -->
-<div class="settings-card mt-6">
-<h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-<i class="fas fa-history text-indigo-600"></i>
-हालिया गतिविधि लॉग
-</h3>
-<div class="max-h-80 overflow-y-auto space-y-3 pr-2">
-<div class="activity-log-item">
-<div class="flex justify-between items-start">
-<div>
-<p class="font-medium text-gray-800">नया आवेदन जोड़ा गया</p>
-<p class="text-sm text-gray-600">समग्र आईडी - राजेश कुमार</p>
-</div>
-<span class="text-xs text-gray-500">10 मिनट पहले</span>
-</div>
-</div>
-<div class="activity-log-item">
-<div class="flex justify-between items-start">
-<div>
-<p class="font-medium text-gray-800">उपयोगकर्ता अपडेट किया गया</p>
-<p class="text-sm text-gray-600">सीता वर्मा की भूमिका बदली गई</p>
-</div>
-<span class="text-xs text-gray-500">25 मिनट पहले</span>
-</div>
-</div>
-<div class="activity-log-item">
-<div class="flex justify-between items-start">
-<div>
-<p class="font-medium text-gray-800">डेटा निर्यात किया गया</p>
-<p class="text-sm text-gray-600">CSV फॉर्मेट में 50 आवेदन</p>
-</div>
-<span class="text-xs text-gray-500">1 घंटा पहले</span>
-</div>
-</div>
-<div class="activity-log-item">
-<div class="flex justify-between items-start">
-<div>
-<p class="font-medium text-gray-800">सेटिंग्स अपडेट की गईं</p>
-<p class="text-sm text-gray-600">ऑटोमेशन सेटिंग्स सक्रिय की गईं</p>
-</div>
-<span class="text-xs text-gray-500">2 घंटे पहले</span>
-</div>
-</div>
-</div>
-<button class="btn-secondary w-full mt-3" onclick="viewFullActivityLog()">
-<i class="fas fa-list mr-2"></i>पूर्ण लॉग देखें
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- User Detail Modal -->
-<div id="userDetailModal" class="modal">
-<div class="modal-content user-detail-modal">
-<div class="modal-header">
-<h2 class="text-2xl font-bold flex items-center gap-3">
-<i class="fas fa-user-circle"></i>
-उपयोगकर्ता विवरण
-</h2>
-<button onclick="closeUserDetailModal()" class="text-white hover:text-gray-200 text-2xl hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center transition">
-<i class="fas fa-times"></i>
-</button>
-</div>
-<div class="p-8">
-<div class="flex flex-col md:flex-row gap-8">
-<!-- User Avatar and Basic Info -->
-<div class="md:w-1/3 text-center">
-<div class="user-avatar-large mb-4">U</div>
-<h3 class="text-2xl font-bold mb-2">उपयोगकर्ता नाम</h3>
-<p class="text-gray-600 mb-4">user@example.com</p>
-<div class="flex justify-center gap-2 mb-4">
-<span class="badge-role role-officer">अधिकारी</span>
-<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-<i class="fas fa-circle text-green-500 mr-1"></i>सक्रिय
-</span>
-</div>
-<div class="bg-gray-50 p-4 rounded-xl">
-<div class="text-sm text-gray-600 mb-2">अंतिम लॉगिन</div>
-<div class="font-medium">आज, 10:30 AM</div>
-</div>
-</div>
-
-<!-- User Details -->
-<div class="md:w-2/3">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-<div class="form-group">
-<label class="block text-sm font-medium text-gray-700 mb-2">पूरा नाम</label>
-<p class="form-control bg-gray-50">उपयोगकर्ता नाम</p>
-</div>
-<div class="form-group">
-<label class="block text-sm font-medium text-gray-700 mb-2">ईमेल</label>
-<p class="form-control bg-gray-50">user@example.com</p>
-</div>
-<div class="form-group">
-<label class="block text-sm font-medium text-gray-700 mb-2">मोबाइल नंबर</label>
-<p class="form-control bg-gray-50">9876543210</p>
-</div>
-<div class="form-group">
-<label class="block text-sm font-medium text-gray-700 mb-2">जिला</label>
-<p class="form-control bg-gray-50">भोपाल</p>
-</div>
-<div class="form-group">
-<label class="block text-sm font-medium text-gray-700 mb-2">पदनाम</label>
-<p class="form-control bg-gray-50">वरिष्ठ अधिकारी</p>
-</div>
-<div class="form-group">
-<label class="block text-sm font-medium text-gray-700 mb-2">शामिल हुए</label>
-<p class="form-control bg-gray-50">15 जनवरी, 2024</p>
-</div>
-</div>
-
-<!-- User Permissions -->
-<div class="mb-6">
-<h4 class="font-bold text-gray-800 mb-3">अनुमतियां</h4>
-<div class="permission-grid">
-<div class="permission-item">
-<div class="flex items-center justify-between">
-<p class="font-medium text-gray-800 text-sm">आवेदन देखें</p>
-<i class="fas fa-check-circle text-green-600"></i>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between">
-<p class="font-medium text-gray-800 text-sm">आवेदन संपादित करें</p>
-<i class="fas fa-check-circle text-green-600"></i>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between">
-<p class="font-medium text-gray-800 text-sm">डेटा निर्यात करें</p>
-<i class="fas fa-check-circle text-green-600"></i>
-</div>
-</div>
-<div class="permission-item">
-<div class="flex items-center justify-between">
-<p class="font-medium text-gray-800 text-sm">उपयोगकर्ता प्रबंधित करें</p>
-<i class="fas fa-times-circle text-red-600"></i>
-</div>
-</div>
-</div>
-</div>
-
-<!-- Action Buttons -->
-<div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
-<button onclick="editUserFromDetail()" class="btn-secondary">
-<i class="fas fa-edit mr-2"></i>संपादित करें
-</button>
-<button onclick="resetUserPassword()" class="btn-secondary bg-yellow-500 hover:bg-yellow-600 text-white border-none">
-<i class="fas fa-key mr-2"></i>पासवर्ड रीसेट करें
-</button>
-<button onclick="toggleUserStatus()" class="btn-secondary bg-green-600 hover:bg-green-700 text-white border-none">
-<i class="fas fa-toggle-on mr-2"></i>स्थिति बदलें
-</button>
-<button onclick="deleteUserFromDetail()" class="btn-secondary bg-red-600 hover:bg-red-700 text-white border-none">
-<i class="fas fa-trash mr-2"></i>हटाएं
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- [Rest of the modals and JavaScript remain similar with enhanced functions] -->
-
-<script type="module">
-// [Previous Firebase imports and initialization]
-
-// Enhanced User Management Functions
-let allUsers = [];
-let selectedUsers = new Set();
-
-// Sample User Data
-function loadUsers() {
-allUsers = [
-{
-id: '1', name: 'प्रशासक', email: 'admin@allinonemp.gov.in', 
-role: 'admin', roleText: 'सुपर एडमिन',
-district: 'bhopal', districtText: 'भोपाल',
-status: 'active', statusText: 'सक्रिय', statusColor: 'text-green-600',
-lastLogin: '2 मिनट पहले', avatar: 'A', permissions: ['view', 'edit', 'export', 'manage']
-},
-{
-id: '2', name: 'राजेश शर्मा', email: 'rajesh@mp.gov.in', 
-role: 'officer', roleText: 'अधिकारी',
-district: 'indore', districtText: 'इंदौर',
-status: 'active', statusText: 'सक्रिय', statusColor: 'text-green-600',
-lastLogin: '5 मिनट पहले', avatar: 'र', permissions: ['view', 'edit', 'export']
-},
-{
-id: '3', name: 'सीता वर्मा', email: 'sita@mp.gov.in', 
-role: 'officer', roleText: 'अधिकारी',
-district: 'jabalpur', districtText: 'जबलपुर',
-status: 'inactive', statusText: 'निष्क्रिय', statusColor: 'text-gray-500',
-lastLogin: '2 घंटे पहले', avatar: 'स', permissions: ['view', 'edit']
-},
-{
-id: '4', name: 'मोहन लाल', email: 'mohan@mp.gov.in', 
-role: 'viewer', roleText: 'दर्शक',
-district: 'gwalior', districtText: 'ग्वालियर',
-status: 'active', statusText: 'सक्रिय', statusColor: 'text-green-600',
-lastLogin: '1 दिन पहले', avatar: 'म', permissions: ['view']
-},
-{
-id: '5', name: 'कमलेश यादव', email: 'kamlesh@mp.gov.in', 
-role: 'dataentry', roleText: 'डेटा एंट्री',
-district: 'ujjain', districtText: 'उज्जैन',
-status: 'active', statusText: 'सक्रिय', statusColor: 'text-green-600',
-lastLogin: '3 घंटे पहले', avatar: 'क', permissions: ['view', 'edit']
-}
-];
-renderUsersTable();
-updateUserStats();
-}
-
-// Enhanced Render Users Table
-function renderUsersTable(filteredUsers = null) {
-const users = filteredUsers || allUsers;
-const tbody = document.getElementById('usersTableBody');
-document.getElementById('usersTotal').textContent = allUsers.length;
-document.getElementById('usersShowing').textContent = users.length;
-
-if (users.length === 0) {
-tbody.innerHTML = `
-<tr>
-<td colspan="8" class="py-12 text-center">
-<div class="empty-state">
-<i class="fas fa-users-slash empty-icon"></i>
-<h3 class="empty-title">कोई उपयोगकर्ता नहीं मिला</h3>
-<p class="empty-message">फ़िल्टर मानदंडों के अनुसार कोई उपयोगकर्ता नहीं मिला</p>
-<button onclick="resetUserFilters()" class="btn-primary mt-4 px-6 py-3">
-<i class="fas fa-redo"></i> फ़िल्टर रीसेट करें
-</button>
-</div>
-</td>
-</tr>
-`;
-return;
-}
-
-let html = '';
-users.forEach(user => {
-const isSelected = selectedUsers.has(user.id);
-html += `
-<tr class="table-row hover:bg-blue-50/50 transition-all ${isSelected ? 'bg-blue-50' : ''}">
-<td>
-<input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded user-checkbox"
-value="${user.id}" ${isSelected ? 'checked' : ''} onchange="toggleUserSelection('${user.id}')">
-</td>
-<td>
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 
-flex items-center justify-center text-white font-bold">
-${user.avatar}
-</div>
-<div>
-<div class="font-bold text-gray-800">${user.name}</div>
-<div class="text-xs text-gray-500">${user.designation || 'अधिकारी'}</div>
-</div>
-</div>
-</td>
-<td class="text-gray-600">${user.email}</td>
-<td>
-<span class="badge-role role-${user.role}">${user.roleText}</span>
-</td>
-<td class="text-gray-700 font-medium">${user.districtText}</td>
-<td>
-<span class="${user.statusColor} text-sm font-medium flex items-center gap-1">
-<i class="fas fa-circle text-xs"></i>
-${user.statusText}
-</span>
-</td>
-<td class="text-gray-600 text-sm">${user.lastLogin}</td>
-<td>
-<div class="flex gap-2">
-<button onclick="viewUserDetail('${user.id}')" class="action-btn action-view" title="विवरण देखें">
-<i class="fas fa-eye"></i>
-</button>
-<button onclick="editUser('${user.id}')" class="action-btn action-edit" title="संपादित करें">
-<i class="fas fa-edit"></i>
-</button>
-<div class="user-action-menu relative">
-<button class="action-btn bg-gray-100 text-gray-700 hover:bg-gray-200" 
-onclick="toggleActionMenu(event, this)">
-<i class="fas fa-ellipsis-v"></i>
-</button>
-<div class="action-dropdown">
-<div class="action-item" onclick="resetPassword('${user.id}')">
-<i class="fas fa-key text-yellow-600"></i> पासवर्ड रीसेट करें
-</div>
-<div class="action-item" onclick="toggleStatus('${user.id}')">
-<i class="fas fa-toggle-on text-blue-600"></i> स्थिति बदलें
-</div>
-<div class="action-item text-red-600 hover:text-red-800 hover:bg-red-50" 
-onclick="deleteUser('${user.id}')">
-<i class="fas fa-trash"></i> हटाएं
-</div>
-</div>
-</div>
-</div>
-</td>
-</tr>
-`;
-});
-tbody.innerHTML = html;
-}
-
-// User Selection Functions
-window.toggleUserSelection = function(id) {
-if (selectedUsers.has(id)) {
-selectedUsers.delete(id);
-} else {
-selectedUsers.add(id);
-}
-updateBulkUserActions();
-};
-
-window.toggleSelectAllUsers = function() {
-const checkbox = document.getElementById('selectAllUsers');
-if (checkbox.checked) {
-allUsers.forEach(user => selectedUsers.add(user.id));
-} else {
-selectedUsers.clear();
-}
-document.querySelectorAll('.user-checkbox').forEach(cb => {
-cb.checked = checkbox.checked;
-});
-updateBulkUserActions();
-};
-
-function updateBulkUserActions() {
-const count = selectedUsers.size;
-// Update UI based on selection
-}
-
-// Filter Functions
-window.filterUsers = function() {
-const searchQuery = document.getElementById('userSearch').value.toLowerCase();
-let filtered = [...allUsers];
-
-if (searchQuery) {
-filtered = filtered.filter(user =>
-user.name.toLowerCase().includes(searchQuery) ||
-user.email.toLowerCase().includes(searchQuery) ||
-user.roleText.toLowerCase().includes(searchQuery)
-);
-}
-
-renderUsersTable(filtered);
-};
-
-window.applyUserFilters = function() {
-const roleFilter = document.getElementById('roleFilter').value;
-const statusFilter = document.getElementById('statusFilterUser').value;
-const districtFilter = document.getElementById('districtFilterUser').value;
-
-let filtered = [...allUsers];
-
-if (roleFilter) {
-filtered = filtered.filter(user => user.role === roleFilter);
-}
-if (statusFilter) {
-filtered = filtered.filter(user => user.status === statusFilter);
-}
-if (districtFilter) {
-filtered = filtered.filter(user => user.district === districtFilter);
-}
-
-renderUsersTable(filtered);
-};
-
-window.filterByRole = function(role) {
-document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-event.target.classList.add('active');
-
-if (role === 'all') {
-renderUsersTable();
-return;
-}
-
-const filtered = allUsers.filter(user => user.role === role);
-renderUsersTable(filtered);
-};
-
-window.filterByStatus = function(status) {
-document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-event.target.classList.add('active');
-
-const filtered = allUsers.filter(user => user.status === status);
-renderUsersTable(filtered);
-};
-
-window.toggleAdvancedFilters = function() {
-const filters = document.getElementById('advancedFilters');
-filters.style.display = filters.style.display === 'none' ? 'grid' : 'none';
-};
-
-window.resetUserFilters = function() {
-document.getElementById('userSearch').value = '';
-document.getElementById('roleFilter').value = '';
-document.getElementById('statusFilterUser').value = '';
-document.getElementById('districtFilterUser').value = '';
-document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-document.querySelector('.filter-tab:first-child').classList.add('active');
-renderUsersTable();
-};
-
-// User Detail Functions
-window.viewUserDetail = function(id) {
-const user = allUsers.find(u => u.id === id);
-if (!user) return;
-
-// Populate modal with user data
-document.getElementById('userDetailModal').classList.add('active');
-document.body.style.overflow = 'hidden';
-};
-
-window.closeUserDetailModal = function() {
-document.getElementById('userDetailModal').classList.remove('active');
-document.body.style.overflow = 'auto';
-};
-
-// Update User Stats
-function updateUserStats() {
-document.getElementById('totalUsersCount').textContent = allUsers.length;
-document.getElementById('activeOfficers').textContent = allUsers.filter(u => u.status === 'active').length;
-}
-
-// Action Menu Toggle
-window.toggleActionMenu = function(event, button) {
-event.stopPropagation();
-const dropdown = button.nextElementSibling;
-document.querySelectorAll('.action-dropdown').forEach(d => {
-if (d !== dropdown) d.classList.remove('show');
-});
-dropdown.classList.toggle('show');
-};
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', function(event) {
-if (!event.target.closest('.user-action-menu')) {
-document.querySelectorAll('.action-dropdown').forEach(d => {
-d.classList.remove('show');
-});
-}
-});
-
-// Enhanced Profile Functions
-window.changePassword = function() {
-alert('पासवर्ड बदलने का फॉर्म खुलेगा');
-};
-
-window.viewSecurityLog = function() {
-alert('सुरक्षा लॉग प्रदर्शित किया जाएगा');
-};
-
-window.terminateAllSessions = function() {
-if (confirm('क्या आप सभी सक्रिय सत्र समाप्त करना चाहते हैं?')) {
-alert('सभी सत्र समाप्त कर दिए गए हैं');
-}
-};
-
-window.viewActivityLog = function() {
-alert('पूर्ण गतिविधि लॉग प्रदर्शित किया जाएगा');
-};
-
-window.viewFullActivityLog = function() {
-alert('विस्तृत गतिविधि लॉग खुलेगा');
-};
-
-window.setupTwoFactor = function() {
-alert('दो-चरणीय सत्यापन सेटअप प्रक्रिया शुरू होगी');
-};
-
-// Export User List
-window.exportUserList = function() {
-let csv = '\uFEFF';
-csv += 'नाम,ईमेल,भूमिका,जिला,स्थिति,अंतिम लॉगिन,शामिल हुए
-';
-
-allUsers.forEach(user => {
-csv += `"${user.name}","${user.email}","${user.roleText}","${user.districtText}","${user.statusText}","${user.lastLogin}","15 जनवरी, 2024"
-`;
-});
-
-const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = `AllInOneMP_Users_${new Date().toISOString().split('T')[0]}.csv`;
-a.click();
-URL.revokeObjectURL(url);
-alert('उपयोगकर्ता सूची सफलतापूर्वक निर्यात हो गई!');
-};
-
-// Bulk User Actions
-window.bulkUserActions = function() {
-if (selectedUsers.size === 0) {
-alert('कृपया कम से कम एक उपयोगकर्ता चुनें!');
-return;
-}
-alert(`${selectedUsers.size} उपयोगकर्ताओं पर बल्क कार्रवाई करें`);
-};
-
-// Save Settings
-window.saveAllSettings = function() {
-alert('सभी सेटिंग्स सफलतापूर्वक सहेजी गईं!');
-};
-
-window.resetAllSettings = function() {
-if (confirm('क्या आप सभी सेटिंग्स डिफ़ॉल्ट मानों पर रीसेट करना चाहते हैं?')) {
-alert('सेटिंग्स रीसेट कर दी गई हैं!');
-}
-};
-
-window.testSettings = function() {
-alert('सेटिंग्स का परीक्षण किया जा रहा है...');
-};
-
-// Initialize on DOM Load
-document.addEventListener('DOMContentLoaded', function() {
-// [Previous initialization code]
-loadUsers();
-updateUserStats();
-
-// Set admin avatar based on name
-const adminName = document.getElementById('adminName')?.textContent || 'प्रशासक';
-document.getElementById('adminAvatarLarge').textContent = adminName.charAt(0);
-document.getElementById('profileAvatarLarge').textContent = adminName.charAt(0);
-
-// Set profile details
-document.getElementById('profileNameLarge').textContent = adminName;
-document.getElementById('profileDesignation').textContent = 'वरिष्ठ प्रशासनिक अधिकारी';
-document.getElementById('profileEmailLarge').textContent = 'admin@allinonemp.gov.in';
-});
-</script>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-landmark"></i>
+                    <span>AllInOne MP</span>
+                </div>
+                <div class="logo-subtitle">प्रशासनिक डैशबोर्ड</div>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                        <i class="fas fa-home"></i>
+                        <span>डैशबोर्ड</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('users')">
+                        <i class="fas fa-users"></i>
+                        <span>उपयोगकर्ता प्रबंधन</span>
+                        <span class="badge">24</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('settings')">
+                        <i class="fas fa-cog"></i>
+                        <span>सेटिंग्स</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>लॉगआउट</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="खोजें...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+
+                <div class="top-bar-right">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar" id="adminAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="adminName">प्रशासक</div>
+                            <div class="user-role">सुपर एडमिन</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="page-section active">
+                <h1 class="page-title">
+                    <i class="fas fa-home"></i>
+                    डैशबोर्ड
+                </h1>
+
+                <div class="card-grid">
+                    <div class="stats-card">
+                        <div class="stats-card-header">
+                            <div>
+                                <div class="stats-label">कुल उपयोगकर्ता</div>
+                                <div class="stats-value">24</div>
+                                <div class="stats-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>12% बढ़ोतरी</span>
+                                </div>
+                            </div>
+                            <div class="stats-icon primary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-card">
+                        <div class="stats-card-header">
+                            <div>
+                                <div class="stats-label">सक्रिय अधिकारी</div>
+                                <div class="stats-value">12</div>
+                                <div class="stats-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>8% बढ़ोतरी</span>
+                                </div>
+                            </div>
+                            <div class="stats-icon success">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-card">
+                        <div class="stats-card-header">
+                            <div>
+                                <div class="stats-label">नए उपयोगकर्ता</div>
+                                <div class="stats-value">8</div>
+                                <div class="stats-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>इस सप्ताह</span>
+                                </div>
+                            </div>
+                            <div class="stats-icon warning">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-card">
+                        <div class="stats-card-header">
+                            <div>
+                                <div class="stats-label">भूमिकाएं</div>
+                                <div class="stats-value">4</div>
+                                <div class="stats-trend">
+                                    <span>विभिन्न पहुंच स्तर</span>
+                                </div>
+                            </div>
+                            <div class="stats-icon danger">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="page-section">
+                <h1 class="page-title">
+                    <i class="fas fa-users"></i>
+                    उपयोगकर्ता प्रबंधन
+                </h1>
+
+                <!-- User Profile Card -->
+                <div class="user-profile-card">
+                    <div style="text-align: center;">
+                        <div class="user-avatar-large" id="adminAvatarLarge">A</div>
+                        <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 10px;" id="adminFullName">प्रशासक</h2>
+                        <p style="opacity: 0.9; margin-bottom: 20px;" id="adminDesignation">वरिष्ठ प्रशासनिक अधिकारी</p>
+                        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                            <span class="badge-role role-admin">सुपर एडमिन</span>
+                            <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">
+                                <i class="fas fa-circle" style="color: #10b981; margin-right: 5px;"></i>
+                                ऑनलाइन
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>उपयोगकर्ता</th>
+                                <th>ईमेल</th>
+                                <th>भूमिका</th>
+                                <th>स्थिति</th>
+                                <th>अंतिम लॉगिन</th>
+                                <th>कार्रवाई</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #60a5fa); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                            A
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">प्रशासक</div>
+                                            <div style="font-size: 0.8rem; color: #64748b;">वरिष्ठ अधिकारी</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>admin@allinonemp.gov.in</td>
+                                <td><span class="badge-role role-admin">सुपर एडमिन</span></td>
+                                <td><span class="badge badge-success">सक्रिय</span></td>
+                                <td>2 मिनट पहले</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="page-section">
+                <h1 class="page-title">
+                    <i class="fas fa-cog"></i>
+                    सेटिंग्स और उपयोगकर्ता विकल्प
+                </h1>
+
+                <div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px; margin-bottom: 30px;">
+                    <!-- Profile Card -->
+                    <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: var(--card-shadow); text-align: center;">
+                        <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                            <div class="user-avatar-large" id="profileAvatarLarge">A</div>
+                            <button style="position: absolute; bottom: 0; right: 0; background: white; padding: 8px; border-radius: 50%; box-shadow: var(--shadow-md);">
+                                <i class="fas fa-camera" style="color: var(--gray-600);"></i>
+                            </button>
+                        </div>
+                        <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;" id="profileNameLarge">प्रशासक</h3>
+                        <p style="color: var(--gray-600); margin-bottom: 15px;" id="profileDesignation">वरिष्ठ प्रशासनिक अधिकारी</p>
+                        <p style="color: var(--gray-500); font-size: 0.9rem; margin-bottom: 20px;" id="profileEmailLarge">admin@allinonemp.gov.in</p>
+                        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                            <span class="badge-role role-admin">सुपर एडमिन</span>
+                            <span style="background: var(--gray-100); color: var(--gray-800); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">
+                                <i class="fas fa-circle" style="color: var(--success); margin-right: 5px;"></i>
+                                सक्रिय
+                            </span>
+                        </div>
+                        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;" onclick="alert('प्रोफाइल संपादित करें')">
+                            <i class="fas fa-edit"></i> प्रोफाइल संपादित करें
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%; background: var(--warning); color: white; border: none;">
+                            <i class="fas fa-lock"></i> पासवर्ड बदलें
+                        </button>
+                    </div>
+
+                    <!-- Settings Form -->
+                    <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: var(--card-shadow);">
+                        <h3 style="font-size: 1.2rem; font-weight: bold; margin-bottom: 20px;">
+                            <i class="fas fa-user-cog" style="color: var(--secondary); margin-right: 10px;"></i>
+                            व्यक्तिगत प्राथमिकताएं
+                        </h3>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                            <div class="form-group">
+                                <label class="form-label">कार्यालय का नाम</label>
+                                <input type="text" class="form-control" value="AllInOne MP प्रशासनिक कार्यालय">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">संपर्क ईमेल</label>
+                                <input type="email" class="form-control" value="support@allinonemp.gov.in">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">हेल्पलाइन नंबर</label>
+                                <input type="text" class="form-control" value="1800-123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">भाषा प्राथमिकता</label>
+                                <select class="form-control">
+                                    <option value="hi">हिंदी (प्राथमिक)</option>
+                                    <option value="en">English</option>
+                                    <option value="hi-en">हिंदी + English</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h4 style="font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                            <i class="fas fa-bell" style="color: var(--info); margin-right: 10px;"></i>
+                            सूचना प्राथमिकताएं
+                        </h4>
+
+                        <div style="background: var(--gray-50); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--gray-200);">
+                                <div>
+                                    <p style="font-weight: 500;">ईमेल सूचनाएं</p>
+                                    <p style="font-size: 0.85rem; color: var(--gray-600);">नए आवेदन और अपडेट पर</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--gray-200);">
+                                <div>
+                                    <p style="font-weight: 500;">SMS अलर्ट</p>
+                                    <p style="font-size: 0.85rem; color: var(--gray-600);">तत्काल अधिसूचनाएं</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                                <div>
+                                    <p style="font-weight: 500;">डैशबोर्ड विजेट</p>
+                                    <p style="font-size: 0.85rem; color: var(--gray-600);">कस्टमाइज करें</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> रीसेट करें
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-save"></i> सेटिंग्स सहेजें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Log -->
+                <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: var(--card-shadow);">
+                    <h3 style="font-size: 1.2rem; font-weight: bold; margin-bottom: 20px;">
+                        <i class="fas fa-history" style="color: var(--info); margin-right: 10px;"></i>
+                        हालिया गतिविधि लॉग
+                    </h3>
+
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <div class="activity-log-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <p style="font-weight: 500;">नया आवेदन जोड़ा गया</p>
+                                    <p style="font-size: 0.85rem; color: var(--gray-600);">समग्र आईडी - राजेश कुमार</p>
+                                </div>
+                                <span style="font-size: 0.8rem; color: var(--gray-500); white-space: nowrap;">10 मिनट पहले</span>
+                            </div>
+                        </div>
+                        <div class="activity-log-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <p style="font-weight: 500;">उपयोगकर्ता अपडेट किया गया</p>
+                                    <p style="font-size: 0.85rem; color: var(--gray-600);">सीता वर्मा की भूमिका बदली गई</p>
+                                </div>
+                                <span style="font-size: 0.8rem; color: var(--gray-500); white-space: nowrap;">25 मिनट पहले</span>
+                            </div>
+                        </div>
+                        <div class="activity-log-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <p style="font-weight: 500;">सेटिंग्स अपडेट की गईं</p>
+                                    <p style="font-size: 0.85rem; color: var(--gray-600);">ऑटोमेशन सेटिंग्स सक्रिय की गईं</p>
+                                </div>
+                                <span style="font-size: 0.8rem; color: var(--gray-500); white-space: nowrap;">2 घंटे पहले</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Show Section
+        function showSection(sectionId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.closest('.nav-link').classList.add('active');
+        }
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('sidebar-active');
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('क्या आप लॉगआउट करना चाहते हैं?')) {
+                alert('लॉगआउट सफल!');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminName = 'प्रशासक';
+            document.getElementById('adminAvatar').textContent = adminName.charAt(0);
+            document.getElementById('adminName').textContent = adminName;
+            document.getElementById('adminAvatarLarge').textContent = adminName.charAt(0);
+            document.getElementById('adminFullName').textContent = adminName;
+            document.getElementById('profileAvatarLarge').textContent = adminName.charAt(0);
+            document.getElementById('profileNameLarge').textContent = adminName;
+        });
+    </script>
 </body>
 </html>
