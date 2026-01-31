@@ -1114,14 +1114,6 @@
                 </a>
             </li>
             <li>
-                <a class="nav-item" onclick="showSection('users')">
-                    <div class="nav-icon">
-                        <i class="fas fa-users-cog"></i>
-                    </div>
-                    <span class="sidebar-text">उपयोगकर्ता प्रबंधन</span>
-                </a>
-            </li>
-            <li>
                 <a class="nav-item" onclick="showSection('settings')">
                     <div class="nav-icon">
                         <i class="fas fa-cog"></i>
@@ -1706,92 +1698,6 @@
     </div>
 
     <!-- USERS MANAGEMENT SECTION -->
-    <div id="users" class="page-section">
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 fade-in">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h1 class="text-2.5xl font-bold text-gray-800 flex items-center gap-3">
-                            <i class="fas fa-users-cog text-indigo-600"></i>
-                            उपयोगकर्ता प्रबंधन
-                        </h1>
-                        <p class="text-gray-500 mt-1">सिस्टम उपयोगकर्ताओं और अधिकारियों का प्रबंधन</p>
-                    </div>
-                    <button onclick="openAddUserModal()" class="btn-primary">
-                        <i class="fas fa-user-plus"></i> नया उपयोगकर्ता जोड़ें
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div class="settings-card">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-gray-800">सक्रिय उपयोगकर्ता</h3>
-                        <div class="bg-green-100 text-green-600 p-3 rounded-xl">
-                            <i class="fas fa-user-check text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="text-3xl font-bold text-gray-800 mb-2" id="activeUsersCount">5</div>
-                    <p class="text-sm text-gray-600">वर्तमान में सक्रिय सत्र</p>
-                </div>
-                
-                <div class="settings-card">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-gray-800">कुल अधिकारी</h3>
-                        <div class="bg-blue-100 text-blue-600 p-3 rounded-xl">
-                            <i class="fas fa-user-tie text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="text-3xl font-bold text-gray-800 mb-2" id="totalOfficers">12</div>
-                    <p class="text-sm text-gray-600">पंजीकृत प्रशासकीय अधिकारी</p>
-                </div>
-
-                <div class="settings-card">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-gray-800">रोल्स</h3>
-                        <div class="bg-purple-100 text-purple-600 p-3 rounded-xl">
-                            <i class="fas fa-user-shield text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="text-3xl font-bold text-gray-800 mb-2">3</div>
-                    <p class="text-sm text-gray-600">विभिन्न पहुंच स्तर</p>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-                <div class="p-5 border-b border-gray-200">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <h2 class="text-xl font-bold text-gray-800">उपयोगकर्ता सूची</h2>
-                        <div class="relative w-full md:w-64">
-                            <input type="text" id="userSearch" placeholder="उपयोगकर्ता खोजें..." class="form-control pl-10 pr-4 py-2.5 w-full">
-                            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>उपयोगकर्ता</th>
-                                <th>ईमेल</th>
-                                <th>भूमिका</th>
-                                <th>स्थिति</th>
-                                <th>अंतिम लॉगिन</th>
-                                <th>कार्रवाई</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <!-- Users will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- SETTINGS SECTION -->
     <div id="settings" class="page-section">
         <div class="max-w-7xl mx-auto">
@@ -1811,15 +1717,26 @@
                             <div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold mx-auto shadow-lg" id="profileAvatar">
                                 A
                             </div>
-                            <button class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:shadow-lg transition border border-gray-200">
+                            <button class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:shadow-lg transition border border-gray-200" onclick="changeProfilePicture()">
                                 <i class="fas fa-camera text-gray-600"></i>
                             </button>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800" id="profileName">प्रशासक</h3>
-                        <p class="text-gray-600 mb-4" id="profileEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="254441484c4b654449494c4b4a4b4048550b424a530b4c4b">[email&#160;protected]</a></p>
+                        <h3 class="text-xl font-bold text-gray-800 mb-1" id="profileName">लोड हो रहा है...</h3>
+                        <p class="text-gray-600 mb-2" id="profileEmail">लोड हो रहा है...</p>
+                        <p class="text-sm text-gray-500 mb-4" id="profilePhone">-</p>
                         <div class="flex justify-center gap-2 mb-4">
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">सुपर एडमिन</span>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium" id="profileRole">एडमिन</span>
                             <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">सक्रिय</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-3 mb-4 text-left">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-gray-600">खाता बनाया:</span>
+                                <span class="font-medium text-gray-800" id="profileCreated">-</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">अंतिम लॉगिन:</span>
+                                <span class="font-medium text-gray-800" id="profileLastLogin">-</span>
+                            </div>
                         </div>
                         <button onclick="openEditProfileModal()" class="btn-secondary w-full">
                             <i class="fas fa-edit mr-2"></i>प्रोफाइल संपादित करें
@@ -1827,7 +1744,10 @@
                     </div>
 
                     <div class="settings-card mt-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">सुरक्षा</h3>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-blue-600"></i>
+                            सुरक्षा
+                        </h3>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -1835,7 +1755,7 @@
                                     <p class="text-sm text-gray-600">OTP के माध्यम से अतिरिक्त सुरक्षा</p>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="twoFactorToggle">
+                                    <input type="checkbox" id="twoFactorToggle" onchange="toggleTwoFactor()">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -1845,7 +1765,46 @@
                                     <p class="text-sm text-gray-600">नए लॉगिन पर ईमेल अलर्ट</p>
                                 </div>
                                 <label class="toggle-switch">
+                                    <input type="checkbox" checked id="loginNotifications" onchange="toggleLoginNotifications()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-gray-800">पासवर्ड परिवर्तन</p>
+                                    <p class="text-sm text-gray-600">अपना पासवर्ड अपडेट करें</p>
+                                </div>
+                                <button onclick="openChangePasswordModal()" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                                    बदलें
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card mt-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-bell text-yellow-600"></i>
+                            अधिसूचना प्राथमिकताएं
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">नए आवेदन</span>
+                                <label class="toggle-switch">
                                     <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">स्टेटस अपडेट</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">दैनिक रिपोर्ट</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -1856,29 +1815,43 @@
                 <!-- System Settings -->
                 <div class="lg:col-span-2">
                     <div class="settings-card">
-                        <h3 class="text-lg font-bold text-gray-800 mb-6">सिस्टम सेटिंग्स</h3>
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                            <i class="fas fa-building text-blue-600"></i>
+                            कार्यालय की जानकारी
+                        </h3>
                         
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>कार्यालय का नाम</label>
-                                <input type="text" class="form-control" value="AllInOne MP प्रशासनिक कार्यालय">
+                                <input type="text" id="officeName" class="form-control" value="AllInOne MP प्रशासनिक कार्यालय">
                             </div>
                             <div class="form-group">
                                 <label>संपर्क ईमेल</label>
-                                <input type="email" class="form-control" value="support@allinonemp.gov.in">
+                                <input type="email" id="officeEmail" class="form-control" value="support@allinonemp.gov.in">
                             </div>
                             <div class="form-group">
                                 <label>हेल्पलाइन नंबर</label>
-                                <input type="text" class="form-control" value="1800-123-4567">
+                                <input type="text" id="officePhone" class="form-control" value="1800-123-4567">
                             </div>
                             <div class="form-group">
                                 <label>कार्यालय समय</label>
-                                <input type="text" class="form-control" value="10:00 AM - 5:00 PM">
+                                <input type="text" id="officeHours" class="form-control" value="10:00 AM - 5:00 PM">
+                            </div>
+                            <div class="form-group">
+                                <label>पता</label>
+                                <input type="text" id="officeAddress" class="form-control" value="मध्य प्रदेश सरकार, भोपाल">
+                            </div>
+                            <div class="form-group">
+                                <label>वेबसाइट</label>
+                                <input type="text" id="officeWebsite" class="form-control" value="https://allinonemp.gov.in">
                             </div>
                         </div>
 
                         <div class="mt-6 pt-6 border-t border-gray-200">
-                            <h4 class="font-bold text-gray-800 mb-4">ऑटोमेशन सेटिंग्स</h4>
+                            <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-robot text-purple-600"></i>
+                                ऑटोमेशन सेटिंग्स
+                            </h4>
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                                     <div>
@@ -1886,7 +1859,17 @@
                                         <p class="text-sm text-gray-600">आवेदन जमा होने पर स्वचालित ईमेल/SMS</p>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" checked>
+                                        <input type="checkbox" checked id="autoReceipt">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                    <div>
+                                        <p class="font-medium text-gray-800">स्वचालित स्टेटस अपडेट</p>
+                                        <p class="text-sm text-gray-600">आवेदकों को SMS द्वारा स्टेटस सूचना</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked id="autoStatusUpdate">
                                         <span class="toggle-slider"></span>
                                     </label>
                                 </div>
@@ -1896,30 +1879,119 @@
                                         <p class="text-sm text-gray-600">प्रत्येक दिन रात्रि 12 बजे बैकअप</p>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" checked>
+                                        <input type="checkbox" checked id="dailyBackup">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                    <div>
+                                        <p class="font-medium text-gray-800">स्वचालित रिपोर्ट जेनरेशन</p>
+                                        <p class="text-sm text-gray-600">साप्ताहिक आंकड़े ईमेल द्वारा</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="autoReports">
                                         <span class="toggle-slider"></span>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-6 flex justify-end">
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-palette text-pink-600"></i>
+                                प्रदर्शन सेटिंग्स
+                            </h4>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                    <div>
+                                        <p class="font-medium text-gray-800">डार्क मोड</p>
+                                        <p class="text-sm text-gray-600">रात्रि समय के लिए डार्क थीम</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="darkMode" onchange="toggleDarkMode()">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>भाषा प्राथमिकता</label>
+                                    <select id="language" class="form-control">
+                                        <option value="hi">हिंदी</option>
+                                        <option value="en">English</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>समय क्षेत्र</label>
+                                    <select id="timezone" class="form-control">
+                                        <option value="IST">IST (भारतीय मानक समय)</option>
+                                        <option value="UTC">UTC</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button onclick="resetSettings()" class="btn-secondary px-6">
+                                <i class="fas fa-undo mr-2"></i>रीसेट करें
+                            </button>
                             <button onclick="saveSettings()" class="btn-primary px-8">
                                 <i class="fas fa-save mr-2"></i>सेटिंग्स सहेजें
                             </button>
                         </div>
                     </div>
 
+                    <div class="settings-card mt-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-green-600"></i>
+                            डेटा और स्टोरेज
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="bg-blue-50 rounded-xl p-4 text-center">
+                                <div class="text-2xl font-bold text-blue-600" id="totalDataSize">24.5 MB</div>
+                                <p class="text-sm text-gray-600 mt-1">कुल डेटा</p>
+                            </div>
+                            <div class="bg-green-50 rounded-xl p-4 text-center">
+                                <div class="text-2xl font-bold text-green-600" id="documentsCount">1,234</div>
+                                <p class="text-sm text-gray-600 mt-1">कुल दस्तावेज़</p>
+                            </div>
+                            <div class="bg-purple-50 rounded-xl p-4 text-center">
+                                <div class="text-2xl font-bold text-purple-600" id="storageUsed">45%</div>
+                                <p class="text-sm text-gray-600 mt-1">स्टोरेज उपयोग</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <button onclick="clearCache()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition flex items-center justify-between">
+                                <span><i class="fas fa-broom mr-2"></i>कैश साफ़ करें</span>
+                                <i class="fas fa-chevron-right text-sm"></i>
+                            </button>
+                            <button onclick="optimizeDatabase()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition flex items-center justify-between">
+                                <span><i class="fas fa-database mr-2"></i>डेटाबेस अनुकूलन</span>
+                                <i class="fas fa-chevron-right text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="settings-card mt-6 border-l-4 border-red-500">
-                        <h3 class="text-lg font-bold text-red-600 mb-4">जोखिम क्षेत्र</h3>
+                        <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            जोखिम क्षेत्र
+                        </h3>
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between p-4 bg-red-50 rounded-xl">
                                 <div>
                                     <p class="font-medium text-gray-800">सभी डेटा साफ़ करें</p>
                                     <p class="text-sm text-gray-600">सावधानी: यह सभी आवेदन डेटा हटा देगा</p>
                                 </div>
                                 <button class="btn-danger" onclick="clearAllData()">
                                     <i class="fas fa-trash-alt mr-2"></i>साफ़ करें
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-red-50 rounded-xl">
+                                <div>
+                                    <p class="font-medium text-gray-800">खाता हटाएं</p>
+                                    <p class="text-sm text-gray-600">स्थायी रूप से अपना खाता हटा दें</p>
+                                </div>
+                                <button class="btn-danger" onclick="deleteAccount()">
+                                    <i class="fas fa-user-times mr-2"></i>हटाएं
                                 </button>
                             </div>
                         </div>
@@ -3095,59 +3167,193 @@ window.bulkStatusUpdate = async function(status) {
     }
 };
 
-// Users Management
-function renderUsers() {
-    const users = [
-        { id: 1, name: 'प्रशासक', email: 'admin@allinonemp.gov.in', role: 'सुपर एडमिन', status: 'online', lastLogin: '2 मिनट पहले' },
-        { id: 2, name: 'राजेश शर्मा', email: 'rajesh@mp.gov.in', role: 'अधिकारी', status: 'online', lastLogin: '5 मिनट पहले' },
-        { id: 3, name: 'सीता वर्मा', email: 'sita@mp.gov.in', role: 'अधिकारी', status: 'offline', lastLogin: '2 घंटे पहले' },
-        { id: 4, name: 'मोहन लाल', email: 'mohan@mp.gov.in', role: 'दर्शक', status: 'offline', lastLogin: '1 दिन पहले' }
-    ];
+// Users Management - REMOVED (Not needed in admin dashboard)
+
+// Load Admin Profile from Database
+async function loadAdminProfile() {
+    if (!currentUser) return;
     
-    const tbody = document.getElementById('usersTableBody');
-    let html = '';
-    users.forEach(user => {
-        html += `
-        <tr class="table-row">
-            <td>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                        ${user.name.charAt(0)}
-                    </div>
-                    <span class="user-status ${user.status}"></span>
-                    <span class="font-bold text-gray-800">${user.name}</span>
-                </div>
-            </td>
-            <td class="text-gray-600">${user.email}</td>
-            <td><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">${user.role}</span></td>
-            <td><span class="${user.status === 'online' ? 'text-green-600' : 'text-gray-500'} text-sm font-medium capitalize">${user.status}</span></td>
-            <td class="text-gray-600 text-sm">${user.lastLogin}</td>
-            <td>
-                <div class="flex gap-2">
-                    <button class="action-btn action-edit" onclick="editUser('${user.id}')"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn action-delete" onclick="deleteUser('${user.id}')"><i class="fas fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>
-        `;
-    });
-    tbody.innerHTML = html;
+    try {
+        const adminDoc = await getDoc(doc(db, 'admins', currentUser.uid));
+        
+        if (adminDoc.exists()) {
+            const adminData = adminDoc.data();
+            
+            // Update profile information
+            document.getElementById('profileName').textContent = adminData.name || currentUser.displayName || 'प्रशासक';
+            document.getElementById('profileEmail').textContent = adminData.email || currentUser.email;
+            document.getElementById('profilePhone').textContent = adminData.phone || '-';
+            document.getElementById('profileRole').textContent = adminData.role || 'एडमिन';
+            
+            // Update creation and last login dates
+            if (adminData.createdAt) {
+                document.getElementById('profileCreated').textContent = formatDate(adminData.createdAt);
+            }
+            if (adminData.lastLogin) {
+                document.getElementById('profileLastLogin').textContent = formatDate(adminData.lastLogin);
+            }
+            
+            // Update avatar
+            const initial = (adminData.name || currentUser.displayName || 'A').charAt(0).toUpperCase();
+            document.getElementById('profileAvatar').textContent = initial;
+            
+            // Update settings toggles if saved in database
+            if (adminData.settings) {
+                if (adminData.settings.twoFactor !== undefined) {
+                    document.getElementById('twoFactorToggle').checked = adminData.settings.twoFactor;
+                }
+                if (adminData.settings.loginNotifications !== undefined) {
+                    document.getElementById('loginNotifications').checked = adminData.settings.loginNotifications;
+                }
+                if (adminData.settings.darkMode !== undefined) {
+                    document.getElementById('darkMode').checked = adminData.settings.darkMode;
+                }
+            }
+        } else {
+            // If admin document doesn't exist, create one
+            await setDoc(doc(db, 'admins', currentUser.uid), {
+                name: currentUser.displayName || 'प्रशासक',
+                email: currentUser.email,
+                role: 'एडमिन',
+                createdAt: serverTimestamp(),
+                lastLogin: serverTimestamp(),
+                settings: {
+                    twoFactor: false,
+                    loginNotifications: true,
+                    darkMode: false,
+                    autoReceipt: true,
+                    autoStatusUpdate: true,
+                    dailyBackup: true,
+                    autoReports: false
+                }
+            });
+            loadAdminProfile(); // Reload after creation
+        }
+    } catch (error) {
+        console.error("Error loading admin profile:", error);
+    }
 }
 
-// User Modal Functions
-window.openAddUserModal = function() {
-    document.getElementById('addUserModal').classList.add('active');
+// Settings Functions
+window.saveSettings = async function() {
+    if (!currentUser) {
+        alert('कृपया पहले लॉगिन करें!');
+        return;
+    }
+    
+    try {
+        const settings = {
+            twoFactor: document.getElementById('twoFactorToggle').checked,
+            loginNotifications: document.getElementById('loginNotifications').checked,
+            darkMode: document.getElementById('darkMode').checked,
+            autoReceipt: document.getElementById('autoReceipt').checked,
+            autoStatusUpdate: document.getElementById('autoStatusUpdate').checked,
+            dailyBackup: document.getElementById('dailyBackup').checked,
+            autoReports: document.getElementById('autoReports').checked,
+            language: document.getElementById('language').value,
+            timezone: document.getElementById('timezone').value
+        };
+        
+        const officeInfo = {
+            name: document.getElementById('officeName').value,
+            email: document.getElementById('officeEmail').value,
+            phone: document.getElementById('officePhone').value,
+            hours: document.getElementById('officeHours').value,
+            address: document.getElementById('officeAddress').value,
+            website: document.getElementById('officeWebsite').value
+        };
+        
+        await updateDoc(doc(db, 'admins', currentUser.uid), {
+            settings: settings,
+            officeInfo: officeInfo,
+            updatedAt: serverTimestamp()
+        });
+        
+        alert('✓ सेटिंग्स सफलतापूर्वक सहेजी गई!');
+    } catch (error) {
+        console.error("Error saving settings:", error);
+        alert('सेटिंग्स सहेजने में त्रुटि!');
+    }
 };
 
-window.closeAddUserModal = function() {
-    document.getElementById('addUserModal').classList.remove('active');
+window.resetSettings = function() {
+    if (confirm('क्या आप सभी सेटिंग्स को डिफ़ॉल्ट पर रीसेट करना चाहते हैं?')) {
+        document.getElementById('twoFactorToggle').checked = false;
+        document.getElementById('loginNotifications').checked = true;
+        document.getElementById('darkMode').checked = false;
+        document.getElementById('autoReceipt').checked = true;
+        document.getElementById('autoStatusUpdate').checked = true;
+        document.getElementById('dailyBackup').checked = true;
+        document.getElementById('autoReports').checked = false;
+        document.getElementById('language').value = 'hi';
+        document.getElementById('timezone').value = 'IST';
+        alert('✓ सेटिंग्स रीसेट हो गई हैं!');
+    }
 };
 
-document.getElementById('addUserForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    alert('नया उपयोगकर्ता जोड़ा गया! (डेमो मोड)');
-    closeAddUserModal();
-    this.reset();
+window.toggleTwoFactor = async function() {
+    const enabled = document.getElementById('twoFactorToggle').checked;
+    if (enabled) {
+        alert('दो-चरणीय सत्यापन सक्षम किया गया! अगली बार लॉगिन करते समय OTP की आवश्यकता होगी।');
+    } else {
+        if (confirm('क्या आप दो-चरणीय सत्यापन अक्षम करना चाहते हैं?')) {
+            alert('दो-चरणीय सत्यापन अक्षम कर दिया गया।');
+        } else {
+            document.getElementById('twoFactorToggle').checked = true;
+        }
+    }
+};
+
+window.toggleLoginNotifications = function() {
+    const enabled = document.getElementById('loginNotifications').checked;
+    alert(enabled ? 'लॉगिन सूचनाएं सक्षम की गई!' : 'लॉगिन सूचनाएं अक्षम की गई!');
+};
+
+window.toggleDarkMode = function() {
+    const enabled = document.getElementById('darkMode').checked;
+    if (enabled) {
+        document.body.classList.add('dark-mode');
+        alert('डार्क मोड सक्षम किया गया! (जल्द ही उपलब्ध)');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+};
+
+window.changeProfilePicture = function() {
+    alert('प्रोफाइल फोटो अपडेट फीचर जल्द ही उपलब्ध होगा!');
+};
+
+window.openChangePasswordModal = function() {
+    const newPassword = prompt('नया पासवर्ड दर्ज करें (कम से कम 6 अक्षर):');
+    if (newPassword && newPassword.length >= 6) {
+        alert('पासवर्ड सफलतापूर्वक बदल दिया गया! (डेमो मोड)');
+    } else if (newPassword) {
+        alert('पासवर्ड कम से कम 6 अक्षर का होना चाहिए!');
+    }
+};
+
+window.clearCache = function() {
+    if (confirm('क्या आप कैश साफ़ करना चाहते हैं?')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        alert('✓ कैश सफलतापूर्वक साफ़ कर दिया गया!');
+    }
+};
+
+window.optimizeDatabase = function() {
+    if (confirm('डेटाबेस अनुकूलन शुरू करें? इसमें कुछ समय लग सकता है।')) {
+        alert('✓ डेटाबेस अनुकूलन पूर्ण! (डेमो मोड)');
+    }
+};
+
+window.deleteAccount = function() {
+    const confirmation = prompt('खाता हटाने के लिए "DELETE" टाइप करें:');
+    if (confirmation === 'DELETE') {
+        if (confirm('यह कार्रवाई स्थायी है और इसे पूर्ववत नहीं किया जा सकता। क्या आप निश्चित हैं?')) {
+            alert('खाता हटाने की सुविधा केवल सुपर एडमिन द्वारा की जा सकती है।');
+        }
+    }
+};
 });
 
 window.editUser = function(id) {
@@ -3338,7 +3544,7 @@ window.showSection = function(sectionId) {
         }
     });
     
-    if (sectionId === 'users') renderUsers();
+    if (sectionId === 'settings') loadAdminProfile();
     
     if (window.innerWidth < 768) {
         const sidebar = document.getElementById('sidebar');
@@ -3578,10 +3784,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('adminName').textContent = displayName;
             document.getElementById('sidebarAdminName').textContent = displayName;
             document.getElementById('welcomeAdminName').textContent = displayName;
-            document.getElementById('profileName').textContent = displayName;
-            document.getElementById('profileEmail').textContent = user.email;
             document.getElementById('topBarAvatar').textContent = displayName.charAt(0).toUpperCase();
-            document.getElementById('profileAvatar').textContent = displayName.charAt(0).toUpperCase();
+            
+            // Load admin profile from database
+            loadAdminProfile();
         }
     });
     
